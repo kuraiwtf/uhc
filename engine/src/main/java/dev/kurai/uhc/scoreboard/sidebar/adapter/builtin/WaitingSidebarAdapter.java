@@ -55,13 +55,6 @@ public final class WaitingSidebarAdapter implements SidebarAdapter, SidebarTitle
                     this.ultraHardcore.getModuleService().getCurrentModule().getName(), GOLD, BOLD))
             .build());
     lines.add(empty());
-
-    final var module = this.ultraHardcore.getModuleService().getCurrentModule();
-    if (module instanceof final SidebarAdapter moduleSidebar) {
-      lines.addAll(moduleSidebar.provideLines(player));
-      lines.add(empty());
-    }
-
     lines.add(
         text()
             .append(text("Joueurs: "))
