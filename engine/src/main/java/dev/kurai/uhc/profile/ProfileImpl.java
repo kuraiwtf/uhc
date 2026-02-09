@@ -6,13 +6,12 @@ import dev.kurai.uhc.actionbar.Actionbar;
 import dev.kurai.uhc.ecs.component.Component;
 import dev.kurai.uhc.ecs.component.defaults.NameComponent;
 import dev.kurai.uhc.ecs.entity.Entity;
+import dev.kurai.uhc.module.power.AbstractPower;
 import dev.kurai.uhc.profile.component.ProfileIdentifierComponent;
 import dev.kurai.uhc.profile.component.ProfileMiningComponent;
 import dev.kurai.uhc.profile.state.ProfileState;
 import dev.kurai.uhc.profile.state.WaitingProfileState;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import net.kyori.adventure.audience.Audience;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -22,6 +21,7 @@ public final class ProfileImpl implements Profile {
   private final Map<@NotNull Class<? extends Component>, @NotNull Component> components;
 
   private final UltraHardcoreAPI ultraHardcore;
+  private final Map<@NotNull String, @NotNull AbstractPower> powers;
 
   private ProfileState state;
 
@@ -40,6 +40,7 @@ public final class ProfileImpl implements Profile {
     this.setState(new WaitingProfileState());
 
     this.ultraHardcore = ultraHardcore;
+    this.powers = Maps.newHashMap();
   }
 
   @Override
@@ -102,5 +103,20 @@ public final class ProfileImpl implements Profile {
     return Optional.ofNullable(this.components.get(componentClass))
         .map(componentClass::cast)
         .orElse(null);
+  }
+
+  @Override
+  public @NotNull Collection<AbstractPower> getPowers() {
+    return List.copyOf(this.powers.values());
+  }
+
+  @Override
+  public void registerPower(final @NotNull AbstractPower power) {
+    this.powers.put(power.getId(), power);
+  }
+
+  @Override
+  public void unregisterPower(final @NotNull String id) {
+    this.powers.remove(id);
   }
 }

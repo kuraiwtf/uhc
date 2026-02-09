@@ -9,11 +9,14 @@ import dev.kurai.uhc.game.configuration.inventory.InventoryConfiguration;
 import dev.kurai.uhc.game.start.countdown.task.StartCountdownTask;
 import dev.kurai.uhc.game.start.phase.StartPhase;
 import dev.kurai.uhc.listener.game.PlayingListener;
+import dev.kurai.uhc.module.power.listener.PowerListener;
+import dev.kurai.uhc.module.power.task.updater.CooldownUpdaterTask;
 import dev.kurai.uhc.profile.state.PlayingProfileState;
 import dev.kurai.uhc.scoreboard.sidebar.adapter.builtin.PlayingSidebarAdapter;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 
@@ -103,18 +106,26 @@ public final class StartServiceImpl implements StartService {
 
     final var eventService = this.ultraHardcore.getEventService();
     eventService.dispatchEvent(new GameStartEvent());
-    eventService.registerListener(new PlayingListener(this.ultraHardcore));
+    eventService.registerListeners(
+        new PlayingListener(this.ultraHardcore),
+        new PowerListener(this.ultraHardcore.getProfileService(), this.ultraHardcore.getPlugin()));
 
     final var gameService = this.ultraHardcore.getGameService();
     gameService.setStartTime(System.currentTimeMillis());
     gameService.getTimerService().startAllTimers();
 
-    // Configure world border based on BorderConfiguration
     final var world = this.ultraHardcore.getWorldService().getWorld();
     final var worldBorder = world.getWorldBorder();
     final var initialSize = BorderConfiguration.INITIAL_SIZE_OPTION.getValue() * 2;
     worldBorder.setSize(initialSize);
     worldBorder.setCenter(0, 0);
+
+    Bukkit.getScheduler()
+        .runTaskTimerAsynchronously(
+            this.ultraHardcore.getPlugin(),
+            new CooldownUpdaterTask(this.ultraHardcore.getProfileService()),
+            0,
+            1L);
 
     final var profileService = this.ultraHardcore.getProfileService();
     for (final var profile : profileService.getProfiles()) {

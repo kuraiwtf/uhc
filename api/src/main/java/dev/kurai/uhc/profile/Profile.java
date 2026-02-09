@@ -3,6 +3,7 @@ package dev.kurai.uhc.profile;
 import dev.kurai.uhc.actionbar.Actionbar;
 import dev.kurai.uhc.ecs.component.Component;
 import dev.kurai.uhc.ecs.entity.Entity;
+import dev.kurai.uhc.module.power.holder.PowerHolder;
 import dev.kurai.uhc.profile.state.ProfileState;
 import dev.kurai.uhc.util.api.name.Nameable;
 import dev.kurai.uhc.util.api.state.Stateful;
@@ -18,6 +19,7 @@ public interface Profile
     extends Nameable<@NotNull String>,
         Stateful<ProfileState>,
         Entity<@NotNull UUID>,
+        PowerHolder,
         ForwardingAudience.Single {
 
   @Override

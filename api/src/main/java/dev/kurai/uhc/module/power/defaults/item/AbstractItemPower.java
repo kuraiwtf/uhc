@@ -1,0 +1,18 @@
+package dev.kurai.uhc.module.power.defaults.item;
+
+import dev.kurai.uhc.UltraHardcoreAPI;
+import dev.kurai.uhc.module.power.AbstractPower;
+import java.util.UUID;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
+
+public abstract class AbstractItemPower extends AbstractPower {
+
+  public AbstractItemPower(
+      final @NotNull UUID owner, final @NotNull UltraHardcoreAPI ultraHardcore) {
+    super(owner, ultraHardcore);
+  }
+
+  public abstract @NotNull ItemStack provideIcon(final @NotNull Player player);
+}

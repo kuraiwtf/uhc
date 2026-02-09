@@ -3,16 +3,23 @@ package dev.kurai.uhc.tablist.service;
 import static net.kyori.adventure.text.Component.text;
 
 import dev.kurai.uhc.tablist.TabListProvider;
+import dev.kurai.uhc.tablist.adapter.BuiltinTablistHeaderProvider;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.jetbrains.annotations.NotNull;
 
 public final class TabListServiceImpl implements TabListService {
 
-  private static final TabListProvider TAB_LIST_HEADER = _ -> text().build(),
-      TAB_LIST_FOOTER = _ -> text().build();
+  private static final TabListProvider TAB_LIST_FOOTER =
+      _ ->
+          text()
+              .appendNewline()
+              .append(text("@kuraiwtf", NamedTextColor.GOLD))
+              .appendNewline()
+              .build();
   private TabListProvider headerProvider, footerProvider;
 
   public TabListServiceImpl() {
-    this.install(TAB_LIST_HEADER, TAB_LIST_FOOTER);
+    this.install(new BuiltinTablistHeaderProvider(), TAB_LIST_FOOTER);
   }
 
   @Override
