@@ -1,0 +1,289 @@
+package dev.kurai.uhc.menu;
+
+import static dev.kurai.uhc.game.GameService.SLOTS_OPTION;
+import static dev.kurai.uhc.game.GameService.WHITELIST_OPTION;
+import static dev.kurai.uhc.util.CC.BAR;
+
+import dev.kurai.uhc.UltraHardcoreAPI;
+import dev.kurai.uhc.event.service.EventService;
+import dev.kurai.uhc.game.scenario.service.ScenarioService;
+import dev.kurai.uhc.game.start.service.StartService;
+import dev.kurai.uhc.menu.rules.RulesMenu;
+import dev.kurai.uhc.menu.scenario.ScenarioConfigurationMenu;
+import dev.kurai.uhc.menu.slots.SlotsConfigurationMenu;
+import dev.kurai.uhc.menu.team.TeamConfigurationMenu;
+import dev.kurai.uhc.menu.template.BackTemplate;
+import dev.kurai.uhc.menu.template.BorderTemplate;
+import dev.kurai.uhc.module.AbstractModule;
+import dev.kurai.uhc.module.team.module.TeamModule;
+import dev.kurai.uhc.util.CC;
+import dev.kurai.uhc.util.ItemBuilder;
+import net.j4c0b3y.api.menu.Menu;
+import net.j4c0b3y.api.menu.MenuSize;
+import net.j4c0b3y.api.menu.button.Button;
+import net.j4c0b3y.api.menu.button.ButtonClick;
+import net.j4c0b3y.api.menu.layer.impl.BackgroundLayer;
+import net.j4c0b3y.api.menu.layer.impl.ForegroundLayer;
+import org.bukkit.DyeColor;
+import org.bukkit.Material;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
+
+public final class ConfigurationMenu extends Menu {
+
+  private final UltraHardcoreAPI ultraHardcore;
+
+  public ConfigurationMenu(
+      final @NotNull Player player, final @NotNull UltraHardcoreAPI ultraHardcore) {
+    super("Configuration de la partie", MenuSize.SIX, player);
+    this.ultraHardcore = ultraHardcore;
+  }
+
+  @Override
+  public void setup(final @NotNull BackgroundLayer back, final @NotNull ForegroundLayer front) {
+    this.apply(new BorderTemplate(DyeColor.ORANGE.getData()));
+
+    front.set(13, new SlotsButton());
+
+    front.set(
+        27,
+        new ScenarioButton(
+            this.ultraHardcore.getEventService(),
+            this.ultraHardcore.getGameService().getScenarioService()));
+
+    final var module = this.ultraHardcore.getModuleService().getCurrentModule();
+    if (module instanceof TeamModule) {
+      front.set(30, new TeamButton());
+    } else {
+      back.set(30, new TeamDisabledButton());
+    }
+
+    front.set(31, new SettingsButton(this.ultraHardcore));
+
+    if (module.provideModuleMenu(this.getPlayer()) != null) {
+      front.set(32, new ModuleButton(this.getPlayer(), module));
+    } else {
+      back.set(32, new EmptyModuleButton());
+    }
+
+    front.set(43, new AccessibilityButton());
+
+    front.set(49, new StartButton(this.ultraHardcore.getGameService().getStartService()));
+  }
+
+  private static final class SlotsButton extends Button {
+
+    @Override
+    public ItemStack getIcon() {
+      return new ItemBuilder(Material.SKULL_ITEM)
+          .data(3)
+          .name("&a&lSlots")
+          .lore(
+              "",
+              "&a " + CC.SQUARE + "&f Slots: &a" + SLOTS_OPTION.getValue(),
+              "",
+              "&7" + BAR + "&f Permet de modifier les",
+              "&a  slots&f de la partie.",
+              "")
+          .glowing(true)
+          .asItemStack();
+    }
+
+    @Override
+    public void onClick(final ButtonClick click) {
+      final var slotsConfigurationMenu = new SlotsConfigurationMenu(click.getMenu().getPlayer());
+      slotsConfigurationMenu.setPreviousMenu(click.getMenu());
+      slotsConfigurationMenu.open();
+    }
+  }
+
+  private static final class ScenarioButton extends Button {
+
+    private final EventService eventService;
+    private final ScenarioService scenarioService;
+
+    private ScenarioButton(
+        final @NotNull EventService eventService, final @NotNull ScenarioService scenarioService) {
+      this.eventService = eventService;
+      this.scenarioService = scenarioService;
+    }
+
+    @Override
+    public ItemStack getIcon() {
+      return new ItemBuilder(Material.BOOK).name("&a&lScénarios").glowing(true).asItemStack();
+    }
+
+    @Override
+    public void onClick(final ButtonClick click) {
+      final var scenarioMenu =
+          new ScenarioConfigurationMenu(
+              click.getMenu().getPlayer(), this.eventService, this.scenarioService);
+      scenarioMenu.setPreviousMenu(click.getMenu());
+      scenarioMenu.open();
+    }
+  }
+
+  private static final class TeamButton extends Button {
+
+    @Override
+    public ItemStack getIcon() {
+      return new ItemBuilder(Material.BANNER)
+          .data(DyeColor.RED.getDyeData())
+          .name("&a&lÉquipes")
+          .lore("", "&7" + BAR + "&f Permet d'accéder aux&c paramètres", "&f  des équipes.", "")
+          .asItemStack();
+    }
+
+    @Override
+    public void onClick(final ButtonClick click) {
+      final var teamMenu = new TeamConfigurationMenu(click.getMenu().getPlayer());
+      teamMenu.setPreviousMenu(click.getMenu());
+      teamMenu.open();
+    }
+  }
+
+  private static final class TeamDisabledButton extends Button {
+
+    @Override
+    public ItemStack getIcon() {
+      return new ItemBuilder(Material.INK_SACK)
+          .data(DyeColor.RED.getDyeData())
+          .name("&c&lÉquipes indisponibles")
+          .lore(
+              "",
+              "&7" + BAR + "&f Vous ne pouvez&c pas",
+              "&f  configurer les &céquipes",
+              "&f  dans ce &cjeu.",
+              "")
+          .lunarTag("unclickable", true)
+          .lunarTag("hideSlotHighlight", true)
+          .asItemStack();
+    }
+  }
+
+  private static final class SettingsButton extends Button {
+
+    private final UltraHardcoreAPI ultraHardcore;
+
+    private SettingsButton(final UltraHardcoreAPI ultraHardcore) {
+      this.ultraHardcore = ultraHardcore;
+    }
+
+    @Override
+    public ItemStack getIcon() {
+      return new ItemBuilder(Material.REDSTONE_COMPARATOR)
+          .name("&c&lParamètres")
+          .lore("", "&7" + BAR + "&f Permet d'accéder aux&c paramètres", "&f  de la partie.", "")
+          .glowing(true)
+          .asItemStack();
+    }
+
+    @Override
+    public void onClick(final ButtonClick click) {
+      final var settingsMenu = new RulesMenu(click.getMenu().getPlayer(), this.ultraHardcore);
+      settingsMenu.setPreviousMenu(click.getMenu());
+      settingsMenu.open();
+    }
+  }
+
+  private static final class ModuleButton extends Button {
+
+    private final Player player;
+    private final AbstractModule module;
+
+    private ModuleButton(final @NotNull Player player, final @NotNull AbstractModule module) {
+      this.player = player;
+      this.module = module;
+    }
+
+    @Override
+    public ItemStack getIcon() {
+      return new ItemBuilder(this.module.provideModuleIcon(this.player))
+          .name("&6&l" + this.module.getName())
+          .lore(
+              "",
+              "&7" + BAR + "&f Cliquez pour &6configurer",
+              "&f  le&6 module&f de la partie.",
+              "")
+          .asItemStack();
+    }
+
+    @Override
+    public void onClick(final ButtonClick click) {
+      final var menu = this.module.provideModuleMenu(this.player);
+      if (menu == null) {
+        return;
+      }
+
+      menu.setPreviousMenu(click.getMenu());
+      menu.apply(new BackTemplate(click.getMenu()));
+      menu.open();
+    }
+  }
+
+  private static final class EmptyModuleButton extends Button {
+
+    @Override
+    public ItemStack getIcon() {
+      return new ItemBuilder(Material.INK_SACK)
+          .data(DyeColor.RED.getDyeData())
+          .name("&c&lConfiguration indisponible")
+          .lore("", "&7" + BAR + "&f Vous ne pouvez&c pas", "&f  configurer ce jeu.", "")
+          .lunarTag("unclickable", true)
+          .lunarTag("hideSlotHighlight", true)
+          .asItemStack();
+    }
+  }
+
+  private static final class AccessibilityButton extends Button {
+
+    @Override
+    public ItemStack getIcon() {
+      return new ItemBuilder(Material.MINECART)
+          .name(
+              "&6&lAccès à la partie&8 ("
+                  + (WHITELIST_OPTION.getValue() ? "&cFermée" : "&aOuverte")
+                  + "&8)")
+          .glowing(!WHITELIST_OPTION.getValue())
+          .asItemStack();
+    }
+
+    @Override
+    public void onClick(final ButtonClick click) {
+      WHITELIST_OPTION.setValue(!WHITELIST_OPTION.getValue());
+      click.getMenu().update();
+    }
+  }
+
+  private static final class StartButton extends Button {
+
+    private final StartService startService;
+
+    private StartButton(final @NotNull StartService startService) {
+      this.startService = startService;
+    }
+
+    @Override
+    public ItemStack getIcon() {
+      final var starting = this.startService.isStarting();
+      return new ItemBuilder(Material.INK_SACK)
+          .data(starting ? DyeColor.RED.getDyeData() : DyeColor.LIME.getDyeData())
+          .name((starting ? "&c&lAnnuler" : "&a&lDémarrer") + " la partie")
+          .asItemStack();
+    }
+
+    @Override
+    public void onClick(final ButtonClick click) {
+      final var menu = click.getMenu();
+      if (this.startService.isStarting()) {
+        this.startService.cancelStart();
+        menu.update();
+        return;
+      }
+
+      this.startService.handleStart();
+      menu.close();
+    }
+  }
+}

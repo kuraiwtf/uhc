@@ -1,0 +1,7 @@
+name: UHC-Engine
+version: ${version}
+author: kurai
+main: dev.kurai.uhc.UltraHardcorePlugin
+
+depend:
+  - packetevents

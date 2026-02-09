@@ -1,0 +1,26 @@
+package dev.kurai.uhc.command.defaults;
+
+import dev.kurai.uhc.UltraHardcoreAPI;
+import dev.kurai.uhc.command.annotation.Command;
+import dev.kurai.uhc.command.annotation.CommandMeta;
+import org.bukkit.entity.Player;
+import org.jspecify.annotations.NullMarked;
+
+@NullMarked
+public final class ModerationCommands {
+
+  private final UltraHardcoreAPI ultraHardcore;
+
+  public ModerationCommands(final UltraHardcoreAPI ultraHardcore) {
+    this.ultraHardcore = ultraHardcore;
+  }
+
+  @Command(@CommandMeta(name = "list"))
+  public void list(final Player player) {
+    for (final var profile : this.ultraHardcore.getProfileService().getProfiles()) {
+      player.sendMessage(
+          " - %s [%s] (%s)"
+              .formatted(profile.getName(), profile.getId(), profile.getState().getId()));
+    }
+  }
+}
