@@ -146,7 +146,11 @@ public final class StartInventoryMenu extends Menu {
         return;
       }
 
-      profile.addComponent(new InventoryEditorComponent());
+      final var inventory = player.getInventory();
+      final var currentInventory = inventory.getContents().clone();
+      final var currentArmor = inventory.getArmorContents().clone();
+
+      profile.addComponent(new InventoryEditorComponent(currentInventory, currentArmor));
       player.closeInventory();
 
       this.loadInventoryForEditing(player);

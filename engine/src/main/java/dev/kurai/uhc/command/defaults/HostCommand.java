@@ -95,6 +95,8 @@ public final class HostCommand {
 
     inventory.clear();
     inventory.setArmorContents(null);
+    inventory.setContents(editorComponent.getSavedInventory());
+    inventory.setArmorContents(editorComponent.getSavedArmor());
 
     this.bukkitAudiences
         .player(player)
