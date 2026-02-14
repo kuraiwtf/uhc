@@ -1,6 +1,5 @@
 package dev.kurai.uhc.module.power;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.actionbar.entry.ActionbarEntry;
@@ -9,8 +8,6 @@ import dev.kurai.uhc.module.power.restriction.PowerRestriction;
 import dev.kurai.uhc.module.power.restriction.holder.PowerRestrictionHolder;
 import dev.kurai.uhc.profile.Profile;
 import dev.kurai.uhc.util.api.Identifiable;
-import dev.kurai.uhc.util.api.annotation.Identifier;
-import dev.kurai.uhc.util.api.annotation.Name;
 import dev.kurai.uhc.util.api.name.Nameable;
 import java.util.*;
 import org.bukkit.entity.Player;
@@ -30,19 +27,17 @@ public abstract class AbstractPower
 
   protected final Profile profile;
 
-  public AbstractPower(final @NotNull UUID owner, final @NotNull UltraHardcoreAPI ultraHardcore) {
+  public AbstractPower(
+      final @NotNull String identifier,
+      final @NotNull String name,
+      final @NotNull UUID owner,
+      final @NotNull UltraHardcoreAPI ultraHardcore) {
+    this.identifier = identifier;
+    this.name = name;
     this.owner = owner;
     this.ultraHardcore = ultraHardcore;
 
     this.restrictions = Maps.newConcurrentMap();
-
-    final var identifierAnnotation = this.getClass().getAnnotation(Identifier.class);
-    Preconditions.checkNotNull(identifierAnnotation, "Identifier annotation is missing!");
-    this.identifier = identifierAnnotation.value();
-
-    final var nameAnnotation = this.getClass().getAnnotation(Name.class);
-    Preconditions.checkNotNull(nameAnnotation, "Name annotation is missing!");
-    this.name = nameAnnotation.value();
 
     this.profile = ultraHardcore.getProfileService().getProfile(owner);
   }

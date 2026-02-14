@@ -21,8 +21,11 @@ public abstract class AbstractParentItemPower extends LeftClickItemPower {
   private long lastSwitch;
 
   public AbstractParentItemPower(
-      final @NotNull UUID owner, final @NotNull UltraHardcoreAPI ultraHardcore) {
-    super(owner, ultraHardcore);
+      final @NotNull String identifier,
+      final @NotNull String name,
+      final @NotNull UUID owner,
+      final @NotNull UltraHardcoreAPI ultraHardcore) {
+    super(identifier, name, owner, ultraHardcore);
     this.children = Lists.newArrayList();
   }
 

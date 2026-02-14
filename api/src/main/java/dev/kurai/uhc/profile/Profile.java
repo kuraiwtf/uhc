@@ -3,10 +3,12 @@ package dev.kurai.uhc.profile;
 import dev.kurai.uhc.actionbar.Actionbar;
 import dev.kurai.uhc.ecs.component.Component;
 import dev.kurai.uhc.ecs.entity.Entity;
+import dev.kurai.uhc.module.power.AbstractPower;
 import dev.kurai.uhc.module.power.holder.PowerHolder;
 import dev.kurai.uhc.profile.state.ProfileState;
 import dev.kurai.uhc.util.api.name.Nameable;
 import dev.kurai.uhc.util.api.state.Stateful;
+import java.util.Collection;
 import java.util.Optional;
 import java.util.UUID;
 import net.kyori.adventure.audience.ForwardingAudience;
@@ -50,6 +52,19 @@ public interface Profile
 
   @Override
   <T extends Component> T getComponent(final @NotNull Class<T> componentClass);
+
+  @Override
+  @NotNull
+  Collection<@NotNull AbstractPower> getPowers();
+
+  @Override
+  <T extends AbstractPower> T getPower(final Class<T> clazz);
+
+  @Override
+  void registerPower(final @NotNull AbstractPower power);
+
+  @Override
+  void unregisterPower(final @NotNull String id);
 
   default @NotNull Optional<Player> findPlayer() {
     return Optional.ofNullable(Bukkit.getPlayer(this.getId()));

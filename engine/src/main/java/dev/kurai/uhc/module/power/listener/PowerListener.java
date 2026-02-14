@@ -44,7 +44,7 @@ public final class PowerListener extends PacketListenerAbstract implements Liste
     final var profile = this.profileService.getProfile(player.getUniqueId());
 
     final var item = player.getInventory().getItem(event.getNewSlot());
-    if (item.getType().name().contains("SWORD") || item.getType().isBlock()) {
+    if (item == null || item.getType().name().contains("SWORD") || item.getType().isBlock()) {
       return;
     }
 

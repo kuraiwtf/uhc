@@ -7,7 +7,11 @@ import org.jetbrains.annotations.NotNull;
 
 public abstract class BlockPlacePower extends AbstractItemPower {
 
-  public BlockPlacePower(final @NotNull UUID owner, final @NotNull UltraHardcoreAPI ultraHardcore) {
-    super(owner, ultraHardcore);
+  public BlockPlacePower(
+      final @NotNull String identifier,
+      final @NotNull String name,
+      final @NotNull UUID owner,
+      final @NotNull UltraHardcoreAPI ultraHardcore) {
+    super(identifier, name, owner, ultraHardcore);
   }
 }

@@ -9,6 +9,8 @@ public interface PowerHolder {
   @NotNull
   Collection<@NotNull AbstractPower> getPowers();
 
+  <T extends AbstractPower> T getPower(final Class<T> clazz);
+
   void registerPower(final @NotNull AbstractPower power);
 
   default void registerPowers(final AbstractPower @NotNull ... powers) {

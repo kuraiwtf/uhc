@@ -111,6 +111,13 @@ public final class ProfileImpl implements Profile {
   }
 
   @Override
+  public <T extends AbstractPower> T getPower(final Class<T> clazz) {
+    return Optional.ofNullable(this.powers.get(clazz.getSimpleName()))
+        .map(clazz::cast)
+        .orElse(null);
+  }
+
+  @Override
   public void registerPower(final @NotNull AbstractPower power) {
     this.powers.put(power.getId(), power);
   }

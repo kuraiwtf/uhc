@@ -7,7 +7,10 @@ import org.jetbrains.annotations.NotNull;
 
 public abstract class LeftClickPlayerTargetItemPower extends PlayerTargetItemPower {
   public LeftClickPlayerTargetItemPower(
-      final @NotNull UUID owner, final @NotNull UltraHardcoreAPI ultraHardcore) {
-    super(owner, ultraHardcore);
+      final @NotNull String identifier,
+      final @NotNull String name,
+      final @NotNull UUID owner,
+      final @NotNull UltraHardcoreAPI ultraHardcore) {
+    super(identifier, name, owner, ultraHardcore);
   }
 }

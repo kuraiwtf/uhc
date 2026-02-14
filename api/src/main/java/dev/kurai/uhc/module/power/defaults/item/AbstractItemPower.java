@@ -10,8 +10,11 @@ import org.jetbrains.annotations.NotNull;
 public abstract class AbstractItemPower extends AbstractPower {
 
   public AbstractItemPower(
-      final @NotNull UUID owner, final @NotNull UltraHardcoreAPI ultraHardcore) {
-    super(owner, ultraHardcore);
+      final @NotNull String identifier,
+      final @NotNull String name,
+      final @NotNull UUID owner,
+      final @NotNull UltraHardcoreAPI ultraHardcore) {
+    super(identifier, name, owner, ultraHardcore);
   }
 
   public abstract @NotNull ItemStack provideIcon(final @NotNull Player player);

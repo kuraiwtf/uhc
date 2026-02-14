@@ -51,8 +51,11 @@ public final class PlayingSidebarAdapter implements SidebarAdapter {
 
     final var module = this.ultraHardcore.getModuleService().getCurrentModule();
     if (module instanceof final SidebarAdapter moduleSidebar) {
-      lines.addAll(moduleSidebar.provideLines(player));
-      lines.add(empty());
+      final var moduleSidebarLines = moduleSidebar.provideLines(player);
+      if (!moduleSidebarLines.isEmpty()) {
+        lines.addAll(moduleSidebarLines);
+        lines.add(empty());
+      }
     }
 
     lines.add(

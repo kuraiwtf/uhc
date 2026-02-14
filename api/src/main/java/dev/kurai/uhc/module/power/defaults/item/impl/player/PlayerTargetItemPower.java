@@ -12,8 +12,11 @@ public abstract class PlayerTargetItemPower extends AbstractItemPower {
   protected Player target;
 
   public PlayerTargetItemPower(
-      final @NotNull UUID owner, final @NotNull UltraHardcoreAPI ultraHardcore) {
-    super(owner, ultraHardcore);
+      final @NotNull String identifier,
+      final @NotNull String name,
+      final @NotNull UUID owner,
+      final @NotNull UltraHardcoreAPI ultraHardcore) {
+    super(identifier, name, owner, ultraHardcore);
     this.target = null;
   }
 
