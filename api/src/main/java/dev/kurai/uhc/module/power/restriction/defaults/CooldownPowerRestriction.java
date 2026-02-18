@@ -10,6 +10,7 @@ import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 
 public final class CooldownPowerRestriction implements PowerRestriction {
@@ -20,6 +21,8 @@ public final class CooldownPowerRestriction implements PowerRestriction {
 
   private int initialCooldownTime;
   private int timeLeft;
+
+  private BukkitTask task;
 
   public CooldownPowerRestriction(final @NotNull Plugin plugin, final int initialCooldownTime) {
     this.plugin = plugin;
@@ -35,7 +38,12 @@ public final class CooldownPowerRestriction implements PowerRestriction {
   @Override
   public void onUse(final @NotNull AbstractPower power, final @NotNull Player player) {
     this.timeLeft = this.initialCooldownTime;
-    new CooldownDecrementTask(this).runTaskTimer(this.plugin, 0, 20L);
+
+    if (this.task != null) {
+      return;
+    }
+
+    this.task = new CooldownDecrementTask(this).runTaskTimer(this.plugin, 0, 20L);
   }
 
   @Override
@@ -82,6 +90,7 @@ public final class CooldownPowerRestriction implements PowerRestriction {
     @Override
     public void run() {
       if (this.restriction.timeLeft <= 0) {
+        this.restriction.task = null;
         this.cancel();
         return;
       }
