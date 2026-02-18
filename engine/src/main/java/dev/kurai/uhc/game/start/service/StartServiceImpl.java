@@ -108,7 +108,10 @@ public final class StartServiceImpl implements StartService {
     eventService.dispatchEvent(new GameStartEvent());
     eventService.registerListeners(
         new PlayingListener(this.ultraHardcore),
-        new PowerListener(this.ultraHardcore.getProfileService(), this.ultraHardcore.getPlugin()));
+        new PowerListener(
+            this.ultraHardcore.getProfileService(),
+            this.ultraHardcore.getModuleService(),
+            this.ultraHardcore.getPlugin()));
 
     final var gameService = this.ultraHardcore.getGameService();
     gameService.setStartTime(System.currentTimeMillis());

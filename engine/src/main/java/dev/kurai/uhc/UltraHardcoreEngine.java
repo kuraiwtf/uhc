@@ -81,7 +81,7 @@ public final class UltraHardcoreEngine extends UltraHardcoreAPI {
 
     this.commandRegistrar.registerCommands(
         new DeveloperCommand(this),
-        new PlayerCommands(this.gameService.getScenarioService()),
+        new PlayerCommands(this),
         new ModerationCommands(this),
         new HostCommand(this));
 

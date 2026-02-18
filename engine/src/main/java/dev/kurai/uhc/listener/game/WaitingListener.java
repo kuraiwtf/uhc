@@ -18,6 +18,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
@@ -64,6 +65,15 @@ public final class WaitingListener implements Listener {
     event.setJoinMessage(null);
     final var player = event.getPlayer();
     player.teleport(this.spawnLocation);
+    player.setWalkSpeed(0.2F);
+    player.setFallDistance(0f);
+    player.setMaxHealth(20f);
+    player.setHealth(20f);
+    player.getInventory().setContents(new ItemStack[36]);
+    player.getInventory().setArmorContents(new ItemStack[4]);
+    for (final var effect : player.getActivePotionEffects()) {
+      player.removePotionEffect(effect.getType());
+    }
 
     final var profile = this.profileService.createProfile(player);
     this.plugin
