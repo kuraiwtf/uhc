@@ -6,43 +6,51 @@ import dev.kurai.uhc.util.api.name.Nameable;
 import net.j4c0b3y.api.menu.Menu;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NullMarked;
 
-public abstract class AbstractModule
-    implements Identifiable<@NotNull String>, Nameable<@NotNull String> {
+@NullMarked
+public abstract class AbstractModule implements Identifiable<String>, Nameable<String> {
 
   protected final String id;
   protected final String name;
 
+  protected final @Nullable String commandName;
+
   protected final UltraHardcoreAPI ultraHardcore;
 
   protected AbstractModule(
-      final @NotNull String id,
-      final @NotNull String name,
-      final @NotNull UltraHardcoreAPI ultraHardcore) {
+      final String id,
+      final String name,
+      final @Nullable String commandName,
+      final UltraHardcoreAPI ultraHardcore) {
     this.id = id;
     this.name = name;
+    this.commandName = commandName;
     this.ultraHardcore = ultraHardcore;
   }
 
   @Override
-  public final @NotNull String getId() {
+  public final String getId() {
     return this.id;
   }
 
   @Override
-  public final @NotNull String getName() {
+  public final String getName() {
     return this.name;
   }
 
-  public final @NotNull UltraHardcoreAPI getUltraHardcore() {
+  public final @Nullable String getCommandName() {
+    return this.commandName;
+  }
+
+  public final UltraHardcoreAPI getUltraHardcore() {
     return this.ultraHardcore;
   }
 
-  public @Nullable Menu provideModuleMenu(final @NotNull Player player) {
+  public @Nullable Menu provideModuleMenu(final Player player) {
     return null;
   }
 
-  public abstract @NotNull ItemStack provideModuleIcon(final @NotNull Player player);
+  public abstract ItemStack provideModuleIcon(final Player player);
 }
