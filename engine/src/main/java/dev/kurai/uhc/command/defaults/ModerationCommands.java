@@ -3,6 +3,7 @@ package dev.kurai.uhc.command.defaults;
 import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.command.annotation.Command;
 import dev.kurai.uhc.command.annotation.CommandMeta;
+import dev.kurai.uhc.menu.list.PlayerListMenu;
 import org.bukkit.entity.Player;
 import org.jspecify.annotations.NullMarked;
 
@@ -17,10 +18,6 @@ public final class ModerationCommands {
 
   @Command(@CommandMeta(name = "list"))
   public void list(final Player player) {
-    for (final var profile : this.ultraHardcore.getProfileService().getProfiles()) {
-      player.sendMessage(
-          " - %s [%s] (%s)"
-              .formatted(profile.getName(), profile.getId(), profile.getState().getId()));
-    }
+    new PlayerListMenu(player, this.ultraHardcore.getProfileService()).open();
   }
 }

@@ -10,6 +10,7 @@ import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.game.configuration.game.GameConfiguration;
 import dev.kurai.uhc.game.configuration.ore.OreConfiguration;
 import dev.kurai.uhc.item.builtin.*;
+import dev.kurai.uhc.profile.component.InventoryComponent;
 import dev.kurai.uhc.profile.component.ProfileMiningComponent;
 import dev.kurai.uhc.util.PlayerUtil;
 import java.util.Map;
@@ -76,6 +77,15 @@ public final class PlayingListener implements Listener {
     event.setKeepInventory(true);
     event.setKeepLevel(true);
 
+    final var player = event.getEntity();
+    final var profile = this.ultraHardcore.getProfileService().getProfile(player.getUniqueId());
+    if (profile == null) {
+      return;
+    }
+
+    final var inventory = player.getInventory();
+    profile.addComponent(
+        new InventoryComponent(inventory.getContents(), inventory.getArmorContents()));
     this.ultraHardcore.getGameService().getDeathService().getDeathProcessor().processDeath(event);
   }
 
@@ -135,7 +145,6 @@ public final class PlayingListener implements Listener {
     final var miningComponent = profile.getComponent(ProfileMiningComponent.class);
     final var blockType = block.getType();
 
-    // Check ore limits and prevent drop if limit reached
     boolean limitReached = false;
     if (blockType == IRON_ORE) {
       final var ironLimit = OreConfiguration.IRON_LIMIT_OPTION.getValue();
