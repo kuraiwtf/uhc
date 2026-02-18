@@ -14,59 +14,68 @@ import java.util.UUID;
 import net.kyori.adventure.audience.ForwardingAudience;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NullMarked;
 
+@NullMarked
 public interface Profile
-    extends Nameable<@NotNull String>,
+    extends Nameable<String>,
         Stateful<ProfileState>,
-        Entity<@NotNull UUID>,
+        Entity<UUID>,
         PowerHolder,
         ForwardingAudience.Single {
 
   @Override
-  @NotNull
   UUID getId();
 
   @Override
-  @NotNull
   String getName();
 
-  @NotNull
   Actionbar getActionbar();
+
+  void addItem(final ItemStack item);
+
+  default void addItems(final ItemStack... items) {
+    for (final var item : items) {
+      this.addItem(item);
+    }
+  }
 
   @Override
   ProfileState getState();
 
   @Override
-  void setState(@NotNull final ProfileState state);
+  void setState(final ProfileState state);
 
   @Override
-  <E extends Entity<@NotNull UUID>> E addComponent(final @NotNull Component component);
+  Collection<Component> getComponents();
 
   @Override
-  boolean removeComponent(final @NotNull Class<? extends Component> componentClass);
+  <E extends Entity<UUID>> E addComponent(final Component component);
 
   @Override
-  boolean hasComponent(final @NotNull Class<? extends Component> componentClass);
+  boolean removeComponent(final Class<? extends Component> componentClass);
 
   @Override
-  <T extends Component> T getComponent(final @NotNull Class<T> componentClass);
+  boolean hasComponent(final Class<? extends Component> componentClass);
 
   @Override
-  @NotNull
-  Collection<@NotNull AbstractPower> getPowers();
+  <T extends Component> T getComponent(final Class<T> componentClass);
+
+  @Override
+  Collection<AbstractPower> getPowers();
 
   @Override
   <T extends AbstractPower> T getPower(final Class<T> clazz);
 
   @Override
-  void registerPower(final @NotNull AbstractPower power);
+  void registerPower(final AbstractPower power);
 
   @Override
-  void unregisterPower(final @NotNull String id);
+  void unregisterPower(final String id);
 
-  default @NotNull Optional<Player> findPlayer() {
+  default Optional<Player> findPlayer() {
     return Optional.ofNullable(Bukkit.getPlayer(this.getId()));
   }
 
