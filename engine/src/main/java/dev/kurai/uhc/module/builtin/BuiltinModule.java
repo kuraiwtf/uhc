@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 public final class BuiltinModule extends AbstractModule implements TeamModule {
 
   public BuiltinModule(final @NotNull UltraHardcoreAPI ultraHardcore) {
-    super("uhc", "UHC", ultraHardcore);
+    super("uhc", "UHC", null, ultraHardcore);
   }
 
   @Override
