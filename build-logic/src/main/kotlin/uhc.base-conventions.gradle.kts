@@ -1,6 +1,3 @@
-group = "${rootProject.group}.${rootProject.name}"
-version = rootProject.version
-
 repositories {
     mavenCentral()
     mavenLocal()
