@@ -49,9 +49,9 @@ public final class OreLimitMenu extends Menu {
                     "")
                 .asItemStack()));
 
-    front.set(11, new IronLimitButton());
+    front.set(12, new IronLimitButton());
     front.set(13, new GoldLimitButton());
-    front.set(15, new DiamondLimitButton());
+    front.set(14, new DiamondLimitButton());
   }
 
   private static final class IronLimitButton extends Button {
