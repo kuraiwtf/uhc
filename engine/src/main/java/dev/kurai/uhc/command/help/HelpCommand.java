@@ -4,7 +4,6 @@ import static dev.kurai.uhc.util.CC.prefix;
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.format.NamedTextColor.*;
 import static net.kyori.adventure.text.format.TextDecoration.BOLD;
-import static net.kyori.adventure.text.format.TextDecoration.STRIKETHROUGH;
 
 import dev.kurai.uhc.command.UltraHardcoreParentCommand;
 import dev.kurai.uhc.util.CC;
@@ -14,15 +13,7 @@ import org.jetbrains.annotations.NotNull;
 
 public final class HelpCommand {
 
-  private static final Component BARS = text("-".repeat(7)).decorate(STRIKETHROUGH);
-  private static final Component SEPARATOR =
-      text()
-          .append(BARS.color(DARK_PURPLE))
-          .append(BARS.color(LIGHT_PURPLE))
-          .append(BARS.append(BARS))
-          .append(BARS.color(LIGHT_PURPLE))
-          .append(BARS.color(DARK_PURPLE))
-          .build();
+  private static final Component SEPARATOR = CC.line(GOLD, YELLOW);
   private static final int COMMANDS_PER_PAGE = 5;
 
   private final UltraHardcoreParentCommand parentCommand;
@@ -52,20 +43,20 @@ public final class HelpCommand {
             .appendNewline()
             .appendSpace()
             .append(text("Aide: "))
-            .append(text("/", DARK_PURPLE))
-            .append(text(this.parentCommand.getName(), LIGHT_PURPLE))
+            .append(text("/", GOLD))
+            .append(text(this.parentCommand.getName(), YELLOW))
             .appendNewline()
             .appendNewline();
 
     for (final var subCommand : this.parentCommand.getSubCommands()) {
       message
           .appendSpace()
-          .append(text(CC.SQUARE, DARK_PURPLE))
+          .append(text(CC.SQUARE, GOLD))
           .appendSpace()
-          .append(text("/", DARK_PURPLE))
-          .append(text(this.parentCommand.getName(), LIGHT_PURPLE))
+          .append(text("/", GOLD))
+          .append(text(this.parentCommand.getName(), YELLOW))
           .appendSpace()
-          .append(text(subCommand.commandMeta().name(), LIGHT_PURPLE))
+          .append(text(subCommand.commandMeta().name(), YELLOW))
           .appendSpace()
           .append(text("-", GRAY))
           .appendSpace()
@@ -75,12 +66,12 @@ public final class HelpCommand {
 
     message
         .appendNewline()
-        .append(text(CC.BAR, DARK_PURPLE, BOLD))
+        .append(text(CC.BAR, GOLD, BOLD))
         .appendSpace()
         .append(text("Page: "))
-        .append(text(page, LIGHT_PURPLE, BOLD))
+        .append(text(page, YELLOW, BOLD))
         .append(text("/", DARK_GRAY))
-        .append(text(this.totalPages, LIGHT_PURPLE))
+        .append(text(this.totalPages, YELLOW))
         .appendNewline()
         .append(SEPARATOR);
     audience.sendMessage(message);
