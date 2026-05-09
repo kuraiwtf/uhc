@@ -7,11 +7,13 @@ import static dev.kurai.uhc.command.argument.builtin.JavaArgumentResolvers.LONG_
 
 import com.google.common.collect.Maps;
 import dev.kurai.uhc.command.argument.ArgumentResolver;
+import dev.kurai.uhc.command.argument.builtin.bukkit.OfflinePlayerArgumentResolver;
 import dev.kurai.uhc.command.argument.builtin.bukkit.PlayerArgumentResolver;
 import dev.kurai.uhc.command.argument.builtin.bukkit.WorldArgumentResolver;
 import java.util.Collection;
 import java.util.Map;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -43,6 +45,8 @@ public final class ArgumentResolverRegistrarImpl implements ArgumentResolverRegi
     this.registerArgumentResolver(Long.class, LONG_RESOLVER);
     this.registerArgumentResolver(long.class, LONG_RESOLVER);
 
+    this.registerArgumentResolver(
+        OfflinePlayer.class, new OfflinePlayerArgumentResolver(this.bukkitAudiences));
     this.registerArgumentResolver(Player.class, new PlayerArgumentResolver(this.bukkitAudiences));
     this.registerArgumentResolver(World.class, new WorldArgumentResolver(this.bukkitAudiences));
   }
@@ -70,6 +74,10 @@ public final class ArgumentResolverRegistrarImpl implements ArgumentResolverRegi
       final @NotNull Class<?> clazz,
       final @NotNull CommandSender sender,
       final @NotNull String argument) {
-    return this.argumentResolvers.get(clazz).complete(sender, argument);
+    final var resolver = this.argumentResolvers.get(clazz);
+    if (resolver == null) {
+      return java.util.Collections.emptyList();
+    }
+    return resolver.complete(sender, argument);
   }
 }
