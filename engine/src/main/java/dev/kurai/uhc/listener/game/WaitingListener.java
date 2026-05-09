@@ -13,25 +13,34 @@ import dev.kurai.uhc.profile.service.ProfileService;
 import java.util.Map;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.format.TextDecoration;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.FoodLevelChangeEvent;
+import org.bukkit.event.player.PlayerArmorStandManipulateEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NullMarked;
 
+@NullMarked
 public final class WaitingListener implements Listener {
 
-  private static final Map<@NotNull Integer, @NotNull Class<? extends CustomItem>> WAITING_ITEMS =
+  private static final Map<Integer, Class<? extends CustomItem>> WAITING_ITEMS =
       Map.of(
           0, ScenarioItem.class,
           1, MumbleItem.class,
           7, JumpItem.class,
           8, LogoutItem.class);
-  private static final Map<@NotNull Integer, @NotNull Class<? extends CustomItem>>
-      HOST_WAITING_ITEMS = Map.of(4, ConfigurationItem.class);
+  private static final Map<Integer, Class<? extends CustomItem>> HOST_WAITING_ITEMS =
+      Map.of(4, ConfigurationItem.class);
 
   private final BukkitAudiences bukkitAudiences;
   private final EventService eventService;
@@ -43,12 +52,12 @@ public final class WaitingListener implements Listener {
   private final Location spawnLocation;
 
   public WaitingListener(
-      final @NotNull BukkitAudiences bukkitAudiences,
-      final @NotNull EventService eventService,
-      final @NotNull ItemService itemService,
-      final @NotNull ModuleService moduleService,
-      final @NotNull ProfileService profileService,
-      final @NotNull Plugin plugin) {
+      final BukkitAudiences bukkitAudiences,
+      final EventService eventService,
+      final ItemService itemService,
+      final ModuleService moduleService,
+      final ProfileService profileService,
+      final Plugin plugin) {
     this.bukkitAudiences = bukkitAudiences;
     this.eventService = eventService;
     this.itemService = itemService;
@@ -61,10 +70,16 @@ public final class WaitingListener implements Listener {
   }
 
   @EventHandler
-  public void onJoin(final @NotNull PlayerJoinEvent event) {
+  public void onJoin(final PlayerJoinEvent event) {
     event.setJoinMessage(null);
     final var player = event.getPlayer();
     player.teleport(this.spawnLocation);
+    player.setGameMode(GameMode.SURVIVAL);
+    player.setFallDistance(0.0f);
+    player.setExp(0.0F);
+    player.setLevel(0);
+    player.setFoodLevel(20);
+    player.setSaturation(20f);
     player.setWalkSpeed(0.2F);
     player.setFallDistance(0f);
     player.setMaxHealth(20f);
@@ -106,10 +121,50 @@ public final class WaitingListener implements Listener {
   }
 
   private void setItem(
-      final @NotNull Player player, final int slot, final Class<? extends CustomItem> clazz) {
+      final Player player, final int slot, final Class<? extends CustomItem> clazz) {
     this.itemService
         .findByClass(clazz)
         .ifPresent(item -> player.getInventory().setItem(slot, item.provideIcon(player)));
+  }
+
+  @EventHandler
+  public void onEntityDamage(final EntityDamageEvent event) {
+    event.setCancelled(true);
+  }
+
+  @EventHandler
+  public void onFoodLevelChange(final FoodLevelChangeEvent event) {
+    event.setCancelled(true);
+  }
+
+  @EventHandler
+  public void onPlayerMove(final PlayerMoveEvent event) {
+    final var player = event.getPlayer();
+    if (player.getLocation().getBlockY() > 160) {
+      return;
+    }
+
+    player.teleport(this.spawnLocation);
+  }
+
+  @EventHandler
+  public void onBlockPlace(final BlockPlaceEvent event) {
+    event.setCancelled(true);
+  }
+
+  @EventHandler
+  public void onBlockBreak(final BlockBreakEvent event) {
+    event.setCancelled(true);
+  }
+
+  @EventHandler
+  public void onPlayerArmorStandManipulate(final PlayerArmorStandManipulateEvent event) {
+    event.setCancelled(true);
+  }
+
+  @EventHandler
+  public void onPlayerInteract(final PlayerInteractEvent event) {
+    event.setCancelled(true);
   }
 
   @EventHandler
