@@ -2,7 +2,7 @@
 kotlin = '2.2.20'
 shadow = '9.1.0'
 
-apollo-api = '1.2.1'
+apollo-api = '1.2.6'
 apollo-wrapper = '0.0.1'
 
 spigot-api = '1.8.8-R0.1-SNAPSHOT'
