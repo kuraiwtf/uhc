@@ -5,10 +5,7 @@ import dev.kurai.uhc.actionbar.service.ActionbarService;
 import dev.kurai.uhc.actionbar.service.ActionbarServiceImpl;
 import dev.kurai.uhc.actionbar.task.updater.ActionbarUpdaterTask;
 import dev.kurai.uhc.command.argument.builtin.uhc.TimerArgumentResolver;
-import dev.kurai.uhc.command.defaults.DeveloperCommand;
-import dev.kurai.uhc.command.defaults.HostCommand;
-import dev.kurai.uhc.command.defaults.ModerationCommands;
-import dev.kurai.uhc.command.defaults.PlayerCommands;
+import dev.kurai.uhc.command.defaults.*;
 import dev.kurai.uhc.command.registrar.CommandRegistrar;
 import dev.kurai.uhc.command.registrar.CommandRegistrarImpl;
 import dev.kurai.uhc.event.service.EventService;
@@ -30,6 +27,8 @@ import dev.kurai.uhc.tablist.service.TabListService;
 import dev.kurai.uhc.tablist.service.TabListServiceImpl;
 import dev.kurai.uhc.tablist.updater.task.TabListUpdaterTask;
 import dev.kurai.uhc.timer.AbstractTimer;
+import dev.kurai.uhc.whitelist.service.WhitelistService;
+import dev.kurai.uhc.whitelist.service.WhitelistServiceImpl;
 import dev.kurai.uhc.world.service.WorldService;
 import dev.kurai.uhc.world.service.WorldServiceImpl;
 import net.j4c0b3y.api.menu.MenuHandler;
@@ -51,6 +50,7 @@ public final class UltraHardcoreEngine extends UltraHardcoreAPI {
   private ProfileService profileService;
   private SidebarService sidebarService;
   private TabListService tabListService;
+  private WhitelistService whitelistService;
   private WorldService worldService;
 
   public UltraHardcoreEngine(final @NotNull Plugin plugin) {
@@ -78,12 +78,14 @@ public final class UltraHardcoreEngine extends UltraHardcoreAPI {
     this.moduleService = new ModuleServiceImpl(this);
     this.profileService = new ProfileServiceImpl(this);
     this.tabListService = new TabListServiceImpl();
+    this.whitelistService = new WhitelistServiceImpl();
 
     this.commandRegistrar.registerCommands(
         new DeveloperCommand(this),
         new PlayerCommands(this),
         new ModerationCommands(this),
-        new HostCommand(this));
+        new HostCommand(this),
+        new WhitelistCommand(this.bukkitAudiences, this.whitelistService));
 
     this.commandRegistrar
         .getArgumentResolverRegistrar()
@@ -165,6 +167,11 @@ public final class UltraHardcoreEngine extends UltraHardcoreAPI {
   @Override
   public @NotNull TabListService getTabListService() {
     return this.tabListService;
+  }
+
+  @Override
+  public @NotNull WhitelistService getWhitelistService() {
+    return this.whitelistService;
   }
 
   @Override

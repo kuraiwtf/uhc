@@ -10,6 +10,7 @@ import dev.kurai.uhc.module.service.ModuleService;
 import dev.kurai.uhc.profile.service.ProfileService;
 import dev.kurai.uhc.scoreboard.sidebar.service.SidebarService;
 import dev.kurai.uhc.tablist.service.TabListService;
+import dev.kurai.uhc.whitelist.service.WhitelistService;
 import dev.kurai.uhc.world.service.WorldService;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bukkit.plugin.Plugin;
@@ -64,6 +65,8 @@ public abstract class UltraHardcoreAPI {
   public abstract @NotNull SidebarService getSidebarService();
 
   public abstract @NotNull TabListService getTabListService();
+
+  public abstract @NotNull WhitelistService getWhitelistService();
 
   public abstract @NotNull WorldService getWorldService();
 }
