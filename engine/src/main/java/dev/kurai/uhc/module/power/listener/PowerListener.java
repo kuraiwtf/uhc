@@ -12,8 +12,6 @@ import dev.kurai.uhc.module.power.defaults.item.impl.RightClickItemPower;
 import dev.kurai.uhc.module.power.defaults.item.impl.block.BlockPlacePower;
 import dev.kurai.uhc.module.power.defaults.item.impl.parent.AbstractParentItemPower;
 import dev.kurai.uhc.module.power.defaults.item.impl.player.PlayerTargetItemPower;
-import dev.kurai.uhc.module.power.defaults.item.impl.player.impl.LeftClickPlayerTargetItemPower;
-import dev.kurai.uhc.module.power.defaults.item.impl.player.impl.RightClickPlayerTargetItemPower;
 import dev.kurai.uhc.module.service.ModuleService;
 import dev.kurai.uhc.profile.service.ProfileService;
 import dev.kurai.uhc.util.GlobalUtil;
@@ -26,7 +24,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -107,10 +104,17 @@ public final class PowerListener extends PacketListenerAbstract implements Liste
       return;
     }
 
+    final boolean rightClick = event.getAction().name().contains("RIGHT");
+    final boolean leftClick = event.getAction().name().contains("LEFT");
+    if (!rightClick && !leftClick) {
+      return;
+    }
+
+    final var powerClass = rightClick ? RightClickItemPower.class : LeftClickItemPower.class;
     final var foundPower =
         profile.getPowers().stream()
-            .filter(AbstractItemPower.class::isInstance)
-            .map(AbstractItemPower.class::cast)
+            .filter(powerClass::isInstance)
+            .map(powerClass::cast)
             .filter(power -> power.provideIcon(player).isSimilar(event.getItem()))
             .findFirst()
             .orElse(null);
@@ -119,32 +123,24 @@ public final class PowerListener extends PacketListenerAbstract implements Liste
       return;
     }
 
-    if (event.getAction() == Action.RIGHT_CLICK_AIR
-        || event.getAction() == Action.RIGHT_CLICK_BLOCK) {
-      if (foundPower instanceof final RightClickPlayerTargetItemPower targetItemPower) {
-        this.handleTargetItemPower(player, targetItemPower, event);
-        return;
-      } else if (foundPower instanceof RightClickItemPower) {
-        foundPower.use(player);
-        event.setCancelled(true);
-      } else if (foundPower instanceof final AbstractParentItemPower parent) {
-        if (parent.getCurrentPower() == null) {
+    if (leftClick) {
+      if (foundPower instanceof final AbstractParentItemPower parentPower) {
+        if (parentPower.getCurrentPower() == null) {
           return;
         }
 
-        parent.getCurrentPower().use(player);
+        parentPower.getCurrentPower().use(player);
+        return;
       }
     }
 
-    if (event.getAction() == Action.LEFT_CLICK_AIR
-        || event.getAction() == Action.LEFT_CLICK_BLOCK) {
-      if (foundPower instanceof final LeftClickPlayerTargetItemPower targetItemPower) {
-        this.handleTargetItemPower(player, targetItemPower, event);
-      } else if (foundPower instanceof LeftClickItemPower) {
-        foundPower.use(player);
-        event.setCancelled(true);
-      }
+    if (foundPower instanceof final PlayerTargetItemPower targetPower) {
+      this.handleTargetItemPower(player, targetPower, event);
+      return;
     }
+
+    foundPower.use(player);
+    event.setCancelled(true);
   }
 
   private void handleTargetItemPower(
