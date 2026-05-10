@@ -153,6 +153,7 @@ public final class ProfileImpl implements Profile {
     this.registerPower(power, false);
   }
 
+  @Override
   public void registerPower(final AbstractPower power, final boolean roleAttribution) {
     this.powers.put(power.getId(), power);
 

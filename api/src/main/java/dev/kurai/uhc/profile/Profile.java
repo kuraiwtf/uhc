@@ -72,6 +72,8 @@ public interface Profile
   @Override
   void registerPower(final AbstractPower power);
 
+  void registerPower(AbstractPower power, boolean roleAttribution);
+
   @Override
   void unregisterPower(final String id);
 
