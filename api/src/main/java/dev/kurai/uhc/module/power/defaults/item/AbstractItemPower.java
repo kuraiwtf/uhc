@@ -18,4 +18,8 @@ public abstract class AbstractItemPower extends AbstractPower {
   }
 
   public abstract @NotNull ItemStack provideIcon(final @NotNull Player player);
+
+  public boolean shouldDistributePower(final Player player) {
+    return true;
+  }
 }

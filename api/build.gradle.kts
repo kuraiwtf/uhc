@@ -26,7 +26,7 @@ publishing {
         from(components["java"])
 
         groupId = project.group.toString()
-        artifactId = project.name
+        artifactId = "${rootProject.name}-${project.name}"
         version = project.version.toString()
     }
 }

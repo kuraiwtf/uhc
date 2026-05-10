@@ -94,6 +94,10 @@ public abstract class AbstractPower
         .map(restrictionClass::cast);
   }
 
+  public final UltraHardcoreAPI ultraHardcore() {
+    return this.ultraHardcore;
+  }
+
   public final @NotNull Profile getPlayer() {
     return this.profile;
   }

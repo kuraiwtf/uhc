@@ -150,6 +150,10 @@ public final class ProfileImpl implements Profile {
 
   @Override
   public void registerPower(final AbstractPower power) {
+    this.registerPower(power, false);
+  }
+
+  public void registerPower(final AbstractPower power, final boolean roleAttribution) {
     this.powers.put(power.getId(), power);
 
     if (power instanceof final Listener listener) {
@@ -157,13 +161,15 @@ public final class ProfileImpl implements Profile {
     }
 
     if (power instanceof final AbstractItemPower itemPower) {
-      this.findPlayer()
-          .ifPresentOrElse(
-              player -> this.addItem(itemPower.provideIcon(player)),
-              () ->
-                  this.getComponent(OfflineActionComponent.class)
-                      .getActions()
-                      .add(player -> this.addItem(itemPower.provideIcon(player))));
+      final var player = this.getPlayer();
+      if (player == null || !player.isOnline()) {
+        return;
+      }
+
+      if ((!roleAttribution || itemPower.shouldDistributePower(player))) {
+        final var icon = itemPower.provideIcon(player);
+        this.addItem(icon);
+      }
     }
   }
 
