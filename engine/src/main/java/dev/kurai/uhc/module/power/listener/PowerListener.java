@@ -212,6 +212,10 @@ public final class PowerListener extends PacketListenerAbstract implements Liste
     }
 
     final var prefix = "/" + this.moduleService.getCurrentModule().getCommandName() + " ";
+    if (!event.getMessage().startsWith(prefix)) {
+      return;
+    }
+
     final var arguments =
         Lists.newArrayList(event.getMessage().substring(prefix.length()).split(" "));
     final var commandName = arguments.removeFirst();
