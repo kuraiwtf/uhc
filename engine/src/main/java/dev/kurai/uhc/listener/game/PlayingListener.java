@@ -7,10 +7,12 @@ import static org.bukkit.Material.*;
 
 import com.google.common.collect.Maps;
 import dev.kurai.uhc.UltraHardcoreAPI;
+import dev.kurai.uhc.event.defaults.game.GameTickEvent;
 import dev.kurai.uhc.game.configuration.game.GameConfiguration;
 import dev.kurai.uhc.game.configuration.ore.OreConfiguration;
 import dev.kurai.uhc.item.builtin.*;
 import dev.kurai.uhc.profile.component.InventoryComponent;
+import dev.kurai.uhc.profile.component.OfflineActionComponent;
 import dev.kurai.uhc.profile.component.ProfileMiningComponent;
 import dev.kurai.uhc.util.PlayerUtil;
 import java.util.Map;
@@ -69,6 +71,27 @@ public final class PlayingListener implements Listener {
                 .append(text("15:00", NamedTextColor.GOLD, TextDecoration.BOLD))
                 .append(text(" pour se reconnecter."))
                 .build());
+  }
+
+  @EventHandler
+  public void processOfflineActions(final GameTickEvent event) {
+    for (final var profile :
+        this.ultraHardcore
+            .getProfileService()
+            .getProfiles(profile -> profile.findPlayer().isPresent())) {
+      final var offlineActionComponent = profile.getComponent(OfflineActionComponent.class);
+      if (offlineActionComponent == null) {
+        continue;
+      }
+
+      final var poll = offlineActionComponent.getActions().poll();
+      if (poll == null) {
+        continue;
+      }
+
+      final var player = profile.getPlayer();
+      poll.onJoin(player);
+    }
   }
 
   @EventHandler
