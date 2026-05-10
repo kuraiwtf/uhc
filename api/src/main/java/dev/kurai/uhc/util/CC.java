@@ -85,6 +85,14 @@ public final class CC {
     return text().append(text(BAR, GRAY, BOLD)).appendSpace();
   }
 
+  public static String prefix(final String text) {
+    return prefix(text, "&e&lUHC&7 &l" + BAR + "&f");
+  }
+
+  public static String prefix(final String text, final String prefix) {
+    return colorize(prefix + " " + text);
+  }
+
   /**
    * Centers a message automatically for padding {@link #CENTER_PX}
    *
