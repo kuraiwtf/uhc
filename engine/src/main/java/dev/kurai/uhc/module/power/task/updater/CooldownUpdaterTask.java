@@ -2,12 +2,16 @@ package dev.kurai.uhc.module.power.task.updater;
 
 import static net.kyori.adventure.text.Component.text;
 
+import dev.kurai.uhc.module.power.AbstractPower;
 import dev.kurai.uhc.module.power.defaults.item.AbstractItemPower;
 import dev.kurai.uhc.module.power.restriction.defaults.CooldownPowerRestriction;
+import dev.kurai.uhc.profile.Profile;
 import dev.kurai.uhc.profile.service.ProfileService;
 import java.util.Objects;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 public final class CooldownUpdaterTask implements Runnable {
@@ -22,50 +26,87 @@ public final class CooldownUpdaterTask implements Runnable {
   public void run() {
     for (final var profile : this.profileService.getProfiles()) {
       final var player = Objects.requireNonNull(profile.getPlayer());
-      for (final var itemPower :
-          profile.getPowers().stream()
-              .filter(AbstractItemPower.class::isInstance)
-              .map(AbstractItemPower.class::cast)
-              .toList()) {
-        final var actionbarEntry = itemPower.provideActionbarEntry(player);
-        final var actionbar = profile.getActionbar();
-        if (!itemPower.provideIcon(player).isSimilar(player.getItemInHand())) {
-          if (actionbarEntry == null) {
-            actionbar.removeEntry(itemPower.getId());
-            continue;
-          }
-
-          actionbar.removeEntry(actionbarEntry.getId());
-          continue;
-        }
-
-        if (actionbarEntry == null) {
-          final var cooldown =
-              itemPower.findRestriction(CooldownPowerRestriction.class, "cooldown");
-          if (cooldown != null && cooldown.getTimeLeft() > 0) {
-            actionbar.registerEntry(
-                itemPower.getId(),
-                text()
-                    .append(text(itemPower.getName()))
-                    .append(text(": "))
-                    .append(text(cooldown.getTimeLeft(), NamedTextColor.RED, TextDecoration.BOLD))
-                    .append(text("s", NamedTextColor.RED))
-                    .build());
-            continue;
-          }
-
-          actionbar.registerEntry(
-              itemPower.getId(),
-              text()
-                  .append(text(itemPower.getName()))
-                  .append(text(": "))
-                  .append(text("Utilisable", NamedTextColor.GREEN))
-                  .build());
-          continue;
-        }
-
-        actionbar.registerEntry(actionbarEntry);
+      for (final var power : profile.getPowers()) {
+        this.processPower(profile, player, power);
       }
     }
+  }
+
+  private void processPower(
+      final @NotNull Profile profile,
+      final @NotNull Player player,
+      final @NotNull AbstractPower power) {
+    if (power instanceof final AbstractItemPower itemPower) {
+      this.processItemPower(profile, player, itemPower);
+    } else {
+      this.registerPowerEntry(profile, player, power);
+    }
+  }
+
+  private void processItemPower(
+      final @NotNull Profile profile,
+      final @NotNull Player player,
+      final @NotNull AbstractItemPower itemPower) {
+    if (!itemPower.provideIcon(player).isSimilar(player.getItemInHand())) {
+      this.removeItemPowerEntry(profile, player, itemPower);
+      return;
+    }
+
+    final var actionbar = profile.getActionbar();
+    final var actionbarEntry = itemPower.provideActionbarEntry(player);
+    if (actionbarEntry == null) {
+      actionbar.registerEntry(itemPower.getId(), this.buildStatusComponent(itemPower));
+      return;
+    }
+
+    actionbar.registerEntry(actionbarEntry);
+  }
+
+  private void removeItemPowerEntry(
+      final @NotNull Profile profile,
+      final @NotNull Player player,
+      final @NotNull AbstractItemPower itemPower) {
+    final var actionbarEntry = itemPower.provideActionbarEntry(player);
+    final var actionbar = profile.getActionbar();
+
+    if (actionbarEntry == null) {
+      actionbar.removeEntry(itemPower.getId());
+    } else {
+      actionbar.removeEntry(actionbarEntry.getId());
+    }
+  }
+
+  private void registerPowerEntry(
+      final @NotNull Profile profile,
+      final @NotNull Player player,
+      final @NotNull AbstractPower power) {
+    final var actionbarEntry = power.provideActionbarEntry(player);
+    final var actionbar = profile.getActionbar();
+
+    if (actionbarEntry == null) {
+      actionbar.removeEntry(power.getId());
+      return;
+    }
+
+    actionbar.registerEntry(actionbarEntry);
+  }
+
+  private @NotNull Component buildStatusComponent(final @NotNull AbstractPower power) {
+    final var cooldown = power.findRestriction(CooldownPowerRestriction.class, "cooldown");
+
+    if (cooldown != null && cooldown.getTimeLeft() > 0) {
+      return text()
+          .append(text(power.getName()))
+          .append(text(": "))
+          .append(text(cooldown.getTimeLeft(), NamedTextColor.RED, TextDecoration.BOLD))
+          .append(text("s", NamedTextColor.RED))
+          .build();
+    }
+
+    return text()
+        .append(text(power.getName()))
+        .append(text(": "))
+        .append(text("Utilisable", NamedTextColor.GREEN))
+        .build();
   }
 }
