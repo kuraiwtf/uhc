@@ -12,7 +12,7 @@ public final class OfflineActionComponent implements Component {
   private final Queue<OfflinePlayerAction> actions;
 
   public OfflineActionComponent() {
-    this.actions = Queues.newSynchronousQueue();
+    this.actions = Queues.newArrayDeque();
   }
 
   public OfflineActionComponent(final Queue<OfflinePlayerAction> actions) {

@@ -61,7 +61,7 @@ public interface Profile
   boolean hasComponent(final Class<? extends Component> componentClass);
 
   @Override
-  <T extends Component> T getComponent(final Class<T> componentClass);
+  <T extends Component> @Nullable T getComponent(final Class<T> componentClass);
 
   @Override
   Collection<AbstractPower> getPowers();

@@ -3,6 +3,7 @@ package dev.kurai.uhc.ecs.entity;
 import dev.kurai.uhc.ecs.component.Component;
 import dev.kurai.uhc.util.api.Identifiable;
 import java.util.Collection;
+import org.jetbrains.annotations.Nullable;
 import org.jspecify.annotations.NullMarked;
 
 @NullMarked
@@ -23,5 +24,5 @@ public interface Entity<I> extends Identifiable<I> {
 
   boolean hasComponent(final Class<? extends Component> componentClass);
 
-  <T extends Component> T getComponent(final Class<T> componentClass);
+  <T extends Component> @Nullable T getComponent(final Class<T> componentClass);
 }
