@@ -21,6 +21,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 @NullMarked
 public final class ProfileImpl implements Profile {
@@ -41,6 +42,7 @@ public final class ProfileImpl implements Profile {
         new ClaimComponent(),
         new ProfileIdentifierComponent(id),
         new ProfileMiningComponent(),
+        new OfflineActionComponent(),
         new ProfileStateComponent(new WaitingProfileState()));
 
     this.ultraHardcore = ultraHardcore;
@@ -128,7 +130,7 @@ public final class ProfileImpl implements Profile {
   }
 
   @Override
-  public <T extends Component> T getComponent(final Class<T> componentClass) {
+  public <T extends Component> @Nullable T getComponent(final Class<T> componentClass) {
     return Optional.ofNullable(this.components.get(componentClass))
         .map(componentClass::cast)
         .orElse(null);
