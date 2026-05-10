@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.event.defaults.game.GameStartEvent;
+import dev.kurai.uhc.event.defaults.game.GameTickEvent;
 import dev.kurai.uhc.game.configuration.border.BorderConfiguration;
 import dev.kurai.uhc.game.configuration.inventory.InventoryConfiguration;
 import dev.kurai.uhc.game.start.countdown.task.StartCountdownTask;
@@ -123,6 +124,12 @@ public final class StartServiceImpl implements StartService {
     worldBorder.setSize(initialSize);
     worldBorder.setCenter(0, 0);
 
+    Bukkit.getScheduler()
+        .runTaskTimer(
+            this.ultraHardcore.getPlugin(),
+            () -> Bukkit.getPluginManager().callEvent(new GameTickEvent()),
+            0,
+            1L);
     Bukkit.getScheduler()
         .runTaskTimerAsynchronously(
             this.ultraHardcore.getPlugin(),
