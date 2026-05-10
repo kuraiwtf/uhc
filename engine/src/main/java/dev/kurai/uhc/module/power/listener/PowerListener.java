@@ -123,23 +123,44 @@ public final class PowerListener extends PacketListenerAbstract implements Liste
       return;
     }
 
-    if (leftClick) {
-      if (foundPower instanceof final AbstractParentItemPower parentPower) {
-        if (parentPower.getCurrentPower() == null) {
-          return;
-        }
-
-        parentPower.getCurrentPower().use(player);
-        return;
-      }
-    }
-
     if (foundPower instanceof final PlayerTargetItemPower targetPower) {
       this.handleTargetItemPower(player, targetPower, event);
       return;
     }
 
     foundPower.use(player);
+    event.setCancelled(true);
+  }
+
+  @EventHandler
+  public void onParentInteract(final PlayerInteractEvent event) {
+    if (!event.hasItem()) {
+      return;
+    }
+
+    final var player = event.getPlayer();
+    final var profile = this.profileService.getProfile(player.getUniqueId());
+    if (profile == null) {
+      return;
+    }
+
+    if (!event.getAction().name().contains("RIGHT")) {
+      return;
+    }
+
+    final var foundPower =
+        profile.getPowers().stream()
+            .filter(AbstractParentItemPower.class::isInstance)
+            .map(AbstractParentItemPower.class::cast)
+            .filter(power -> power.provideIcon(player).isSimilar(event.getItem()))
+            .findFirst()
+            .orElse(null);
+
+    if (foundPower == null || foundPower.getCurrentPower() == null) {
+      return;
+    }
+
+    foundPower.getCurrentPower().use(player);
     event.setCancelled(true);
   }
 
