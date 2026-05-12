@@ -35,9 +35,9 @@ public final class ProfileImpl implements Profile {
 
   public ProfileImpl(final UUID id, final UltraHardcoreAPI ultraHardcore) {
     this.components = Maps.newHashMap();
+    this.addComponent(new ProfileIdentifierComponent(id));
     this.addComponents(
-        new ProfileIdentifierComponent(id),
-        new NameComponent(() -> this.getOfflinePlayer().getName()),
+        new NameComponent(this.getOfflinePlayer().getName()),
         new ClaimComponent(),
         new ProfileMiningComponent(),
         new OfflineActionComponent(),
@@ -73,7 +73,7 @@ public final class ProfileImpl implements Profile {
       return;
     }
 
-    component.setName(() -> name);
+    component.setName(name);
   }
 
   @Override
