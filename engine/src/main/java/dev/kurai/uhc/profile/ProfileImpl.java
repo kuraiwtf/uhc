@@ -162,6 +162,70 @@ public final class ProfileImpl implements Profile {
   }
 
   @Override
+  public void addHealth(final double health) {
+    this.setHealth(this.getHealth() + health);
+  }
+
+  @Override
+  public void removeHealth(final double health) {
+    this.setHealth(this.getHealth() - health);
+  }
+
+  @Override
+  public void setHealth(final double health) {
+    this.findPlayer()
+        .ifPresentOrElse(
+            player -> player.setHealth(Math.min(health, player.getMaxHealth())),
+            () -> {
+              final var offlineActionComponent = this.getComponent(OfflineActionComponent.class);
+              if (offlineActionComponent == null) {
+                return;
+              }
+
+              offlineActionComponent
+                  .getActions()
+                  .add(player -> player.setHealth(Math.min(health, player.getMaxHealth())));
+            });
+  }
+
+  @Override
+  public double getHealth() {
+    return this.findPlayer().map(Player::getHealth).orElse(0.0);
+  }
+
+  @Override
+  public void addMaxHealth(final double maxHealth) {
+    this.setMaxHealth(this.getMaxHealth() + maxHealth);
+  }
+
+  @Override
+  public void removeMaxHealth(final double maxHealth) {
+    this.setMaxHealth(this.getMaxHealth() - maxHealth);
+  }
+
+  @Override
+  public void setMaxHealth(final double maxHealth) {
+    this.findPlayer()
+        .ifPresentOrElse(
+            player -> player.setMaxHealth(Math.max(maxHealth, player.getHealth())),
+            () -> {
+              final var offlineActionComponent = this.getComponent(OfflineActionComponent.class);
+              if (offlineActionComponent == null) {
+                return;
+              }
+
+              offlineActionComponent
+                  .getActions()
+                  .add(player -> player.setMaxHealth(Math.max(maxHealth, player.getHealth())));
+            });
+  }
+
+  @Override
+  public double getMaxHealth() {
+    return this.findPlayer().map(Player::getMaxHealth).orElse(20.0);
+  }
+
+  @Override
   public Collection<Component> getComponents() {
     return this.components.values();
   }

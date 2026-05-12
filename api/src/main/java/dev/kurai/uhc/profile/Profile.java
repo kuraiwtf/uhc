@@ -60,6 +60,22 @@ public interface Profile
 
   Optional<PotionEffect> findPotionEffect(final PotionEffectType type);
 
+  void addHealth(final double health);
+
+  void removeHealth(final double health);
+
+  void setHealth(final double health);
+
+  double getHealth();
+
+  void addMaxHealth(final double maxHealth);
+
+  void removeMaxHealth(final double maxHealth);
+
+  void setMaxHealth(final double maxHealth);
+
+  double getMaxHealth();
+
   @Override
   Collection<Component> getComponents();
 
