@@ -98,8 +98,8 @@ public final class CooldownUpdaterTask implements Runnable {
       return text()
           .append(text(power.getName()))
           .append(text(": "))
-          .append(text(cooldown.getTimeLeft(), NamedTextColor.RED, TextDecoration.BOLD))
-          .append(text("s", NamedTextColor.RED))
+          .append(text(cooldown.getTimeLeft(), NamedTextColor.GOLD, TextDecoration.BOLD))
+          .append(text("s", NamedTextColor.GOLD))
           .build();
     }
 
