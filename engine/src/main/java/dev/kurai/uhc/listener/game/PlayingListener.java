@@ -101,7 +101,8 @@ public final class PlayingListener implements Listener {
     event.setKeepLevel(true);
 
     final var player = event.getEntity();
-    final var profile = this.ultraHardcore.getProfileService().getProfile(player.getUniqueId());
+    final var profile =
+        this.ultraHardcore.getProfileService().getOrCreateProfile(player.getUniqueId());
     if (profile == null) {
       return;
     }
@@ -127,7 +128,7 @@ public final class PlayingListener implements Listener {
             () ->
                 this.ultraHardcore
                     .getProfileService()
-                    .getProfile(shooter.getUniqueId())
+                    .getOrCreateProfile(shooter.getUniqueId())
                     .sendActionBar(
                         PlayerUtil.formatHealthAsHeartBar(
                             player,
@@ -160,7 +161,7 @@ public final class PlayingListener implements Listener {
     }
 
     final var profile =
-        this.ultraHardcore.getProfileService().getProfile(event.getPlayer().getUniqueId());
+        this.ultraHardcore.getProfileService().getOrCreateProfile(event.getPlayer().getUniqueId());
     if (profile == null) {
       return;
     }

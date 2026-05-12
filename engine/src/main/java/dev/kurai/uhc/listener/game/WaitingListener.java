@@ -9,7 +9,7 @@ import dev.kurai.uhc.item.CustomItem;
 import dev.kurai.uhc.item.builtin.*;
 import dev.kurai.uhc.item.service.ItemService;
 import dev.kurai.uhc.module.service.ModuleService;
-import dev.kurai.uhc.profile.service.ProfileService;
+import dev.kurai.uhc.profile.ProfileService;
 import java.util.Map;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -90,7 +90,7 @@ public final class WaitingListener implements Listener {
       player.removePotionEffect(effect.getType());
     }
 
-    final var profile = this.profileService.createProfile(player);
+    final var profile = this.profileService.getOrCreateProfile(player);
     this.plugin
         .getLogger()
         .info(

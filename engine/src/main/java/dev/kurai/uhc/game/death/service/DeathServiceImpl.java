@@ -52,7 +52,8 @@ public final class DeathServiceImpl implements DeathService {
             killer.giveExpLevels(3);
           }
 
-          final var profile = ultraHardcore.getProfileService().getProfile(player.getUniqueId());
+          final var profile =
+              ultraHardcore.getProfileService().getOrCreateProfile(player.getUniqueId());
           if (profile != null) {
             profile.addComponent(
                 new DeadComponent(

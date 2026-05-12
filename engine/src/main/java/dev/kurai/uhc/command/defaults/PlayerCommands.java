@@ -23,7 +23,8 @@ public final class PlayerCommands {
 
   @Command(@CommandMeta(name = "claim", aliases = "full"))
   public void claim(final Player player) {
-    final var profile = this.ultraHardcore.getProfileService().getProfile(player.getUniqueId());
+    final var profile =
+        this.ultraHardcore.getProfileService().getOrCreateProfile(player.getUniqueId());
     if (profile == null || !profile.hasComponent(ClaimComponent.class)) {
       return;
     }

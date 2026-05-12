@@ -65,7 +65,8 @@ public final class HostCommand {
 
   @Command(@CommandMeta(name = "save", description = "Sauvegarder l'inventaire de départ"))
   public void saveInventory(final @NotNull Player player) {
-    final var profile = this.ultraHardcore.getProfileService().getProfile(player.getUniqueId());
+    final var profile =
+        this.ultraHardcore.getProfileService().getOrCreateProfile(player.getUniqueId());
     if (profile == null) {
       this.bukkitAudiences
           .player(player)

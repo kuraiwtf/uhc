@@ -141,7 +141,8 @@ public final class StartInventoryMenu extends Menu {
     @Override
     public void onClick(final ButtonClick click) {
       final var player = click.getMenu().getPlayer();
-      final var profile = this.ultraHardcore.getProfileService().getProfile(player.getUniqueId());
+      final var profile =
+          this.ultraHardcore.getProfileService().getOrCreateProfile(player.getUniqueId());
       if (profile == null) {
         return;
       }
