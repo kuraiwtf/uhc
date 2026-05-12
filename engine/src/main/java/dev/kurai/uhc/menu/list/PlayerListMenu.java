@@ -5,7 +5,7 @@ import dev.kurai.uhc.ecs.component.Component;
 import dev.kurai.uhc.menu.template.BorderTemplate;
 import dev.kurai.uhc.menu.template.PaginationTemplate;
 import dev.kurai.uhc.profile.Profile;
-import dev.kurai.uhc.profile.service.ProfileService;
+import dev.kurai.uhc.profile.ProfileService;
 import dev.kurai.uhc.util.ItemBuilder;
 import java.util.List;
 import net.j4c0b3y.api.menu.MenuSize;
