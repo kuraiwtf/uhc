@@ -15,8 +15,10 @@ import net.kyori.adventure.audience.ForwardingAudience;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.Nullable;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 @NullMarked
 public interface Profile
@@ -47,6 +49,16 @@ public interface Profile
 
   @Override
   void setState(final ProfileState state);
+
+  void addPotionEffect(final PotionEffect effect);
+
+  void removePotionEffect(final PotionEffectType type);
+
+  boolean hasPotionEffect(final PotionEffectType type);
+
+  @Nullable PotionEffect getPotionEffect(final PotionEffectType type);
+
+  Optional<PotionEffect> findPotionEffect(final PotionEffectType type);
 
   @Override
   Collection<Component> getComponents();

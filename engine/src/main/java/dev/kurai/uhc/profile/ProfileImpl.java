@@ -20,6 +20,8 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
@@ -106,6 +108,57 @@ public final class ProfileImpl implements Profile {
 
     this.getComponent(ProfileStateComponent.class).setState(state);
     state.onEntry(this);
+  }
+
+  @Override
+  public void addPotionEffect(final PotionEffect effect) {
+    this.findPlayer()
+        .ifPresentOrElse(
+            player -> player.addPotionEffect(effect),
+            () -> {
+              final var offlineActionComponent = this.getComponent(OfflineActionComponent.class);
+              if (offlineActionComponent == null) {
+                return;
+              }
+
+              offlineActionComponent.getActions().add(player -> player.addPotionEffect(effect));
+            });
+  }
+
+  @Override
+  public void removePotionEffect(final PotionEffectType type) {
+    this.findPlayer()
+        .ifPresentOrElse(
+            player -> player.removePotionEffect(type),
+            () -> {
+              final var offlineActionComponent = this.getComponent(OfflineActionComponent.class);
+              if (offlineActionComponent == null) {
+                return;
+              }
+
+              offlineActionComponent.getActions().add(player -> player.removePotionEffect(type));
+            });
+  }
+
+  @Override
+  public boolean hasPotionEffect(final PotionEffectType type) {
+    return this.findPlayer().map(player -> player.hasPotionEffect(type)).orElse(false);
+  }
+
+  @Override
+  public @Nullable PotionEffect getPotionEffect(final PotionEffectType type) {
+    return this.findPlayer()
+        .flatMap(
+            player ->
+                player.getActivePotionEffects().stream()
+                    .filter(effect -> effect.getType() == type)
+                    .findFirst())
+        .orElse(null);
+  }
+
+  @Override
+  public Optional<PotionEffect> findPotionEffect(final PotionEffectType type) {
+    return Optional.ofNullable(this.getPotionEffect(type));
   }
 
   @Override
