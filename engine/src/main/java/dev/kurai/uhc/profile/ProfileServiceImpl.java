@@ -1,14 +1,11 @@
-package dev.kurai.uhc.profile.service;
+package dev.kurai.uhc.profile;
 
 import com.google.common.collect.Maps;
 import dev.kurai.uhc.UltraHardcoreAPI;
-import dev.kurai.uhc.profile.Profile;
-import dev.kurai.uhc.profile.ProfileImpl;
 import java.util.*;
 import java.util.function.Predicate;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
 
 public final class ProfileServiceImpl implements ProfileService {
@@ -23,14 +20,9 @@ public final class ProfileServiceImpl implements ProfileService {
   }
 
   @Override
-  public @NotNull Profile createProfile(final @NotNull UUID id, final @NotNull String name) {
+  public Profile getOrCreateProfile(final UUID uniqueId) {
     return this.profiles.computeIfAbsent(
-        id, uuid -> new ProfileImpl(uuid, name, this.ultraHardcore));
-  }
-
-  @Override
-  public @Nullable Profile getProfile(final @NotNull UUID id) {
-    return this.profiles.get(id);
+        uniqueId, uuid -> new ProfileImpl(uuid, this.ultraHardcore));
   }
 
   @Override
