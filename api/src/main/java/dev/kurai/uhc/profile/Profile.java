@@ -13,6 +13,7 @@ import java.util.Optional;
 import java.util.UUID;
 import net.kyori.adventure.audience.ForwardingAudience;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
@@ -111,5 +112,9 @@ public interface Profile
 
   default @Nullable Player getPlayer() {
     return this.findPlayer().orElse(null);
+  }
+
+  default OfflinePlayer getOfflinePlayer() {
+    return Bukkit.getOfflinePlayer(this.getId());
   }
 }

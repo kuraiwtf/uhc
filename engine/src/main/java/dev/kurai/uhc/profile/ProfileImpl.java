@@ -33,16 +33,12 @@ public final class ProfileImpl implements Profile {
   private final UltraHardcoreAPI ultraHardcore;
   private final Map<String, AbstractPower> powers;
 
-  public ProfileImpl(final Player player, final UltraHardcoreAPI ultraHardcore) {
-    this(player.getUniqueId(), player.getName(), ultraHardcore);
-  }
-
-  public ProfileImpl(final UUID id, final String name, final UltraHardcoreAPI ultraHardcore) {
+  public ProfileImpl(final UUID id, final UltraHardcoreAPI ultraHardcore) {
     this.components = Maps.newHashMap();
     this.addComponents(
-        new NameComponent(name),
-        new ClaimComponent(),
         new ProfileIdentifierComponent(id),
+        new NameComponent(() -> this.getOfflinePlayer().getName()),
+        new ClaimComponent(),
         new ProfileMiningComponent(),
         new OfflineActionComponent(),
         new ProfileStateComponent(new WaitingProfileState()));
@@ -63,11 +59,21 @@ public final class ProfileImpl implements Profile {
 
   @Override
   public String getName() {
-    return this.getComponent(NameComponent.class).getName();
+    final var component = this.getComponent(NameComponent.class);
+    if (component == null) {
+      return "";
+    }
+
+    return component.getName();
   }
 
   public void setName(final String name) {
-    this.getComponent(NameComponent.class).setName(name);
+    final var component = this.getComponent(NameComponent.class);
+    if (component == null) {
+      return;
+    }
+
+    component.setName(() -> name);
   }
 
   @Override
