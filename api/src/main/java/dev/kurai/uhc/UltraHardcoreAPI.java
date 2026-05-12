@@ -7,7 +7,7 @@ import dev.kurai.uhc.event.service.EventService;
 import dev.kurai.uhc.game.GameService;
 import dev.kurai.uhc.item.service.ItemService;
 import dev.kurai.uhc.module.service.ModuleService;
-import dev.kurai.uhc.profile.service.ProfileService;
+import dev.kurai.uhc.profile.ProfileService;
 import dev.kurai.uhc.scoreboard.sidebar.service.SidebarService;
 import dev.kurai.uhc.tablist.service.TabListService;
 import dev.kurai.uhc.whitelist.service.WhitelistService;
