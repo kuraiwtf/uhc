@@ -219,7 +219,6 @@ public final class PowerListener extends PacketListenerAbstract implements Liste
     final var arguments =
         Lists.newArrayList(event.getMessage().substring(prefix.length()).split(" "));
     final var commandName = arguments.removeFirst();
-
     final var foundPower =
         profile.getPowers().stream()
             .filter(AbstractCommandPower.class::isInstance)
