@@ -39,7 +39,7 @@ public abstract class AbstractPower
 
     this.restrictions = Maps.newConcurrentMap();
 
-    this.profile = ultraHardcore.getProfileService().getProfile(owner);
+    this.profile = ultraHardcore.getProfileService().getOrCreateProfile(owner);
   }
 
   public @Nullable ActionbarEntry provideActionbarEntry(final @NotNull Player player) {

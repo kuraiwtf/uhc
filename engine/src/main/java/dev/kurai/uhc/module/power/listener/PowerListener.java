@@ -13,7 +13,7 @@ import dev.kurai.uhc.module.power.defaults.item.impl.block.BlockPlacePower;
 import dev.kurai.uhc.module.power.defaults.item.impl.parent.AbstractParentItemPower;
 import dev.kurai.uhc.module.power.defaults.item.impl.player.PlayerTargetItemPower;
 import dev.kurai.uhc.module.service.ModuleService;
-import dev.kurai.uhc.profile.service.ProfileService;
+import dev.kurai.uhc.profile.ProfileService;
 import dev.kurai.uhc.util.GlobalUtil;
 import net.minecraft.server.v1_8_R3.ItemStack;
 import net.minecraft.server.v1_8_R3.Items;
@@ -48,7 +48,7 @@ public final class PowerListener extends PacketListenerAbstract implements Liste
   @EventHandler
   public void onHeldSwap(final PlayerItemHeldEvent event) {
     final var player = event.getPlayer();
-    final var profile = this.profileService.getProfile(player.getUniqueId());
+    final var profile = this.profileService.getOrCreateProfile(player.getUniqueId());
 
     final var item = player.getInventory().getItem(event.getNewSlot());
     if (item == null || item.getType().name().contains("SWORD") || item.getType().isBlock()) {
@@ -99,7 +99,7 @@ public final class PowerListener extends PacketListenerAbstract implements Liste
     }
 
     final var player = event.getPlayer();
-    final var profile = this.profileService.getProfile(player.getUniqueId());
+    final var profile = this.profileService.getOrCreateProfile(player.getUniqueId());
     if (profile == null) {
       return;
     }
@@ -139,7 +139,7 @@ public final class PowerListener extends PacketListenerAbstract implements Liste
     }
 
     final var player = event.getPlayer();
-    final var profile = this.profileService.getProfile(player.getUniqueId());
+    final var profile = this.profileService.getOrCreateProfile(player.getUniqueId());
     if (profile == null) {
       return;
     }
@@ -182,7 +182,7 @@ public final class PowerListener extends PacketListenerAbstract implements Liste
   @EventHandler
   public void onBlockPlace(final BlockPlaceEvent event) {
     final var player = event.getPlayer();
-    final var profile = this.profileService.getProfile(player.getUniqueId());
+    final var profile = this.profileService.getOrCreateProfile(player.getUniqueId());
     if (profile == null) {
       return;
     }
@@ -206,7 +206,7 @@ public final class PowerListener extends PacketListenerAbstract implements Liste
   @EventHandler
   public void onPlayerCommandPreprocess(final PlayerCommandPreprocessEvent event) {
     final var player = event.getPlayer();
-    final var profile = this.profileService.getProfile(player.getUniqueId());
+    final var profile = this.profileService.getOrCreateProfile(player.getUniqueId());
     if (profile == null) {
       return;
     }
