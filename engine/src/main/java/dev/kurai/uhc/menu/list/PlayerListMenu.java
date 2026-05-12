@@ -77,6 +77,15 @@ public final class PlayerListMenu extends PaginatedMenu {
         lines.add("");
       }
 
+      final var powers = this.profile.getPowers();
+      if (!powers.isEmpty()) {
+        lines.add("Powers:");
+        for (final var power : powers) {
+          lines.add(" - " + power.getId());
+        }
+        lines.add("");
+      }
+
       return new ItemBuilder(Material.SKULL_ITEM)
           .data(3)
           .name("&6&l" + this.profile.getName())
