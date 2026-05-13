@@ -14,6 +14,7 @@ import dev.kurai.uhc.module.power.defaults.item.AbstractItemPower;
 import dev.kurai.uhc.profile.component.*;
 import dev.kurai.uhc.profile.state.ProfileState;
 import dev.kurai.uhc.profile.state.WaitingProfileState;
+import dev.kurai.uhc.util.CC;
 import java.util.*;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -229,6 +230,33 @@ public final class ProfileImpl implements Profile {
   @Override
   public double getMaxHealth() {
     return this.findPlayer().map(Player::getMaxHealth).orElse(20.0);
+  }
+
+  @Override
+  public void sendMessage(final String message) {
+    this.findPlayer()
+        .ifPresentOrElse(
+            player -> player.sendMessage(CC.colorize(message)),
+            () -> {
+              final var offlineActionComponent = this.getComponent(OfflineActionComponent.class);
+              if (offlineActionComponent == null) {
+                return;
+              }
+
+              offlineActionComponent
+                  .getActions()
+                  .add(player -> player.sendMessage(CC.colorize(message)));
+            });
+  }
+
+  @Override
+  public void sendPrefixedMessage(final String message) {
+    this.sendMessage(CC.prefix(message));
+  }
+
+  @Override
+  public void sendPrefixedMessage(final String message, final String prefix) {
+    this.sendMessage(CC.prefix(message, prefix));
   }
 
   @Override

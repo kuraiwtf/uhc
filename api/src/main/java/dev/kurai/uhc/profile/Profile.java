@@ -77,6 +77,12 @@ public interface Profile
 
   double getMaxHealth();
 
+  void sendMessage(final String message);
+
+  void sendPrefixedMessage(final String message);
+
+  void sendPrefixedMessage(final String message, final String prefix);
+
   @Override
   Collection<Component> getComponents();
 
