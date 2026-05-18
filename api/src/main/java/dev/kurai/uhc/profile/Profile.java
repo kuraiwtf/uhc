@@ -1,5 +1,6 @@
 package dev.kurai.uhc.profile;
 
+import com.github.retrooper.packetevents.wrapper.PacketWrapper;
 import dev.kurai.uhc.actionbar.Actionbar;
 import dev.kurai.uhc.ecs.component.Component;
 import dev.kurai.uhc.ecs.entity.Entity;
@@ -12,6 +13,7 @@ import java.util.Collection;
 import java.util.Optional;
 import java.util.UUID;
 import net.kyori.adventure.audience.ForwardingAudience;
+import net.minecraft.server.v1_8_R3.Packet;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -111,6 +113,10 @@ public interface Profile
 
   @Override
   void unregisterPower(final String id);
+
+  void sendPacket(final PacketWrapper<?> wrapper);
+
+  void sendPacket(final Packet<?> packet);
 
   default Optional<Player> findPlayer() {
     return Optional.ofNullable(Bukkit.getPlayer(this.getId()));

@@ -3,6 +3,8 @@ package dev.kurai.uhc.profile;
 import static dev.kurai.uhc.util.CC.prefix;
 import static net.kyori.adventure.text.Component.text;
 
+import com.github.retrooper.packetevents.PacketEvents;
+import com.github.retrooper.packetevents.wrapper.PacketWrapper;
 import com.google.common.collect.Maps;
 import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.actionbar.Actionbar;
@@ -18,6 +20,8 @@ import dev.kurai.uhc.util.CC;
 import java.util.*;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.minecraft.server.v1_8_R3.Packet;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
@@ -182,7 +186,7 @@ public final class ProfileImpl implements Profile {
   public void setHealth(final double health) {
     this.findPlayer()
         .ifPresentOrElse(
-            player -> player.setHealth(Math.min(health, player.getMaxHealth())),
+            player -> this.setHealthInternal(player, health),
             () -> {
               final var offlineActionComponent = this.getComponent(OfflineActionComponent.class);
               if (offlineActionComponent == null) {
@@ -191,8 +195,12 @@ public final class ProfileImpl implements Profile {
 
               offlineActionComponent
                   .getActions()
-                  .add(player -> player.setHealth(Math.min(health, player.getMaxHealth())));
+                  .add(player -> this.setHealthInternal(player, health));
             });
+  }
+
+  private void setHealthInternal(final Player player, final double health) {
+    player.setHealth(Math.min(health, player.getMaxHealth()));
   }
 
   @Override
@@ -214,7 +222,7 @@ public final class ProfileImpl implements Profile {
   public void setMaxHealth(final double maxHealth) {
     this.findPlayer()
         .ifPresentOrElse(
-            player -> player.setMaxHealth(Math.max(maxHealth, player.getHealth())),
+            player -> this.setMaxHealthInternal(player, maxHealth),
             () -> {
               final var offlineActionComponent = this.getComponent(OfflineActionComponent.class);
               if (offlineActionComponent == null) {
@@ -223,8 +231,12 @@ public final class ProfileImpl implements Profile {
 
               offlineActionComponent
                   .getActions()
-                  .add(player -> player.setMaxHealth(Math.max(maxHealth, player.getHealth())));
+                  .add(player -> this.setMaxHealthInternal(player, maxHealth));
             });
+  }
+
+  private void setMaxHealthInternal(final Player player, final double maxHealth) {
+    player.setMaxHealth(Math.max(maxHealth, player.getHealth()));
   }
 
   @Override
@@ -330,5 +342,47 @@ public final class ProfileImpl implements Profile {
   @Override
   public void unregisterPower(final String id) {
     this.powers.remove(id);
+  }
+
+  @Override
+  public void sendPacket(final PacketWrapper<?> wrapper) {
+    this.findPlayer()
+        .ifPresentOrElse(
+            player -> this.sendPacketInternal(player, wrapper),
+            () -> {
+              final var offlineActionComponent = this.getComponent(OfflineActionComponent.class);
+              if (offlineActionComponent == null) {
+                return;
+              }
+
+              offlineActionComponent
+                  .getActions()
+                  .add(player -> this.sendPacketInternal(player, wrapper));
+            });
+  }
+
+  @Override
+  public void sendPacket(final Packet<?> packet) {
+    this.findPlayer()
+        .ifPresentOrElse(
+            player -> this.sendPacketInternal(player, packet),
+            () -> {
+              final var offlineActionComponent = this.getComponent(OfflineActionComponent.class);
+              if (offlineActionComponent == null) {
+                return;
+              }
+
+              offlineActionComponent
+                  .getActions()
+                  .add(player -> this.sendPacketInternal(player, packet));
+            });
+  }
+
+  private void sendPacketInternal(final Player player, final PacketWrapper<?> wrapper) {
+    PacketEvents.getAPI().getPlayerManager().sendPacket(player, wrapper);
+  }
+
+  private void sendPacketInternal(final Player player, final Packet<?> packet) {
+    ((CraftPlayer) player).getHandle().playerConnection.sendPacket(packet);
   }
 }
