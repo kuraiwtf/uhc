@@ -81,7 +81,6 @@ public final class UltraHardcoreEngine extends UltraHardcoreAPI {
     this.whitelistService = new WhitelistServiceImpl();
 
     this.commandRegistrar.registerCommands(
-        new DeveloperCommand(this),
         new PlayerCommands(this),
         new ModerationCommands(this),
         new HostCommand(this),
