@@ -57,7 +57,16 @@ public final class HostCommand {
   }
 
   @SubCommand(@CommandMeta(name = "info", description = "Afficher les informations de la partie"))
-  public void info(final @NotNull Player player) {}
+  public void info(final @NotNull Player player) {
+    final var profile = this.ultraHardcore.getProfileService().getOrCreateProfile(player);
+    profile.sendMessage("");
+    profile.sendMessage("Voici les informations de la partie:");
+    profile.sendMessage("");
+    profile.sendMessage("&8»&r Hôte principal:&6 %s");
+    profile.sendMessage("&8»&r Co-hôtes&8 (&60&8)&r:");
+    profile.sendMessage("&8 -&r %s");
+    profile.sendMessage("");
+  }
 
   @SubCommand(@CommandMeta(name = "set", description = "Définir le joueur hôte de la partie"))
   public void set(
@@ -67,16 +76,6 @@ public final class HostCommand {
   public void saveInventory(final @NotNull Player player) {
     final var profile =
         this.ultraHardcore.getProfileService().getOrCreateProfile(player.getUniqueId());
-    if (profile == null) {
-      this.bukkitAudiences
-          .player(player)
-          .sendMessage(
-              prefix()
-                  .append(text("Impossible de trouver votre profil.", NamedTextColor.RED))
-                  .build());
-      return;
-    }
-
     final var editorComponent = profile.getComponent(InventoryEditorComponent.class);
     if (editorComponent == null) {
       this.bukkitAudiences
