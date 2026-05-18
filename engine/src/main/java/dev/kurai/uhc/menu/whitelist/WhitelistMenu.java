@@ -23,7 +23,9 @@ import net.j4c0b3y.api.menu.pagination.PaginationSlot;
 import org.bukkit.Bukkit;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 import org.jspecify.annotations.NullMarked;
 
@@ -58,7 +60,7 @@ public final class WhitelistMenu extends PaginatedMenu {
                   final var name = meta.asOfflinePlayer().getName();
                   return name != null ? name.toLowerCase() : "";
                 }))
-        .map(WhitelistedPlayerButton::new)
+        .map(meta -> new WhitelistedPlayerButton(this.whitelistService, meta))
         .map(Button.class::cast)
         .toList();
   }
@@ -84,9 +86,12 @@ public final class WhitelistMenu extends PaginatedMenu {
 
   private static final class WhitelistedPlayerButton extends Button {
 
+    private final WhitelistService whitelistService;
     private final WhitelistMeta meta;
 
-    private WhitelistedPlayerButton(final WhitelistMeta meta) {
+    private WhitelistedPlayerButton(
+        final WhitelistService whitelistService, final WhitelistMeta meta) {
+      this.whitelistService = whitelistService;
       this.meta = meta;
     }
 
@@ -105,14 +110,22 @@ public final class WhitelistMenu extends PaginatedMenu {
           .lore(
               "",
               "&a " + SQUARE + "&f Statut: " + (online ? "&aEn ligne" : "&cHors-ligne"),
-              "&a " + SQUARE + "&f Ajouté par: &e" + executorName,
+              "&a " + SQUARE + "&f Ajouté par: &b" + executorName,
               "&a " + SQUARE + "&f Raison: &7" + this.meta.source(),
               "")
           .skullOwner(name)
           .amount(this.meta.asOfflinePlayer().isOnline() ? 1 : 0)
-          .lunarTag("unclickable", true)
-          .lunarTag("hideSlotHighlight", true)
           .asItemStack();
+    }
+
+    @Override
+    public void onClick(final ButtonClick click) {
+      if (click.getType() != ClickType.DROP) {
+        return;
+      }
+
+      this.whitelistService.unwhitelist(this.meta.id());
+      click.getMenu().update();
     }
   }
 
@@ -173,7 +186,7 @@ public final class WhitelistMenu extends PaginatedMenu {
               .toList();
 
       if (offlineNames.isEmpty()) {
-        player.sendMessage(CC.colorize("&cAucun joueur hors-ligne dans la liste blanche."));
+        player.playSound(player.getLocation(), Sound.VILLAGER_NO, 1f, 1f);
         return;
       }
 
