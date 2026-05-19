@@ -87,7 +87,6 @@ public final class FixListener extends PacketListenerAbstract implements Listene
         final var potionType = removeEffectPacket.getPotionType();
         if (potionType != PotionTypes.INVISIBILITY) {
           event.setCancelled(true);
-          return;
         }
       }
     }
