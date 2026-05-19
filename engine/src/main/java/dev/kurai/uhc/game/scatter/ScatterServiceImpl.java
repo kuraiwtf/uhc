@@ -1,11 +1,8 @@
-package dev.kurai.uhc.game.scatter.service;
+package dev.kurai.uhc.game.scatter;
 
 import com.google.common.collect.Lists;
 import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.game.GameService;
-import dev.kurai.uhc.game.scatter.ScatterPositionProvider;
-import dev.kurai.uhc.game.scatter.ScatterService;
-import dev.kurai.uhc.game.scatter.task.ScatterTask;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;

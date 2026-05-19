@@ -1,4 +1,4 @@
-package dev.kurai.uhc.game.start.service;
+package dev.kurai.uhc.game.start;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
@@ -9,6 +9,7 @@ import dev.kurai.uhc.game.configuration.border.BorderConfiguration;
 import dev.kurai.uhc.game.configuration.inventory.InventoryConfiguration;
 import dev.kurai.uhc.game.start.countdown.task.StartCountdownTask;
 import dev.kurai.uhc.game.start.phase.StartPhase;
+import dev.kurai.uhc.game.start.service.StartService;
 import dev.kurai.uhc.listener.game.PlayingListener;
 import dev.kurai.uhc.module.power.listener.PowerListener;
 import dev.kurai.uhc.module.power.task.updater.CooldownUpdaterTask;

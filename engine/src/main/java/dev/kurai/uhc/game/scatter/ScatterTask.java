@@ -1,4 +1,4 @@
-package dev.kurai.uhc.game.scatter.task;
+package dev.kurai.uhc.game.scatter;
 
 import static net.kyori.adventure.text.Component.text;
 

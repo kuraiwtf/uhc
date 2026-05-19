@@ -1,9 +1,7 @@
-package dev.kurai.uhc.game.scenario.service;
+package dev.kurai.uhc.game.scenario;
 
 import com.google.common.collect.Maps;
 import dev.kurai.uhc.UltraHardcoreAPI;
-import dev.kurai.uhc.game.scenario.AbstractScenario;
-import dev.kurai.uhc.game.scenario.ScenarioService;
 import dev.kurai.uhc.game.scenario.defaults.*;
 import java.util.Collection;
 import java.util.Map;
@@ -18,6 +16,7 @@ public final class ScenarioServiceImpl implements ScenarioService {
   public ScenarioServiceImpl(final @NotNull UltraHardcoreAPI ultraHardcore) {
     this.scenarios = Maps.newHashMap();
     this.registerScenarios(
+        new ArmorReplaceScenario(ultraHardcore),
         new BetaZombieScenario(ultraHardcore),
         new CobblestoneOnlyScenario(ultraHardcore),
         new CutCleanScenario(ultraHardcore),
