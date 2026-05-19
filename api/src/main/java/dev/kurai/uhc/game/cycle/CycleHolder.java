@@ -1,6 +1,5 @@
-package dev.kurai.uhc.game.cycle.holder;
+package dev.kurai.uhc.game.cycle;
 
-import dev.kurai.uhc.game.cycle.Cycle;
 import java.util.Collection;
 import org.jetbrains.annotations.NotNull;
 

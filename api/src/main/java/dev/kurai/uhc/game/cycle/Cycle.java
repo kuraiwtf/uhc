@@ -9,9 +9,9 @@ public interface Cycle extends Identifiable<@NotNull String> {
   @NotNull
   String getId();
 
-  void onStart();
+  default void onStart() {}
 
-  void onSkip();
+  default void onSkip() {}
 
-  void onStop();
+  default void onStop() {}
 }
