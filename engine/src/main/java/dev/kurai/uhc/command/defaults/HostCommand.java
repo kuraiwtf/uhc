@@ -12,12 +12,13 @@ import dev.kurai.uhc.game.configuration.inventory.InventoryConfiguration;
 import dev.kurai.uhc.menu.ConfigurationMenu;
 import dev.kurai.uhc.profile.component.InventoryEditorComponent;
 import dev.kurai.uhc.timer.AbstractTimer;
+import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
 
+@RequiredArgsConstructor
 @Command(
     @CommandMeta(name = "host", aliases = "h", description = "Commande de gestion de la partie"))
 public final class HostCommand {
@@ -25,23 +26,19 @@ public final class HostCommand {
   private final BukkitAudiences bukkitAudiences;
   private final UltraHardcoreAPI ultraHardcore;
 
-  public HostCommand(final @NotNull UltraHardcoreAPI ultraHardcore) {
-    this.bukkitAudiences = ultraHardcore.getBukkitAudiences();
-    this.ultraHardcore = ultraHardcore;
-  }
-
   @SubCommand(@CommandMeta(name = "add", description = "Ajouter un co-hôte"))
-  public void add(
-      final @NotNull Player player, final @NotNull @Argument(name = "joueur") Player target) {}
+  public void add(final Player player, final @Argument(name = "joueur") Player target) {}
+
+  @SubCommand(@CommandMeta(name = "remove", description = "Retirer un co-hôte"))
+  public void remove(final Player player, final @Argument(name = "joueur") Player target) {}
 
   @SubCommand(@CommandMeta(name = "config", description = "Configurer la partie"))
-  public void config(final @NotNull Player player) {
+  public void config(final Player player) {
     new ConfigurationMenu(player, this.ultraHardcore).open();
   }
 
   @SubCommand(@CommandMeta(name = "force", description = "Forcer un timer"))
-  public void force(
-      final @NotNull Player player, final @NotNull @Argument(name = "timer") AbstractTimer timer) {
+  public void force(final Player player, final @Argument(name = "timer") AbstractTimer timer) {
     timer.setTimeLeft(5);
     this.bukkitAudiences
         .player(player)
@@ -57,7 +54,7 @@ public final class HostCommand {
   }
 
   @SubCommand(@CommandMeta(name = "info", description = "Afficher les informations de la partie"))
-  public void info(final @NotNull Player player) {
+  public void info(final Player player) {
     final var profile = this.ultraHardcore.getProfileService().getOrCreateProfile(player);
     profile.sendMessage("");
     profile.sendMessage("Voici les informations de la partie:");
@@ -69,11 +66,10 @@ public final class HostCommand {
   }
 
   @SubCommand(@CommandMeta(name = "set", description = "Définir le joueur hôte de la partie"))
-  public void set(
-      final @NotNull Player player, final @NotNull @Argument(name = "joueur") Player target) {}
+  public void set(final Player player, final @Argument(name = "joueur") Player target) {}
 
   @Command(@CommandMeta(name = "save", description = "Sauvegarder l'inventaire de départ"))
-  public void saveInventory(final @NotNull Player player) {
+  public void saveInventory(final Player player) {
     final var profile =
         this.ultraHardcore.getProfileService().getOrCreateProfile(player.getUniqueId());
     final var editorComponent = profile.getComponent(InventoryEditorComponent.class);
