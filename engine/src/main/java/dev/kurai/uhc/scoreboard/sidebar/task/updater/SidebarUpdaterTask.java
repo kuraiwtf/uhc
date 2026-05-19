@@ -1,6 +1,6 @@
 package dev.kurai.uhc.scoreboard.sidebar.task.updater;
 
-import dev.kurai.uhc.scoreboard.sidebar.service.SidebarService;
+import dev.kurai.uhc.scoreboard.sidebar.SidebarService;
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 

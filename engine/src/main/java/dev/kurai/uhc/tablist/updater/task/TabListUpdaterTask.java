@@ -3,7 +3,7 @@ package dev.kurai.uhc.tablist.updater.task;
 import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.manager.player.PlayerManager;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerPlayerListHeaderAndFooter;
-import dev.kurai.uhc.tablist.service.TabListService;
+import dev.kurai.uhc.tablist.TabListService;
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 

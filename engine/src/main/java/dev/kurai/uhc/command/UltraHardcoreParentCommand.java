@@ -8,7 +8,6 @@ import com.google.common.collect.Lists;
 import dev.kurai.uhc.command.annotation.CommandMeta;
 import dev.kurai.uhc.command.help.HelpCommand;
 import dev.kurai.uhc.command.impl.SubCommandData;
-import dev.kurai.uhc.command.registrar.CommandRegistrar;
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;

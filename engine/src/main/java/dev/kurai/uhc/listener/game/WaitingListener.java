@@ -3,11 +3,11 @@ package dev.kurai.uhc.listener.game;
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.format.NamedTextColor.*;
 
+import dev.kurai.uhc.event.EventService;
 import dev.kurai.uhc.event.defaults.game.GameStartEvent;
-import dev.kurai.uhc.event.service.EventService;
 import dev.kurai.uhc.item.CustomItem;
+import dev.kurai.uhc.item.ItemService;
 import dev.kurai.uhc.item.builtin.*;
-import dev.kurai.uhc.item.service.ItemService;
 import dev.kurai.uhc.module.service.ModuleService;
 import dev.kurai.uhc.profile.ProfileService;
 import java.util.Map;

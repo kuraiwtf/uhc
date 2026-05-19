@@ -1,10 +1,12 @@
 package dev.kurai.uhc.game.drop.service;
 
 import com.google.common.collect.Maps;
-import dev.kurai.uhc.event.service.EventService;
+import dev.kurai.uhc.event.EventService;
 import dev.kurai.uhc.game.drop.AbstractDropRateModifier;
 import java.util.Collection;
 import java.util.Map;
+
+import dev.kurai.uhc.game.drop.DropRateService;
 import org.bukkit.event.*;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;

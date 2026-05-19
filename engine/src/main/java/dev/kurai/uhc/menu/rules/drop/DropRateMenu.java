@@ -1,7 +1,7 @@
 package dev.kurai.uhc.menu.rules.drop;
 
 import dev.kurai.uhc.game.drop.AbstractDropRateModifier;
-import dev.kurai.uhc.game.drop.service.DropRateService;
+import dev.kurai.uhc.game.drop.DropRateService;
 import dev.kurai.uhc.menu.template.BackTemplate;
 import dev.kurai.uhc.menu.template.BorderTemplate;
 import dev.kurai.uhc.menu.template.PaginationTemplate;

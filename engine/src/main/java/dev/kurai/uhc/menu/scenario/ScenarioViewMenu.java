@@ -1,7 +1,7 @@
 package dev.kurai.uhc.menu.scenario;
 
 import dev.kurai.uhc.game.scenario.AbstractScenario;
-import dev.kurai.uhc.game.scenario.service.ScenarioService;
+import dev.kurai.uhc.game.scenario.ScenarioService;
 import dev.kurai.uhc.menu.button.GlassButton;
 import dev.kurai.uhc.menu.template.BackTemplate;
 import dev.kurai.uhc.menu.template.BorderTemplate;

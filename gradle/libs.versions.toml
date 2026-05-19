@@ -14,6 +14,8 @@ menu-api = '1.5.5'
 
 packetevents-api = '2.11.1'
 
+lombok = '1.18.46'
+
 [plugins]
 shadow = { id = 'com.gradleup.shadow', version.ref = 'shadow' }
 
@@ -32,6 +34,8 @@ adventure-mini-message = { module = 'net.kyori:adventure-text-minimessage' }
 menu-api = { module = 'net.j4c0b3y:MenuAPI-core', version.ref = 'menu-api' }
 
 packetevents-spigot = { module = 'com.github.retrooper:packetevents-spigot', version.ref = 'packetevents-api' }
+
+lombok = { module = 'org.projectlombok:lombok', version.ref = 'lombok' }
 
 [bundles]
 apollo = ['apollo-api', 'apollo-wrapper']

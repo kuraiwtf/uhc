@@ -1,6 +1,6 @@
 package dev.kurai.uhc.listener;
 
-import dev.kurai.uhc.item.service.ItemService;
+import dev.kurai.uhc.item.ItemService;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;

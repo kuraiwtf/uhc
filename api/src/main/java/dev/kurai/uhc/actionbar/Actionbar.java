@@ -1,6 +1,5 @@
 package dev.kurai.uhc.actionbar;
 
-import dev.kurai.uhc.actionbar.entry.ActionbarEntry;
 import dev.kurai.uhc.util.api.Identifiable;
 import java.util.Map;
 import java.util.UUID;

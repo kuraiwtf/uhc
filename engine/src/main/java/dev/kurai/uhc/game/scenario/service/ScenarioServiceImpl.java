@@ -3,6 +3,7 @@ package dev.kurai.uhc.game.scenario.service;
 import com.google.common.collect.Maps;
 import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.game.scenario.AbstractScenario;
+import dev.kurai.uhc.game.scenario.ScenarioService;
 import dev.kurai.uhc.game.scenario.defaults.*;
 import java.util.Collection;
 import java.util.Map;

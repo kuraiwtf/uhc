@@ -4,13 +4,13 @@ import static dev.kurai.uhc.util.api.option.Option.option;
 import static dev.kurai.uhc.util.api.option.Option.positiveNumberOption;
 import static net.kyori.adventure.key.Key.key;
 
-import dev.kurai.uhc.game.death.service.DeathService;
-import dev.kurai.uhc.game.drop.service.DropRateService;
+import dev.kurai.uhc.game.death.DeathService;
+import dev.kurai.uhc.game.drop.DropRateService;
 import dev.kurai.uhc.game.episode.EpisodeService;
-import dev.kurai.uhc.game.scatter.service.ScatterService;
-import dev.kurai.uhc.game.scenario.service.ScenarioService;
+import dev.kurai.uhc.game.scatter.ScatterService;
+import dev.kurai.uhc.game.scenario.ScenarioService;
 import dev.kurai.uhc.game.start.service.StartService;
-import dev.kurai.uhc.timer.service.TimerService;
+import dev.kurai.uhc.timer.TimerService;
 import dev.kurai.uhc.util.api.option.Option;
 import net.kyori.adventure.audience.ForwardingAudience;
 import org.jetbrains.annotations.Range;

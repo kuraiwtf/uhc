@@ -5,7 +5,8 @@ import static net.kyori.adventure.key.Key.key;
 import static net.kyori.adventure.text.Component.text;
 
 import dev.kurai.uhc.UltraHardcoreAPI;
-import dev.kurai.uhc.game.death.processor.DeathProcessor;
+import dev.kurai.uhc.game.death.DeathProcessor;
+import dev.kurai.uhc.game.death.DeathService;
 import dev.kurai.uhc.profile.component.DeadComponent;
 import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.format.NamedTextColor;

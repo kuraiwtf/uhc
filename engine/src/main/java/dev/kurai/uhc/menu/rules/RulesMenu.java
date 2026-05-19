@@ -7,7 +7,7 @@ import static dev.kurai.uhc.game.configuration.ore.OreConfiguration.*;
 import static dev.kurai.uhc.util.CC.*;
 
 import dev.kurai.uhc.UltraHardcoreAPI;
-import dev.kurai.uhc.game.drop.service.DropRateService;
+import dev.kurai.uhc.game.drop.DropRateService;
 import dev.kurai.uhc.menu.button.ItemButton;
 import dev.kurai.uhc.menu.rules.border.BorderConfigurationMenu;
 import dev.kurai.uhc.menu.rules.drop.DropRateMenu;

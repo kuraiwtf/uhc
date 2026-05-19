@@ -5,8 +5,8 @@ import static dev.kurai.uhc.game.GameService.WHITELIST_OPTION;
 import static dev.kurai.uhc.util.CC.BAR;
 
 import dev.kurai.uhc.UltraHardcoreAPI;
-import dev.kurai.uhc.event.service.EventService;
-import dev.kurai.uhc.game.scenario.service.ScenarioService;
+import dev.kurai.uhc.event.EventService;
+import dev.kurai.uhc.game.scenario.ScenarioService;
 import dev.kurai.uhc.game.start.service.StartService;
 import dev.kurai.uhc.menu.rules.RulesMenu;
 import dev.kurai.uhc.menu.scenario.ScenarioConfigurationMenu;

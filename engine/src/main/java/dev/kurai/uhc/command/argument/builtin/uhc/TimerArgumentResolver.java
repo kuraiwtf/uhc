@@ -7,7 +7,7 @@ import static net.kyori.adventure.text.format.NamedTextColor.RED;
 
 import dev.kurai.uhc.command.argument.ArgumentResolver;
 import dev.kurai.uhc.timer.AbstractTimer;
-import dev.kurai.uhc.timer.service.TimerService;
+import dev.kurai.uhc.timer.TimerService;
 import java.util.Collection;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bukkit.command.CommandSender;

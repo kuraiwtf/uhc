@@ -9,7 +9,7 @@ import dev.kurai.uhc.command.annotation.SubCommand;
 import dev.kurai.uhc.command.argument.annotation.Argument;
 import dev.kurai.uhc.menu.whitelist.WhitelistMenu;
 import dev.kurai.uhc.util.CC;
-import dev.kurai.uhc.whitelist.service.WhitelistService;
+import dev.kurai.uhc.whitelist.WhitelistService;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.OfflinePlayer;

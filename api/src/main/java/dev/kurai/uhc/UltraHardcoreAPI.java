@@ -1,17 +1,17 @@
 package dev.kurai.uhc;
 
 import com.google.common.base.Preconditions;
-import dev.kurai.uhc.actionbar.service.ActionbarService;
-import dev.kurai.uhc.command.registrar.CommandRegistrar;
-import dev.kurai.uhc.event.service.EventService;
+import dev.kurai.uhc.actionbar.ActionbarService;
+import dev.kurai.uhc.command.CommandRegistrar;
+import dev.kurai.uhc.event.EventService;
 import dev.kurai.uhc.game.GameService;
-import dev.kurai.uhc.item.service.ItemService;
+import dev.kurai.uhc.item.ItemService;
 import dev.kurai.uhc.module.service.ModuleService;
 import dev.kurai.uhc.profile.ProfileService;
-import dev.kurai.uhc.scoreboard.sidebar.service.SidebarService;
-import dev.kurai.uhc.tablist.service.TabListService;
-import dev.kurai.uhc.whitelist.service.WhitelistService;
-import dev.kurai.uhc.world.service.WorldService;
+import dev.kurai.uhc.scoreboard.sidebar.SidebarService;
+import dev.kurai.uhc.tablist.TabListService;
+import dev.kurai.uhc.whitelist.WhitelistService;
+import dev.kurai.uhc.world.WorldService;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;

@@ -8,7 +8,6 @@ import static net.kyori.adventure.text.format.NamedTextColor.DARK_GRAY;
 import com.google.common.collect.Lists;
 import dev.kurai.uhc.command.annotation.CommandMeta;
 import dev.kurai.uhc.command.argument.data.ArgumentData;
-import dev.kurai.uhc.command.registrar.CommandRegistrar;
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

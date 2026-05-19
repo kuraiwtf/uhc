@@ -2,7 +2,6 @@ package dev.kurai.uhc.actionbar;
 
 import com.google.common.collect.Maps;
 import dev.kurai.uhc.UltraHardcorePlugin;
-import dev.kurai.uhc.actionbar.entry.ActionbarEntry;
 import java.util.Map;
 import java.util.UUID;
 import net.kyori.adventure.text.Component;

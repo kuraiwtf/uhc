@@ -3,7 +3,7 @@ package dev.kurai.uhc.game.start.countdown.task;
 import static net.kyori.adventure.text.Component.empty;
 import static net.kyori.adventure.text.Component.text;
 
-import dev.kurai.uhc.game.scatter.service.ScatterService;
+import dev.kurai.uhc.game.scatter.ScatterService;
 import java.time.Duration;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.format.NamedTextColor;

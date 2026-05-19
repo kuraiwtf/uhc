@@ -8,7 +8,7 @@ import static net.kyori.adventure.text.format.TextDecoration.*;
 
 import com.google.common.collect.Lists;
 import dev.kurai.uhc.UltraHardcoreAPI;
-import dev.kurai.uhc.scoreboard.sidebar.adapter.SidebarAdapter;
+import dev.kurai.uhc.scoreboard.sidebar.SidebarAdapter;
 import dev.kurai.uhc.util.TimeUtil;
 import java.util.List;
 import net.kyori.adventure.text.Component;

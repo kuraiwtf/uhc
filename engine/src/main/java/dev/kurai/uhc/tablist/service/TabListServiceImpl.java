@@ -3,6 +3,7 @@ package dev.kurai.uhc.tablist.service;
 import static net.kyori.adventure.text.Component.text;
 
 import dev.kurai.uhc.tablist.TabListProvider;
+import dev.kurai.uhc.tablist.TabListService;
 import dev.kurai.uhc.tablist.adapter.BuiltinTablistHeaderProvider;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.jetbrains.annotations.NotNull;

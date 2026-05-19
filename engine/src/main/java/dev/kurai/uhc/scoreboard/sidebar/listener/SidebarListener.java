@@ -1,6 +1,6 @@
 package dev.kurai.uhc.scoreboard.sidebar.listener;
 
-import dev.kurai.uhc.scoreboard.sidebar.service.SidebarService;
+import dev.kurai.uhc.scoreboard.sidebar.SidebarService;
 import java.util.concurrent.CompletableFuture;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
