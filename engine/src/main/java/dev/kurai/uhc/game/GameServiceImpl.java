@@ -7,6 +7,8 @@ import dev.kurai.uhc.game.drop.defaults.AppleDropRateModifier;
 import dev.kurai.uhc.game.drop.defaults.FlintDropRateModifier;
 import dev.kurai.uhc.game.drop.service.DropRateService;
 import dev.kurai.uhc.game.drop.service.DropRateServiceImpl;
+import dev.kurai.uhc.game.episode.EpisodeService;
+import dev.kurai.uhc.game.episode.EpisodeServiceImpl;
 import dev.kurai.uhc.game.scatter.service.ScatterService;
 import dev.kurai.uhc.game.scatter.service.ScatterServiceImpl;
 import dev.kurai.uhc.game.scenario.service.ScenarioService;
@@ -29,6 +31,7 @@ public final class GameServiceImpl implements GameService {
 
   private final DeathService deathService;
   private final DropRateService dropRateService;
+  private final EpisodeService episodeService;
   private final ScatterService scatterService;
   private final ScenarioService scenarioService;
   private final StartService startService;
@@ -42,6 +45,7 @@ public final class GameServiceImpl implements GameService {
     this.deathService = new DeathServiceImpl(ultraHardcore);
     (this.dropRateService = new DropRateServiceImpl(ultraHardcore.getEventService()))
         .registerModifiers(new AppleDropRateModifier(), new FlintDropRateModifier());
+    this.episodeService = new EpisodeServiceImpl(ultraHardcore);
     this.scatterService = new ScatterServiceImpl(ultraHardcore, this);
     this.scenarioService = new ScenarioServiceImpl(ultraHardcore);
 
@@ -74,6 +78,11 @@ public final class GameServiceImpl implements GameService {
   @Override
   public DropRateService getDropRateService() {
     return this.dropRateService;
+  }
+
+  @Override
+  public EpisodeService getEpisodeService() {
+    return this.episodeService;
   }
 
   @Override
