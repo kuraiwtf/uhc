@@ -1,7 +1,6 @@
 package dev.kurai.uhc.profile;
 
 import static dev.kurai.uhc.util.CC.prefix;
-import static net.kyori.adventure.text.Component.text;
 
 import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.wrapper.PacketWrapper;
@@ -18,12 +17,13 @@ import dev.kurai.uhc.profile.state.ProfileState;
 import dev.kurai.uhc.profile.state.WaitingProfileState;
 import dev.kurai.uhc.util.CC;
 import java.util.*;
+import java.util.function.Consumer;
 import net.kyori.adventure.audience.Audience;
-import net.kyori.adventure.text.format.NamedTextColor;
 import net.minecraft.server.v1_8_R3.Packet;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -44,6 +44,7 @@ public final class ProfileImpl implements Profile {
     this.addComponents(
         new NameComponent(this.getOfflinePlayer().getName()),
         new ClaimComponent(),
+        new DamageImmunityComponent(),
         new ProfileMiningComponent(),
         new OfflineActionComponent(),
         new ProfileStateComponent(new WaitingProfileState()));
@@ -86,24 +87,33 @@ public final class ProfileImpl implements Profile {
     return this.ultraHardcore.getActionbarService().getActionbar(this.getId());
   }
 
-  @Override
-  public void addItem(final ItemStack item) {
+  private void executeAction(final Consumer<Player> action) {
     this.findPlayer()
-        .ifPresent(
-            player -> {
-              final var left = player.getInventory().addItem(item);
-              if (left.isEmpty()) {
+        .ifPresentOrElse(
+            action,
+            () -> {
+              final var offlineActionComponent = this.getComponent(OfflineActionComponent.class);
+              if (offlineActionComponent == null) {
                 return;
               }
 
-              this.getComponent(ClaimComponent.class).getItems().addAll(left.values());
-              this.sendMessage(
-                  prefix()
-                      .append(text("Un objet a été ajouté à votre "))
-                      .append(text("/claim", NamedTextColor.GREEN))
-                      .append(text('.'))
-                      .build());
+              offlineActionComponent.getActions().add(action::accept);
             });
+  }
+
+  @Override
+  public void addItem(final ItemStack item) {
+    this.executeAction(player -> this.addItemInternal(player, item));
+  }
+
+  private void addItemInternal(final Player player, final ItemStack item) {
+    final var left = player.getInventory().addItem(item);
+    if (left.isEmpty()) {
+      return;
+    }
+
+    this.getComponent(ClaimComponent.class).getItems().addAll(left.values());
+    this.sendPrefixedMessage("Un objet vient d'être ajouté à votre&a /full&r.");
   }
 
   @Override
@@ -123,32 +133,20 @@ public final class ProfileImpl implements Profile {
 
   @Override
   public void addPotionEffect(final PotionEffect effect) {
-    this.findPlayer()
-        .ifPresentOrElse(
-            player -> player.addPotionEffect(effect),
-            () -> {
-              final var offlineActionComponent = this.getComponent(OfflineActionComponent.class);
-              if (offlineActionComponent == null) {
-                return;
-              }
+    this.executeAction(player -> this.addEffectInternal(player, effect));
+  }
 
-              offlineActionComponent.getActions().add(player -> player.addPotionEffect(effect));
-            });
+  private void addEffectInternal(final Player player, final PotionEffect effect) {
+    player.addPotionEffect(effect);
   }
 
   @Override
   public void removePotionEffect(final PotionEffectType type) {
-    this.findPlayer()
-        .ifPresentOrElse(
-            player -> player.removePotionEffect(type),
-            () -> {
-              final var offlineActionComponent = this.getComponent(OfflineActionComponent.class);
-              if (offlineActionComponent == null) {
-                return;
-              }
+    this.executeAction(player -> this.removeEffectInternal(player, type));
+  }
 
-              offlineActionComponent.getActions().add(player -> player.removePotionEffect(type));
-            });
+  private void removeEffectInternal(final Player player, final PotionEffectType type) {
+    player.removePotionEffect(type);
   }
 
   @Override
@@ -184,19 +182,7 @@ public final class ProfileImpl implements Profile {
 
   @Override
   public void setHealth(final double health) {
-    this.findPlayer()
-        .ifPresentOrElse(
-            player -> this.setHealthInternal(player, health),
-            () -> {
-              final var offlineActionComponent = this.getComponent(OfflineActionComponent.class);
-              if (offlineActionComponent == null) {
-                return;
-              }
-
-              offlineActionComponent
-                  .getActions()
-                  .add(player -> this.setHealthInternal(player, health));
-            });
+    this.executeAction(player -> this.setHealthInternal(player, health));
   }
 
   private void setHealthInternal(final Player player, final double health) {
@@ -220,19 +206,7 @@ public final class ProfileImpl implements Profile {
 
   @Override
   public void setMaxHealth(final double maxHealth) {
-    this.findPlayer()
-        .ifPresentOrElse(
-            player -> this.setMaxHealthInternal(player, maxHealth),
-            () -> {
-              final var offlineActionComponent = this.getComponent(OfflineActionComponent.class);
-              if (offlineActionComponent == null) {
-                return;
-              }
-
-              offlineActionComponent
-                  .getActions()
-                  .add(player -> this.setMaxHealthInternal(player, maxHealth));
-            });
+    this.executeAction(player -> this.setMaxHealthInternal(player, maxHealth));
   }
 
   private void setMaxHealthInternal(final Player player, final double maxHealth) {
@@ -245,20 +219,52 @@ public final class ProfileImpl implements Profile {
   }
 
   @Override
-  public void sendMessage(final String message) {
-    this.findPlayer()
-        .ifPresentOrElse(
-            player -> player.sendMessage(CC.colorize(message)),
-            () -> {
-              final var offlineActionComponent = this.getComponent(OfflineActionComponent.class);
-              if (offlineActionComponent == null) {
-                return;
-              }
+  public void addDamageImmunity(final EntityDamageEvent.DamageCause cause, final int ticks) {
+    final var component = this.getComponent(DamageImmunityComponent.class);
+    if (component == null) {
+      return;
+    }
 
-              offlineActionComponent
-                  .getActions()
-                  .add(player -> player.sendMessage(CC.colorize(message)));
-            });
+    component.immunities().add(new DamageImmunityComponent.DamageImmunity(cause, ticks));
+  }
+
+  @Override
+  public void removeDamageImmunity(final EntityDamageEvent.DamageCause cause) {
+    final var component = this.getComponent(DamageImmunityComponent.class);
+    if (component == null) {
+      return;
+    }
+
+    component.immunities().removeIf(immunity -> immunity.cause() == cause);
+  }
+
+  @Override
+  public boolean hasDamageImmunity(final EntityDamageEvent.DamageCause cause) {
+    final var component = this.getComponent(DamageImmunityComponent.class);
+    if (component == null) {
+      return false;
+    }
+
+    return component.immunities().stream().anyMatch(immunity -> immunity.cause() == cause);
+  }
+
+  @Override
+  public int getDamageImmunityTicks(final EntityDamageEvent.DamageCause cause) {
+    final var component = this.getComponent(DamageImmunityComponent.class);
+    if (component == null) {
+      return -1;
+    }
+
+    return component.immunities().stream()
+        .filter(immunity -> immunity.cause() == cause)
+        .findFirst()
+        .map(DamageImmunityComponent.DamageImmunity::timeLeft)
+        .orElse(-1);
+  }
+
+  @Override
+  public void sendMessage(final String message) {
+    this.executeAction(player -> player.sendMessage(CC.colorize(message)));
   }
 
   @Override
@@ -346,36 +352,12 @@ public final class ProfileImpl implements Profile {
 
   @Override
   public void sendPacket(final PacketWrapper<?> wrapper) {
-    this.findPlayer()
-        .ifPresentOrElse(
-            player -> this.sendPacketInternal(player, wrapper),
-            () -> {
-              final var offlineActionComponent = this.getComponent(OfflineActionComponent.class);
-              if (offlineActionComponent == null) {
-                return;
-              }
-
-              offlineActionComponent
-                  .getActions()
-                  .add(player -> this.sendPacketInternal(player, wrapper));
-            });
+    this.executeAction(player -> this.sendPacketInternal(player, wrapper));
   }
 
   @Override
   public void sendPacket(final Packet<?> packet) {
-    this.findPlayer()
-        .ifPresentOrElse(
-            player -> this.sendPacketInternal(player, packet),
-            () -> {
-              final var offlineActionComponent = this.getComponent(OfflineActionComponent.class);
-              if (offlineActionComponent == null) {
-                return;
-              }
-
-              offlineActionComponent
-                  .getActions()
-                  .add(player -> this.sendPacketInternal(player, packet));
-            });
+    this.executeAction(player -> this.sendPacketInternal(player, packet));
   }
 
   private void sendPacketInternal(final Player player, final PacketWrapper<?> wrapper) {

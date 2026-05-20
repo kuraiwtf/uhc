@@ -17,6 +17,7 @@ import net.minecraft.server.v1_8_R3.Packet;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -78,6 +79,14 @@ public interface Profile
   void setMaxHealth(final double maxHealth);
 
   double getMaxHealth();
+
+  void addDamageImmunity(final EntityDamageEvent.DamageCause cause, final int ticks);
+
+  void removeDamageImmunity(final EntityDamageEvent.DamageCause cause);
+
+  boolean hasDamageImmunity(final EntityDamageEvent.DamageCause cause);
+
+  int getDamageImmunityTicks(final EntityDamageEvent.DamageCause cause);
 
   void sendMessage(final String message);
 
