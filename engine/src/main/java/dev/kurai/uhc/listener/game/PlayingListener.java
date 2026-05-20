@@ -11,6 +11,7 @@ import dev.kurai.uhc.event.defaults.game.GameTickEvent;
 import dev.kurai.uhc.game.configuration.game.GameConfiguration;
 import dev.kurai.uhc.game.configuration.ore.OreConfiguration;
 import dev.kurai.uhc.item.builtin.*;
+import dev.kurai.uhc.profile.Profile;
 import dev.kurai.uhc.profile.component.DamageImmunityComponent;
 import dev.kurai.uhc.profile.component.InventoryComponent;
 import dev.kurai.uhc.profile.component.OfflineActionComponent;
@@ -28,6 +29,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -109,7 +111,7 @@ public final class PlayingListener implements Listener {
       final var iterator = component.immunities().iterator();
       while (iterator.hasNext()) {
         final var next = iterator.next();
-        if (next.timeLeft() == -1) {
+        if (next.timeLeft() < 0) {
           return;
         }
 
@@ -122,6 +124,22 @@ public final class PlayingListener implements Listener {
         iterator.remove();
       }
     }
+  }
+
+  @EventHandler
+  public void onDamage(final EntityDamageEvent event) {
+    if (!(event.getEntity() instanceof final Player player)) {
+      return;
+    }
+
+    final var profile = this.ultraHardcore.getProfileService().getOrCreateProfile(player);
+    final var cause = event.getCause();
+    if (profile.getDamageImmunityTicks(cause) != Profile.IMMUNITY_UNTIL_NEXT_DAMAGE_TICKS) {
+      return;
+    }
+
+    profile.removeDamageImmunity(cause);
+    event.setCancelled(true);
   }
 
   @EventHandler
