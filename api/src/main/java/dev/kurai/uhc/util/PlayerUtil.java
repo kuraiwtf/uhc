@@ -11,36 +11,35 @@ import net.minecraft.server.v1_8_R3.PacketPlayOutSetSlot;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
 
 public final class PlayerUtil {
 
-  public static double getHealth(final @NotNull Player player) {
+  public static double getHealth(final Player player) {
     return player.getHealth();
   }
 
-  public static float getAbsorption(final @NotNull Player player) {
+  public static float getAbsorption(final Player player) {
     return ((CraftPlayer) player).getHandle().getAbsorptionHearts();
   }
 
-  public static double getEntireHealth(final @NotNull Player player) {
+  public static double getEntireHealth(final Player player) {
     return getHealth(player) + getAbsorption(player);
   }
 
-  public static @NotNull Component formatHealthAsPercentage(
-      final @NotNull Player player, final boolean complete, final @NotNull Style style) {
+  public static Component formatHealthAsPercentage(
+      final Player player, final boolean complete, final Style style) {
     final double health = complete ? getEntireHealth(player) : getHealth(player);
     return text("%.2f".formatted(health / player.getMaxHealth() * 100))
         .style(style)
         .append(text('%').decoration(TextDecoration.BOLD, false));
   }
 
-  public static @NotNull Component formatHealthAsHearts(
-      final @NotNull Player player,
+  public static Component formatHealthAsHearts(
+      final Player player,
       final boolean complete,
-      final @NotNull Style currentHealthStyle,
-      final @NotNull Style maxHealthStyle,
-      final @NotNull Component separator) {
+      final Style currentHealthStyle,
+      final Style maxHealthStyle,
+      final Component separator) {
     final double health = complete ? getEntireHealth(player) : getHealth(player);
     return text()
         .append(text(health).style(currentHealthStyle))
@@ -51,12 +50,12 @@ public final class PlayerUtil {
         .build();
   }
 
-  public static @NotNull Component formatHealthAsHeartBar(
-      final @NotNull Player player,
-      final @NotNull Style fullHeartStyle,
-      final @NotNull Style halfHeartStyle,
-      final @NotNull Style absorptionHeartStyle,
-      final @NotNull Style emptyHeartStyle) {
+  public static Component formatHealthAsHeartBar(
+      final Player player,
+      final Style fullHeartStyle,
+      final Style halfHeartStyle,
+      final Style absorptionHeartStyle,
+      final Style emptyHeartStyle) {
     final double health = getEntireHealth(player);
     final double absorption = getAbsorption(player);
 
@@ -88,7 +87,7 @@ public final class PlayerUtil {
     return result.build();
   }
 
-  public static void updateItem(final @NotNull Player player, final int slot) {
+  public static void updateItem(final Player player, final int slot) {
     if (slot == -1) {
       return;
     }
@@ -100,7 +99,7 @@ public final class PlayerUtil {
     ((CraftPlayer) player).getHandle().playerConnection.sendPacket(packet);
   }
 
-  public static void updateHeldItem(final @NotNull Player player) {
+  public static void updateHeldItem(final Player player) {
     updateItem(player, player.getInventory().getHeldItemSlot());
   }
 
