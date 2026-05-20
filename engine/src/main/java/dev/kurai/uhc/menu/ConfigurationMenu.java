@@ -18,6 +18,7 @@ import dev.kurai.uhc.module.AbstractModule;
 import dev.kurai.uhc.module.team.module.TeamModule;
 import dev.kurai.uhc.util.CC;
 import dev.kurai.uhc.util.ItemBuilder;
+import lombok.RequiredArgsConstructor;
 import net.j4c0b3y.api.menu.Menu;
 import net.j4c0b3y.api.menu.MenuSize;
 import net.j4c0b3y.api.menu.button.Button;
@@ -53,8 +54,8 @@ public final class ConfigurationMenu extends Menu {
             this.ultraHardcore.getGameService().getScenarioService()));
 
     final var module = this.ultraHardcore.getModuleService().getCurrentModule();
-    if (module instanceof TeamModule) {
-      front.set(30, new TeamButton());
+    if (module instanceof final TeamModule teamModule) {
+      front.set(30, new TeamButton(teamModule));
     } else {
       back.set(30, new TeamDisabledButton());
     }
@@ -124,7 +125,10 @@ public final class ConfigurationMenu extends Menu {
     }
   }
 
+  @RequiredArgsConstructor
   private static final class TeamButton extends Button {
+
+    private final TeamModule module;
 
     @Override
     public ItemStack getIcon() {
@@ -137,7 +141,7 @@ public final class ConfigurationMenu extends Menu {
 
     @Override
     public void onClick(final ButtonClick click) {
-      final var teamMenu = new TeamConfigurationMenu(click.getMenu().getPlayer());
+      final var teamMenu = new TeamConfigurationMenu(click.getMenu().getPlayer(), this.module);
       teamMenu.setPreviousMenu(click.getMenu());
       teamMenu.open();
     }
