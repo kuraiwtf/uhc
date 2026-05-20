@@ -11,6 +11,7 @@ import dev.kurai.uhc.event.defaults.game.GameTickEvent;
 import dev.kurai.uhc.game.configuration.game.GameConfiguration;
 import dev.kurai.uhc.game.configuration.ore.OreConfiguration;
 import dev.kurai.uhc.item.builtin.*;
+import dev.kurai.uhc.profile.component.DamageImmunityComponent;
 import dev.kurai.uhc.profile.component.InventoryComponent;
 import dev.kurai.uhc.profile.component.OfflineActionComponent;
 import dev.kurai.uhc.profile.component.ProfileMiningComponent;
@@ -79,18 +80,47 @@ public final class PlayingListener implements Listener {
         this.ultraHardcore
             .getProfileService()
             .getProfiles(profile -> profile.findPlayer().isPresent())) {
-      final var offlineActionComponent = profile.getComponent(OfflineActionComponent.class);
-      if (offlineActionComponent == null) {
+      final var component = profile.getComponent(OfflineActionComponent.class);
+      if (component == null) {
         continue;
       }
 
-      final var poll = offlineActionComponent.getActions().poll();
+      final var poll = component.getActions().poll();
       if (poll == null) {
         continue;
       }
 
       final var player = profile.getPlayer();
       poll.onJoin(player);
+    }
+  }
+
+  @EventHandler
+  public void processDamageImmunities(final GameTickEvent event) {
+    for (final var profile :
+        this.ultraHardcore
+            .getProfileService()
+            .getProfiles(profile -> profile.findPlayer().isPresent())) {
+      final var component = profile.getComponent(DamageImmunityComponent.class);
+      if (component == null) {
+        continue;
+      }
+
+      final var iterator = component.immunities().iterator();
+      while (iterator.hasNext()) {
+        final var next = iterator.next();
+        if (next.timeLeft() == -1) {
+          return;
+        }
+
+        next.timeLeft(next.timeLeft() - 1);
+
+        if (next.timeLeft() > 0) {
+          return;
+        }
+
+        iterator.remove();
+      }
     }
   }
 
@@ -125,17 +155,21 @@ public final class PlayingListener implements Listener {
     Bukkit.getScheduler()
         .runTaskLaterAsynchronously(
             this.ultraHardcore.getPlugin(),
-            () ->
-                this.ultraHardcore
-                    .getProfileService()
-                    .getOrCreateProfile(shooter.getUniqueId())
-                    .sendActionBar(
-                        PlayerUtil.formatHealthAsHeartBar(
-                            player,
-                            style(NamedTextColor.DARK_RED),
-                            style(NamedTextColor.RED),
-                            style(NamedTextColor.YELLOW),
-                            style(NamedTextColor.DARK_GRAY))),
+            () -> {
+              final var profile =
+                  this.ultraHardcore.getProfileService().getOrCreateProfile(shooter.getUniqueId());
+              profile
+                  .getActionbar()
+                  .registerEntry(
+                      "health_view",
+                      PlayerUtil.formatHealthAsHeartBar(
+                          player,
+                          style(NamedTextColor.DARK_RED),
+                          style(NamedTextColor.RED),
+                          style(NamedTextColor.YELLOW),
+                          style(NamedTextColor.DARK_GRAY)),
+                      3 * 20);
+            },
             2L);
   }
 
