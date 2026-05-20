@@ -32,6 +32,10 @@ public interface Profile
         PowerHolder,
         ForwardingAudience.Single {
 
+  int UNKNOWN_IMMUNITY_TICKS = -Integer.MAX_VALUE;
+  int INFINITE_IMMUNITY_TICKS = -1;
+  int IMMUNITY_UNTIL_NEXT_DAMAGE_TICKS = -2;
+
   @Override
   UUID getId();
 
@@ -79,6 +83,14 @@ public interface Profile
   void setMaxHealth(final double maxHealth);
 
   double getMaxHealth();
+
+  default void addDamageImmunity(final EntityDamageEvent.DamageCause cause) {
+    this.addDamageImmunity(cause, INFINITE_IMMUNITY_TICKS);
+  }
+
+  default void addDamageImmunityUntilNext(final EntityDamageEvent.DamageCause cause) {
+    this.addDamageImmunity(cause, IMMUNITY_UNTIL_NEXT_DAMAGE_TICKS);
+  }
 
   void addDamageImmunity(final EntityDamageEvent.DamageCause cause, final int ticks);
 

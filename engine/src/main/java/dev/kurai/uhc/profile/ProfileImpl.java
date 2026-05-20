@@ -252,14 +252,14 @@ public final class ProfileImpl implements Profile {
   public int getDamageImmunityTicks(final EntityDamageEvent.DamageCause cause) {
     final var component = this.getComponent(DamageImmunityComponent.class);
     if (component == null) {
-      return -1;
+      return UNKNOWN_IMMUNITY_TICKS;
     }
 
     return component.immunities().stream()
         .filter(immunity -> immunity.cause() == cause)
         .findFirst()
         .map(DamageImmunityComponent.DamageImmunity::timeLeft)
-        .orElse(-1);
+        .orElse(UNKNOWN_IMMUNITY_TICKS);
   }
 
   @Override
