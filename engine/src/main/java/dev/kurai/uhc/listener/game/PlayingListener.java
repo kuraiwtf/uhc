@@ -127,7 +127,21 @@ public final class PlayingListener implements Listener {
   }
 
   @EventHandler
-  public void onDamage(final EntityDamageEvent event) {
+  public void processDamageImmunity(final EntityDamageEvent event) {
+    if (!(event.getEntity() instanceof final Player player)) {
+      return;
+    }
+
+    final var profile = this.ultraHardcore.getProfileService().getOrCreateProfile(player);
+    if (!profile.hasDamageImmunity(event.getCause())) {
+      return;
+    }
+
+    event.setCancelled(true);
+  }
+
+  @EventHandler
+  public void processImmunityUntilNextDamage(final EntityDamageEvent event) {
     if (!(event.getEntity() instanceof final Player player)) {
       return;
     }
