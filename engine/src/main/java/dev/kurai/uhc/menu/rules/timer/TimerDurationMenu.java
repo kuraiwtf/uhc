@@ -104,14 +104,13 @@ public final class TimerDurationMenu extends Menu {
           "&6 " + SQUARE + "&f Durée actuelle: &b" + TimeUtil.formatDuration(timeLeft * 1000L));
 
       if (minTime > 0 || maxTime != -1) {
-        lines.add("");
-        lines.add("&c " + SQUARE + "&f Limites:");
+        lines.add("&6 " + SQUARE + "&f Limites:");
         if (minTime > 0) {
-          lines.add("   &2" + SQUARE + " Min:&a " + TimeUtil.formatDuration(minTime * 1000L));
+          lines.add("   &2" + SQUARE + "&f Min:&a " + TimeUtil.formatDuration(minTime * 1000L));
         }
 
         if (maxTime != -1) {
-          lines.add("   &4" + SQUARE + " Max:&c " + TimeUtil.formatDuration(maxTime * 1000L));
+          lines.add("   &4" + SQUARE + "&f Max:&c " + TimeUtil.formatDuration(maxTime * 1000L));
         }
       }
 
