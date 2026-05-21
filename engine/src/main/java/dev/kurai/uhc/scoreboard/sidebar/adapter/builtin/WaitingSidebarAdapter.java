@@ -13,7 +13,6 @@ import dev.kurai.uhc.scoreboard.sidebar.SidebarTitleAdapter;
 import java.util.List;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
-import net.minecraft.server.v1_8_R3.MinecraftServer;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -40,19 +39,23 @@ public final class WaitingSidebarAdapter implements SidebarAdapter, SidebarTitle
   @Override
   public @NotNull List<@NotNull Component> provideLines(final @NotNull Player player) {
     final var lines = Lists.<Component>newArrayList();
-    final var tps = MinecraftServer.getServer().recentTps[0];
+    final var hostId = this.ultraHardcore.gameService().hostService().host();
     lines.add(empty());
     lines.add(
         text()
             .append(text("Hôte: "))
-            .append(text(Bukkit.getOnlinePlayers().size(), GOLD, BOLD))
+            .append(
+                text(
+                    hostId == null
+                        ? "Aucun"
+                        : this.ultraHardcore.profileService().getOrCreateProfile(hostId).getName(),
+                    hostId == null ? RED : GOLD))
             .build());
     lines.add(
         text()
             .append(text("Jeu: "))
             .append(
-                text(
-                    this.ultraHardcore.getModuleService().getCurrentModule().getName(), GOLD, BOLD))
+                text(this.ultraHardcore.moduleService().getCurrentModule().getName(), GOLD, BOLD))
             .build());
     lines.add(empty());
     lines.add(
