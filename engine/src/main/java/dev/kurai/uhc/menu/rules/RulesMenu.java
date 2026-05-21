@@ -45,12 +45,47 @@ public final class RulesMenu extends Menu {
     this.apply(new BackTemplate(this.getPreviousMenu()));
     this.apply(new ModernBorderTemplate(DyeColor.RED.getData(), DyeColor.GRAY.getData()));
 
+    final var gameService = this.ultraHardcore.gameService();
+    final var cycleService = gameService.cycleService();
+    if (cycleService.enabled()) {
+      front.set(
+          4,
+          new ItemButton(
+              new ItemBuilder(Material.WATCH)
+                  .name("&6&lDurée d'un cycle")
+                  .lore(
+                      "",
+                      "&6 " + SQUARE + "&f Temps:&b %d",
+                      "",
+                      "&7" + BAR + "&f Permet de modifier la",
+                      "  durée d'un&e cycle complet",
+                      "  au cours de la partie.",
+                      "")
+                  .amount(cycleService.totalCycleDuration() / 60)
+                  .asItemStack()));
+    } else {
+      front.set(
+          4,
+          new ItemButton(
+              new ItemBuilder(Material.WATCH)
+                  .name("&6&lCycle")
+                  .lore(
+                      "",
+                      "&7" + BAR + "&f Il est impossible de",
+                      "&d  configurer&f la durée",
+                      "&f  du&e cycle&f de la partie",
+                      "&f  car il est&c désactivé&f.",
+                      "")
+                  .amount(0)
+                  .asItemStack()));
+    }
+
     front.set(11, new BowHealthViewButton());
     front.set(12, new SpectatorButton());
     front.set(14, new BorderTimerButton(this.ultraHardcore));
     front.set(15, new BorderButton());
 
-    front.set(18, new DropRateButton(this.ultraHardcore.gameService().dropRateService()));
+    front.set(18, new DropRateButton(gameService.dropRateService()));
     front.set(19, new StartInventoryButton(this.ultraHardcore));
     front.set(26, new InvincibilityTimerButton(this.ultraHardcore));
 
