@@ -8,7 +8,13 @@ public interface CycleService extends CycleHolder {
 
   void enabled(final boolean enabled);
 
+  void start();
+
   int totalCycleDuration();
 
-  void totalCycleDuration(final @Range(from = 5 * 60L, to = 20 * 60L) int duration);
+  void totalCycleDuration(final @Range(from = 5 * 60L, to = 30 * 60L) int duration);
+
+  void skipCycleTo(Cycle target);
+
+  void skipCycle();
 }

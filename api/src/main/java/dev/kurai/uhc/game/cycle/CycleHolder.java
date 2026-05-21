@@ -1,45 +1,46 @@
 package dev.kurai.uhc.game.cycle;
 
 import java.util.Collection;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NullUnmarked;
 
+@NullUnmarked
 public interface CycleHolder {
 
-  Collection<@NotNull Cycle> getPhases();
+  Collection<Cycle> getPhases();
 
   void clearPhases();
 
-  void registerCycle(final @NotNull Cycle cycle);
+  void registerCycle(final Cycle cycle);
 
-  default void registerCycles(final @NotNull Cycle @NotNull ... cycles) {
+  default void registerCycles(final Cycle... cycles) {
     for (final var cycle : cycles) {
       this.registerCycle(cycle);
     }
   }
 
-  void registerCycle(final int index, final @NotNull Cycle cycle);
+  void registerCycle(final int index, final Cycle cycle);
 
-  void registerCycleBefore(final @NotNull Cycle from, final @NotNull Cycle cycle);
+  void registerCycleBefore(final Cycle from, final Cycle cycle);
 
-  void registerCycleAfter(final @NotNull Cycle from, final @NotNull Cycle cycle);
+  void registerCycleAfter(final Cycle from, final Cycle cycle);
 
-  void unregisterCycle(final @NotNull String id);
+  void unregisterCycle(final String id);
 
-  default void unregisterCycles(final String @NotNull ... ids) {
+  default void unregisterCycles(final String... ids) {
     for (final var id : ids) {
       this.unregisterCycle(id);
     }
   }
 
-  default void unregisterCycle(final @NotNull Cycle cycle) {
+  default void unregisterCycle(final Cycle cycle) {
     this.unregisterCycle(cycle.getId());
   }
 
-  default void unregisterPhases(final Cycle @NotNull ... cycles) {
+  default void unregisterCycles(final Cycle... cycles) {
     for (final var cycle : cycles) {
       this.unregisterCycle(cycle);
     }
   }
 
-  boolean hasPhase(final @NotNull String id);
+  boolean hasPhase(final String id);
 }
