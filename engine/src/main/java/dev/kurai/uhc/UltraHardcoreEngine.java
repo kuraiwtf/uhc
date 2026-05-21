@@ -97,15 +97,7 @@ public final class UltraHardcoreEngine extends UltraHardcoreAPI {
     PacketEvents.getAPI().getEventManager().registerListener(fixListener);
 
     this.eventService.registerListeners(
-        fixListener,
-        new ItemListener(this.itemService),
-        new WaitingListener(
-            this.bukkitAudiences,
-            this.eventService,
-            this.itemService,
-            this.moduleService,
-            this.profileService,
-            this.plugin));
+        fixListener, new ItemListener(this.itemService), new WaitingListener(this));
 
     Bukkit.getScheduler()
         .runTaskTimerAsynchronously(

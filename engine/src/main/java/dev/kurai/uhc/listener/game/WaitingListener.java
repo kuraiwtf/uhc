@@ -3,18 +3,17 @@ package dev.kurai.uhc.listener.game;
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.format.NamedTextColor.*;
 
-import dev.kurai.uhc.event.EventService;
+import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.event.defaults.game.GameStartEvent;
+import dev.kurai.uhc.event.defaults.host.HostAccessUpdateEvent;
 import dev.kurai.uhc.item.CustomItem;
-import dev.kurai.uhc.item.ItemService;
 import dev.kurai.uhc.item.builtin.*;
-import dev.kurai.uhc.module.service.ModuleService;
-import dev.kurai.uhc.profile.ProfileService;
 import java.util.Map;
-import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.format.TextDecoration;
+import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -27,7 +26,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.Plugin;
 import org.jspecify.annotations.NullMarked;
 
 @NullMarked
@@ -42,31 +40,15 @@ public final class WaitingListener implements Listener {
   private static final Map<Integer, Class<? extends CustomItem>> HOST_WAITING_ITEMS =
       Map.of(4, ConfigurationItem.class);
 
-  private final BukkitAudiences bukkitAudiences;
-  private final EventService eventService;
-  private final ItemService itemService;
-  private final ModuleService moduleService;
-  private final ProfileService profileService;
-  private final Plugin plugin;
+  private final UltraHardcoreAPI ultraHardcore;
 
   private final Location spawnLocation;
 
-  public WaitingListener(
-      final BukkitAudiences bukkitAudiences,
-      final EventService eventService,
-      final ItemService itemService,
-      final ModuleService moduleService,
-      final ProfileService profileService,
-      final Plugin plugin) {
-    this.bukkitAudiences = bukkitAudiences;
-    this.eventService = eventService;
-    this.itemService = itemService;
-    this.moduleService = moduleService;
-    this.profileService = profileService;
-    this.plugin = plugin;
-
+  public WaitingListener(final UltraHardcoreAPI ultraHardcore) {
+    this.ultraHardcore = ultraHardcore;
     this.spawnLocation =
-        Location.deserialize(plugin.getConfig().getConfigurationSection("spawn").getValues(false));
+        Location.deserialize(
+            ultraHardcore.plugin().getConfig().getConfigurationSection("spawn").getValues(false));
   }
 
   @EventHandler
@@ -90,14 +72,16 @@ public final class WaitingListener implements Listener {
       player.removePotionEffect(effect.getType());
     }
 
-    final var profile = this.profileService.getOrCreateProfile(player);
-    this.plugin
+    final var profile = this.ultraHardcore.profileService().getOrCreateProfile(player);
+    this.ultraHardcore
+        .plugin()
         .getLogger()
         .info(
             "Created profile for %s (%s)."
                 .formatted(profile.getName(), profile.getId().toString()));
 
-    this.bukkitAudiences
+    this.ultraHardcore
+        .bukkitAudiences()
         .all()
         .sendActionBar(
             text()
@@ -113,16 +97,33 @@ public final class WaitingListener implements Listener {
 
     WAITING_ITEMS.forEach((slot, itemClass) -> this.setItem(player, slot, itemClass));
 
-    if (false) {
+    if (!this.ultraHardcore.gameService().hostService().hasHostAccess(player)) {
       return;
     }
 
     HOST_WAITING_ITEMS.forEach((slot, itemClass) -> this.setItem(player, slot, itemClass));
   }
 
+  @EventHandler
+  public void onHostUpdate(final HostAccessUpdateEvent event) {
+    final var player = Bukkit.getPlayer(event.getId());
+    if (player == null) {
+      return;
+    }
+
+    if (event.getStatus() == HostAccessUpdateEvent.Status.ALLOWED) {
+      HOST_WAITING_ITEMS.forEach((slot, itemClass) -> this.setItem(player, slot, itemClass));
+    } else {
+      for (final var i : HOST_WAITING_ITEMS.keySet()) {
+        player.getInventory().setItem(i, new ItemStack(Material.AIR));
+      }
+    }
+  }
+
   private void setItem(
       final Player player, final int slot, final Class<? extends CustomItem> clazz) {
-    this.itemService
+    this.ultraHardcore
+        .itemService()
         .findByClass(clazz)
         .ifPresent(item -> player.getInventory().setItem(slot, item.provideIcon(player)));
   }
@@ -169,6 +170,6 @@ public final class WaitingListener implements Listener {
 
   @EventHandler
   public void onGameStart(final GameStartEvent event) {
-    this.eventService.unregisterListener(this);
+    this.ultraHardcore.eventService().unregisterListener(this);
   }
 }
