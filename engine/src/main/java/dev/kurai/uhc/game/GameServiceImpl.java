@@ -1,6 +1,8 @@
 package dev.kurai.uhc.game;
 
 import dev.kurai.uhc.UltraHardcoreAPI;
+import dev.kurai.uhc.game.cycle.CycleService;
+import dev.kurai.uhc.game.cycle.CycleServiceImpl;
 import dev.kurai.uhc.game.death.DeathService;
 import dev.kurai.uhc.game.death.DeathServiceImpl;
 import dev.kurai.uhc.game.drop.DropRateService;
@@ -34,6 +36,7 @@ public final class GameServiceImpl implements GameService {
 
   private final UltraHardcoreAPI ultraHardcore;
 
+  private final CycleService cycleService;
   private final DeathService deathService;
   private final DropRateService dropRateService;
   private final EpisodeService episodeService;
@@ -48,6 +51,7 @@ public final class GameServiceImpl implements GameService {
   public GameServiceImpl(final UltraHardcoreAPI ultraHardcore) {
     this.ultraHardcore = ultraHardcore;
 
+    this.cycleService = new CycleServiceImpl(ultraHardcore);
     this.deathService = new DeathServiceImpl(ultraHardcore);
     (this.dropRateService = new DropRateServiceImpl(ultraHardcore.eventService()))
         .registerModifiers(new AppleDropRateModifier(), new FlintDropRateModifier());

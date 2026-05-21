@@ -4,6 +4,7 @@ import static dev.kurai.uhc.util.api.option.Option.option;
 import static dev.kurai.uhc.util.api.option.Option.positiveNumberOption;
 import static net.kyori.adventure.key.Key.key;
 
+import dev.kurai.uhc.game.cycle.CycleService;
 import dev.kurai.uhc.game.death.DeathService;
 import dev.kurai.uhc.game.drop.DropRateService;
 import dev.kurai.uhc.game.episode.EpisodeService;
@@ -26,6 +27,8 @@ public interface GameService extends ForwardingAudience {
   long startTime();
 
   void startTime(final @Range(from = 0L, to = Long.MAX_VALUE) long startTime);
+
+  CycleService cycleService();
 
   DeathService deathService();
 
