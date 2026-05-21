@@ -23,9 +23,9 @@ public interface HostService {
 
   Set<UUID> coHosts();
 
-  void addCoHost(final UUID coHost);
+  boolean addCoHost(final UUID coHost);
 
-  void removeCoHost(final UUID coHost);
+  boolean removeCoHost(final UUID coHost);
 
   boolean coHost(final UUID uniqueId);
 

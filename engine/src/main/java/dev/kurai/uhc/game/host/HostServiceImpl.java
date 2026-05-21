@@ -2,12 +2,14 @@ package dev.kurai.uhc.game.host;
 
 import com.google.common.collect.Sets;
 import dev.kurai.uhc.UltraHardcoreAPI;
+import dev.kurai.uhc.event.defaults.host.HostAccessUpdateEvent;
 import dev.kurai.uhc.game.host.resolver.PlayerJoinHostResolver;
 import java.util.Collection;
 import java.util.Set;
 import java.util.UUID;
 import lombok.Getter;
 import lombok.Setter;
+import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitRunnable;
 
 @Getter
@@ -17,8 +19,10 @@ public final class HostServiceImpl implements HostService {
   private UUID host;
   private final Set<UUID> coHosts = Sets.newHashSet();
   private final Collection<TickableHostResolver> tickableHostResolvers = Sets.newHashSet();
+  private final UltraHardcoreAPI ultraHardcore;
 
   public HostServiceImpl(final UltraHardcoreAPI ultraHardcore) {
+    this.ultraHardcore = ultraHardcore;
     final var service = HostServiceImpl.this;
     this.processHostResolver(
         () -> {
@@ -62,7 +66,36 @@ public final class HostServiceImpl implements HostService {
       return;
     }
 
-    this.host = uuid;
+    this.host(uuid);
+  }
+
+  @Override
+  public void host(final UUID host) {
+    if (this.host != null) {
+      final var event =
+          this.ultraHardcore
+              .eventService()
+              .dispatchEvent(
+                  new HostAccessUpdateEvent(
+                      this.host,
+                      HostAccessUpdateEvent.Type.HOST,
+                      HostAccessUpdateEvent.Status.DENIED));
+      if (event.isCancelled()) {
+        return;
+      }
+    }
+
+    final var event =
+        this.ultraHardcore
+            .eventService()
+            .dispatchEvent(
+                new HostAccessUpdateEvent(
+                    host, HostAccessUpdateEvent.Type.HOST, HostAccessUpdateEvent.Status.ALLOWED));
+    if (event.isCancelled()) {
+      return;
+    }
+
+    this.host = host;
   }
 
   @Override
@@ -76,13 +109,32 @@ public final class HostServiceImpl implements HostService {
   }
 
   @Override
-  public void addCoHost(final UUID coHost) {
+  public boolean addCoHost(final UUID coHost) {
+    final var event =
+        new HostAccessUpdateEvent(
+            coHost, HostAccessUpdateEvent.Type.CO_HOST, HostAccessUpdateEvent.Status.ALLOWED);
+    Bukkit.getPluginManager().callEvent(event);
+
+    if (event.isCancelled()) {
+      return false;
+    }
+
     this.coHosts.add(coHost);
+    return true;
   }
 
   @Override
-  public void removeCoHost(final UUID coHost) {
+  public boolean removeCoHost(final UUID coHost) {
+    final var event =
+        new HostAccessUpdateEvent(
+            coHost, HostAccessUpdateEvent.Type.CO_HOST, HostAccessUpdateEvent.Status.DENIED);
+    Bukkit.getPluginManager().callEvent(event);
+    if (event.isCancelled()) {
+      return false;
+    }
+
     this.coHosts.remove(coHost);
+    return true;
   }
 
   @Override
