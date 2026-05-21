@@ -1,7 +1,6 @@
 package dev.kurai.uhc.game;
 
 import static dev.kurai.uhc.util.api.option.Option.option;
-import static dev.kurai.uhc.util.api.option.Option.positiveNumberOption;
 import static net.kyori.adventure.key.Key.key;
 
 import dev.kurai.uhc.game.cycle.CycleService;
@@ -11,6 +10,7 @@ import dev.kurai.uhc.game.episode.EpisodeService;
 import dev.kurai.uhc.game.host.HostService;
 import dev.kurai.uhc.game.scatter.ScatterService;
 import dev.kurai.uhc.game.scenario.ScenarioService;
+import dev.kurai.uhc.game.slot.SlotService;
 import dev.kurai.uhc.game.start.service.StartService;
 import dev.kurai.uhc.timer.TimerService;
 import dev.kurai.uhc.util.api.option.Option;
@@ -21,7 +21,6 @@ import org.jspecify.annotations.NullMarked;
 @NullMarked
 public interface GameService extends ForwardingAudience {
 
-  Option<Integer> SLOTS_OPTION = positiveNumberOption(key("slots"), 20);
   Option<Boolean> WHITELIST_OPTION = option(key("whitelist"), true);
 
   long startTime();
@@ -41,6 +40,8 @@ public interface GameService extends ForwardingAudience {
   ScatterService scatterService();
 
   ScenarioService scenarioService();
+
+  SlotService slotService();
 
   StartService startService();
 

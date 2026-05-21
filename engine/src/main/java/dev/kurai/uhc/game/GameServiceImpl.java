@@ -17,6 +17,8 @@ import dev.kurai.uhc.game.scatter.ScatterService;
 import dev.kurai.uhc.game.scatter.ScatterServiceImpl;
 import dev.kurai.uhc.game.scenario.ScenarioService;
 import dev.kurai.uhc.game.scenario.ScenarioServiceImpl;
+import dev.kurai.uhc.game.slot.SlotService;
+import dev.kurai.uhc.game.slot.SlotServiceImpl;
 import dev.kurai.uhc.game.start.StartServiceImpl;
 import dev.kurai.uhc.game.start.service.StartService;
 import dev.kurai.uhc.timer.TimerService;
@@ -43,6 +45,7 @@ public final class GameServiceImpl implements GameService {
   private final HostService hostService;
   private final ScatterService scatterService;
   private final ScenarioService scenarioService;
+  private final SlotService slotService;
   private final StartService startService;
   private final TimerService timerService;
 
@@ -59,11 +62,10 @@ public final class GameServiceImpl implements GameService {
     this.hostService = new HostServiceImpl(ultraHardcore);
     this.scatterService = new ScatterServiceImpl(ultraHardcore, this);
     this.scenarioService = new ScenarioServiceImpl(ultraHardcore);
-
-    final var bukkitAudiences = ultraHardcore.bukkitAudiences();
-
+    this.slotService = new SlotServiceImpl();
     this.startService = new StartServiceImpl(ultraHardcore);
 
+    final var bukkitAudiences = ultraHardcore.bukkitAudiences();
     (this.timerService = new TimerServiceImpl(ultraHardcore.plugin()))
         .registerTimers(
             new InvincibilityTimer(bukkitAudiences, ultraHardcore),
