@@ -4,6 +4,7 @@ import static net.kyori.adventure.text.Component.text;
 
 import com.google.common.collect.Lists;
 import dev.kurai.uhc.game.GameService;
+import dev.kurai.uhc.game.configuration.border.BorderConfiguration;
 import java.util.List;
 import java.util.UUID;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
@@ -31,7 +32,8 @@ public final class ScatterTask extends BukkitRunnable {
             gameService
                 .scatterService()
                 .getPositionProvider()
-                .provideLocations(1125, this.players.size()));
+                .provideLocations(
+                    BorderConfiguration.INITIAL_SIZE_OPTION.getValue() - 50, this.players.size()));
   }
 
   @Override

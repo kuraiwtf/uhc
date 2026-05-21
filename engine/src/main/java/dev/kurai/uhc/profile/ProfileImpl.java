@@ -1,7 +1,5 @@
 package dev.kurai.uhc.profile;
 
-import static dev.kurai.uhc.util.CC.prefix;
-
 import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.wrapper.PacketWrapper;
 import com.google.common.collect.Maps;

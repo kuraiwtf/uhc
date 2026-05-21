@@ -83,6 +83,7 @@ public final class UltraHardcoreEngine extends UltraHardcoreAPI {
 
     this.commandRegistrar.registerCommands(
         new PlayerCommands(this),
+        new ModuleCommands(this),
         new ModerationCommands(this),
         new HostCommand(this.bukkitAudiences, this),
         new WhitelistCommand(this.bukkitAudiences, this.whitelistService));
