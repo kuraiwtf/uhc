@@ -100,23 +100,22 @@ public final class TimerDurationMenu extends Menu {
 
       final var lines = Lists.<String>newArrayList();
       lines.add("");
-      lines.add("&6 " + SQUARE + "&f Temps actuel: &b" + TimeUtil.formatDuration(timeLeft * 1000L));
+      lines.add(
+          "&6 " + SQUARE + "&f Durée actuelle: &b" + TimeUtil.formatDuration(timeLeft * 1000L));
 
       if (minTime > 0 || maxTime != -1) {
+        lines.add("");
         lines.add("&c " + SQUARE + "&f Limites:");
         if (minTime > 0) {
-          lines.add("   Min:&a " + TimeUtil.formatDuration(minTime * 1000L));
+          lines.add("   &2" + SQUARE + " Min:&a " + TimeUtil.formatDuration(minTime * 1000L));
         }
-
-        lines.add(
-            "   Durée actuelle:&6 " + TimeUtil.formatDuration(this.timer.getTimeLeft() * 1000L));
 
         if (maxTime != -1) {
-          lines.add("   Max:&c " + TimeUtil.formatDuration(maxTime * 1000L));
+          lines.add("   &4" + SQUARE + " Max:&c " + TimeUtil.formatDuration(maxTime * 1000L));
         }
-        lines.add("");
       }
 
+      lines.add("");
       lines.add("&7" + BAR + "&f Modifiez le temps avec");
       lines.add("  les boutons autour.");
       lines.add("");
