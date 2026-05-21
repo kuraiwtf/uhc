@@ -1,0 +1,89 @@
+package dev.kurai.uhc.game.host;
+
+import com.google.common.collect.Sets;
+import java.util.Collection;
+import java.util.Set;
+import java.util.UUID;
+import lombok.Getter;
+import lombok.Setter;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.scheduler.BukkitRunnable;
+
+@Getter
+@Setter
+public final class HostServiceImpl implements HostService {
+
+  private UUID host;
+  private final Set<UUID> coHosts = Sets.newHashSet();
+  private final Collection<TickableHostResolver> tickableHostResolvers = Sets.newHashSet();
+
+  public HostServiceImpl(final Plugin plugin) {
+    final var service = HostServiceImpl.this;
+    new BukkitRunnable() {
+      @Override
+      public void run() {
+        if (service.host != null) {
+          this.cancel();
+          return;
+        }
+
+        for (final var resolver : service.tickableHostResolvers) {
+          service.processHostResolver(resolver);
+          if (service.host != null) {
+            this.cancel();
+            return;
+          }
+        }
+      }
+    }.runTaskTimerAsynchronously(plugin, 0L, 1L);
+  }
+
+  @Override
+  public void processHostResolver(final HostResolver resolver) {
+    if (this.host != null) {
+      return;
+    }
+
+    final var uuid = resolver.resolveHost();
+    if (uuid == null) {
+      return;
+    }
+
+    this.host = uuid;
+  }
+
+  @Override
+  public void addTickableHostResolver(final TickableHostResolver resolver) {
+    this.tickableHostResolvers.add(resolver);
+  }
+
+  @Override
+  public void removeTickableHostResolver(final TickableHostResolver resolver) {
+    this.tickableHostResolvers.remove(resolver);
+  }
+
+  @Override
+  public void addCoHost(final UUID coHost) {
+    this.coHosts.add(coHost);
+  }
+
+  @Override
+  public void removeCoHost(final UUID coHost) {
+    this.coHosts.remove(coHost);
+  }
+
+  @Override
+  public boolean coHost(final UUID uniqueId) {
+    return this.coHosts.contains(uniqueId);
+  }
+
+  @Override
+  public boolean isHost(final UUID uniqueId) {
+    return this.host != null && this.host.equals(uniqueId);
+  }
+
+  @Override
+  public boolean hasHostAccess(final UUID uniqueId) {
+    return this.isHost(uniqueId) || this.coHost(uniqueId);
+  }
+}
