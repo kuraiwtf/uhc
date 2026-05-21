@@ -31,13 +31,14 @@ import dev.kurai.uhc.whitelist.WhitelistService;
 import dev.kurai.uhc.whitelist.WhitelistServiceImpl;
 import dev.kurai.uhc.world.WorldService;
 import dev.kurai.uhc.world.WorldServiceImpl;
+import lombok.Getter;
 import net.j4c0b3y.api.menu.MenuHandler;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.jetbrains.annotations.NotNull;
 
+@Getter
 public final class UltraHardcoreEngine extends UltraHardcoreAPI {
 
   private BukkitAudiences bukkitAudiences;
@@ -53,7 +54,7 @@ public final class UltraHardcoreEngine extends UltraHardcoreAPI {
   private WhitelistService whitelistService;
   private WorldService worldService;
 
-  public UltraHardcoreEngine(final @NotNull Plugin plugin) {
+  public UltraHardcoreEngine(final Plugin plugin) {
     super(plugin);
   }
 
@@ -90,7 +91,7 @@ public final class UltraHardcoreEngine extends UltraHardcoreAPI {
         .getArgumentResolverRegistrar()
         .registerArgumentResolver(
             AbstractTimer.class,
-            new TimerArgumentResolver(this.bukkitAudiences, this.gameService.getTimerService()));
+            new TimerArgumentResolver(this.bukkitAudiences, this.gameService.timerService()));
 
     final var fixListener = new FixListener();
     PacketEvents.getAPI().getEventManager().registerListener(fixListener);
@@ -116,65 +117,5 @@ public final class UltraHardcoreEngine extends UltraHardcoreAPI {
     Bukkit.getScheduler()
         .runTaskTimerAsynchronously(
             this.plugin, new TabListUpdaterTask(this.tabListService), 0, 1L);
-  }
-
-  @Override
-  public @NotNull BukkitAudiences getBukkitAudiences() {
-    return this.bukkitAudiences;
-  }
-
-  @Override
-  public @NotNull ActionbarService getActionbarService() {
-    return this.actionbarService;
-  }
-
-  @Override
-  public @NotNull CommandRegistrar getCommandRegistrar() {
-    return this.commandRegistrar;
-  }
-
-  @Override
-  public @NotNull EventService getEventService() {
-    return this.eventService;
-  }
-
-  @Override
-  public @NotNull GameService getGameService() {
-    return this.gameService;
-  }
-
-  @Override
-  public @NotNull ItemService getItemService() {
-    return this.itemService;
-  }
-
-  @Override
-  public @NotNull ModuleService getModuleService() {
-    return this.moduleService;
-  }
-
-  @Override
-  public @NotNull ProfileService getProfileService() {
-    return this.profileService;
-  }
-
-  @Override
-  public @NotNull SidebarService getSidebarService() {
-    return this.sidebarService;
-  }
-
-  @Override
-  public @NotNull TabListService getTabListService() {
-    return this.tabListService;
-  }
-
-  @Override
-  public @NotNull WhitelistService getWhitelistService() {
-    return this.whitelistService;
-  }
-
-  @Override
-  public @NotNull WorldService getWorldService() {
-    return this.worldService;
   }
 }

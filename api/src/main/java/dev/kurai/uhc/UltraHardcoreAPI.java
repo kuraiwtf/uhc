@@ -42,31 +42,31 @@ public abstract class UltraHardcoreAPI {
     return instance;
   }
 
-  public @NotNull Plugin getPlugin() {
+  public @NotNull Plugin plugin() {
     return this.plugin;
   }
 
-  public abstract @NotNull BukkitAudiences getBukkitAudiences();
+  public abstract @NotNull BukkitAudiences bukkitAudiences();
 
-  public abstract @NotNull ActionbarService getActionbarService();
+  public abstract @NotNull ActionbarService actionbarService();
 
-  public abstract @NotNull CommandRegistrar getCommandRegistrar();
+  public abstract @NotNull CommandRegistrar commandRegistrar();
 
-  public abstract @NotNull EventService getEventService();
+  public abstract @NotNull EventService eventService();
 
-  public abstract @NotNull GameService getGameService();
+  public abstract @NotNull GameService gameService();
 
-  public abstract @NotNull ItemService getItemService();
+  public abstract @NotNull ItemService itemService();
 
-  public abstract @NotNull ModuleService getModuleService();
+  public abstract @NotNull ModuleService moduleService();
 
-  public abstract @NotNull ProfileService getProfileService();
+  public abstract @NotNull ProfileService profileService();
 
-  public abstract @NotNull SidebarService getSidebarService();
+  public abstract @NotNull SidebarService sidebarService();
 
-  public abstract @NotNull TabListService getTabListService();
+  public abstract @NotNull TabListService tabListService();
 
-  public abstract @NotNull WhitelistService getWhitelistService();
+  public abstract @NotNull WhitelistService whitelistService();
 
-  public abstract @NotNull WorldService getWorldService();
+  public abstract @NotNull WorldService worldService();
 }

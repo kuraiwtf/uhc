@@ -48,7 +48,7 @@ public final class PlayingListener implements Listener {
   public void onJoin(final @NotNull PlayerJoinEvent event) {
     event.setJoinMessage(null);
     this.ultraHardcore
-        .getGameService()
+        .gameService()
         .sendMessage(
             prefix()
                 .append(text("Le joueur "))
@@ -63,7 +63,7 @@ public final class PlayingListener implements Listener {
   public void onPlayerQuit(final @NotNull PlayerQuitEvent event) {
     event.setQuitMessage(null);
     this.ultraHardcore
-        .getGameService()
+        .gameService()
         .sendMessage(
             prefix()
                 .append(text("Le joueur "))
@@ -80,7 +80,7 @@ public final class PlayingListener implements Listener {
   public void processOfflineActions(final GameTickEvent event) {
     for (final var profile :
         this.ultraHardcore
-            .getProfileService()
+            .profileService()
             .getProfiles(profile -> profile.findPlayer().isPresent())) {
       final var component = profile.getComponent(OfflineActionComponent.class);
       if (component == null) {
@@ -101,7 +101,7 @@ public final class PlayingListener implements Listener {
   public void processDamageImmunities(final GameTickEvent event) {
     for (final var profile :
         this.ultraHardcore
-            .getProfileService()
+            .profileService()
             .getProfiles(profile -> profile.findPlayer().isPresent())) {
       final var component = profile.getComponent(DamageImmunityComponent.class);
       if (component == null) {
@@ -132,7 +132,7 @@ public final class PlayingListener implements Listener {
       return;
     }
 
-    final var profile = this.ultraHardcore.getProfileService().getOrCreateProfile(player);
+    final var profile = this.ultraHardcore.profileService().getOrCreateProfile(player);
     if (!profile.hasDamageImmunity(event.getCause())) {
       return;
     }
@@ -146,7 +146,7 @@ public final class PlayingListener implements Listener {
       return;
     }
 
-    final var profile = this.ultraHardcore.getProfileService().getOrCreateProfile(player);
+    final var profile = this.ultraHardcore.profileService().getOrCreateProfile(player);
     final var cause = event.getCause();
     if (profile.getDamageImmunityTicks(cause) != Profile.IMMUNITY_UNTIL_NEXT_DAMAGE_TICKS) {
       return;
@@ -164,7 +164,7 @@ public final class PlayingListener implements Listener {
 
     final var player = event.getEntity();
     final var profile =
-        this.ultraHardcore.getProfileService().getOrCreateProfile(player.getUniqueId());
+        this.ultraHardcore.profileService().getOrCreateProfile(player.getUniqueId());
     if (profile == null) {
       return;
     }
@@ -172,7 +172,7 @@ public final class PlayingListener implements Listener {
     final var inventory = player.getInventory();
     profile.addComponent(
         new InventoryComponent(inventory.getContents(), inventory.getArmorContents()));
-    this.ultraHardcore.getGameService().getDeathService().getDeathProcessor().processDeath(event);
+    this.ultraHardcore.gameService().deathService().getDeathProcessor().processDeath(event);
   }
 
   @EventHandler
@@ -186,10 +186,10 @@ public final class PlayingListener implements Listener {
 
     Bukkit.getScheduler()
         .runTaskLaterAsynchronously(
-            this.ultraHardcore.getPlugin(),
+            this.ultraHardcore.plugin(),
             () -> {
               final var profile =
-                  this.ultraHardcore.getProfileService().getOrCreateProfile(shooter.getUniqueId());
+                  this.ultraHardcore.profileService().getOrCreateProfile(shooter.getUniqueId());
               profile
                   .getActionbar()
                   .registerEntry(
@@ -227,7 +227,7 @@ public final class PlayingListener implements Listener {
     }
 
     final var profile =
-        this.ultraHardcore.getProfileService().getOrCreateProfile(event.getPlayer().getUniqueId());
+        this.ultraHardcore.profileService().getOrCreateProfile(event.getPlayer().getUniqueId());
     if (profile == null) {
       return;
     }
