@@ -1,12 +1,14 @@
 package dev.kurai.uhc.menu;
 
-import static dev.kurai.uhc.game.GameService.SLOTS_OPTION;
 import static dev.kurai.uhc.game.GameService.WHITELIST_OPTION;
 import static dev.kurai.uhc.util.CC.BAR;
 
+import com.google.common.collect.Lists;
 import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.event.EventService;
 import dev.kurai.uhc.game.scenario.ScenarioService;
+import dev.kurai.uhc.game.slot.SlotService;
+import dev.kurai.uhc.game.slot.impl.MutableSlotProvider;
 import dev.kurai.uhc.game.start.service.StartService;
 import dev.kurai.uhc.menu.rules.RulesMenu;
 import dev.kurai.uhc.menu.scenario.ScenarioConfigurationMenu;
@@ -45,7 +47,7 @@ public final class ConfigurationMenu extends Menu {
   public void setup(final @NotNull BackgroundLayer back, final @NotNull ForegroundLayer front) {
     this.apply(new BorderTemplate(DyeColor.ORANGE.getData()));
 
-    front.set(13, new SlotsButton());
+    front.set(13, new SlotsButton(this.ultraHardcore.gameService().slotService()));
 
     front.set(
         27,
@@ -72,27 +74,44 @@ public final class ConfigurationMenu extends Menu {
     front.set(49, new StartButton(this.ultraHardcore.gameService().startService()));
   }
 
+  @RequiredArgsConstructor
   private static final class SlotsButton extends Button {
+
+    private final SlotService slotService;
 
     @Override
     public ItemStack getIcon() {
+      final var lines = Lists.<String>newArrayList();
+      final var slotProvider = this.slotService.slotProvider();
+      lines.add("");
+      lines.add("&a " + CC.SQUARE + "&f Slots: &a" + slotProvider.slots());
+      lines.add("");
+
+      if (slotProvider instanceof MutableSlotProvider) {
+        lines.add("&7" + BAR + "&f Permet de modifier les");
+        lines.add("&a  slots&f de la partie.");
+      } else {
+        lines.add("&7" + BAR + "&f Les&a slots&f de la");
+        lines.add("&f  partie sont définis de");
+        lines.add("&f  manière&d automatique&f.");
+      }
+
+      lines.add("");
       return new ItemBuilder(Material.SKULL_ITEM)
           .data(3)
           .name("&a&lSlots")
-          .lore(
-              "",
-              "&a " + CC.SQUARE + "&f Slots: &a" + SLOTS_OPTION.getValue(),
-              "",
-              "&7" + BAR + "&f Permet de modifier les",
-              "&a  slots&f de la partie.",
-              "")
-          .glowing(true)
+          .lore(lines)
           .asItemStack();
     }
 
     @Override
     public void onClick(final ButtonClick click) {
-      final var slotsConfigurationMenu = new SlotsConfigurationMenu(click.getMenu().getPlayer());
+      if (!(this.slotService.slotProvider() instanceof final MutableSlotProvider slotProvider)) {
+        return;
+      }
+
+      final var slotsConfigurationMenu =
+          new SlotsConfigurationMenu(click.getMenu().getPlayer(), slotProvider);
       slotsConfigurationMenu.setPreviousMenu(click.getMenu());
       slotsConfigurationMenu.open();
     }

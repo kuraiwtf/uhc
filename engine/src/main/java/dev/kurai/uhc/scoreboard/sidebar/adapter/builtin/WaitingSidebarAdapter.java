@@ -7,7 +7,6 @@ import static net.kyori.adventure.text.format.TextDecoration.*;
 
 import com.google.common.collect.Lists;
 import dev.kurai.uhc.UltraHardcoreAPI;
-import dev.kurai.uhc.game.GameService;
 import dev.kurai.uhc.module.team.module.TeamModule;
 import dev.kurai.uhc.scoreboard.sidebar.SidebarAdapter;
 import dev.kurai.uhc.scoreboard.sidebar.SidebarTitleAdapter;
@@ -40,7 +39,8 @@ public final class WaitingSidebarAdapter implements SidebarAdapter, SidebarTitle
   @Override
   public @NotNull List<@NotNull Component> provideLines(final @NotNull Player player) {
     final var lines = Lists.<Component>newArrayList();
-    final var hostId = this.ultraHardcore.gameService().hostService().host();
+    final var gameService = this.ultraHardcore.gameService();
+    final var hostId = gameService.hostService().host();
     lines.add(empty());
     lines.add(
         text()
@@ -52,29 +52,25 @@ public final class WaitingSidebarAdapter implements SidebarAdapter, SidebarTitle
                         : this.ultraHardcore.profileService().getOrCreateProfile(hostId).getName(),
                     hostId == null ? RED : GOLD))
             .build());
-    lines.add(
-        text()
-            .append(text("Jeu: "))
-            .append(
-                text(this.ultraHardcore.moduleService().getCurrentModule().getName(), GOLD, BOLD))
-            .build());
+    final var module = this.ultraHardcore.moduleService().getCurrentModule();
+    lines.add(text().append(text("Jeu: ")).append(text(module.getName(), GOLD, BOLD)).build());
     lines.add(empty());
     lines.add(
         text()
             .append(text("Joueurs: "))
             .append(text(Bukkit.getOnlinePlayers().size(), GOLD, BOLD))
             .append(text('/', DARK_GRAY))
-            .append(text(GameService.SLOTS_OPTION.getValue(), GOLD))
+            .append(text(gameService.slotService().slotProvider().slots(), GOLD))
             .build());
-    if (this.ultraHardcore.moduleService().getCurrentModule() instanceof final TeamModule module) {
+    if (module instanceof final TeamModule teamModule) {
       lines.add(
           text()
               .append(text("Équipes: "))
               .append(
                   text(
-                      module.teamSize() == 1
+                      teamModule.teamSize() == 1
                           ? "FFA"
-                          : "%dvs%d".formatted(module.teamSize(), module.teamSize()),
+                          : "%dvs%d".formatted(teamModule.teamSize(), teamModule.teamSize()),
                       GOLD))
               .build());
     }
