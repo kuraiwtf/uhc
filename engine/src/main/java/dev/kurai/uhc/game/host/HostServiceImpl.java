@@ -1,12 +1,13 @@
 package dev.kurai.uhc.game.host;
 
 import com.google.common.collect.Sets;
+import dev.kurai.uhc.UltraHardcoreAPI;
+import dev.kurai.uhc.game.host.resolver.PlayerJoinHostResolver;
 import java.util.Collection;
 import java.util.Set;
 import java.util.UUID;
 import lombok.Getter;
 import lombok.Setter;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 @Getter
@@ -17,8 +18,20 @@ public final class HostServiceImpl implements HostService {
   private final Set<UUID> coHosts = Sets.newHashSet();
   private final Collection<TickableHostResolver> tickableHostResolvers = Sets.newHashSet();
 
-  public HostServiceImpl(final Plugin plugin) {
+  public HostServiceImpl(final UltraHardcoreAPI ultraHardcore) {
     final var service = HostServiceImpl.this;
+    this.processHostResolver(
+        () -> {
+          final var env = System.getenv("SERVER_HOST_ID");
+          if (env != null) {
+            return UUID.fromString(env);
+          }
+
+          return null;
+        });
+
+    this.addTickableHostResolver(new PlayerJoinHostResolver(ultraHardcore.eventService()));
+
     new BukkitRunnable() {
       @Override
       public void run() {
@@ -35,7 +48,7 @@ public final class HostServiceImpl implements HostService {
           }
         }
       }
-    }.runTaskTimerAsynchronously(plugin, 0L, 1L);
+    }.runTaskTimerAsynchronously(ultraHardcore.plugin(), 0L, 1L);
   }
 
   @Override
