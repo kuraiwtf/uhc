@@ -18,6 +18,6 @@ public final class ModerationCommands {
 
   @Command(@CommandMeta(name = "list"))
   public void list(final Player player) {
-    new PlayerListMenu(player, this.ultraHardcore.getProfileService()).open();
+    new PlayerListMenu(player, this.ultraHardcore.profileService()).open();
   }
 }

@@ -37,12 +37,12 @@ public final class InvincibilityTimer extends AbstractTimer implements Listener 
 
   @Override
   public void onStart() {
-    this.ultraHardcore.getEventService().registerListener(this);
+    this.ultraHardcore.eventService().registerListener(this);
   }
 
   @Override
   public void onSecond() {
-    for (final var profile : this.ultraHardcore.getProfileService().getProfiles()) {
+    for (final var profile : this.ultraHardcore.profileService().getProfiles()) {
       profile
           .getActionbar()
           .registerEntry(
@@ -60,7 +60,7 @@ public final class InvincibilityTimer extends AbstractTimer implements Listener 
 
   @Override
   public void onEnd() {
-    this.ultraHardcore.getEventService().unregisterListener(this);
+    this.ultraHardcore.eventService().unregisterListener(this);
     this.bukkitAudiences
         .all()
         .sendMessage(
@@ -68,7 +68,7 @@ public final class InvincibilityTimer extends AbstractTimer implements Listener 
                 .append(text("désactivée", DARK_RED))
                 .append(text(".", RED)));
 
-    for (final var profile : this.ultraHardcore.getProfileService().getProfiles()) {
+    for (final var profile : this.ultraHardcore.profileService().getProfiles()) {
       profile.getActionbar().removeEntry(IDENTIFIER);
     }
 

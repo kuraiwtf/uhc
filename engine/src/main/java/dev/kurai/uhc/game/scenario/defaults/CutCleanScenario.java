@@ -78,7 +78,7 @@ public final class CutCleanScenario extends AbstractScenario implements Listener
             result.getAmount(), ThreadLocalRandom.current().nextFloat(2f, 3.5f));
     final var dropEvent =
         this.ultraHardcore
-            .getEventService()
+            .eventService()
             .dispatchEvent(new CutCleanDropEvent(event.getPlayer(), result, experience));
 
     block.setType(Material.AIR);

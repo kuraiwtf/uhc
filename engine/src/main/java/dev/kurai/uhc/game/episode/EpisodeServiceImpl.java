@@ -47,6 +47,6 @@ public final class EpisodeServiceImpl implements EpisodeService {
         service.currentEpisode++;
         Bukkit.getPluginManager().callEvent(new GameEpisodeChangeEvent(service.currentEpisode));
       }
-    }.runTaskTimer(this.ultraHardcore.getPlugin(), 20 * 20L, 20 * 20L);
+    }.runTaskTimer(this.ultraHardcore.plugin(), 20 * 20L, 20 * 20L);
   }
 }

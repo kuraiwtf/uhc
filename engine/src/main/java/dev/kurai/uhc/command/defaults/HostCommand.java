@@ -55,7 +55,7 @@ public final class HostCommand {
 
   @SubCommand(@CommandMeta(name = "info", description = "Afficher les informations de la partie"))
   public void info(final Player player) {
-    final var profile = this.ultraHardcore.getProfileService().getOrCreateProfile(player);
+    final var profile = this.ultraHardcore.profileService().getOrCreateProfile(player);
     profile.sendMessage("");
     profile.sendMessage("Voici les informations de la partie:");
     profile.sendMessage("");
@@ -71,7 +71,7 @@ public final class HostCommand {
   @Command(@CommandMeta(name = "save", description = "Sauvegarder l'inventaire de départ"))
   public void saveInventory(final Player player) {
     final var profile =
-        this.ultraHardcore.getProfileService().getOrCreateProfile(player.getUniqueId());
+        this.ultraHardcore.profileService().getOrCreateProfile(player.getUniqueId());
     final var editorComponent = profile.getComponent(InventoryEditorComponent.class);
     if (editorComponent == null) {
       this.bukkitAudiences

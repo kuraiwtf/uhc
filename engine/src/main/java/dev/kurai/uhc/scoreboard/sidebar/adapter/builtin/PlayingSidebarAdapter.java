@@ -43,13 +43,13 @@ public final class PlayingSidebarAdapter implements SidebarAdapter {
                 text(
                     TimeUtil.formatDuration(
                         (System.currentTimeMillis()
-                            - this.ultraHardcore.getGameService().getStartTime())),
+                            - this.ultraHardcore.gameService().startTime())),
                     GOLD,
                     BOLD))
             .build());
     lines.add(empty());
 
-    final var module = this.ultraHardcore.getModuleService().getCurrentModule();
+    final var module = this.ultraHardcore.moduleService().getCurrentModule();
     if (module instanceof final SidebarAdapter moduleSidebar) {
       final var moduleSidebarLines = moduleSidebar.provideLines(player);
       if (!moduleSidebarLines.isEmpty()) {

@@ -33,7 +33,7 @@ public final class TimberScenario extends AbstractScenario implements Listener {
       return;
     }
 
-    new TimberTask(this.check(block)).runTaskTimer(this.ultraHardcore.getPlugin(), 0, 4L);
+    new TimberTask(this.check(block)).runTaskTimer(this.ultraHardcore.plugin(), 0, 4L);
   }
 
   private @NotNull List<@NotNull Block> check(final @NotNull Block block) {

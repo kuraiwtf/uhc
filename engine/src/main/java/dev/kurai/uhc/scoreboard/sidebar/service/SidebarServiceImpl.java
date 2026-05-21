@@ -27,11 +27,10 @@ public final class SidebarServiceImpl implements SidebarService {
     this.sidebars = Maps.newHashMap();
     final var adapter = new WaitingSidebarAdapter(ultraHardcore);
     this.install(adapter, adapter);
-    ultraHardcore.getEventService().registerListener(new SidebarListener(this));
+    ultraHardcore.eventService().registerListener(new SidebarListener(this));
 
     Bukkit.getScheduler()
-        .runTaskTimerAsynchronously(
-            ultraHardcore.getPlugin(), new SidebarUpdaterTask(this), 0L, 1L);
+        .runTaskTimerAsynchronously(ultraHardcore.plugin(), new SidebarUpdaterTask(this), 0L, 1L);
   }
 
   @Override

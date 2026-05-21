@@ -39,7 +39,7 @@ public abstract class AbstractPower
 
     this.restrictions = Maps.newConcurrentMap();
 
-    this.profile = ultraHardcore.getProfileService().getOrCreateProfile(owner);
+    this.profile = ultraHardcore.profileService().getOrCreateProfile(owner);
   }
 
   public @Nullable ActionbarEntry provideActionbarEntry(final @NotNull Player player) {
@@ -59,7 +59,7 @@ public abstract class AbstractPower
     }
 
     final var powerUseEvent =
-        this.ultraHardcore.getEventService().dispatchEvent(new PowerUseEvent(this.profile, this));
+        this.ultraHardcore.eventService().dispatchEvent(new PowerUseEvent(this.profile, this));
     if (powerUseEvent.isCancelled()) {
       return;
     }

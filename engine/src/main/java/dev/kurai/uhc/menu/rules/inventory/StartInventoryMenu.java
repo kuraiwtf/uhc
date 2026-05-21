@@ -142,7 +142,7 @@ public final class StartInventoryMenu extends Menu {
     public void onClick(final ButtonClick click) {
       final var player = click.getMenu().getPlayer();
       final var profile =
-          this.ultraHardcore.getProfileService().getOrCreateProfile(player.getUniqueId());
+          this.ultraHardcore.profileService().getOrCreateProfile(player.getUniqueId());
       if (profile == null) {
         return;
       }
@@ -172,7 +172,7 @@ public final class StartInventoryMenu extends Menu {
 
     private void sendEditModeMessage(final Player player) {
       this.ultraHardcore
-          .getBukkitAudiences()
+          .bukkitAudiences()
           .player(player)
           .sendMessage(
               text()

@@ -24,7 +24,7 @@ public final class PlayerCommands {
   @Command(@CommandMeta(name = "claim", aliases = "full"))
   public void claim(final Player player) {
     final var profile =
-        this.ultraHardcore.getProfileService().getOrCreateProfile(player.getUniqueId());
+        this.ultraHardcore.profileService().getOrCreateProfile(player.getUniqueId());
     if (profile == null || !profile.hasComponent(ClaimComponent.class)) {
       return;
     }
@@ -52,6 +52,6 @@ public final class PlayerCommands {
           aliases = "scen",
           description = "uhc.command.scenarios.description"))
   public void scenarios(final Player player) {
-    new ScenarioViewMenu(player, this.ultraHardcore.getGameService().getScenarioService()).open();
+    new ScenarioViewMenu(player, this.ultraHardcore.gameService().scenarioService()).open();
   }
 }

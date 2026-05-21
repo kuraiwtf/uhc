@@ -50,7 +50,7 @@ public final class RulesMenu extends Menu {
     front.set(14, new BorderTimerButton(this.ultraHardcore));
     front.set(15, new BorderButton());
 
-    front.set(18, new DropRateButton(this.ultraHardcore.getGameService().getDropRateService()));
+    front.set(18, new DropRateButton(this.ultraHardcore.gameService().dropRateService()));
     front.set(19, new StartInventoryButton(this.ultraHardcore));
     front.set(26, new InvincibilityTimerButton(this.ultraHardcore));
 
@@ -202,7 +202,7 @@ public final class RulesMenu extends Menu {
 
     @Override
     public ItemStack getIcon() {
-      final var timerService = this.ultraHardcore.getGameService().getTimerService();
+      final var timerService = this.ultraHardcore.gameService().timerService();
       final var pvpTimerOpt = timerService.getTimer("pvp");
 
       if (pvpTimerOpt.isEmpty()) {
@@ -230,7 +230,7 @@ public final class RulesMenu extends Menu {
     @Override
     public void onClick(final ButtonClick click) {
       final var menu = click.getMenu();
-      final var timerService = this.ultraHardcore.getGameService().getTimerService();
+      final var timerService = this.ultraHardcore.gameService().timerService();
       final var timerOpt = timerService.getTimer("pvp");
 
       if (timerOpt.isEmpty()) {
@@ -253,7 +253,7 @@ public final class RulesMenu extends Menu {
 
     @Override
     public ItemStack getIcon() {
-      final var timerService = this.ultraHardcore.getGameService().getTimerService();
+      final var timerService = this.ultraHardcore.gameService().timerService();
       final var borderTimerOpt = timerService.getTimer("border");
 
       if (borderTimerOpt.isEmpty()) {
@@ -280,7 +280,7 @@ public final class RulesMenu extends Menu {
     @Override
     public void onClick(final ButtonClick click) {
       final var menu = click.getMenu();
-      final var timerService = this.ultraHardcore.getGameService().getTimerService();
+      final var timerService = this.ultraHardcore.gameService().timerService();
       final var timerOpt = timerService.getTimer("border");
 
       if (timerOpt.isEmpty()) {
@@ -303,7 +303,7 @@ public final class RulesMenu extends Menu {
 
     @Override
     public ItemStack getIcon() {
-      final var timerService = this.ultraHardcore.getGameService().getTimerService();
+      final var timerService = this.ultraHardcore.gameService().timerService();
       final var invincibilityTimerOpt = timerService.getTimer("invincibility");
 
       if (invincibilityTimerOpt.isEmpty()) {
@@ -332,7 +332,7 @@ public final class RulesMenu extends Menu {
     @Override
     public void onClick(final ButtonClick click) {
       final var menu = click.getMenu();
-      final var timerService = this.ultraHardcore.getGameService().getTimerService();
+      final var timerService = this.ultraHardcore.gameService().timerService();
       final var timerOpt = timerService.getTimer("invincibility");
 
       if (timerOpt.isEmpty()) {

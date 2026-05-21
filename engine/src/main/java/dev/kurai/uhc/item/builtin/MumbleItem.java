@@ -50,7 +50,7 @@ public final class MumbleItem extends CustomItem {
     }
 
     this.ultraHardcore
-        .getBukkitAudiences()
+        .bukkitAudiences()
         .player(player)
         .sendMessage(
             prefix()

@@ -97,30 +97,30 @@ public final class StartServiceImpl implements StartService {
   public void handleStart() {
     this.startTask =
         new StartCountdownTask(
-                this.ultraHardcore.getBukkitAudiences(),
-                this.ultraHardcore.getGameService().getScatterService())
-            .runTaskTimer(this.ultraHardcore.getPlugin(), 0, 20L);
+                this.ultraHardcore.bukkitAudiences(),
+                this.ultraHardcore.gameService().scatterService())
+            .runTaskTimer(this.ultraHardcore.plugin(), 0, 20L);
   }
 
   @Override
   public void handleFinalStart() {
     this.startTask = null;
 
-    final var eventService = this.ultraHardcore.getEventService();
+    final var eventService = this.ultraHardcore.eventService();
     eventService.dispatchEvent(new GameStartEvent());
     eventService.registerListeners(
         new PlayingListener(this.ultraHardcore),
         new PowerListener(
-            this.ultraHardcore.getProfileService(),
-            this.ultraHardcore.getModuleService(),
-            this.ultraHardcore.getPlugin()));
+            this.ultraHardcore.profileService(),
+            this.ultraHardcore.moduleService(),
+            this.ultraHardcore.plugin()));
 
-    final var gameService = this.ultraHardcore.getGameService();
-    gameService.setStartTime(System.currentTimeMillis());
-    gameService.getTimerService().startAllTimers();
-    gameService.getEpisodeService().start();
+    final var gameService = this.ultraHardcore.gameService();
+    gameService.startTime(System.currentTimeMillis());
+    gameService.timerService().startAllTimers();
+    gameService.episodeService().start();
 
-    final var world = this.ultraHardcore.getWorldService().getWorld();
+    final var world = this.ultraHardcore.worldService().getWorld();
     final var worldBorder = world.getWorldBorder();
     final var initialSize = BorderConfiguration.INITIAL_SIZE_OPTION.getValue() * 2;
     worldBorder.setSize(initialSize);
@@ -128,18 +128,18 @@ public final class StartServiceImpl implements StartService {
 
     Bukkit.getScheduler()
         .runTaskTimer(
-            this.ultraHardcore.getPlugin(),
+            this.ultraHardcore.plugin(),
             () -> Bukkit.getPluginManager().callEvent(new GameTickEvent()),
             0,
             1L);
     Bukkit.getScheduler()
         .runTaskTimerAsynchronously(
-            this.ultraHardcore.getPlugin(),
-            new CooldownUpdaterTask(this.ultraHardcore.getProfileService()),
+            this.ultraHardcore.plugin(),
+            new CooldownUpdaterTask(this.ultraHardcore.profileService()),
             0,
             1L);
 
-    final var profileService = this.ultraHardcore.getProfileService();
+    final var profileService = this.ultraHardcore.profileService();
     for (final var profile : profileService.getProfiles()) {
       final var player = profile.getPlayer();
       if (player == null) {
@@ -154,7 +154,7 @@ public final class StartServiceImpl implements StartService {
     }
 
     this.ultraHardcore
-        .getSidebarService()
+        .sidebarService()
         .installAdapter(new PlayingSidebarAdapter(this.ultraHardcore));
   }
 }

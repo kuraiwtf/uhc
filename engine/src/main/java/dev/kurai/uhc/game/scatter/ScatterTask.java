@@ -29,7 +29,7 @@ public final class ScatterTask extends BukkitRunnable {
     this.positions =
         Lists.newArrayList(
             gameService
-                .getScatterService()
+                .scatterService()
                 .getPositionProvider()
                 .provideLocations(1125, this.players.size()));
   }
@@ -37,7 +37,7 @@ public final class ScatterTask extends BukkitRunnable {
   @Override
   public void run() {
     if (this.players.isEmpty()) {
-      this.gameService.getStartService().handleFinalStart();
+      this.gameService.startService().handleFinalStart();
       this.cancel();
       return;
     }

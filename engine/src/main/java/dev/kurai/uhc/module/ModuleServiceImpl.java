@@ -30,7 +30,7 @@ public final class ModuleServiceImpl implements ModuleService {
 
     final var event =
         this.ultraHardcore
-            .getEventService()
+            .eventService()
             .dispatchEvent(new ModuleInstallEvent(this.currentModule, module));
     if (event.isCancelled()) {
       LOGGER.warning("Module %s installation cancelled.".formatted(module.getName()));

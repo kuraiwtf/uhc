@@ -28,7 +28,7 @@ public final class DeathServiceImpl implements DeathService {
             deathLocation.getWorld().dropItemNaturally(deathLocation, drop);
           }
 
-          final var gameService = ultraHardcore.getGameService();
+          final var gameService = ultraHardcore.gameService();
           gameService.sendMessage(
               prefix()
                   .append(text(player.getName(), NamedTextColor.GOLD))
@@ -52,18 +52,17 @@ public final class DeathServiceImpl implements DeathService {
           }
 
           final var profile =
-              ultraHardcore.getProfileService().getOrCreateProfile(player.getUniqueId());
+              ultraHardcore.profileService().getOrCreateProfile(player.getUniqueId());
           if (profile != null) {
             profile.addComponent(
                 new DeadComponent(
                     killer == null ? null : killer.getUniqueId(),
-                    System.currentTimeMillis() - ultraHardcore.getGameService().getStartTime()));
+                    System.currentTimeMillis() - ultraHardcore.gameService().startTime()));
           }
 
           player.spigot().respawn();
           player.setGameMode(GameMode.SPECTATOR);
-          player.teleport(
-              new Location(ultraHardcore.getWorldService().getWorld(), 0.5, 200.5, 0.5));
+          player.teleport(new Location(ultraHardcore.worldService().getWorld(), 0.5, 200.5, 0.5));
         };
   }
 

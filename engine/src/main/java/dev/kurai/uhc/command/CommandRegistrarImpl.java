@@ -24,7 +24,7 @@ public final class CommandRegistrarImpl implements CommandRegistrar {
   private final ArgumentResolverRegistrar argumentResolverRegistrar;
 
   public CommandRegistrarImpl(final @NotNull UltraHardcoreAPI ultraHardcore) {
-    this.bukkitAudiences = ultraHardcore.getBukkitAudiences();
+    this.bukkitAudiences = ultraHardcore.bukkitAudiences();
     this.ultraHardcore = ultraHardcore;
     this.argumentResolverRegistrar = new ArgumentResolverRegistrarImpl(this.bukkitAudiences);
   }

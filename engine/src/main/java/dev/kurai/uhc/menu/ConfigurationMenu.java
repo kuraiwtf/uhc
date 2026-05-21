@@ -50,10 +50,9 @@ public final class ConfigurationMenu extends Menu {
     front.set(
         27,
         new ScenarioButton(
-            this.ultraHardcore.getEventService(),
-            this.ultraHardcore.getGameService().getScenarioService()));
+            this.ultraHardcore.eventService(), this.ultraHardcore.gameService().scenarioService()));
 
-    final var module = this.ultraHardcore.getModuleService().getCurrentModule();
+    final var module = this.ultraHardcore.moduleService().getCurrentModule();
     if (module instanceof final TeamModule teamModule) {
       front.set(30, new TeamButton(teamModule));
     } else {
@@ -70,7 +69,7 @@ public final class ConfigurationMenu extends Menu {
 
     front.set(43, new AccessibilityButton());
 
-    front.set(49, new StartButton(this.ultraHardcore.getGameService().getStartService()));
+    front.set(49, new StartButton(this.ultraHardcore.gameService().startService()));
   }
 
   private static final class SlotsButton extends Button {

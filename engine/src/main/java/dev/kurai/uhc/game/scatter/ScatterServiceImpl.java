@@ -20,14 +20,14 @@ public final class ScatterServiceImpl implements ScatterService {
   public ScatterServiceImpl(
       final @NotNull UltraHardcoreAPI ultraHardcore, final @NotNull GameService gameService) {
     this.gameService = gameService;
-    this.plugin = ultraHardcore.getPlugin();
-    this.bukkitAudiences = ultraHardcore.getBukkitAudiences();
+    this.plugin = ultraHardcore.plugin();
+    this.bukkitAudiences = ultraHardcore.bukkitAudiences();
 
     this.positionProvider =
         (radius, players) -> {
           final var locations = Lists.<Location>newArrayListWithCapacity(players);
 
-          final var world = ultraHardcore.getWorldService().getWorld();
+          final var world = ultraHardcore.worldService().getWorld();
           final var center = world.getSpawnLocation();
 
           final double angleStep = (2 * Math.PI) / players;

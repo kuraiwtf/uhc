@@ -52,7 +52,7 @@ public final class GameServiceImpl implements GameService {
     (this.dropRateService = new DropRateServiceImpl(ultraHardcore.eventService()))
         .registerModifiers(new AppleDropRateModifier(), new FlintDropRateModifier());
     this.episodeService = new EpisodeServiceImpl(ultraHardcore);
-    this.hostService = new HostServiceImpl(ultraHardcore.plugin());
+    this.hostService = new HostServiceImpl(ultraHardcore);
     this.scatterService = new ScatterServiceImpl(ultraHardcore, this);
     this.scenarioService = new ScenarioServiceImpl(ultraHardcore);
 

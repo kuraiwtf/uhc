@@ -43,7 +43,7 @@ public final class ScenarioItem extends CustomItem {
       return;
     }
 
-    new ScenarioViewMenu(player, this.ultraHardcore.getGameService().getScenarioService()).open();
+    new ScenarioViewMenu(player, this.ultraHardcore.gameService().scenarioService()).open();
   }
 
   @Override

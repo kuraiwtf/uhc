@@ -55,7 +55,7 @@ public final class ProfileImpl implements Profile {
 
   @Override
   public Audience audience() {
-    return this.ultraHardcore.getBukkitAudiences().player(this.getId());
+    return this.ultraHardcore.bukkitAudiences().player(this.getId());
   }
 
   @Override
@@ -84,7 +84,7 @@ public final class ProfileImpl implements Profile {
 
   @Override
   public Actionbar getActionbar() {
-    return this.ultraHardcore.getActionbarService().getActionbar(this.getId());
+    return this.ultraHardcore.actionbarService().getActionbar(this.getId());
   }
 
   private void executeAction(final Consumer<Player> action) {
@@ -329,7 +329,7 @@ public final class ProfileImpl implements Profile {
     this.powers.put(power.getId(), power);
 
     if (power instanceof final Listener listener) {
-      this.ultraHardcore.getEventService().registerListener(listener);
+      this.ultraHardcore.eventService().registerListener(listener);
     }
 
     if (power instanceof final AbstractItemPower itemPower) {
