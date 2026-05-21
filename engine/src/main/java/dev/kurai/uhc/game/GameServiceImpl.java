@@ -9,6 +9,8 @@ import dev.kurai.uhc.game.drop.defaults.AppleDropRateModifier;
 import dev.kurai.uhc.game.drop.defaults.FlintDropRateModifier;
 import dev.kurai.uhc.game.episode.EpisodeService;
 import dev.kurai.uhc.game.episode.EpisodeServiceImpl;
+import dev.kurai.uhc.game.host.HostService;
+import dev.kurai.uhc.game.host.HostServiceImpl;
 import dev.kurai.uhc.game.scatter.ScatterService;
 import dev.kurai.uhc.game.scatter.ScatterServiceImpl;
 import dev.kurai.uhc.game.scenario.ScenarioService;
@@ -20,11 +22,14 @@ import dev.kurai.uhc.timer.TimerServiceImpl;
 import dev.kurai.uhc.timer.builtin.BorderTimer;
 import dev.kurai.uhc.timer.builtin.InvincibilityTimer;
 import dev.kurai.uhc.timer.builtin.PvPTimer;
+import lombok.Getter;
+import lombok.Setter;
 import net.kyori.adventure.audience.Audience;
-import org.jetbrains.annotations.Range;
 import org.jspecify.annotations.NullMarked;
 
 @NullMarked
+@Getter
+@Setter
 public final class GameServiceImpl implements GameService {
 
   private final UltraHardcoreAPI ultraHardcore;
@@ -32,6 +37,7 @@ public final class GameServiceImpl implements GameService {
   private final DeathService deathService;
   private final DropRateService dropRateService;
   private final EpisodeService episodeService;
+  private final HostService hostService;
   private final ScatterService scatterService;
   private final ScenarioService scenarioService;
   private final StartService startService;
@@ -43,17 +49,18 @@ public final class GameServiceImpl implements GameService {
     this.ultraHardcore = ultraHardcore;
 
     this.deathService = new DeathServiceImpl(ultraHardcore);
-    (this.dropRateService = new DropRateServiceImpl(ultraHardcore.getEventService()))
+    (this.dropRateService = new DropRateServiceImpl(ultraHardcore.eventService()))
         .registerModifiers(new AppleDropRateModifier(), new FlintDropRateModifier());
     this.episodeService = new EpisodeServiceImpl(ultraHardcore);
+    this.hostService = new HostServiceImpl(ultraHardcore.plugin());
     this.scatterService = new ScatterServiceImpl(ultraHardcore, this);
     this.scenarioService = new ScenarioServiceImpl(ultraHardcore);
 
-    final var bukkitAudiences = ultraHardcore.getBukkitAudiences();
+    final var bukkitAudiences = ultraHardcore.bukkitAudiences();
 
     this.startService = new StartServiceImpl(ultraHardcore);
 
-    (this.timerService = new TimerServiceImpl(ultraHardcore.getPlugin()))
+    (this.timerService = new TimerServiceImpl(ultraHardcore.plugin()))
         .registerTimers(
             new InvincibilityTimer(bukkitAudiences, ultraHardcore),
             new PvPTimer(bukkitAudiences),
@@ -61,54 +68,9 @@ public final class GameServiceImpl implements GameService {
   }
 
   @Override
-  public long getStartTime() {
-    return this.startTime;
-  }
-
-  @Override
-  public void setStartTime(@Range(from = 0L, to = Long.MAX_VALUE) final long startTime) {
-    this.startTime = startTime;
-  }
-
-  @Override
-  public DeathService getDeathService() {
-    return this.deathService;
-  }
-
-  @Override
-  public DropRateService getDropRateService() {
-    return this.dropRateService;
-  }
-
-  @Override
-  public EpisodeService getEpisodeService() {
-    return this.episodeService;
-  }
-
-  @Override
-  public ScatterService getScatterService() {
-    return this.scatterService;
-  }
-
-  @Override
-  public ScenarioService getScenarioService() {
-    return this.scenarioService;
-  }
-
-  @Override
-  public StartService getStartService() {
-    return this.startService;
-  }
-
-  @Override
-  public TimerService getTimerService() {
-    return this.timerService;
-  }
-
-  @Override
   public Iterable<? extends Audience> audiences() {
     return this.ultraHardcore
-        .getProfileService()
+        .profileService()
         .getProfiles(profile -> profile.findPlayer().isPresent());
   }
 }
