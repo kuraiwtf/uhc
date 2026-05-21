@@ -13,7 +13,9 @@ import org.jetbrains.annotations.NotNull;
 @Setter
 public final class BuiltinModule extends AbstractModule implements TeamModule {
 
+  private int minTeamSize;
   private int teamSize;
+  private int maxTeamSize;
 
   private boolean teamView;
   private boolean friendlyFire;
@@ -21,7 +23,9 @@ public final class BuiltinModule extends AbstractModule implements TeamModule {
 
   public BuiltinModule(final @NotNull UltraHardcoreAPI ultraHardcore) {
     super("uhc", "UHC", null, ultraHardcore);
+    this.minTeamSize = 1;
     this.teamSize = 1;
+    this.maxTeamSize = Integer.MAX_VALUE;
   }
 
   @Override

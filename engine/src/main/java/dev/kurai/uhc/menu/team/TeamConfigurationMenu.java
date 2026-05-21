@@ -90,6 +90,17 @@ public final class TeamConfigurationMenu extends Menu {
           .amount(this.module.teamSize())
           .asItemStack();
     }
+
+    @Override
+    public void onClick(final ButtonClick click) {
+      final var type = click.getType();
+      this.module.teamSize(
+          Math.clamp(
+              this.module.teamSize() + (type.isLeftClick() ? 1 : type.isRightClick() ? -1 : 0),
+              1,
+              this.module.maxTeamSize()));
+      click.getMenu().update();
+    }
   }
 
   @RequiredArgsConstructor

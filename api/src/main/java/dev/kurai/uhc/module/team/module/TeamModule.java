@@ -6,9 +6,17 @@ public interface TeamModule {
 
   void teamView(final boolean teamView);
 
+  int minTeamSize();
+
+  void minTeamSize(final int minTeamSize);
+
   int teamSize();
 
   void teamSize(final int teamSize);
+
+  int maxTeamSize();
+
+  void maxTeamSize(final int maxTeamSize);
 
   default boolean ffa() {
     return this.teamSize() == 1;

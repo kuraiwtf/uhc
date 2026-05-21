@@ -8,6 +8,7 @@ import static net.kyori.adventure.text.format.TextDecoration.*;
 import com.google.common.collect.Lists;
 import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.game.GameService;
+import dev.kurai.uhc.module.team.module.TeamModule;
 import dev.kurai.uhc.scoreboard.sidebar.SidebarAdapter;
 import dev.kurai.uhc.scoreboard.sidebar.SidebarTitleAdapter;
 import java.util.List;
@@ -65,7 +66,18 @@ public final class WaitingSidebarAdapter implements SidebarAdapter, SidebarTitle
             .append(text('/', DARK_GRAY))
             .append(text(GameService.SLOTS_OPTION.getValue(), GOLD))
             .build());
-    lines.add(text().append(text("Équipes: ")).append(text("FFA", GOLD, BOLD)).build());
+    if (this.ultraHardcore.moduleService().getCurrentModule() instanceof final TeamModule module) {
+      lines.add(
+          text()
+              .append(text("Équipes: "))
+              .append(
+                  text(
+                      module.teamSize() == 1
+                          ? "FFA"
+                          : "%dvs%d".formatted(module.teamSize(), module.teamSize()),
+                      GOLD))
+              .build());
+    }
     lines.add(empty());
     lines.add(text().append(text('@', DARK_AQUA)).append(text("kuraiwtf", AQUA)).build());
     return lines;
