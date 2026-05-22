@@ -278,12 +278,11 @@ public final class PlayingListener implements Listener {
     }
 
     if (limitReached) {
-      block.setType(Material.AIR);
-      event.setCancelled(true);
-
       if (blockType == DIAMOND_ORE) {
         event.getPlayer().getInventory().addItem(new ItemStack(Material.GOLD_INGOT, 2));
       }
+
+      event.setCancelled(true);
       return;
     }
 

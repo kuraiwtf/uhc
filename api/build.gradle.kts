@@ -3,10 +3,8 @@ plugins {
     id("uhc.maven-publishing-conventions")
 }
 
-val targetJavaVersion = 23
-
 java {
-    toolchain.languageVersion = JavaLanguageVersion.of(targetJavaVersion)
+    toolchain { languageVersion = JavaLanguageVersion.of(25) }
 
     withSourcesJar()
     withJavadocJar()

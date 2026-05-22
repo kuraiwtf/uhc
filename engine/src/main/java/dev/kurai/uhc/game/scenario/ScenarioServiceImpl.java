@@ -21,7 +21,6 @@ public final class ScenarioServiceImpl implements ScenarioService {
         new CobblestoneOnlyScenario(ultraHardcore),
         new CutCleanScenario(ultraHardcore),
         new HasteyBoysScenario(ultraHardcore),
-        new OreMagnetScenario(ultraHardcore),
         new SafeMinersScenario(ultraHardcore),
         new TimberScenario(ultraHardcore));
   }
