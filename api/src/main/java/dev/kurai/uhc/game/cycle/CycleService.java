@@ -14,7 +14,7 @@ public interface CycleService extends CycleHolder {
 
   void totalCycleDuration(final @Range(from = 5 * 60L, to = 30 * 60L) int duration);
 
-  void skipCycleTo(Cycle target);
+  void skipCycleTo(AbstractCycle target);
 
   void skipCycle();
 }
