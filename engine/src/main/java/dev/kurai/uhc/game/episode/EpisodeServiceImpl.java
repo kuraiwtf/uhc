@@ -2,6 +2,12 @@ package dev.kurai.uhc.game.episode;
 
 import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.event.defaults.game.GameEpisodeChangeEvent;
+import java.time.Duration;
+import net.kyori.adventure.key.Key;
+import net.kyori.adventure.sound.Sound;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.title.Title;
 import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -14,9 +20,6 @@ public final class EpisodeServiceImpl implements EpisodeService {
 
   public EpisodeServiceImpl(final UltraHardcoreAPI ultraHardcore) {
     this.ultraHardcore = ultraHardcore;
-
-    this.enabled = false;
-    this.currentEpisode = 1;
   }
 
   @Override
@@ -46,7 +49,21 @@ public final class EpisodeServiceImpl implements EpisodeService {
       public void run() {
         service.currentEpisode++;
         Bukkit.getPluginManager().callEvent(new GameEpisodeChangeEvent(service.currentEpisode));
+
+        if (service.currentEpisode == 1) {
+          return;
+        }
+
+        final var gameService = EpisodeServiceImpl.this.ultraHardcore.gameService();
+        gameService.showTitle(
+            Title.title(
+                Component.empty(),
+                Component.text("Épisode ", NamedTextColor.AQUA)
+                    .append(Component.text(service.currentEpisode)),
+                Title.Times.times(Duration.ZERO, Duration.ofSeconds(3L), Duration.ZERO)));
+
+        gameService.playSound(Sound.sound(Key.key("note.pling"), Sound.Source.NEUTRAL, 1f, 1f));
       }
-    }.runTaskTimer(this.ultraHardcore.plugin(), 20 * 20L, 20 * 20L);
+    }.runTaskTimer(this.ultraHardcore.plugin(), 0L, (20 * 60) * 20L);
   }
 }
