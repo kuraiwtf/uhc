@@ -6,23 +6,23 @@ import org.jspecify.annotations.NullUnmarked;
 @NullUnmarked
 public interface CycleHolder {
 
-  Collection<Cycle> getPhases();
+  Collection<AbstractCycle> getPhases();
 
   void clearPhases();
 
-  void registerCycle(final Cycle cycle);
+  void registerCycle(final AbstractCycle cycle);
 
-  default void registerCycles(final Cycle... cycles) {
+  default void registerCycles(final AbstractCycle... cycles) {
     for (final var cycle : cycles) {
       this.registerCycle(cycle);
     }
   }
 
-  void registerCycle(final int index, final Cycle cycle);
+  void registerCycle(final int index, final AbstractCycle cycle);
 
-  void registerCycleBefore(final Cycle from, final Cycle cycle);
+  void registerCycleBefore(final AbstractCycle from, final AbstractCycle cycle);
 
-  void registerCycleAfter(final Cycle from, final Cycle cycle);
+  void registerCycleAfter(final AbstractCycle from, final AbstractCycle cycle);
 
   void unregisterCycle(final String id);
 
@@ -32,11 +32,11 @@ public interface CycleHolder {
     }
   }
 
-  default void unregisterCycle(final Cycle cycle) {
+  default void unregisterCycle(final AbstractCycle cycle) {
     this.unregisterCycle(cycle.getId());
   }
 
-  default void unregisterCycles(final Cycle... cycles) {
+  default void unregisterCycles(final AbstractCycle... cycles) {
     for (final var cycle : cycles) {
       this.unregisterCycle(cycle);
     }
