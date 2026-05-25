@@ -57,7 +57,7 @@ public final class ScatterServiceImpl implements ScatterService {
 
   @Override
   public void handleScatter() {
-    new ScatterTask(this.gameService, this.bukkitAudiences).runTaskTimer(this.plugin, 0, 1L);
+    new ScatterTask(this.gameService).runTaskTimer(this.plugin, 0, 1L);
   }
 
   @Override
