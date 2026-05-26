@@ -38,5 +38,5 @@ public final class PlayerExplosionEvent extends Event implements Cancellable {
 
   public record Explosion(Collection<BlockData> blocks) {}
 
-  public record BlockData(Material material, byte data) {}
+  public record BlockData(Location location, Material material, byte data) {}
 }

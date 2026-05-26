@@ -203,7 +203,9 @@ public final class GlobalUtil {
     final var explosionBlocks = Lists.<PlayerExplosionEvent.BlockData>newArrayList();
     for (final var location : blocks) {
       final var block = location.getBlock();
-      explosionBlocks.add(new PlayerExplosionEvent.BlockData(block.getType(), block.getData()));
+      explosionBlocks.add(
+          new PlayerExplosionEvent.BlockData(
+              block.getLocation(), block.getType(), block.getData()));
     }
 
     final var event =
