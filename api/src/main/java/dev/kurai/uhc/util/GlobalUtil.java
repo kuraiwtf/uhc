@@ -4,6 +4,9 @@ import static org.bukkit.Material.*;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
+import dev.kurai.uhc.UltraHardcoreAPI;
+import dev.kurai.uhc.event.defaults.player.PlayerExplosionEvent;
+import dev.kurai.uhc.profile.Profile;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -189,13 +192,31 @@ public final class GlobalUtil {
     return list;
   }
 
-  public static void createBeautyExplosion(final Location loc, final int power) {
-    createBeautyExplosion(loc, power, false);
+  public static void createBeautyExplosion(
+      final Profile source, final Location loc, final int power) {
+    createBeautyExplosion(source, loc, power, false);
   }
 
   public static void createBeautyExplosion(
-      final Location loc, final int power, final boolean fire) {
+      final Profile source, final Location loc, final int power, final boolean fire) {
     final List<Location> blocks = generateSphere(loc, power, false);
+    final var explosionBlocks = Lists.<PlayerExplosionEvent.BlockData>newArrayList();
+    for (final var location : blocks) {
+      final var block = location.getBlock();
+      explosionBlocks.add(new PlayerExplosionEvent.BlockData(block.getType(), block.getData()));
+    }
+
+    final var event =
+        UltraHardcoreAPI.getInstance()
+            .eventService()
+            .dispatchEvent(
+                new PlayerExplosionEvent(
+                    source, new PlayerExplosionEvent.Explosion(explosionBlocks), loc, power));
+
+    if (event.isCancelled()) {
+      return;
+    }
+
     for (final Location blockLoc : blocks) {
       final var block = blockLoc.getBlock();
       if (block.getType() != AIR && block.getType() != BEDROCK) {
