@@ -12,6 +12,7 @@ import dev.kurai.uhc.util.api.state.Stateful;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Consumer;
 import net.kyori.adventure.audience.ForwardingAudience;
 import net.minecraft.server.v1_8_R3.Packet;
 import org.bukkit.Bukkit;
@@ -43,6 +44,8 @@ public interface Profile
   String getName();
 
   Actionbar getActionbar();
+
+  void executeAction(Consumer<Player> action);
 
   void addItem(final ItemStack item);
 

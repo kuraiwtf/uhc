@@ -85,7 +85,8 @@ public final class ProfileImpl implements Profile {
     return this.ultraHardcore.actionbarService().getActionbar(this.getId());
   }
 
-  private void executeAction(final Consumer<Player> action) {
+  @Override
+  public void executeAction(final Consumer<Player> action) {
     this.findPlayer()
         .ifPresentOrElse(
             action,
