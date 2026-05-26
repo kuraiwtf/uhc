@@ -8,6 +8,7 @@ import static org.bukkit.Material.*;
 import com.google.common.collect.Maps;
 import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.event.defaults.game.GameTickEvent;
+import dev.kurai.uhc.event.defaults.player.PlayerDamageByPlayerEvent;
 import dev.kurai.uhc.game.configuration.game.GameConfiguration;
 import dev.kurai.uhc.game.configuration.ore.OreConfiguration;
 import dev.kurai.uhc.item.builtin.*;
@@ -74,6 +75,24 @@ public final class PlayingListener implements Listener {
                 .append(text("15:00", NamedTextColor.GOLD, TextDecoration.BOLD))
                 .append(text(" pour se reconnecter."))
                 .build());
+  }
+
+  @EventHandler
+  public void onDamage(final EntityDamageByEntityEvent event) {
+    if (!(event.getDamager() instanceof final Player player)
+        || !(event.getEntity() instanceof final Player victim)
+        || event.isCancelled()
+        || victim.getNoDamageTicks() > 10) {
+      return;
+    }
+
+    final var profileService = this.ultraHardcore.profileService();
+    final var attackerProfile = profileService.getOrCreateProfile(player);
+    final var victimProfile = profileService.getOrCreateProfile(victim);
+
+    this.ultraHardcore
+        .eventService()
+        .dispatchEvent(new PlayerDamageByPlayerEvent(attackerProfile, victimProfile, event));
   }
 
   @EventHandler
