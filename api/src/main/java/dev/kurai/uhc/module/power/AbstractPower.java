@@ -17,10 +17,10 @@ import org.jetbrains.annotations.Nullable;
 public abstract class AbstractPower
     implements Identifiable<@NotNull String>, Nameable<@NotNull String>, PowerRestrictionHolder {
 
-  private final String identifier;
-  private final String name;
+  protected final String identifier;
+  protected final String name;
 
-  private final Map<@NotNull String, @NotNull PowerRestriction> restrictions;
+  protected final Map<@NotNull String, @NotNull PowerRestriction> restrictions;
 
   protected final UUID owner;
   protected final UltraHardcoreAPI ultraHardcore;

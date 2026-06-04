@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.UUID;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -40,11 +41,20 @@ public abstract class AbstractParentItemPower extends LeftClickItemPower {
         this.children.get((this.children.indexOf(this.currentPower) + 1) % this.children.size());
     this.lastSwitch = System.currentTimeMillis();
 
-    player.setItemInHand(this.currentPower.provideIcon(player));
+    player.setItemInHand(this.currentPower.getIcon(player));
     player.updateInventory();
 
     player.playSound(player.getLocation(), Sound.WOOD_CLICK, 1F, 1F);
     return true;
+  }
+
+  @Override
+  public ItemStack getIcon(final Player player) {
+    if (this.currentPower == null) {
+      return super.getIcon(player);
+    }
+
+    return this.currentPower.getIcon(player);
   }
 
   public final void registerChild(final @NotNull RightClickItemPower power) {

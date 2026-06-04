@@ -47,7 +47,7 @@ public final class CooldownUpdaterTask implements Runnable {
       final @NotNull Profile profile,
       final @NotNull Player player,
       final @NotNull AbstractItemPower itemPower) {
-    if (!itemPower.provideIcon(player).isSimilar(player.getItemInHand())) {
+    if (!itemPower.getIcon(player).isSimilar(player.getItemInHand())) {
       this.removeItemPowerEntry(profile, player, itemPower);
       return;
     }
