@@ -100,7 +100,7 @@ public final class PlayerUtil {
   }
 
   public static void updateHeldItem(final Player player) {
-    updateItem(player, player.getInventory().getHeldItemSlot());
+    updateItem(player, retrieveIndex(player.getInventory().getHeldItemSlot()));
   }
 
   private static int retrieveIndex(int index) {
