@@ -310,7 +310,7 @@ public final class ProfileImpl implements Profile {
   }
 
   @Override
-  public <T extends AbstractPower> T getPower(final Class<T> clazz) {
+  public <T extends AbstractPower> @Nullable T getPower(final Class<T> clazz) {
     return this.powers.values().stream()
         .filter(power -> clazz.isAssignableFrom(power.getClass()))
         .map(clazz::cast)
@@ -338,7 +338,7 @@ public final class ProfileImpl implements Profile {
       }
 
       if ((!roleAttribution || itemPower.shouldDistributePower(player))) {
-        final var icon = itemPower.provideIcon(player);
+        final var icon = itemPower.getIcon(player);
         this.addItem(icon);
       }
     }

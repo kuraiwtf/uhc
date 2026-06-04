@@ -128,7 +128,7 @@ public interface Profile
   Collection<AbstractPower> getPowers();
 
   @Override
-  <T extends AbstractPower> T getPower(final Class<T> clazz);
+  <T extends AbstractPower> @Nullable T getPower(final Class<T> clazz);
 
   @Override
   void registerPower(final AbstractPower power);
