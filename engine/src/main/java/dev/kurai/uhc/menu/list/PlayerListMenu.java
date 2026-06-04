@@ -1,7 +1,6 @@
 package dev.kurai.uhc.menu.list;
 
 import com.google.common.collect.Lists;
-import dev.kurai.uhc.ecs.component.Component;
 import dev.kurai.uhc.menu.template.BorderTemplate;
 import dev.kurai.uhc.menu.template.PaginationTemplate;
 import dev.kurai.uhc.profile.Profile;
@@ -11,6 +10,7 @@ import java.util.List;
 import net.j4c0b3y.api.menu.MenuSize;
 import net.j4c0b3y.api.menu.annotation.AutoUpdate;
 import net.j4c0b3y.api.menu.button.Button;
+import net.j4c0b3y.api.menu.button.ButtonClick;
 import net.j4c0b3y.api.menu.layer.impl.BackgroundLayer;
 import net.j4c0b3y.api.menu.layer.impl.ForegroundLayer;
 import net.j4c0b3y.api.menu.pagination.PaginatedMenu;
@@ -61,30 +61,21 @@ public final class PlayerListMenu extends PaginatedMenu {
     public ItemStack getIcon() {
       final var lines = Lists.<String>newArrayList();
 
-      for (final var component : this.profile.getComponents()) {
-        final Class<? extends Component> componentClass = component.getClass();
-        lines.add(componentClass.getSimpleName() + ": ");
-        for (final var field : componentClass.getDeclaredFields()) {
-          field.setAccessible(true);
-          try {
-            lines.add(" - " + field.getName() + ": " + field.get(component));
-          } catch (final IllegalAccessException e) {
-            throw new RuntimeException(e);
-          }
-          field.setAccessible(false);
-        }
-
-        lines.add("");
-      }
+      lines.add("");
+      lines.add("Components:&a %d".formatted(this.profile.getComponents().size()));
+      lines.add("");
 
       final var powers = this.profile.getPowers();
       if (!powers.isEmpty()) {
         lines.add("Powers:");
         for (final var power : powers) {
-          lines.add(" - " + power.getId());
+          lines.add("&8 -&r " + power.getId());
         }
         lines.add("");
       }
+
+      lines.add("&e&l»&r Cliquez-ici pour accéder aux composants.");
+      lines.add("");
 
       return new ItemBuilder(Material.SKULL_ITEM)
           .data(3)
@@ -92,6 +83,13 @@ public final class PlayerListMenu extends PaginatedMenu {
           .lore(lines)
           .skullOwner(this.profile.getName())
           .asItemStack();
+    }
+
+    @Override
+    public void onClick(final ButtonClick click) {
+      final var menu = new ComponentListMenu(click.getMenu().getPlayer(), this.profile);
+      menu.setPreviousMenu(click.getMenu());
+      menu.open();
     }
   }
 }
