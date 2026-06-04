@@ -15,6 +15,7 @@ dependencies {
     api(libs.bundles.apollo)
     api(libs.bundles.adventure)
     api(libs.menu.api)
+    api(libs.entity.lib)
     api(libs.lombok)
     annotationProcessor(libs.lombok)
     compileOnly(libs.packetevents.spigot)
