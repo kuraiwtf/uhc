@@ -81,12 +81,14 @@ public final class CC {
 
   private CC() {}
 
+  public static final String BUILTIN_PREFIX = "&e&lUHC&7 &l" + BAR + "&f";
+
   public static TextComponent.@NotNull Builder prefix() {
     return text().append(text(BAR, GRAY, BOLD)).appendSpace();
   }
 
   public static String prefix(final String text) {
-    return prefix(text, "&e&lUHC&7 &l" + BAR + "&f");
+    return prefix(text, BUILTIN_PREFIX);
   }
 
   public static String prefix(final String text, final String prefix) {

@@ -4,6 +4,7 @@ import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.command.annotation.Command;
 import dev.kurai.uhc.command.annotation.CommandMeta;
 import dev.kurai.uhc.menu.list.PlayerListMenu;
+import dev.kurai.uhc.util.CC;
 import org.bukkit.entity.Player;
 import org.jspecify.annotations.NullMarked;
 
@@ -18,6 +19,11 @@ public final class ModerationCommands {
 
   @Command(@CommandMeta(name = "list"))
   public void list(final Player player) {
+    if (!player.isOp()) {
+      player.sendMessage(CC.prefix("Vous n'avez pas la permission d'utiliser cette commande."));
+      return;
+    }
+
     new PlayerListMenu(player, this.ultraHardcore.profileService()).open();
   }
 }
