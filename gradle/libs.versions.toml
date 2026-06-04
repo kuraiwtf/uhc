@@ -16,6 +16,8 @@ packetevents-api = '2.11.1'
 
 lombok = '1.18.46'
 
+entity-lib = '1.0.6'
+
 [plugins]
 shadow = { id = 'com.gradleup.shadow', version.ref = 'shadow' }
 
@@ -36,6 +38,8 @@ menu-api = { module = 'net.j4c0b3y:MenuAPI-core', version.ref = 'menu-api' }
 packetevents-spigot = { module = 'com.github.retrooper:packetevents-spigot', version.ref = 'packetevents-api' }
 
 lombok = { module = 'org.projectlombok:lombok', version.ref = 'lombok' }
+
+entity-lib = { module = 'pt.supercrafting:EntityLib', version.ref = 'entity-lib' }
 
 [bundles]
 apollo = ['apollo-api', 'apollo-wrapper']
