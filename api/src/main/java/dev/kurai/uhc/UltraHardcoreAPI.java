@@ -14,20 +14,21 @@ import dev.kurai.uhc.whitelist.WhitelistService;
 import dev.kurai.uhc.world.WorldService;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bukkit.plugin.Plugin;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NullUnmarked;
+import pt.supercrafting.entity.EntityLib;
 
+@NullUnmarked
 public abstract class UltraHardcoreAPI {
 
   private static UltraHardcoreAPI instance;
 
   protected final Plugin plugin;
 
-  protected UltraHardcoreAPI(final @NotNull Plugin plugin) {
+  protected UltraHardcoreAPI(final Plugin plugin) {
     this.plugin = plugin;
   }
 
-  public static synchronized @NotNull UltraHardcoreAPI create(
-      final @NotNull UltraHardcoreAPI instance) {
+  public static synchronized UltraHardcoreAPI create(final UltraHardcoreAPI instance) {
     Preconditions.checkArgument(UltraHardcoreAPI.instance == null, "API instance already exists!");
     return UltraHardcoreAPI.instance = instance;
   }
@@ -38,35 +39,37 @@ public abstract class UltraHardcoreAPI {
 
   public void onDisable() {}
 
-  public static @NotNull UltraHardcoreAPI getInstance() {
+  public static UltraHardcoreAPI getInstance() {
     return instance;
   }
 
-  public @NotNull Plugin plugin() {
+  public Plugin plugin() {
     return this.plugin;
   }
 
-  public abstract @NotNull BukkitAudiences bukkitAudiences();
+  public abstract BukkitAudiences bukkitAudiences();
 
-  public abstract @NotNull ActionbarService actionbarService();
+  public abstract ActionbarService actionbarService();
 
-  public abstract @NotNull CommandRegistrar commandRegistrar();
+  public abstract CommandRegistrar commandRegistrar();
 
-  public abstract @NotNull EventService eventService();
+  public abstract EntityLib entityLib();
 
-  public abstract @NotNull GameService gameService();
+  public abstract EventService eventService();
 
-  public abstract @NotNull ItemService itemService();
+  public abstract GameService gameService();
 
-  public abstract @NotNull ModuleService moduleService();
+  public abstract ItemService itemService();
 
-  public abstract @NotNull ProfileService profileService();
+  public abstract ModuleService moduleService();
 
-  public abstract @NotNull SidebarService sidebarService();
+  public abstract ProfileService profileService();
 
-  public abstract @NotNull TabListService tabListService();
+  public abstract SidebarService sidebarService();
 
-  public abstract @NotNull WhitelistService whitelistService();
+  public abstract TabListService tabListService();
 
-  public abstract @NotNull WorldService worldService();
+  public abstract WhitelistService whitelistService();
+
+  public abstract WorldService worldService();
 }

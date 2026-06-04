@@ -37,6 +37,7 @@ import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
+import pt.supercrafting.entity.EntityLib;
 
 @Getter
 public final class UltraHardcoreEngine extends UltraHardcoreAPI {
@@ -44,6 +45,7 @@ public final class UltraHardcoreEngine extends UltraHardcoreAPI {
   private BukkitAudiences bukkitAudiences;
   private ActionbarService actionbarService;
   private CommandRegistrar commandRegistrar;
+  private EntityLib entityLib;
   private EventService eventService;
   private GameService gameService;
   private ItemService itemService;
@@ -69,6 +71,8 @@ public final class UltraHardcoreEngine extends UltraHardcoreAPI {
     new MenuHandler((JavaPlugin) this.plugin);
     this.commandRegistrar = new CommandRegistrarImpl(this);
     this.eventService = new EventServiceImpl(this.plugin);
+
+    this.entityLib = EntityLib.create(this.plugin, PacketEvents.getAPI());
 
     this.worldService = new WorldServiceImpl(this.plugin, this.bukkitAudiences);
     this.sidebarService = new SidebarServiceImpl(this);
