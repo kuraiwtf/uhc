@@ -18,6 +18,8 @@ lombok = '1.18.46'
 
 entity-lib = '1.0.6'
 
+actionbar-api = '0.0.1'
+
 [plugins]
 shadow = { id = 'com.gradleup.shadow', version.ref = 'shadow' }
 
@@ -40,6 +42,8 @@ packetevents-spigot = { module = 'com.github.retrooper:packetevents-spigot', ver
 lombok = { module = 'org.projectlombok:lombok', version.ref = 'lombok' }
 
 entity-lib = { module = 'pt.supercrafting:EntityLib', version.ref = 'entity-lib' }
+
+actionbar-api = { module = 'dev.kurai:actionbar-api', version.ref = 'actionbar-api' }
 
 [bundles]
 apollo = ['apollo-api', 'apollo-wrapper']
