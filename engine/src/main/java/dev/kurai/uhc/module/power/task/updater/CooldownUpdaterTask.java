@@ -2,12 +2,14 @@ package dev.kurai.uhc.module.power.task.updater;
 
 import static net.kyori.adventure.text.Component.text;
 
+import dev.kurai.uhc.adventure.UltraHardcoreKey;
 import dev.kurai.uhc.module.power.AbstractPower;
 import dev.kurai.uhc.module.power.defaults.item.AbstractItemPower;
 import dev.kurai.uhc.module.power.restriction.defaults.CooldownPowerRestriction;
 import dev.kurai.uhc.profile.Profile;
 import dev.kurai.uhc.profile.ProfileService;
 import java.util.Objects;
+import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -55,7 +57,8 @@ public final class CooldownUpdaterTask implements Runnable {
     final var actionbar = profile.getActionbar();
     final var actionbarEntry = itemPower.provideActionbarEntry(player);
     if (actionbarEntry == null) {
-      actionbar.registerEntry(itemPower.getId(), this.buildStatusComponent(itemPower));
+      actionbar.registerEntry(
+          UltraHardcoreKey.key(itemPower.getId()), this.buildStatusComponent(itemPower));
       return;
     }
 
@@ -70,9 +73,9 @@ public final class CooldownUpdaterTask implements Runnable {
     final var actionbar = profile.getActionbar();
 
     if (actionbarEntry == null) {
-      actionbar.removeEntry(itemPower.getId());
+      actionbar.unregisterEntry(UltraHardcoreKey.key(itemPower.getId()));
     } else {
-      actionbar.removeEntry(actionbarEntry.getId());
+      actionbar.unregisterEntry(actionbarEntry.key());
     }
   }
 
@@ -84,7 +87,7 @@ public final class CooldownUpdaterTask implements Runnable {
     final var actionbar = profile.getActionbar();
 
     if (actionbarEntry == null) {
-      actionbar.removeEntry(power.getId());
+      actionbar.unregisterEntry(Key.key(power.getId()));
       return;
     }
 

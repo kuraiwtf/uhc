@@ -7,6 +7,7 @@ import static org.bukkit.Material.*;
 
 import com.google.common.collect.Maps;
 import dev.kurai.uhc.UltraHardcoreAPI;
+import dev.kurai.uhc.adventure.UltraHardcoreKey;
 import dev.kurai.uhc.event.defaults.game.GameTickEvent;
 import dev.kurai.uhc.event.defaults.player.PlayerDamageByPlayerEvent;
 import dev.kurai.uhc.game.configuration.game.GameConfiguration;
@@ -18,6 +19,7 @@ import dev.kurai.uhc.profile.component.InventoryComponent;
 import dev.kurai.uhc.profile.component.OfflineActionComponent;
 import dev.kurai.uhc.profile.component.ProfileMiningComponent;
 import dev.kurai.uhc.util.PlayerUtil;
+import java.time.Duration;
 import java.util.Map;
 import java.util.function.Consumer;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -212,14 +214,14 @@ public final class PlayingListener implements Listener {
               profile
                   .getActionbar()
                   .registerEntry(
-                      "health_view",
+                      UltraHardcoreKey.key("health_view"),
                       PlayerUtil.formatHealthAsHeartBar(
                           player,
                           style(NamedTextColor.DARK_RED),
                           style(NamedTextColor.RED),
                           style(NamedTextColor.YELLOW),
                           style(NamedTextColor.DARK_GRAY)),
-                      3 * 20);
+                      Duration.ofSeconds(3L));
             },
             2L);
   }

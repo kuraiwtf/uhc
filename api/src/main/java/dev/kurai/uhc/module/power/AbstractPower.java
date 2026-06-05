@@ -1,8 +1,8 @@
 package dev.kurai.uhc.module.power;
 
 import com.google.common.collect.Maps;
+import dev.kurai.actionbar.entry.ActionbarEntry;
 import dev.kurai.uhc.UltraHardcoreAPI;
-import dev.kurai.uhc.actionbar.ActionbarEntry;
 import dev.kurai.uhc.event.defaults.power.PowerUseEvent;
 import dev.kurai.uhc.module.power.restriction.PowerRestriction;
 import dev.kurai.uhc.module.power.restriction.holder.PowerRestrictionHolder;

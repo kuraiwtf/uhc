@@ -4,10 +4,12 @@ import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.format.NamedTextColor.*;
 
 import dev.kurai.uhc.UltraHardcoreAPI;
+import dev.kurai.uhc.adventure.UltraHardcoreKey;
 import dev.kurai.uhc.timer.AbstractTimer;
 import dev.kurai.uhc.timer.annotation.Duration;
 import dev.kurai.uhc.util.api.annotation.Identifier;
 import dev.kurai.uhc.util.api.annotation.Name;
+import net.kyori.adventure.key.Key;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
@@ -24,6 +26,8 @@ import org.jetbrains.annotations.NotNull;
 public final class InvincibilityTimer extends AbstractTimer implements Listener {
 
   static final String IDENTIFIER = "invincibility";
+
+  private static final Key ACTIONBAR_KEY = UltraHardcoreKey.key(IDENTIFIER);
 
   private final BukkitAudiences bukkitAudiences;
   private final UltraHardcoreAPI ultraHardcore;
@@ -46,7 +50,7 @@ public final class InvincibilityTimer extends AbstractTimer implements Listener 
       profile
           .getActionbar()
           .registerEntry(
-              IDENTIFIER,
+              ACTIONBAR_KEY,
               text()
                   .append(text("Vous êtes "))
                   .append(text("invincible", GREEN))
@@ -69,7 +73,7 @@ public final class InvincibilityTimer extends AbstractTimer implements Listener 
                 .append(text(".", RED)));
 
     for (final var profile : this.ultraHardcore.profileService().getProfiles()) {
-      profile.getActionbar().removeEntry(IDENTIFIER);
+      profile.getActionbar().unregisterEntry(ACTIONBAR_KEY);
     }
 
     Bukkit.getOnlinePlayers()
