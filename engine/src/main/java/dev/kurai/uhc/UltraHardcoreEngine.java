@@ -1,9 +1,7 @@
 package dev.kurai.uhc;
 
 import com.github.retrooper.packetevents.PacketEvents;
-import dev.kurai.uhc.actionbar.ActionbarService;
-import dev.kurai.uhc.actionbar.ActionbarServiceImpl;
-import dev.kurai.uhc.actionbar.ActionbarUpdaterTask;
+import dev.kurai.actionbar.service.ActionbarService;
 import dev.kurai.uhc.command.CommandRegistrar;
 import dev.kurai.uhc.command.CommandRegistrarImpl;
 import dev.kurai.uhc.command.argument.builtin.uhc.TimerArgumentResolver;
@@ -77,7 +75,8 @@ public final class UltraHardcoreEngine extends UltraHardcoreAPI {
     this.worldService = new WorldServiceImpl(this.plugin, this.bukkitAudiences);
     this.sidebarService = new SidebarServiceImpl(this);
 
-    this.actionbarService = new ActionbarServiceImpl();
+    this.actionbarService =
+        ActionbarService.create(this.plugin, player -> this.bukkitAudiences.player(player));
     this.gameService = new GameServiceImpl(this);
     this.itemService = new ItemServiceImpl(this);
     this.moduleService = new ModuleServiceImpl(this);
@@ -103,13 +102,6 @@ public final class UltraHardcoreEngine extends UltraHardcoreAPI {
 
     this.eventService.registerListeners(
         fixListener, new ItemListener(this.itemService), new WaitingListener(this));
-
-    Bukkit.getScheduler()
-        .runTaskTimerAsynchronously(
-            this.plugin,
-            new ActionbarUpdaterTask(this.bukkitAudiences, this.actionbarService),
-            0,
-            1L);
 
     Bukkit.getScheduler()
         .runTaskTimerAsynchronously(

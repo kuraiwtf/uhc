@@ -1,7 +1,7 @@
 package dev.kurai.uhc;
 
 import com.google.common.base.Preconditions;
-import dev.kurai.uhc.actionbar.ActionbarService;
+import dev.kurai.actionbar.service.ActionbarService;
 import dev.kurai.uhc.command.CommandRegistrar;
 import dev.kurai.uhc.event.EventService;
 import dev.kurai.uhc.game.GameService;
