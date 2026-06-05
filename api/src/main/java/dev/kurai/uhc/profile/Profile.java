@@ -1,7 +1,7 @@
 package dev.kurai.uhc.profile;
 
 import com.github.retrooper.packetevents.wrapper.PacketWrapper;
-import dev.kurai.uhc.actionbar.Actionbar;
+import dev.kurai.actionbar.Actionbar;
 import dev.kurai.uhc.ecs.component.Component;
 import dev.kurai.uhc.ecs.entity.Entity;
 import dev.kurai.uhc.module.power.AbstractPower;

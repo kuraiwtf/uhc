@@ -3,8 +3,8 @@ package dev.kurai.uhc.profile;
 import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.wrapper.PacketWrapper;
 import com.google.common.collect.Maps;
+import dev.kurai.actionbar.Actionbar;
 import dev.kurai.uhc.UltraHardcoreAPI;
-import dev.kurai.uhc.actionbar.Actionbar;
 import dev.kurai.uhc.ecs.component.Component;
 import dev.kurai.uhc.ecs.component.defaults.NameComponent;
 import dev.kurai.uhc.ecs.entity.Entity;
@@ -82,7 +82,7 @@ public final class ProfileImpl implements Profile {
 
   @Override
   public Actionbar getActionbar() {
-    return this.ultraHardcore.actionbarService().getActionbar(this.getId());
+    return this.ultraHardcore.actionbarService().actionbar(this.getId());
   }
 
   @Override
