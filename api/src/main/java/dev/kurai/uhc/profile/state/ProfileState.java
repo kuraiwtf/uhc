@@ -2,8 +2,10 @@ package dev.kurai.uhc.profile.state;
 
 import dev.kurai.uhc.profile.Profile;
 import dev.kurai.uhc.util.api.state.entity.EntityState;
+import lombok.ToString;
 import org.jetbrains.annotations.NotNull;
 
+@ToString
 public abstract class ProfileState implements EntityState<Profile> {
 
   protected final String id;
