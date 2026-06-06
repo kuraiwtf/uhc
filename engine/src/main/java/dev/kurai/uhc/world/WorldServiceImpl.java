@@ -17,7 +17,9 @@ public final class WorldServiceImpl implements WorldService {
       final @NotNull Plugin plugin, final @NotNull BukkitAudiences bukkitAudiences) {
     this.plugin = plugin;
     this.bukkitAudiences = bukkitAudiences;
+
     this.world = WorldCreator.name("uhc_world").createWorld();
+    this.world.setSpawnLocation(0, 200, 0);
   }
 
   @Override
