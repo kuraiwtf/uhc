@@ -35,6 +35,11 @@ public final class Color {
     return TextColor.color(this.red, this.green, this.blue);
   }
 
+  public com.github.retrooper.packetevents.protocol.color.Color asPacketEventsColor() {
+    return new com.github.retrooper.packetevents.protocol.color.Color(
+        this.red, this.green, this.blue);
+  }
+
   public java.awt.Color asJavaColor() {
     return new java.awt.Color(this.red, this.green, this.blue);
   }
