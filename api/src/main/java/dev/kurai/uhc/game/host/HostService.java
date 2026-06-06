@@ -1,17 +1,21 @@
 package dev.kurai.uhc.game.host;
 
+import dev.kurai.uhc.profile.Profile;
 import java.util.Collection;
 import java.util.Set;
 import java.util.UUID;
 import org.bukkit.entity.Player;
-import org.jspecify.annotations.NullUnmarked;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
-@NullUnmarked
+@NullMarked
 public interface HostService {
 
-  UUID host();
+  @Nullable Profile hostProfile();
 
-  void host(final UUID host);
+  @Nullable UUID host();
+
+  void host(final @Nullable UUID host);
 
   void processHostResolver(final HostResolver resolver);
 

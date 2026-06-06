@@ -4,6 +4,7 @@ import com.google.common.collect.Sets;
 import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.event.defaults.host.HostAccessUpdateEvent;
 import dev.kurai.uhc.game.host.resolver.PlayerJoinHostResolver;
+import dev.kurai.uhc.profile.Profile;
 import java.util.Collection;
 import java.util.Set;
 import java.util.UUID;
@@ -11,12 +12,15 @@ import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 @Getter
 @Setter
+@NullMarked
 public final class HostServiceImpl implements HostService {
 
-  private UUID host;
+  private @Nullable UUID host;
   private final Set<UUID> coHosts = Sets.newHashSet();
   private final Collection<TickableHostResolver> tickableHostResolvers = Sets.newHashSet();
   private final UltraHardcoreAPI ultraHardcore;
@@ -70,7 +74,12 @@ public final class HostServiceImpl implements HostService {
   }
 
   @Override
-  public void host(final UUID host) {
+  public @Nullable Profile hostProfile() {
+    return this.ultraHardcore.profileService().getOrCreateProfile(this.host);
+  }
+
+  @Override
+  public void host(final @Nullable UUID host) {
     if (this.host != null) {
       final var event =
           this.ultraHardcore
