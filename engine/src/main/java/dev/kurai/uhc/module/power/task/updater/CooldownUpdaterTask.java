@@ -8,6 +8,7 @@ import dev.kurai.uhc.module.power.defaults.item.AbstractItemPower;
 import dev.kurai.uhc.module.power.restriction.defaults.CooldownPowerRestriction;
 import dev.kurai.uhc.profile.Profile;
 import dev.kurai.uhc.profile.ProfileService;
+import dev.kurai.uhc.util.Color;
 import java.util.Objects;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
@@ -99,14 +100,15 @@ public final class CooldownUpdaterTask implements Runnable {
   }
 
   private @NotNull Component buildStatusComponent(final @NotNull AbstractPower power) {
-    final var cooldown = power.findRestriction(CooldownPowerRestriction.class, "cooldown");
-
+    final CooldownPowerRestriction cooldown =
+        power.findRestriction(CooldownPowerRestriction.class, "cooldown");
+    final Color color = power.getColor();
     if (cooldown != null && cooldown.getTimeLeft() > 0) {
       return text()
           .append(text(power.getName()))
           .append(text(": "))
-          .append(text(cooldown.getTimeLeft(), NamedTextColor.GOLD, TextDecoration.BOLD))
-          .append(text("s", NamedTextColor.GOLD))
+          .append(text(cooldown.getTimeLeft(), color.asAdventureColor(), TextDecoration.BOLD))
+          .append(text("s", color.asAdventureColor()))
           .build();
     }
 
