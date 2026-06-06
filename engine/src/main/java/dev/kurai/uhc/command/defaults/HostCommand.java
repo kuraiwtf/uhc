@@ -9,9 +9,13 @@ import dev.kurai.uhc.command.annotation.CommandMeta;
 import dev.kurai.uhc.command.annotation.SubCommand;
 import dev.kurai.uhc.command.argument.annotation.Argument;
 import dev.kurai.uhc.game.configuration.inventory.InventoryConfiguration;
+import dev.kurai.uhc.game.host.HostService;
 import dev.kurai.uhc.menu.ConfigurationMenu;
+import dev.kurai.uhc.profile.Profile;
 import dev.kurai.uhc.profile.component.InventoryEditorComponent;
 import dev.kurai.uhc.timer.AbstractTimer;
+import dev.kurai.uhc.util.CC;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -27,10 +31,32 @@ public final class HostCommand {
   private final UltraHardcoreAPI ultraHardcore;
 
   @SubCommand(@CommandMeta(name = "add", description = "Ajouter un co-hôte"))
-  public void add(final Player player, final @Argument(name = "joueur") Player target) {}
+  public void add(final Player player, final @Argument(name = "joueur") Player target) {
+    final HostService hostService = this.ultraHardcore.gameService().hostService();
+    if (hostService.coHost(target)) {
+      player.sendMessage(CC.prefix("Ce joueur est déjà un co-hôte de la partie."));
+      return;
+    }
+
+    hostService.addCoHost(target.getUniqueId());
+    player.sendMessage(
+        CC.prefix(
+            "Vous avez ajouté&6 %s&f comme co-hôte de la partie.".formatted(target.getName())));
+  }
 
   @SubCommand(@CommandMeta(name = "remove", description = "Retirer un co-hôte"))
-  public void remove(final Player player, final @Argument(name = "joueur") Player target) {}
+  public void remove(final Player player, final @Argument(name = "joueur") Player target) {
+    final HostService hostService = this.ultraHardcore.gameService().hostService();
+    if (!hostService.coHost(target)) {
+      player.sendMessage(CC.prefix("Ce joueur n'est pas un co-hôte de la partie."));
+      return;
+    }
+
+    hostService.removeCoHost(target.getUniqueId());
+    player.sendMessage(
+        CC.prefix(
+            "Vous avez retiré&6 %s&f des co-hôtes de la partie.".formatted(target.getName())));
+  }
 
   @SubCommand(@CommandMeta(name = "config", description = "Configurer la partie"))
   public void config(final Player player) {
@@ -55,18 +81,48 @@ public final class HostCommand {
 
   @SubCommand(@CommandMeta(name = "info", description = "Afficher les informations de la partie"))
   public void info(final Player player) {
-    final var profile = this.ultraHardcore.profileService().getOrCreateProfile(player);
+    final HostService hostService = this.ultraHardcore.gameService().hostService();
+    final Profile hostProfile = hostService.hostProfile();
+
+    final Profile profile = this.ultraHardcore.profileService().getOrCreateProfile(player);
+
     profile.sendMessage("");
     profile.sendMessage("Voici les informations de la partie:");
     profile.sendMessage("");
-    profile.sendMessage("&8»&r Hôte principal:&6 %s");
-    profile.sendMessage("&8»&r Co-hôtes&8 (&60&8)&r:");
-    profile.sendMessage("&8 -&r %s");
+    profile.sendMessage(
+        "&8»&r Hôte principal:&6 %s"
+            .formatted(hostProfile == null ? "Aucun" : hostProfile.getName()));
+
+    profile.sendMessage("");
+    final var coHosts = hostService.coHosts();
+    if (coHosts.isEmpty()) {
+      profile.sendMessage("&8»&c Aucun co-hôte.");
+    } else {
+      profile.sendMessage("&8»&r Co-hôtes&8 (&6%d&8):".formatted(coHosts.size()));
+      for (final UUID coHost : coHosts) {
+        final Profile coHostProfile =
+            this.ultraHardcore.profileService().getOrCreateProfile(coHost);
+        profile.sendMessage("   &8»&r %s".formatted(coHostProfile.getName()));
+      }
+    }
     profile.sendMessage("");
   }
 
   @SubCommand(@CommandMeta(name = "set", description = "Définir le joueur hôte de la partie"))
-  public void set(final Player player, final @Argument(name = "joueur") Player target) {}
+  public void set(final Player player, final @Argument(name = "joueur") Player target) {
+    final HostService hostService = this.ultraHardcore.gameService().hostService();
+    final UUID host = hostService.host();
+    if (host != null && host.equals(target.getUniqueId())) {
+      player.sendMessage(CC.prefix("Ce joueur est déjà l'hôte principal de la partie."));
+      return;
+    }
+
+    hostService.host(target.getUniqueId());
+    player.sendMessage(
+        CC.prefix(
+            "Vous avez défini&6 %s&f comme hôte principal de la partie."
+                .formatted(target.getName())));
+  }
 
   @Command(@CommandMeta(name = "save", description = "Sauvegarder l'inventaire de départ"))
   public void saveInventory(final Player player) {
