@@ -13,8 +13,11 @@ import dev.kurai.uhc.game.start.service.StartService;
 import dev.kurai.uhc.listener.game.PlayingListener;
 import dev.kurai.uhc.module.power.listener.PowerListener;
 import dev.kurai.uhc.module.power.task.updater.CooldownUpdaterTask;
+import dev.kurai.uhc.profile.component.DisconnectComponent;
 import dev.kurai.uhc.profile.state.PlayingProfileState;
+import dev.kurai.uhc.profile.state.WaitingProfileState;
 import dev.kurai.uhc.scoreboard.sidebar.adapter.builtin.PlayingSidebarAdapter;
+import java.time.Instant;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -119,6 +122,7 @@ public final class StartServiceImpl implements StartService {
     gameService.startTime(System.currentTimeMillis());
     gameService.timerService().startAllTimers();
     gameService.cycleService().start();
+    gameService.disconnectService().start();
     gameService.episodeService().start();
 
     final var world = this.ultraHardcore.worldService().getWorld();
@@ -142,12 +146,18 @@ public final class StartServiceImpl implements StartService {
 
     final var profileService = this.ultraHardcore.profileService();
     for (final var profile : profileService.getProfiles()) {
+      if (!(profile.getState() instanceof WaitingProfileState)) {
+        continue;
+      }
+
       final var player = profile.getPlayer();
       if (player == null) {
         continue;
       }
 
       profile.setState(new PlayingProfileState());
+      profile.addComponent(
+          new DisconnectComponent(gameService.disconnectService().disconnectTime(), Instant.now()));
 
       final var inventory = player.getInventory();
       inventory.setContents(InventoryConfiguration.INVENTORY_CONTENT_OPTION.getValue());

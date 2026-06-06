@@ -14,12 +14,12 @@ import dev.kurai.uhc.game.configuration.game.GameConfiguration;
 import dev.kurai.uhc.game.configuration.ore.OreConfiguration;
 import dev.kurai.uhc.item.builtin.*;
 import dev.kurai.uhc.profile.Profile;
-import dev.kurai.uhc.profile.component.DamageImmunityComponent;
-import dev.kurai.uhc.profile.component.InventoryComponent;
-import dev.kurai.uhc.profile.component.OfflineActionComponent;
-import dev.kurai.uhc.profile.component.ProfileMiningComponent;
+import dev.kurai.uhc.profile.component.*;
+import dev.kurai.uhc.profile.state.PlayingProfileState;
 import dev.kurai.uhc.util.PlayerUtil;
+import dev.kurai.uhc.util.TimeUtil;
 import java.time.Duration;
+import java.time.Instant;
 import java.util.Map;
 import java.util.function.Consumer;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -37,6 +37,7 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.jetbrains.annotations.NotNull;
 
 public final class PlayingListener implements Listener {
@@ -50,33 +51,72 @@ public final class PlayingListener implements Listener {
   @EventHandler
   public void onJoin(final @NotNull PlayerJoinEvent event) {
     event.setJoinMessage(null);
+
+    final Player player = event.getPlayer();
+    final Profile profile = this.ultraHardcore.profileService().getOrCreateProfile(player);
+    if (!(profile.getState() instanceof PlayingProfileState)) {
+      player.teleport(this.ultraHardcore.worldService().getWorld().getSpawnLocation());
+      return;
+    }
+
     this.ultraHardcore
         .gameService()
         .sendMessage(
             prefix()
                 .append(text("Le joueur "))
-                .append(text(event.getPlayer().getName(), NamedTextColor.AQUA))
+                .append(text(player.getName(), NamedTextColor.AQUA))
                 .append(text(" s'est "))
                 .append(text("reconnecté", NamedTextColor.GREEN))
                 .append(text('.'))
                 .build());
+
+    final DisconnectComponent component = profile.getComponent(DisconnectComponent.class);
+    if (component == null) {
+      return;
+    }
+
+    component.timeLeft(
+        component.timeLeft() - Duration.between(component.lastLogin(), Instant.now()).toMillis());
+    component.lastLogin(Instant.now());
   }
 
   @EventHandler
   public void onPlayerQuit(final @NotNull PlayerQuitEvent event) {
     event.setQuitMessage(null);
+
+    final Player player = event.getPlayer();
+    final Profile profile = this.ultraHardcore.profileService().getOrCreateProfile(player);
+    if (!(profile.getState() instanceof PlayingProfileState)) {
+      return;
+    }
+
+    final DisconnectComponent component = profile.getComponent(DisconnectComponent.class);
+    if (component == null) {
+      return;
+    }
+
     this.ultraHardcore
         .gameService()
         .sendMessage(
             prefix()
                 .append(text("Le joueur "))
-                .append(text(event.getPlayer().getName(), NamedTextColor.AQUA))
+                .append(text(player.getName(), NamedTextColor.AQUA))
                 .append(text(" s'est "))
                 .append(text("déconnecté", NamedTextColor.RED))
                 .append(text(". Il dispose ainsi de "))
-                .append(text("15:00", NamedTextColor.GOLD, TextDecoration.BOLD))
+                .append(
+                    text(
+                        TimeUtil.formatDuration(component.timeLeft()),
+                        NamedTextColor.GOLD,
+                        TextDecoration.BOLD))
                 .append(text(" pour se reconnecter."))
                 .build());
+
+    component.lastLocation(player.getLocation());
+
+    final PlayerInventory inventory = player.getInventory();
+    component.inventory(inventory.getContents());
+    component.armor(inventory.getArmorContents());
   }
 
   @EventHandler
