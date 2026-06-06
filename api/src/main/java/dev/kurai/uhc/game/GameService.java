@@ -5,6 +5,7 @@ import static net.kyori.adventure.key.Key.key;
 
 import dev.kurai.uhc.game.cycle.CycleService;
 import dev.kurai.uhc.game.death.DeathService;
+import dev.kurai.uhc.game.disconnect.DisconnectService;
 import dev.kurai.uhc.game.drop.DropRateService;
 import dev.kurai.uhc.game.episode.EpisodeService;
 import dev.kurai.uhc.game.host.HostService;
@@ -30,6 +31,8 @@ public interface GameService extends ForwardingAudience {
   CycleService cycleService();
 
   DeathService deathService();
+
+  DisconnectService disconnectService();
 
   DropRateService dropRateService();
 

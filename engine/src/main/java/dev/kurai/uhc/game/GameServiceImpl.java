@@ -5,6 +5,8 @@ import dev.kurai.uhc.game.cycle.CycleService;
 import dev.kurai.uhc.game.cycle.CycleServiceImpl;
 import dev.kurai.uhc.game.death.DeathService;
 import dev.kurai.uhc.game.death.DeathServiceImpl;
+import dev.kurai.uhc.game.disconnect.DisconnectService;
+import dev.kurai.uhc.game.disconnect.DisconnectServiceImpl;
 import dev.kurai.uhc.game.drop.DropRateService;
 import dev.kurai.uhc.game.drop.DropRateServiceImpl;
 import dev.kurai.uhc.game.drop.defaults.AppleDropRateModifier;
@@ -40,6 +42,7 @@ public final class GameServiceImpl implements GameService {
 
   private final CycleService cycleService;
   private final DeathService deathService;
+  private final DisconnectService disconnectService;
   private final DropRateService dropRateService;
   private final EpisodeService episodeService;
   private final HostService hostService;
@@ -56,6 +59,7 @@ public final class GameServiceImpl implements GameService {
 
     this.cycleService = new CycleServiceImpl(ultraHardcore);
     this.deathService = new DeathServiceImpl(ultraHardcore);
+    this.disconnectService = new DisconnectServiceImpl(ultraHardcore);
     (this.dropRateService = new DropRateServiceImpl(ultraHardcore.eventService()))
         .registerModifiers(new AppleDropRateModifier(), new FlintDropRateModifier());
     this.episodeService = new EpisodeServiceImpl(ultraHardcore);
