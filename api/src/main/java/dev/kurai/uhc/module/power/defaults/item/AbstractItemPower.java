@@ -22,7 +22,7 @@ public abstract class AbstractItemPower extends AbstractPower {
 
   public ItemStack getIcon(final Player player) {
     return new ItemBuilder(this.provideIcon(player))
-        .name("&8&l»&6 &l%s&8 &l«".formatted(this.name))
+        .name("&8&l»%s &l%s&8 &l«".formatted(this.getColor().asBukkitColor(), this.name))
         .asItemStack();
   }
 

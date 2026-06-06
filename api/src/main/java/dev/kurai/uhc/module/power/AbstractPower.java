@@ -7,6 +7,7 @@ import dev.kurai.uhc.event.defaults.power.PowerUseEvent;
 import dev.kurai.uhc.module.power.restriction.PowerRestriction;
 import dev.kurai.uhc.module.power.restriction.holder.PowerRestrictionHolder;
 import dev.kurai.uhc.profile.Profile;
+import dev.kurai.uhc.util.Color;
 import dev.kurai.uhc.util.api.Identifiable;
 import dev.kurai.uhc.util.api.name.Nameable;
 import java.util.*;
@@ -44,6 +45,10 @@ public abstract class AbstractPower
 
   public @Nullable ActionbarEntry provideActionbarEntry(final @NotNull Player player) {
     return null;
+  }
+
+  public Color getColor() {
+    return Color.GOLD;
   }
 
   public abstract boolean onUse(final @NotNull Player player);
