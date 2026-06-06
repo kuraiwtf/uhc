@@ -27,6 +27,10 @@ public final class CooldownUpdaterTask implements Runnable {
   @Override
   public void run() {
     for (final var profile : this.profileService.getProfiles()) {
+      if (profile.findPlayer().isEmpty()) {
+        continue;
+      }
+
       final var player = Objects.requireNonNull(profile.getPlayer());
       for (final var power : profile.getPowers()) {
         this.processPower(profile, player, power);
