@@ -112,7 +112,16 @@ public final class ProfileImpl implements Profile {
     }
 
     this.getComponent(ClaimComponent.class).getItems().addAll(left.values());
-    this.sendPrefixedMessage("Un objet vient d'être ajouté à votre&a /full&r.");
+    final var plural = left.size() > 1;
+    this.sendPrefixedMessage(
+        (plural ? "Plusieurs" : "Un")
+            + " objet"
+            + (plural ? "s" : "")
+            + " "
+            + (plural ? "viennent" : "vient")
+            + " d'être ajouté"
+            + (plural ? "s" : "")
+            + " à votre&a /full&r.");
   }
 
   @Override
