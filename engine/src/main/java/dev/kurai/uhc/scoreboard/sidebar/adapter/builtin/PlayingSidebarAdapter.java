@@ -8,12 +8,11 @@ import static net.kyori.adventure.text.format.TextDecoration.*;
 
 import com.google.common.collect.Lists;
 import dev.kurai.uhc.UltraHardcoreAPI;
+import dev.kurai.uhc.profile.state.PlayingProfileState;
 import dev.kurai.uhc.scoreboard.sidebar.SidebarAdapter;
 import dev.kurai.uhc.util.TimeUtil;
 import java.util.List;
 import net.kyori.adventure.text.Component;
-import net.minecraft.server.v1_8_R3.MinecraftServer;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -29,12 +28,18 @@ public final class PlayingSidebarAdapter implements SidebarAdapter {
   @Override
   public @NotNull List<@NotNull Component> provideLines(final @NotNull Player player) {
     final var lines = Lists.<Component>newArrayList();
-    final var tps = MinecraftServer.getServer().recentTps[0];
     lines.add(empty());
     lines.add(
         text()
             .append(text("Joueurs: "))
-            .append(text(Bukkit.getOnlinePlayers().size(), GOLD, BOLD))
+            .append(
+                text(
+                    this.ultraHardcore
+                        .profileService()
+                        .getProfiles(profile -> profile.getState() instanceof PlayingProfileState)
+                        .size(),
+                    GOLD,
+                    BOLD))
             .build());
     lines.add(
         text()
