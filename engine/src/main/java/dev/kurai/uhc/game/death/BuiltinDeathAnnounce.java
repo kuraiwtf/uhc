@@ -8,8 +8,10 @@ import static net.kyori.adventure.text.format.TextDecoration.BOLD;
 import dev.kurai.uhc.profile.Profile;
 import dev.kurai.uhc.util.CC;
 import net.kyori.adventure.text.Component;
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
+@NullMarked
 public final class BuiltinDeathAnnounce implements DeathAnnounce {
 
   @Override
