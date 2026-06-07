@@ -1,42 +1,46 @@
 package dev.kurai.uhc.game.death;
 
-import static dev.kurai.uhc.util.CC.prefix;
 import static net.kyori.adventure.key.Key.key;
-import static net.kyori.adventure.text.Component.text;
+import static net.kyori.adventure.text.format.NamedTextColor.*;
 
 import dev.kurai.uhc.UltraHardcoreAPI;
+import dev.kurai.uhc.game.GameService;
+import dev.kurai.uhc.profile.Profile;
 import dev.kurai.uhc.profile.component.DeadComponent;
+import dev.kurai.uhc.profile.component.DisconnectComponent;
+import dev.kurai.uhc.profile.component.PlayerInformationComponent;
+import lombok.Getter;
+import lombok.Setter;
 import net.kyori.adventure.sound.Sound;
-import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import org.bukkit.*;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 @NullMarked
+@Getter
+@Setter
 public final class DeathServiceImpl implements DeathService {
 
-  private DeathProcessor processor;
+  private final UltraHardcoreAPI ultraHardcore;
+
+  private DeathAnnounce deathAnnounce;
+  private DeathProcessor deathProcessor;
 
   public DeathServiceImpl(final UltraHardcoreAPI ultraHardcore) {
-    this.processor =
+    this.ultraHardcore = ultraHardcore;
+    this.deathAnnounce = new BuiltinDeathAnnounce();
+
+    this.deathProcessor =
         event -> {
-          final var player = event.getEntity();
-          final var deathLocation = player.getLocation().clone();
-          for (final var drop : event.getDrops()) {
+          final Player player = event.getEntity();
+          final Location deathLocation = player.getLocation().clone();
+          for (final ItemStack drop : event.getDrops()) {
             deathLocation.getWorld().dropItemNaturally(deathLocation, drop);
           }
 
-          final var gameService = ultraHardcore.gameService();
-          gameService.sendMessage(
-              prefix()
-                  .append(text(player.getName(), NamedTextColor.GOLD))
-                  .append(text(" est "))
-                  .append(text("mort", NamedTextColor.RED))
-                  .append(text('.'))
-                  .build());
-
+          final GameService gameService = ultraHardcore.gameService();
           gameService.playSound(
               Sound.sound()
                   .source(Sound.Source.HOSTILE)
@@ -45,34 +49,73 @@ public final class DeathServiceImpl implements DeathService {
                   .pitch(1f)
                   .build());
 
-          final var killer = player.getKiller();
+          final Player killer = player.getKiller();
           if (killer != null) {
             killer.getInventory().addItem(new ItemStack(Material.GOLDEN_APPLE));
             killer.giveExpLevels(3);
           }
 
-          final var profile =
+          final Profile profile =
               ultraHardcore.profileService().getOrCreateProfile(player.getUniqueId());
-          if (profile != null) {
-            profile.addComponent(
-                new DeadComponent(
-                    killer == null ? null : killer.getUniqueId(),
-                    System.currentTimeMillis() - ultraHardcore.gameService().startTime()));
-          }
+          profile.addComponent(
+              new DeadComponent(
+                  killer == null ? null : killer.getUniqueId(),
+                  System.currentTimeMillis() - ultraHardcore.gameService().startTime()));
 
-          player.spigot().respawn();
-          player.setGameMode(GameMode.SPECTATOR);
-          player.teleport(new Location(ultraHardcore.worldService().getWorld(), 0.5, 200.5, 0.5));
+          this.eliminate(
+              profile,
+              killer == null
+                  ? null
+                  : this.ultraHardcore.profileService().getOrCreateProfile(killer),
+              false);
         };
   }
 
   @Override
-  public DeathProcessor getDeathProcessor() {
-    return this.processor;
+  public void eliminate(
+      final Profile profile, final @Nullable Profile killer, final boolean offline) {
+    profile.executeAction(
+        player -> {
+          player.spigot().respawn();
+          player.setGameMode(GameMode.SPECTATOR);
+          player.teleport(this.ultraHardcore.worldService().getWorld().getSpawnLocation());
+        });
+
+    final PlayerInformationComponent component =
+        profile.getComponent(PlayerInformationComponent.class);
+    if (component == null) {
+      return;
+    }
+
+    final Location location = component.lastLocation();
+    for (final ItemStack stack : component.inventory()) {
+      this.dropAt(location, stack);
+    }
+
+    for (final ItemStack stack : component.armor()) {
+      this.dropAt(location, stack);
+    }
+
+    final GameService gameService = this.ultraHardcore.gameService();
+    gameService.playSound(
+        Sound.sound()
+            .source(Sound.Source.HOSTILE)
+            .type(key("mob.wither.death"))
+            .volume(1f)
+            .pitch(1f)
+            .build());
+
+    gameService.sendMessage(this.deathAnnounce.provideDeathMessage(profile, killer, offline));
+
+    profile.removeComponent(DisconnectComponent.class);
+    profile.removeComponent(PlayerInformationComponent.class);
   }
 
-  @Override
-  public void installDeathProcessor(final DeathProcessor deathProcessor) {
-    this.processor = deathProcessor;
+  private void dropAt(final Location location, final @Nullable ItemStack item) {
+    if (item == null || item.getType() == Material.AIR) {
+      return;
+    }
+
+    location.getWorld().dropItem(location, item);
   }
 }
