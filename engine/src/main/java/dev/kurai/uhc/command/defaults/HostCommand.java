@@ -17,6 +17,7 @@ import dev.kurai.uhc.profile.component.DeadComponent;
 import dev.kurai.uhc.profile.component.DisconnectComponent;
 import dev.kurai.uhc.profile.component.InventoryEditorComponent;
 import dev.kurai.uhc.profile.state.DeadProfileState;
+import dev.kurai.uhc.profile.state.PlayingProfileState;
 import dev.kurai.uhc.timer.AbstractTimer;
 import dev.kurai.uhc.util.CC;
 import java.util.UUID;
@@ -24,8 +25,12 @@ import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
+import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.PlayerInventory;
 
 @RequiredArgsConstructor
 @Command(
@@ -157,6 +162,47 @@ public final class HostCommand {
         CC.prefix(
             "Vous avez défini&6 %s&f comme hôte principal de la partie."
                 .formatted(target.getName())));
+  }
+
+  @SubCommand(@CommandMeta(name = "revive", description = "Ressusciter un joueur"))
+  public void revive(final Player player, final @Argument(name = "joueur") Player target) {
+    final GameService gameService = this.ultraHardcore.gameService();
+    if (gameService.startTime() == 0L) {
+      player.sendMessage(CC.prefix("La partie n'est pas en cours de jeu."));
+      return;
+    }
+
+    final Profile profile =
+        this.ultraHardcore.profileService().getOrCreateProfile(target.getUniqueId());
+    final DeadComponent component = profile.getComponent(DeadComponent.class);
+    if (component == null) {
+      player.sendMessage(CC.prefix("Le joueur&6 %s&r n'est pas mort.".formatted(target.getName())));
+      return;
+    }
+
+    target.setGameMode(GameMode.SURVIVAL);
+
+    target.setHealth(target.getMaxHealth());
+
+    target.setFoodLevel(20);
+    target.setSaturation(20.0f);
+    target.setExhaustion(0.0f);
+
+    target.teleport(component.location());
+
+    final PlayerInventory inventory = target.getInventory();
+    inventory.setContents(component.inventory());
+    inventory.setArmorContents(component.armor());
+
+    for (final Player receiver : Bukkit.getOnlinePlayers()) {
+      receiver.playSound(receiver.getLocation(), Sound.ZOMBIE_UNFECT, 1f, 2f);
+    }
+
+    profile.setState(new PlayingProfileState());
+    profile.removeComponent(DeadComponent.class);
+
+    player.sendMessage(
+        CC.prefix("Vous venez de&d ressusciter&f le joueur&6 %s&r.".formatted(target.getName())));
   }
 
   @Command(@CommandMeta(name = "save", description = "Sauvegarder l'inventaire de départ"))
