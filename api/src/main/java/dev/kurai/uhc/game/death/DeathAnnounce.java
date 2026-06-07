@@ -9,4 +9,7 @@ public interface DeathAnnounce {
 
   Component provideDeathMessage(
       final Profile profile, final @Nullable Profile killer, final boolean offline);
+
+  default void onDeath(
+      final Profile profile, final @Nullable Profile killer, final boolean offline) {}
 }
