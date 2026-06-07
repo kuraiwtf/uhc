@@ -3,11 +3,11 @@ package dev.kurai.uhc.game.death;
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.format.NamedTextColor.*;
 import static net.kyori.adventure.text.format.NamedTextColor.YELLOW;
+import static net.kyori.adventure.text.format.TextDecoration.BOLD;
 
 import dev.kurai.uhc.profile.Profile;
 import dev.kurai.uhc.util.CC;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.TextDecoration;
 import org.jspecify.annotations.Nullable;
 
 public final class BuiltinDeathAnnounce implements DeathAnnounce {
@@ -19,20 +19,17 @@ public final class BuiltinDeathAnnounce implements DeathAnnounce {
         offline ? "déconnexion" : (killer == null ? "Rien" : killer.getName());
 
     return text()
-        .append(CC.line(GOLD, YELLOW))
-        .appendNewline()
-        .appendNewline()
+        .append(text("UHC", YELLOW, BOLD))
+        .appendSpace()
+        .append(text(CC.BAR, GRAY, BOLD))
         .appendSpace()
         .append(text('»', DARK_GRAY))
         .appendSpace()
-        .append(text(profile.getName()).decorate(TextDecoration.BOLD))
+        .append(text(profile.getName()).decorate(BOLD))
         .appendSpace()
         .append(text("est mort de "))
         .append(text(killerName, RED))
         .append(text('.'))
-        .appendNewline()
-        .appendNewline()
-        .append(CC.line(GOLD, YELLOW))
         .build();
   }
 }
