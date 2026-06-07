@@ -13,8 +13,10 @@ import dev.kurai.uhc.event.defaults.game.GameTickEvent;
 import dev.kurai.uhc.event.defaults.player.PlayerDamageByPlayerEvent;
 import dev.kurai.uhc.game.configuration.game.GameConfiguration;
 import dev.kurai.uhc.game.configuration.ore.OreConfiguration;
+import dev.kurai.uhc.game.death.DeathContext;
 import dev.kurai.uhc.item.builtin.*;
 import dev.kurai.uhc.profile.Profile;
+import dev.kurai.uhc.profile.ProfileService;
 import dev.kurai.uhc.profile.component.*;
 import dev.kurai.uhc.profile.state.PlayingProfileState;
 import dev.kurai.uhc.util.CC;
@@ -233,9 +235,10 @@ public final class PlayingListener implements Listener {
     event.setKeepInventory(true);
     event.setKeepLevel(true);
 
-    final var player = event.getEntity();
-    final var profile =
-        this.ultraHardcore.profileService().getOrCreateProfile(player.getUniqueId());
+    final Player player = event.getEntity();
+
+    final ProfileService profileService = this.ultraHardcore.profileService();
+    final Profile profile = profileService.getOrCreateProfile(player.getUniqueId());
     if (profile == null) {
       return;
     }
@@ -250,7 +253,17 @@ public final class PlayingListener implements Listener {
             player.getFireTicks(),
             player.getFallDistance()));
 
-    this.ultraHardcore.gameService().deathService().deathProcessor().processDeath(event);
+    final Player killer = player.getKiller();
+    this.ultraHardcore
+        .gameService()
+        .deathService()
+        .deathProcessor()
+        .processDeath(
+            new DeathContext(
+                profile,
+                (killer == null ? null : profileService.getOrCreateProfile(killer)),
+                event,
+                false));
   }
 
   @EventHandler

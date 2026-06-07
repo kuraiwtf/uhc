@@ -14,6 +14,7 @@ import lombok.Setter;
 import net.kyori.adventure.sound.Sound;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
@@ -30,10 +31,11 @@ public final class DeathServiceImpl implements DeathService {
 
   public DeathServiceImpl(final UltraHardcoreAPI ultraHardcore) {
     this.ultraHardcore = ultraHardcore;
-    this.deathAnnounce = new BuiltinDeathAnnounce();
 
+    this.deathAnnounce = new BuiltinDeathAnnounce();
     this.deathProcessor =
-        event -> {
+        context -> {
+          final PlayerDeathEvent event = context.event();
           final Player player = event.getEntity();
           final Location deathLocation = player.getLocation().clone();
           for (final ItemStack drop : event.getDrops()) {
