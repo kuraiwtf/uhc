@@ -7,9 +7,7 @@ import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.game.GameService;
 import dev.kurai.uhc.profile.Profile;
 import dev.kurai.uhc.profile.component.DisconnectComponent;
-import dev.kurai.uhc.profile.component.PlayerInformationComponent;
 import dev.kurai.uhc.profile.state.PlayingProfileState;
-import dev.kurai.uhc.profile.state.SpectatingProfileState;
 import java.time.Duration;
 import java.time.Instant;
 import lombok.Getter;
@@ -50,19 +48,11 @@ public final class DisconnectServiceImpl implements DisconnectService {
                   continue;
                 }
 
-                final PlayerInformationComponent informationComponent =
-                    profile.getComponent(PlayerInformationComponent.class);
-                if (informationComponent == null) {
-                  continue;
-                }
-
                 if (Duration.between(disconnectComponent.lastLogin(), Instant.now()).toMillis()
-                    >= this.disconnectTime) {
+                        >= this.disconnectTime
+                    || disconnectComponent.timeLeft() <= 0) {
                   final GameService gameService = this.ultraHardcore.gameService();
                   gameService.deathService().eliminate(profile, null, true);
-
-                  profile.removeComponent(DisconnectComponent.class);
-                  profile.setState(new SpectatingProfileState());
 
                   this.ultraHardcore
                       .gameService()
