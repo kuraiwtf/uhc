@@ -9,6 +9,7 @@ import dev.kurai.uhc.profile.Profile;
 import dev.kurai.uhc.profile.component.DeadComponent;
 import dev.kurai.uhc.profile.component.DisconnectComponent;
 import dev.kurai.uhc.profile.component.PlayerInformationComponent;
+import dev.kurai.uhc.profile.state.DeadProfileState;
 import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.sound.Sound;
@@ -35,13 +36,6 @@ public final class DeathServiceImpl implements DeathService {
     this.deathAnnounce = new BuiltinDeathAnnounce();
     this.deathProcessor =
         context -> {
-          final PlayerDeathEvent event = context.event();
-          final Player player = event.getEntity();
-          final Location deathLocation = player.getLocation().clone();
-          for (final ItemStack drop : event.getDrops()) {
-            deathLocation.getWorld().dropItemNaturally(deathLocation, drop);
-          }
-
           final GameService gameService = ultraHardcore.gameService();
           gameService.playSound(
               Sound.sound()
@@ -51,6 +45,9 @@ public final class DeathServiceImpl implements DeathService {
                   .pitch(1f)
                   .build());
 
+          final PlayerDeathEvent event = context.event();
+
+          final Player player = event.getEntity();
           final Player killer = player.getKiller();
           if (killer != null) {
             killer.getInventory().addItem(new ItemStack(Material.GOLDEN_APPLE));
@@ -63,6 +60,7 @@ public final class DeathServiceImpl implements DeathService {
               new DeadComponent(
                   killer == null ? null : killer.getUniqueId(),
                   System.currentTimeMillis() - ultraHardcore.gameService().startTime()));
+          profile.setState(new DeadProfileState());
 
           this.eliminate(
               profile,
