@@ -5,6 +5,7 @@ import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 
 @AllArgsConstructor
@@ -14,6 +15,8 @@ public final class DeadComponent implements Component {
 
   private UUID killer;
   private long deathTime;
+
+  private Location location;
 
   private ItemStack[] inventory;
   private ItemStack[] armor;

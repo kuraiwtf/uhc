@@ -108,6 +108,7 @@ public final class DeathServiceImpl implements DeathService {
         new DeadComponent(
             killer == null ? null : killer.getId(),
             System.currentTimeMillis() - gameService.startTime(),
+            component.lastLocation().clone(),
             component.inventory().clone(),
             component.armor().clone()));
 
