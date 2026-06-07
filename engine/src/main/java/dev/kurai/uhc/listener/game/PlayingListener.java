@@ -239,7 +239,9 @@ public final class PlayingListener implements Listener {
 
     final ProfileService profileService = this.ultraHardcore.profileService();
     final Profile profile = profileService.getOrCreateProfile(player.getUniqueId());
-    if (profile == null) {
+    if (!(profile.getState() instanceof PlayingProfileState)) {
+      player.spigot().respawn();
+      player.teleport(this.ultraHardcore.worldService().getWorld().getSpawnLocation());
       return;
     }
 
