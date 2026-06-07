@@ -107,7 +107,9 @@ public final class DeathServiceImpl implements DeathService {
     profile.addComponent(
         new DeadComponent(
             killer == null ? null : killer.getId(),
-            System.currentTimeMillis() - gameService.startTime()));
+            System.currentTimeMillis() - gameService.startTime(),
+            component.inventory().clone(),
+            component.armor().clone()));
 
     profile.setState(new DeadProfileState());
   }
