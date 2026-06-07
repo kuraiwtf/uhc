@@ -10,6 +10,7 @@ import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.game.drop.DropRateService;
 import dev.kurai.uhc.menu.button.ItemButton;
 import dev.kurai.uhc.menu.rules.border.BorderConfigurationMenu;
+import dev.kurai.uhc.menu.rules.disconnect.DisconnectTimerEditMenu;
 import dev.kurai.uhc.menu.rules.drop.DropRateMenu;
 import dev.kurai.uhc.menu.rules.inventory.StartInventoryMenu;
 import dev.kurai.uhc.menu.rules.ore.OreLimitMenu;
@@ -103,21 +104,7 @@ public final class RulesMenu extends Menu {
                     "")
                 .asItemStack()));
     front.set(32, new PvPTimerButton(this.ultraHardcore));
-    front.set(
-        33,
-        new ItemButton(
-            new ItemBuilder(Material.DARK_OAK_DOOR_ITEM)
-                .name("&6&lTemps de Déconnexion")
-                .lore(
-                    "",
-                    "&6 " + SQUARE + "&f Temps:&b 05:00",
-                    "",
-                    "&7" + BAR + "&f Permet de modifier",
-                    "  la limite du temps de",
-                    "  &cdéconnexion&f de la partie.",
-                    "")
-                .amount(5)
-                .asItemStack()));
+    front.set(33, new DisconnectTimerButton(this.ultraHardcore));
   }
 
   private static final class BowHealthViewButton extends Button {
@@ -273,6 +260,43 @@ public final class RulesMenu extends Menu {
       }
 
       final var configMenu = new TimerDurationMenu(menu.getPlayer(), timerOpt.get());
+      configMenu.setPreviousMenu(menu);
+      configMenu.open();
+    }
+  }
+
+  private static final class DisconnectTimerButton extends Button {
+
+    private final UltraHardcoreAPI ultraHardcore;
+
+    private DisconnectTimerButton(final UltraHardcoreAPI ultraHardcore) {
+      this.ultraHardcore = ultraHardcore;
+    }
+
+    @Override
+    public ItemStack getIcon() {
+      final long time = this.ultraHardcore.gameService().disconnectService().disconnectTime();
+      return new ItemBuilder(Material.DARK_OAK_DOOR_ITEM)
+          .name("&6&lTemps de déconnexion")
+          .lore(
+              "",
+              "&6 " + SQUARE + "&f Temps: &b" + TimeUtil.formatDuration(time),
+              "",
+              "&7" + BAR + "&f Permet de modifier le",
+              "  temps avant l'élimination",
+              "  automatique d'un joueur.",
+              "  &chors-ligne&r.",
+              "")
+          .amount(Math.clamp((int) (time / (60 * 1_000L)), 1, 64))
+          .asItemStack();
+    }
+
+    @Override
+    public void onClick(final ButtonClick click) {
+      final Menu menu = click.getMenu();
+      final Menu configMenu =
+          new DisconnectTimerEditMenu(
+              menu.getPlayer(), this.ultraHardcore.gameService().disconnectService());
       configMenu.setPreviousMenu(menu);
       configMenu.open();
     }
