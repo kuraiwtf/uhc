@@ -5,6 +5,7 @@ import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.format.Style.style;
 import static org.bukkit.Material.*;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.adventure.UltraHardcoreKey;
@@ -16,6 +17,7 @@ import dev.kurai.uhc.item.builtin.*;
 import dev.kurai.uhc.profile.Profile;
 import dev.kurai.uhc.profile.component.*;
 import dev.kurai.uhc.profile.state.PlayingProfileState;
+import dev.kurai.uhc.util.CC;
 import dev.kurai.uhc.util.PlayerUtil;
 import dev.kurai.uhc.util.TimeUtil;
 import java.time.Duration;
@@ -53,6 +55,7 @@ public final class PlayingListener implements Listener {
     event.setJoinMessage(null);
 
     final Player player = event.getPlayer();
+
     final Profile profile = this.ultraHardcore.profileService().getOrCreateProfile(player);
     if (!(profile.getState() instanceof PlayingProfileState)) {
       player.teleport(this.ultraHardcore.worldService().getWorld().getSpawnLocation());
@@ -69,6 +72,21 @@ public final class PlayingListener implements Listener {
                 .append(text("reconnecté", NamedTextColor.GREEN))
                 .append(text('.'))
                 .build());
+
+    final PlayerInformationComponent informationComponent =
+        profile.getComponent(PlayerInformationComponent.class);
+    if (informationComponent != null) {
+      player.teleport(informationComponent.lastLocation());
+
+      final PlayerInventory inventory = player.getInventory();
+      inventory.setContents(informationComponent.inventory());
+      inventory.setArmorContents(informationComponent.armor());
+
+      player.setFireTicks(informationComponent.fireTicks());
+      player.setFallDistance(informationComponent.fallDistance());
+
+      profile.removeComponent(PlayerInformationComponent.class);
+    }
 
     final DisconnectComponent component = profile.getComponent(DisconnectComponent.class);
     if (component == null) {
@@ -90,33 +108,25 @@ public final class PlayingListener implements Listener {
       return;
     }
 
-    final DisconnectComponent component = profile.getComponent(DisconnectComponent.class);
-    if (component == null) {
+    final DisconnectComponent disconnectComponent = profile.getComponent(DisconnectComponent.class);
+    if (disconnectComponent == null) {
       return;
     }
 
-    this.ultraHardcore
-        .gameService()
-        .sendMessage(
-            prefix()
-                .append(text("Le joueur "))
-                .append(text(player.getName(), NamedTextColor.AQUA))
-                .append(text(" s'est "))
-                .append(text("déconnecté", NamedTextColor.RED))
-                .append(text(". Il dispose ainsi de "))
-                .append(
-                    text(
-                        TimeUtil.formatDuration(component.timeLeft()),
-                        NamedTextColor.GOLD,
-                        TextDecoration.BOLD))
-                .append(text(" pour se reconnecter."))
-                .build());
-
-    component.lastLocation(player.getLocation());
+    Bukkit.broadcastMessage(
+        CC.prefix(
+                "Le joueur&6 %s&r vient de se&c déconnecter&r. Il dispose de&6 &l%s&r pour se reconnecter avant d'être&c éliminé&r.")
+            .formatted(player.getName(), TimeUtil.formatDuration(disconnectComponent.timeLeft())));
 
     final PlayerInventory inventory = player.getInventory();
-    component.inventory(inventory.getContents());
-    component.armor(inventory.getArmorContents());
+    profile.addComponent(
+        new PlayerInformationComponent(
+            player.getLocation(),
+            inventory.getContents(),
+            inventory.getArmorContents(),
+            Lists.newArrayList(player.getActivePotionEffects()),
+            player.getFireTicks(),
+            player.getFallDistance()));
   }
 
   @EventHandler
@@ -230,10 +240,17 @@ public final class PlayingListener implements Listener {
       return;
     }
 
-    final var inventory = player.getInventory();
+    final PlayerInventory inventory = player.getInventory();
     profile.addComponent(
-        new InventoryComponent(inventory.getContents(), inventory.getArmorContents()));
-    this.ultraHardcore.gameService().deathService().getDeathProcessor().processDeath(event);
+        new PlayerInformationComponent(
+            player.getLocation(),
+            inventory.getContents(),
+            inventory.getArmorContents(),
+            Lists.newArrayList(player.getActivePotionEffects()),
+            player.getFireTicks(),
+            player.getFallDistance()));
+
+    this.ultraHardcore.gameService().deathService().deathProcessor().processDeath(event);
   }
 
   @EventHandler
