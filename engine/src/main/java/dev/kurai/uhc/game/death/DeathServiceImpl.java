@@ -56,12 +56,6 @@ public final class DeathServiceImpl implements DeathService {
 
           final Profile profile =
               ultraHardcore.profileService().getOrCreateProfile(player.getUniqueId());
-          profile.addComponent(
-              new DeadComponent(
-                  killer == null ? null : killer.getUniqueId(),
-                  System.currentTimeMillis() - ultraHardcore.gameService().startTime()));
-          profile.setState(new DeadProfileState());
-
           this.eliminate(
               profile,
               killer == null
@@ -109,6 +103,13 @@ public final class DeathServiceImpl implements DeathService {
 
     profile.removeComponent(DisconnectComponent.class);
     profile.removeComponent(PlayerInformationComponent.class);
+
+    profile.addComponent(
+        new DeadComponent(
+            killer == null ? null : killer.getId(),
+            System.currentTimeMillis() - gameService.startTime()));
+
+    profile.setState(new DeadProfileState());
   }
 
   private void dropAt(final Location location, final @Nullable ItemStack item) {
