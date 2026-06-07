@@ -8,11 +8,15 @@ import dev.kurai.uhc.command.annotation.Command;
 import dev.kurai.uhc.command.annotation.CommandMeta;
 import dev.kurai.uhc.command.annotation.SubCommand;
 import dev.kurai.uhc.command.argument.annotation.Argument;
+import dev.kurai.uhc.game.GameService;
 import dev.kurai.uhc.game.configuration.inventory.InventoryConfiguration;
 import dev.kurai.uhc.game.host.HostService;
 import dev.kurai.uhc.menu.ConfigurationMenu;
 import dev.kurai.uhc.profile.Profile;
+import dev.kurai.uhc.profile.component.DeadComponent;
+import dev.kurai.uhc.profile.component.DisconnectComponent;
 import dev.kurai.uhc.profile.component.InventoryEditorComponent;
+import dev.kurai.uhc.profile.state.DeadProfileState;
 import dev.kurai.uhc.timer.AbstractTimer;
 import dev.kurai.uhc.util.CC;
 import java.util.UUID;
@@ -20,6 +24,7 @@ import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 @RequiredArgsConstructor
@@ -106,6 +111,36 @@ public final class HostCommand {
       }
     }
     profile.sendMessage("");
+  }
+
+  @SubCommand(
+      @CommandMeta(
+          name = "killoffline",
+          aliases = "ko",
+          description = "Éliminer un joueur hors-ligne"))
+  public void killOffline(
+      final Player player, final @Argument(name = "joueur") OfflinePlayer target) {
+    final GameService gameService = this.ultraHardcore.gameService();
+    if (gameService.startTime() == 0L) {
+      player.sendMessage(CC.prefix("La partie n'est pas en cours de jeu."));
+      return;
+    }
+
+    final Profile profile =
+        this.ultraHardcore.profileService().getOrCreateProfile(target.getUniqueId());
+    if (target.isOnline()
+        || !profile.hasComponent(DisconnectComponent.class)
+        || profile.hasComponent(DeadComponent.class)) {
+      player.sendMessage(
+          CC.prefix("Le joueur&6 %s&r est&c mort&r ou&a en ligne&r.".formatted(target.getName())));
+      return;
+    }
+
+    profile.setState(new DeadProfileState());
+    gameService.deathService().eliminate(profile, null, true);
+
+    player.sendMessage(
+        CC.prefix("Vous venez d'&céliminer&f le joueur&6 %s&r.".formatted(target.getName())));
   }
 
   @SubCommand(@CommandMeta(name = "set", description = "Définir le joueur hôte de la partie"))

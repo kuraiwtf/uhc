@@ -7,6 +7,7 @@ import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.game.GameService;
 import dev.kurai.uhc.profile.Profile;
 import dev.kurai.uhc.profile.component.DisconnectComponent;
+import dev.kurai.uhc.profile.component.PlayerInformationComponent;
 import dev.kurai.uhc.profile.state.PlayingProfileState;
 import dev.kurai.uhc.profile.state.SpectatingProfileState;
 import java.time.Duration;
@@ -19,10 +20,6 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Sound;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 
 @RequiredArgsConstructor
 @Getter
@@ -47,50 +44,36 @@ public final class DisconnectServiceImpl implements DisconnectService {
                           profile ->
                               profile.getState() instanceof PlayingProfileState
                                   && profile.findPlayer().isEmpty())) {
-                final DisconnectComponent component =
+                final DisconnectComponent disconnectComponent =
                     profile.getComponent(DisconnectComponent.class);
-                if (component == null) {
+                if (disconnectComponent == null) {
                   continue;
                 }
 
-                if (Duration.between(component.lastLogin(), Instant.now()).toMillis()
+                final PlayerInformationComponent informationComponent =
+                    profile.getComponent(PlayerInformationComponent.class);
+                if (informationComponent == null) {
+                  continue;
+                }
+
+                if (Duration.between(disconnectComponent.lastLogin(), Instant.now()).toMillis()
                     >= this.disconnectTime) {
+                  final GameService gameService = this.ultraHardcore.gameService();
+                  gameService.deathService().eliminate(profile, null, true);
+
                   profile.removeComponent(DisconnectComponent.class);
                   profile.setState(new SpectatingProfileState());
 
-                  final GameService gameService = this.ultraHardcore.gameService();
-                  gameService.sendMessage(
-                      MiniMessage.miniMessage()
-                          .deserialize(
-                              "<st><gold>-------</gold><yellow>-------</yellow><white>-------</white><yellow>-------</yellow><gold>-------</gold></st><newline><newline> <dark_gray>»</dark_gray> <b><name></b> est mort de <red>déconnexion</red>.<newline><newline><st><gold>-------</gold><yellow>-------</yellow><white>-------</white><yellow>-------</yellow><gold>-------</gold></st>",
-                              TagResolver.resolver(
-                                  "name",
-                                  Tag.inserting(Component.text(profile.getName(), WHITE, BOLD)))));
-
-                  for (final Player player : Bukkit.getOnlinePlayers()) {
-                    player.playSound(player.getLocation(), Sound.WITHER_DEATH, 1f, 1f);
-                  }
-
-                  final Location location = component.lastLocation();
-                  if (location == null) {
-                    continue;
-                  }
-
-                  for (final ItemStack stack : component.inventory()) {
-                    if (stack == null) {
-                      continue;
-                    }
-
-                    location.getWorld().dropItem(location, stack);
-                  }
-
-                  for (final ItemStack stack : component.armor()) {
-                    if (stack == null) {
-                      continue;
-                    }
-
-                    location.getWorld().dropItem(location, stack);
-                  }
+                  this.ultraHardcore
+                      .gameService()
+                      .sendMessage(
+                          MiniMessage.miniMessage()
+                              .deserialize(
+                                  "<st><gold>-------</gold><yellow>-------</yellow><white>-------</white><yellow>-------</yellow><gold>-------</gold></st><newline><newline> <dark_gray>»</dark_gray> <b><name></b> est mort de <red>déconnexion</red>.<newline><newline><st><gold>-------</gold><yellow>-------</yellow><white>-------</white><yellow>-------</yellow><gold>-------</gold></st>",
+                                  TagResolver.resolver(
+                                      "name",
+                                      Tag.inserting(
+                                          Component.text(profile.getName(), WHITE, BOLD)))));
                 }
               }
             },
