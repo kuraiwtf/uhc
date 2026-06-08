@@ -5,6 +5,7 @@ import static net.kyori.adventure.text.format.TextDecoration.*;
 
 import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.game.GameService;
+import dev.kurai.uhc.game.death.DeathService;
 import dev.kurai.uhc.profile.Profile;
 import dev.kurai.uhc.profile.component.DisconnectComponent;
 import dev.kurai.uhc.profile.state.PlayingProfileState;
@@ -13,10 +14,6 @@ import java.time.Instant;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.minimessage.tag.Tag;
-import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.Bukkit;
 
 @RequiredArgsConstructor
@@ -52,18 +49,10 @@ public final class DisconnectServiceImpl implements DisconnectService {
                         >= this.disconnectTime
                     || disconnectComponent.timeLeft() <= 0) {
                   final GameService gameService = this.ultraHardcore.gameService();
-                  gameService.deathService().eliminate(profile, null, true);
-
-                  this.ultraHardcore
-                      .gameService()
-                      .sendMessage(
-                          MiniMessage.miniMessage()
-                              .deserialize(
-                                  "<st><gold>-------</gold><yellow>-------</yellow><white>-------</white><yellow>-------</yellow><gold>-------</gold></st><newline><newline> <dark_gray>»</dark_gray> <b><name></b> est mort de <red>déconnexion</red>.<newline><newline><st><gold>-------</gold><yellow>-------</yellow><white>-------</white><yellow>-------</yellow><gold>-------</gold></st>",
-                                  TagResolver.resolver(
-                                      "name",
-                                      Tag.inserting(
-                                          Component.text(profile.getName(), WHITE, BOLD)))));
+                  final DeathService deathService = gameService.deathService();
+                  deathService.eliminate(profile, null, true);
+                  gameService.sendMessage(
+                      deathService.deathAnnounce().provideDeathMessage(profile, null, true));
                 }
               }
             },
