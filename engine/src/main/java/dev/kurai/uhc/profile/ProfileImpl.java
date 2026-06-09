@@ -2,12 +2,14 @@ package dev.kurai.uhc.profile;
 
 import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.wrapper.PacketWrapper;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityAnimation;
 import com.google.common.collect.Maps;
 import dev.kurai.actionbar.Actionbar;
 import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.ecs.component.Component;
 import dev.kurai.uhc.ecs.component.defaults.NameComponent;
 import dev.kurai.uhc.ecs.entity.Entity;
+import dev.kurai.uhc.event.defaults.player.PlayerDamageEvent;
 import dev.kurai.uhc.module.power.AbstractPower;
 import dev.kurai.uhc.module.power.defaults.item.AbstractItemPower;
 import dev.kurai.uhc.profile.component.*;
@@ -18,6 +20,7 @@ import java.util.*;
 import java.util.function.Consumer;
 import net.kyori.adventure.audience.Audience;
 import net.minecraft.server.v1_8_R3.Packet;
+import org.bukkit.Sound;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
@@ -176,6 +179,55 @@ public final class ProfileImpl implements Profile {
   @Override
   public Optional<PotionEffect> findPotionEffect(final PotionEffectType type) {
     return Optional.ofNullable(this.getPotionEffect(type));
+  }
+
+  @Override
+  public void damage(double damage, boolean absorptionBypass, boolean visible) {
+    final PlayerDamageEvent event =
+        this.ultraHardcore
+            .eventService()
+            .dispatchEvent(new PlayerDamageEvent(this, damage, absorptionBypass, visible));
+
+    if (event.isCancelled()) {
+      return;
+    }
+
+    damage = event.damage();
+    absorptionBypass = event.absorptionBypass();
+    visible = event.visible();
+
+    final boolean finalAbsorptionBypass = absorptionBypass;
+    final double finalDamage = damage;
+    final boolean finalVisible = visible;
+
+    this.executeAction(
+        player -> {
+          if (player instanceof final CraftPlayer craftPlayer && !finalAbsorptionBypass) {
+            final float absorption = craftPlayer.getHandle().getAbsorptionHearts();
+            if (absorption > 0) {
+              if (absorption >= finalDamage) {
+                craftPlayer.getHandle().setAbsorptionHearts((float) (absorption - finalDamage));
+              } else {
+                craftPlayer.getHandle().setAbsorptionHearts(0f);
+                player.setHealth(Math.max(0, player.getHealth() - (finalDamage - absorption)));
+              }
+            } else {
+              player.setHealth(Math.max(0, player.getHealth() - finalDamage));
+            }
+          } else {
+            player.setHealth(Math.max(player.getHealth() - finalDamage, 0));
+          }
+
+          if (finalVisible) {
+            dev.kurai.uhc.util.packet.PacketWrapper.createPacketWrapper(
+                    new WrapperPlayServerEntityAnimation(
+                        player.getEntityId(),
+                        WrapperPlayServerEntityAnimation.EntityAnimationType.HURT))
+                .send(player.getWorld().getPlayers());
+
+            player.getWorld().playSound(player.getLocation(), Sound.HURT_FLESH, 1f, 1f);
+          }
+        });
   }
 
   @Override

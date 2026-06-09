@@ -71,6 +71,16 @@ public interface Profile
 
   Optional<PotionEffect> findPotionEffect(final PotionEffectType type);
 
+  default void damage(final double damage) {
+    this.damage(damage, false);
+  }
+
+  default void damage(final double damage, final boolean absorptionBypass) {
+    this.damage(damage, absorptionBypass, true);
+  }
+
+  void damage(final double damage, final boolean absorptionBypass, final boolean visible);
+
   void addHealth(final double health);
 
   void removeHealth(final double health);
