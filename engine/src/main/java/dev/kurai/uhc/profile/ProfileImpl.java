@@ -12,6 +12,8 @@ import dev.kurai.uhc.ecs.entity.Entity;
 import dev.kurai.uhc.event.defaults.player.PlayerDamageEvent;
 import dev.kurai.uhc.module.power.AbstractPower;
 import dev.kurai.uhc.module.power.defaults.item.AbstractItemPower;
+import dev.kurai.uhc.module.power.defaults.item.impl.RightClickItemPower;
+import dev.kurai.uhc.module.power.defaults.item.impl.parent.AbstractParentItemPower;
 import dev.kurai.uhc.profile.component.*;
 import dev.kurai.uhc.profile.state.ProfileState;
 import dev.kurai.uhc.profile.state.WaitingProfileState;
@@ -148,7 +150,7 @@ public final class ProfileImpl implements Profile {
   }
 
   private void addEffectInternal(final Player player, final PotionEffect effect) {
-    player.addPotionEffect(effect);
+    player.addPotionEffect(effect, true);
   }
 
   @Override
@@ -402,6 +404,20 @@ public final class ProfileImpl implements Profile {
         final var icon = itemPower.getIcon(player);
         this.addItem(icon);
       }
+    }
+
+    if (power instanceof final AbstractParentItemPower parentPower) {
+      for (final RightClickItemPower child : parentPower.getChildren()) {
+        this.registerChildPower(child);
+      }
+    }
+  }
+
+  private void registerChildPower(final AbstractPower power) {
+    this.powers.put(power.getId(), power);
+
+    if (power instanceof final Listener listener) {
+      this.ultraHardcore.eventService().registerListener(listener);
     }
   }
 
