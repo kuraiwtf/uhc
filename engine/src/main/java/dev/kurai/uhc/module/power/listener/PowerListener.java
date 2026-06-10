@@ -10,7 +10,6 @@ import dev.kurai.uhc.module.power.defaults.item.AbstractItemPower;
 import dev.kurai.uhc.module.power.defaults.item.impl.LeftClickItemPower;
 import dev.kurai.uhc.module.power.defaults.item.impl.RightClickItemPower;
 import dev.kurai.uhc.module.power.defaults.item.impl.block.BlockPlacePower;
-import dev.kurai.uhc.module.power.defaults.item.impl.parent.AbstractParentItemPower;
 import dev.kurai.uhc.module.power.defaults.item.impl.player.PlayerTargetItemPower;
 import dev.kurai.uhc.module.service.ModuleService;
 import dev.kurai.uhc.profile.ProfileService;
@@ -132,7 +131,7 @@ public final class PowerListener extends PacketListenerAbstract implements Liste
     event.setCancelled(true);
   }
 
-  @EventHandler
+  /*@EventHandler
   public void onParentInteract(final PlayerInteractEvent event) {
     if (!event.hasItem()) {
       return;
@@ -162,7 +161,7 @@ public final class PowerListener extends PacketListenerAbstract implements Liste
 
     foundPower.getCurrentPower().use(player);
     event.setCancelled(true);
-  }
+  }*/
 
   private void handleTargetItemPower(
       final Player player, final PlayerTargetItemPower power, final Cancellable cancellable) {
