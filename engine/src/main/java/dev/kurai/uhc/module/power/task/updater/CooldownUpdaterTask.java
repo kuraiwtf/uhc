@@ -5,6 +5,7 @@ import static net.kyori.adventure.text.Component.text;
 import dev.kurai.uhc.adventure.UltraHardcoreKey;
 import dev.kurai.uhc.module.power.AbstractPower;
 import dev.kurai.uhc.module.power.defaults.item.AbstractItemPower;
+import dev.kurai.uhc.module.power.defaults.item.impl.parent.AbstractParentItemPower;
 import dev.kurai.uhc.module.power.restriction.defaults.CooldownPowerRestriction;
 import dev.kurai.uhc.profile.Profile;
 import dev.kurai.uhc.profile.ProfileService;
@@ -15,13 +16,14 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NullMarked;
 
+@NullMarked
 public final class CooldownUpdaterTask implements Runnable {
 
   private final ProfileService profileService;
 
-  public CooldownUpdaterTask(final @NotNull ProfileService profileService) {
+  public CooldownUpdaterTask(final ProfileService profileService) {
     this.profileService = profileService;
   }
 
@@ -34,15 +36,17 @@ public final class CooldownUpdaterTask implements Runnable {
 
       final var player = Objects.requireNonNull(profile.getPlayer());
       for (final var power : profile.getPowers()) {
+        if (power instanceof AbstractParentItemPower
+            || power.getRestrictions().isEmpty() && power.provideActionbarEntry(player) == null) {
+          continue;
+        }
+
         this.processPower(profile, player, power);
       }
     }
   }
 
-  private void processPower(
-      final @NotNull Profile profile,
-      final @NotNull Player player,
-      final @NotNull AbstractPower power) {
+  private void processPower(final Profile profile, final Player player, final AbstractPower power) {
     if (power instanceof final AbstractItemPower itemPower) {
       this.processItemPower(profile, player, itemPower);
     } else {
@@ -51,9 +55,7 @@ public final class CooldownUpdaterTask implements Runnable {
   }
 
   private void processItemPower(
-      final @NotNull Profile profile,
-      final @NotNull Player player,
-      final @NotNull AbstractItemPower itemPower) {
+      final Profile profile, final Player player, final AbstractItemPower itemPower) {
     if (!itemPower.getIcon(player).isSimilar(player.getItemInHand())) {
       this.removeItemPowerEntry(profile, player, itemPower);
       return;
@@ -71,9 +73,7 @@ public final class CooldownUpdaterTask implements Runnable {
   }
 
   private void removeItemPowerEntry(
-      final @NotNull Profile profile,
-      final @NotNull Player player,
-      final @NotNull AbstractItemPower itemPower) {
+      final Profile profile, final Player player, final AbstractItemPower itemPower) {
     final var actionbarEntry = itemPower.provideActionbarEntry(player);
     final var actionbar = profile.getActionbar();
 
@@ -85,9 +85,7 @@ public final class CooldownUpdaterTask implements Runnable {
   }
 
   private void registerPowerEntry(
-      final @NotNull Profile profile,
-      final @NotNull Player player,
-      final @NotNull AbstractPower power) {
+      final Profile profile, final Player player, final AbstractPower power) {
     final var actionbarEntry = power.provideActionbarEntry(player);
     final var actionbar = profile.getActionbar();
 
@@ -99,7 +97,7 @@ public final class CooldownUpdaterTask implements Runnable {
     actionbar.registerEntry(actionbarEntry);
   }
 
-  private @NotNull Component buildStatusComponent(final @NotNull AbstractPower power) {
+  private Component buildStatusComponent(final AbstractPower power) {
     final CooldownPowerRestriction cooldown =
         power.findRestriction(CooldownPowerRestriction.class, "cooldown");
     final Color color = power.getColor();
