@@ -37,7 +37,7 @@ public final class CooldownUpdaterTask implements Runnable {
       final var player = Objects.requireNonNull(profile.getPlayer());
       for (final var power : profile.getPowers()) {
         if (power instanceof AbstractParentItemPower
-            || power.getRestrictions().isEmpty() && power.provideActionbarEntry(player) == null) {
+            || (power.getRestrictions().isEmpty() && power.provideActionbarEntry(player) == null)) {
           continue;
         }
 
