@@ -173,7 +173,7 @@ public final class ProfileImpl implements Profile {
         .flatMap(
             player ->
                 player.getActivePotionEffects().stream()
-                    .filter(effect -> effect.getType() == type)
+                    .filter(effect -> effect.getType().equals(type))
                     .findFirst())
         .orElse(null);
   }
