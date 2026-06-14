@@ -327,7 +327,7 @@ public final class CC {
   public static @NotNull String emptyLine(final ChatColor first, final ChatColor second) {
     final var segment = 21;
 
-    final var builder = new StringBuilder("&m");
+    final var builder = new StringBuilder();
 
     for (var i = 0; i < segment; i++) {
       final ChatColor color;
@@ -338,7 +338,7 @@ public final class CC {
       } else {
         color = ChatColor.WHITE;
       }
-      builder.append(color).append("-").append("&m");
+      builder.append(color).append("&m").append("-");
     }
 
     for (var j = 0; j < segment; j++) {
@@ -350,7 +350,7 @@ public final class CC {
       } else {
         color = first;
       }
-      builder.append(color).append("-").append("&m");
+      builder.append(color).append("&m").append("-");
     }
 
     return CC.colorize(builder.toString());
