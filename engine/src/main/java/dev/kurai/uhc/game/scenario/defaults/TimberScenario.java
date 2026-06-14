@@ -13,21 +13,20 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.jetbrains.annotations.NotNull;
 
 public final class TimberScenario extends AbstractScenario implements Listener {
 
-  public TimberScenario(final @NotNull UltraHardcoreAPI ultraHardcore) {
+  public TimberScenario(final UltraHardcoreAPI ultraHardcore) {
     super("timber", "Timber", ultraHardcore);
   }
 
   @Override
-  public @NotNull ItemStack provideIcon() {
+  public ItemStack provideIcon() {
     return new ItemStack(Material.LOG);
   }
 
   @EventHandler
-  public void onBlockBreak(final @NotNull BlockBreakEvent event) {
+  public void onBlockBreak(final BlockBreakEvent event) {
     final var block = event.getBlock();
     if (this.isNotLog(block.getType())) {
       return;
@@ -36,7 +35,7 @@ public final class TimberScenario extends AbstractScenario implements Listener {
     new TimberTask(this.check(block)).runTaskTimer(this.ultraHardcore.plugin(), 0, 4L);
   }
 
-  private @NotNull List<@NotNull Block> check(final @NotNull Block block) {
+  private List<Block> check(final Block block) {
     final var checkedBlocks = Lists.<Block>newArrayList();
     final var logBlocks = Lists.<Block>newArrayList();
     final var toCheck = Queues.<Block>newConcurrentLinkedQueue();
@@ -71,15 +70,15 @@ public final class TimberScenario extends AbstractScenario implements Listener {
     return logBlocks;
   }
 
-  private boolean isNotLog(final @NotNull Material material) {
+  private boolean isNotLog(final Material material) {
     return !material.name().contains("LOG");
   }
 
   private static final class TimberTask extends BukkitRunnable {
 
-    private final List<@NotNull Block> blocks;
+    private final List<Block> blocks;
 
-    public TimberTask(final List<@NotNull Block> blocks) {
+    public TimberTask(final List<Block> blocks) {
       this.blocks = blocks;
     }
 

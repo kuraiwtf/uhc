@@ -12,7 +12,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jspecify.annotations.NonNull;
 
@@ -27,7 +26,7 @@ public final class ArmorReplaceScenario extends AbstractScenario implements List
   private static final BooleanScenarioConfiguration BOOTS_CONFIGURATION =
       new BooleanScenarioConfiguration("boots");
 
-  public ArmorReplaceScenario(final @NotNull UltraHardcoreAPI ultraHardcore) {
+  public ArmorReplaceScenario(final UltraHardcoreAPI ultraHardcore) {
     super("armor_replace", "Armor Replace", ultraHardcore);
     this.registerConfiguration(HELMET_CONFIGURATION);
     this.registerConfiguration(CHESTPLATE_CONFIGURATION);
@@ -36,7 +35,7 @@ public final class ArmorReplaceScenario extends AbstractScenario implements List
   }
 
   @Override
-  public @NotNull ItemStack provideIcon() {
+  public ItemStack provideIcon() {
     return new ItemStack(Material.IRON_CHESTPLATE);
   }
 

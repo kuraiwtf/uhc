@@ -10,11 +10,10 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
 
 public final class HasteyBoysScenario extends AbstractScenario implements Listener {
 
-  private static final Collection<@NotNull Material> TOOLS = Lists.newArrayList();
+  private static final Collection<Material> TOOLS = Lists.newArrayList();
 
   static {
     for (final var material : Material.values()) {
@@ -29,12 +28,12 @@ public final class HasteyBoysScenario extends AbstractScenario implements Listen
     TOOLS.add(Material.SHEARS);
   }
 
-  public HasteyBoysScenario(final @NotNull UltraHardcoreAPI ultraHardcore) {
+  public HasteyBoysScenario(final UltraHardcoreAPI ultraHardcore) {
     super("hastey_boys", "Hastey Boys", ultraHardcore);
   }
 
   @Override
-  public @NotNull ItemStack provideIcon() {
+  public ItemStack provideIcon() {
     return new ItemStack(Material.IRON_PICKAXE);
   }
 

@@ -11,7 +11,6 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
-import net.minecraft.server.v1_8_R3.*;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.EventHandler;
@@ -20,8 +19,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
-import org.jspecify.annotations.NonNull;
 
 public final class CutCleanScenario extends AbstractScenario implements Listener {
 
@@ -35,17 +32,17 @@ public final class CutCleanScenario extends AbstractScenario implements Listener
       Set.of(
           EntityType.COW, EntityType.PIG, EntityType.CHICKEN, EntityType.SHEEP, EntityType.RABBIT);
 
-  public CutCleanScenario(final @NotNull UltraHardcoreAPI ultraHardcore) {
+  public CutCleanScenario(final UltraHardcoreAPI ultraHardcore) {
     super("cut_clean", "Cut Clean", ultraHardcore);
   }
 
   @Override
-  public @NotNull ItemStack provideIcon() {
+  public ItemStack provideIcon() {
     return new ItemStack(Material.IRON_INGOT);
   }
 
   @EventHandler(priority = EventPriority.LOWEST)
-  public void onBreak(final @NonNull BlockBreakEvent event) {
+  public void onBreak(final BlockBreakEvent event) {
     if (event.isCancelled()) {
       return;
     }
@@ -75,7 +72,7 @@ public final class CutCleanScenario extends AbstractScenario implements Listener
   }
 
   @EventHandler
-  public void onDeath(final @NonNull EntityDeathEvent event) {
+  public void onDeath(final EntityDeathEvent event) {
     final var entity = event.getEntity();
     if (!ALLOWED_ENTITIES.contains(entity.getType())) {
       return;

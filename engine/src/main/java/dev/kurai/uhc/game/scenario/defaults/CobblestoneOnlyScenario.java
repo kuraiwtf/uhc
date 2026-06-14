@@ -9,25 +9,24 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockExplodeEvent;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
 
 public final class CobblestoneOnlyScenario extends AbstractScenario implements Listener {
 
-  public CobblestoneOnlyScenario(final @NotNull UltraHardcoreAPI ultraHardcore) {
+  public CobblestoneOnlyScenario(final UltraHardcoreAPI ultraHardcore) {
     super("cobblestone_only", "Cobble Only", ultraHardcore);
   }
 
   @EventHandler
-  public void onBlockBreak(final @NotNull BlockBreakEvent event) {
+  public void onBlockBreak(final BlockBreakEvent event) {
     this.apply(event.getBlock());
   }
 
   @EventHandler
-  public void onBlockExplode(final @NotNull BlockExplodeEvent event) {
+  public void onBlockExplode(final BlockExplodeEvent event) {
     this.apply(event.getBlock());
   }
 
-  private void apply(final @NotNull Block block) {
+  private void apply(final Block block) {
     if (block.getType() != Material.STONE) {
       return;
     }
@@ -40,7 +39,7 @@ public final class CobblestoneOnlyScenario extends AbstractScenario implements L
   }
 
   @Override
-  public @NotNull ItemStack provideIcon() {
+  public ItemStack provideIcon() {
     return new ItemStack(Material.COBBLESTONE);
   }
 }
