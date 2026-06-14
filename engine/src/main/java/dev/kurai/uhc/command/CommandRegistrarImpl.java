@@ -102,7 +102,8 @@ public final class CommandRegistrarImpl implements CommandRegistrar {
       final var commandMap = this.getCommandMap();
       final var map = this.getPrivateField(commandMap, "knownCommands");
       @SuppressWarnings("unchecked")
-      final HashMap<String, Command> knownCommands = (HashMap<String, Command>) map;
+      final HashMap<String, org.bukkit.command.Command> knownCommands =
+          (HashMap<String, org.bukkit.command.Command>) map;
       knownCommands.remove(name);
     } catch (final Exception e) {
       e.printStackTrace();
