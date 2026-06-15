@@ -114,9 +114,26 @@ public final class UltraHardcoreParentCommand extends Command {
       return true;
     }
 
-    // Minimum args = total params - 1 (sender). Arrays require at least 1 element,
-    // so the formula is identical whether or not there is an array param.
-    final int minArgs = method.getParameters().length - 1;
+    // Find first array parameter (1-based index; 0 = sender).
+    int arrayParamIndex = -1;
+    for (var i = 1; i < method.getParameterTypes().length; i++) {
+      if (method.getParameterTypes()[i].isArray()) {
+        arrayParamIndex = i;
+        break;
+      }
+    }
+
+    final int minArgs;
+    if (arrayParamIndex < 0) {
+      int required = 0;
+      for (final var argument : subCommand.arguments()) {
+        if (argument.defaultValue().isEmpty()) required++;
+      }
+      minArgs = required;
+    } else {
+      minArgs = method.getParameters().length - 1;
+    }
+
     if (rawArguments.size() < minArgs) {
       audience.sendMessage(
           text()
@@ -132,15 +149,6 @@ public final class UltraHardcoreParentCommand extends Command {
       return false;
     }
 
-    // Find first array parameter (1-based index; 0 = sender).
-    int arrayParamIndex = -1;
-    for (var i = 1; i < method.getParameterTypes().length; i++) {
-      if (method.getParameterTypes()[i].isArray()) {
-        arrayParamIndex = i;
-        break;
-      }
-    }
-
     final var resolvedArguments = Lists.newArrayList();
     resolvedArguments.add(sender);
     final var registrar = this.commandRegistrar.getArgumentResolverRegistrar();
@@ -148,9 +156,11 @@ public final class UltraHardcoreParentCommand extends Command {
     if (arrayParamIndex < 0) {
       // No array params: one arg per param, sequential.
       for (var i = 1; i < method.getParameters().length; i++) {
-        final var resolved =
-            registrar.resolveArgument(
-                method.getParameterTypes()[i], sender, rawArguments.get(i - 1));
+        final String rawArg =
+            i - 1 < rawArguments.size()
+                ? rawArguments.get(i - 1)
+                : subCommand.arguments().get(i - 1).defaultValue();
+        final var resolved = registrar.resolveArgument(method.getParameterTypes()[i], sender, rawArg);
         if (resolved == null) {
           audience.sendMessage(
               text().append(prefix()).append(text("Un argument est invalide.", RED)).build());

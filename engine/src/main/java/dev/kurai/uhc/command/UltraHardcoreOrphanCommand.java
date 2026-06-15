@@ -57,7 +57,25 @@ public final class UltraHardcoreOrphanCommand extends Command {
       return true;
     }
 
-    final int minArgs = this.method.getParameters().length - 1;
+    int arrayParamIndex = -1;
+    for (var i = 1; i < this.method.getParameterTypes().length; i++) {
+      if (this.method.getParameterTypes()[i].isArray()) {
+        arrayParamIndex = i;
+        break;
+      }
+    }
+
+    final int minArgs;
+    if (arrayParamIndex < 0) {
+      int required = 0;
+      for (final var argument : this.arguments) {
+        if (argument.defaultValue().isEmpty()) required++;
+      }
+      minArgs = required;
+    } else {
+      minArgs = this.method.getParameters().length - 1;
+    }
+
     if (args.length < minArgs) {
       audience.sendMessage(
           text()
@@ -74,22 +92,16 @@ public final class UltraHardcoreOrphanCommand extends Command {
       return false;
     }
 
-    int arrayParamIndex = -1;
-    for (var i = 1; i < this.method.getParameterTypes().length; i++) {
-      if (this.method.getParameterTypes()[i].isArray()) {
-        arrayParamIndex = i;
-        break;
-      }
-    }
-
     final var resolvedArguments = Lists.newArrayList();
     resolvedArguments.add(sender);
     final var registrar = this.commandRegistrar.getArgumentResolverRegistrar();
 
     if (arrayParamIndex < 0) {
       for (var i = 1; i < this.method.getParameters().length; i++) {
+        final String rawArg =
+            i - 1 < args.length ? args[i - 1] : this.arguments.get(i - 1).defaultValue();
         final var resolved =
-            registrar.resolveArgument(this.method.getParameterTypes()[i], sender, args[i - 1]);
+            registrar.resolveArgument(this.method.getParameterTypes()[i], sender, rawArg);
         if (resolved == null) {
           audience.sendMessage(
               text()
