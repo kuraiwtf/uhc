@@ -89,6 +89,7 @@ public final class UltraHardcoreEngine extends UltraHardcoreAPI {
         new ModuleCommands(this),
         new ModerationCommands(this),
         new HostCommand(this.bukkitAudiences, this),
+        new SpectatorCommand(this),
         new WhitelistCommand(this.bukkitAudiences, this.whitelistService));
 
     this.commandRegistrar

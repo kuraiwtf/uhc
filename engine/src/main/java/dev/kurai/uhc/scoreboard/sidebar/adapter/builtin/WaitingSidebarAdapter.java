@@ -8,25 +8,25 @@ import static net.kyori.adventure.text.format.TextDecoration.*;
 import com.google.common.collect.Lists;
 import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.module.team.module.TeamModule;
+import dev.kurai.uhc.profile.ProfileService;
+import dev.kurai.uhc.profile.component.SpectatorComponent;
 import dev.kurai.uhc.scoreboard.sidebar.SidebarAdapter;
 import dev.kurai.uhc.scoreboard.sidebar.SidebarTitleAdapter;
 import java.util.List;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
 
 public final class WaitingSidebarAdapter implements SidebarAdapter, SidebarTitleAdapter {
 
   private final UltraHardcoreAPI ultraHardcore;
 
-  public WaitingSidebarAdapter(final @NotNull UltraHardcoreAPI ultraHardcore) {
+  public WaitingSidebarAdapter(final UltraHardcoreAPI ultraHardcore) {
     this.ultraHardcore = ultraHardcore;
   }
 
   @Override
-  public @NotNull Component provideTitle(final @NotNull Player player) {
+  public Component provideTitle(final Player player) {
     return text()
         .append(text('-', DARK_GRAY, BOLD))
         .appendSpace()
@@ -37,19 +37,18 @@ public final class WaitingSidebarAdapter implements SidebarAdapter, SidebarTitle
   }
 
   @Override
-  public @NotNull List<@NotNull Component> provideLines(final @NotNull Player player) {
+  public List<Component> provideLines(final Player player) {
     final var lines = Lists.<Component>newArrayList();
     final var gameService = this.ultraHardcore.gameService();
     final var hostId = gameService.hostService().host();
     lines.add(empty());
+    final ProfileService profileService = this.ultraHardcore.profileService();
     lines.add(
         text()
             .append(text("Hôte: "))
             .append(
                 text(
-                    hostId == null
-                        ? "Aucun"
-                        : this.ultraHardcore.profileService().getOrCreateProfile(hostId).getName(),
+                    hostId == null ? "Aucun" : profileService.getOrCreateProfile(hostId).getName(),
                     hostId == null ? RED : GOLD))
             .build());
     final var module = this.ultraHardcore.moduleService().getCurrentModule();
@@ -58,7 +57,13 @@ public final class WaitingSidebarAdapter implements SidebarAdapter, SidebarTitle
     lines.add(
         text()
             .append(text("Joueurs: "))
-            .append(text(Bukkit.getOnlinePlayers().size(), GOLD, BOLD))
+            .append(
+                text(
+                    profileService
+                        .getProfiles(profile -> !profile.hasComponent(SpectatorComponent.class))
+                        .size(),
+                    GOLD,
+                    BOLD))
             .append(text('/', DARK_GRAY))
             .append(text(gameService.slotService().slotProvider().slots(), GOLD))
             .build());
@@ -79,7 +84,7 @@ public final class WaitingSidebarAdapter implements SidebarAdapter, SidebarTitle
     return lines;
   }
 
-  private @NotNull TextColor provideTpsColor(final double tps) {
+  private TextColor provideTpsColor(final double tps) {
     return tps > 15 ? GREEN : tps > 10 ? YELLOW : tps > 5 ? GOLD : RED;
   }
 }

@@ -11,9 +11,11 @@ import dev.kurai.uhc.game.start.countdown.task.StartCountdownTask;
 import dev.kurai.uhc.game.start.phase.StartPhase;
 import dev.kurai.uhc.game.start.service.StartService;
 import dev.kurai.uhc.listener.game.PlayingListener;
+import dev.kurai.uhc.listener.game.SpectatorListener;
 import dev.kurai.uhc.module.power.listener.PowerListener;
 import dev.kurai.uhc.module.power.task.updater.CooldownUpdaterTask;
 import dev.kurai.uhc.profile.component.DisconnectComponent;
+import dev.kurai.uhc.profile.component.SpectatorComponent;
 import dev.kurai.uhc.profile.state.PlayingProfileState;
 import dev.kurai.uhc.profile.state.WaitingProfileState;
 import dev.kurai.uhc.scoreboard.sidebar.adapter.builtin.PlayingSidebarAdapter;
@@ -22,25 +24,27 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.scheduler.BukkitTask;
-import org.jetbrains.annotations.NotNull;
 
 public final class StartServiceImpl implements StartService {
 
   private final UltraHardcoreAPI ultraHardcore;
 
-  private final LinkedList<@NotNull StartPhase> phases;
+  private final LinkedList<StartPhase> phases;
   private StartPhase phase;
 
   private BukkitTask startTask;
 
-  public StartServiceImpl(final @NotNull UltraHardcoreAPI ultraHardcore) {
+  public StartServiceImpl(final UltraHardcoreAPI ultraHardcore) {
     this.ultraHardcore = ultraHardcore;
     this.phases = Lists.newLinkedList();
   }
 
   @Override
-  public Collection<@NotNull StartPhase> getPhases() {
+  public Collection<StartPhase> getPhases() {
     return List.copyOf(this.phases);
   }
 
@@ -50,36 +54,36 @@ public final class StartServiceImpl implements StartService {
   }
 
   @Override
-  public void registerPhase(final @NotNull StartPhase phase) {
+  public void registerPhase(final StartPhase phase) {
     this.phases.add(phase);
   }
 
   @Override
-  public void registerPhase(final int index, final @NotNull StartPhase phase) {
+  public void registerPhase(final int index, final StartPhase phase) {
     this.phases.add(index, phase);
   }
 
   @Override
-  public void registerPhaseBefore(final @NotNull StartPhase from, final @NotNull StartPhase phase) {
+  public void registerPhaseBefore(final StartPhase from, final StartPhase phase) {
     Preconditions.checkArgument(
         this.phases.contains(from), "Phase %s is not registered.", from.getId());
     this.phases.add(this.phases.indexOf(from) - 1, phase);
   }
 
   @Override
-  public void registerPhaseAfter(final @NotNull StartPhase from, final @NotNull StartPhase phase) {
+  public void registerPhaseAfter(final StartPhase from, final StartPhase phase) {
     Preconditions.checkArgument(
         this.phases.contains(from), "Phase %s is not registered.", from.getId());
     this.phases.add(this.phases.indexOf(from) + 1, phase);
   }
 
   @Override
-  public void unregisterPhase(final @NotNull String id) {
+  public void unregisterPhase(final String id) {
     this.phases.removeIf(phase -> phase.getId().equals(id));
   }
 
   @Override
-  public boolean hasPhase(final @NotNull String id) {
+  public boolean hasPhase(final String id) {
     return this.phases.stream().anyMatch(phase -> phase.getId().equals(id));
   }
 
@@ -113,6 +117,7 @@ public final class StartServiceImpl implements StartService {
     eventService.dispatchEvent(new GameStartEvent());
     eventService.registerListeners(
         new PlayingListener(this.ultraHardcore),
+        new SpectatorListener(this.ultraHardcore),
         new PowerListener(
             this.ultraHardcore.profileService(),
             this.ultraHardcore.moduleService(),
@@ -146,12 +151,18 @@ public final class StartServiceImpl implements StartService {
 
     final var profileService = this.ultraHardcore.profileService();
     for (final var profile : profileService.getProfiles()) {
-      if (!(profile.getState() instanceof WaitingProfileState)) {
+      final var player = profile.getPlayer();
+      if (player == null) {
         continue;
       }
 
-      final var player = profile.getPlayer();
-      if (player == null) {
+      if (!(profile.getState() instanceof WaitingProfileState)
+          || profile.hasComponent(SpectatorComponent.class)) {
+        player.teleport(world.getSpawnLocation());
+        player.setGameMode(GameMode.SPECTATOR);
+        final PlayerInventory inventory = player.getInventory();
+        inventory.setContents(new ItemStack[36]);
+        inventory.setArmorContents(new ItemStack[4]);
         continue;
       }
 

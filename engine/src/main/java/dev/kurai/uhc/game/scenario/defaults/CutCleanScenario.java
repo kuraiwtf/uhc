@@ -58,7 +58,7 @@ public final class CutCleanScenario extends AbstractScenario implements Listener
 
     final var drops = block.getDrops();
 
-    block.setType(AIR);
+    event.setDropItems(false);
     player.giveExp(ThreadLocalRandom.current().nextInt(2, 6));
 
     for (final var stack : drops) {

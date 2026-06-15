@@ -2,26 +2,17 @@ package dev.kurai.uhc.game.scatter;
 
 import com.google.common.collect.Lists;
 import dev.kurai.uhc.UltraHardcoreAPI;
-import dev.kurai.uhc.game.GameService;
-import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
-import org.jetbrains.annotations.NotNull;
 
 public final class ScatterServiceImpl implements ScatterService {
 
-  private final GameService gameService;
-  private final Plugin plugin;
-  private final BukkitAudiences bukkitAudiences;
+  private final UltraHardcoreAPI ultraHardcore;
 
   private ScatterPositionProvider positionProvider;
 
-  public ScatterServiceImpl(
-      final @NotNull UltraHardcoreAPI ultraHardcore, final @NotNull GameService gameService) {
-    this.gameService = gameService;
-    this.plugin = ultraHardcore.plugin();
-    this.bukkitAudiences = ultraHardcore.bukkitAudiences();
+  public ScatterServiceImpl(final UltraHardcoreAPI ultraHardcore) {
+    this.ultraHardcore = ultraHardcore;
 
     this.positionProvider =
         (radius, players) -> {
@@ -46,20 +37,20 @@ public final class ScatterServiceImpl implements ScatterService {
   }
 
   @Override
-  public @NotNull ScatterPositionProvider getPositionProvider() {
+  public ScatterPositionProvider getPositionProvider() {
     return this.positionProvider;
   }
 
   @Override
-  public void setPositionProvider(final @NotNull ScatterPositionProvider positionProvider) {
+  public void setPositionProvider(final ScatterPositionProvider positionProvider) {
     this.positionProvider = positionProvider;
   }
 
   @Override
   public void handleScatter() {
-    new ScatterTask(this.gameService).runTaskTimer(this.plugin, 0, 1L);
+    new ScatterTask(this.ultraHardcore).runTaskTimer(this.ultraHardcore.plugin(), 0, 1L);
   }
 
   @Override
-  public void handlePlayerLateScatter(final @NotNull Player player) {}
+  public void handlePlayerLateScatter(final Player player) {}
 }

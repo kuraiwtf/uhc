@@ -5,8 +5,9 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Predicate;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NullMarked;
 
+@NullMarked
 public interface ProfileService {
 
   Profile getOrCreateProfile(final UUID uniqueId);
@@ -15,11 +16,13 @@ public interface ProfileService {
     return this.getOrCreateProfile(player.getUniqueId());
   }
 
-  Optional<@NotNull Profile> getProfile(final @NotNull String name);
+  Optional<Profile> getProfile(final String name);
 
-  Optional<@NotNull Profile> getProfile(final Predicate<@NotNull Profile> filter);
+  Optional<Profile> getProfile(final Predicate<Profile> filter);
 
-  Collection<@NotNull Profile> getProfiles();
+  Collection<Profile> getProfiles();
 
-  Collection<@NotNull Profile> getProfiles(final Predicate<@NotNull Profile> filter);
+  Collection<Profile> getProfiles(final Predicate<Profile> filter);
+
+  Collection<Profile> getPlayingProfiles();
 }

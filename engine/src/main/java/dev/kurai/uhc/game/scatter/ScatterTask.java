@@ -1,30 +1,37 @@
 package dev.kurai.uhc.game.scatter;
 
 import com.google.common.collect.Lists;
-import dev.kurai.uhc.game.GameService;
+import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.game.configuration.border.BorderConfiguration;
+import dev.kurai.uhc.profile.Profile;
+import dev.kurai.uhc.profile.component.SpectatorComponent;
 import java.util.List;
 import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.entity.Entity;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.jetbrains.annotations.NotNull;
 
 public final class ScatterTask extends BukkitRunnable {
 
-  private final GameService gameService;
+  private final UltraHardcoreAPI ultraHardcore;
 
-  private final List<@NotNull UUID> players;
-  private final List<@NotNull Location> positions;
+  private final List<UUID> players;
+  private final List<Location> positions;
 
-  public ScatterTask(final @NotNull GameService gameService) {
-    this.gameService = gameService;
+  public ScatterTask(final UltraHardcoreAPI ultraHardcore) {
+    this.ultraHardcore = ultraHardcore;
     this.players =
-        Lists.newArrayList(Bukkit.getOnlinePlayers().stream().map(Entity::getUniqueId).toList());
+        Lists.newArrayList(
+            ultraHardcore
+                .profileService()
+                .getProfiles(profile -> !profile.hasComponent(SpectatorComponent.class))
+                .stream()
+                .map(Profile::getId)
+                .toList());
     this.positions =
         Lists.newArrayList(
-            gameService
+            ultraHardcore
+                .gameService()
                 .scatterService()
                 .getPositionProvider()
                 .provideLocations(
@@ -34,7 +41,7 @@ public final class ScatterTask extends BukkitRunnable {
   @Override
   public void run() {
     if (this.players.isEmpty()) {
-      this.gameService.startService().handleFinalStart();
+      this.ultraHardcore.gameService().startService().handleFinalStart();
       this.cancel();
       return;
     }
