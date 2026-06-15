@@ -10,13 +10,13 @@ public final class ItemButton extends Button {
 
   private final ItemStack item;
 
-  public ItemButton(final @NotNull ItemStack item) {
+  public ItemButton(final  ItemStack item) {
     this.item = item;
   }
 
   @Contract(pure = true)
   @Override
-  public @NotNull ItemStack getIcon() {
+  public  ItemStack getIcon() {
     return new ItemBuilder(this.item).lunarTag("unclickable", true).asItemStack();
   }
 }

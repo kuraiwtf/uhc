@@ -20,20 +20,19 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
 
 public final class UltraHardcoreParentCommand extends Command {
 
   private final BukkitAudiences bukkitAudiences;
   private final CommandRegistrar commandRegistrar;
-  private final List<@NotNull SubCommandData> subCommands;
+  private final List<SubCommandData> subCommands;
   private final HelpCommand helpCommand;
 
   public UltraHardcoreParentCommand(
-      final @NotNull CommandMeta meta,
-      final @NotNull BukkitAudiences bukkitAudiences,
-      final @NotNull CommandRegistrar commandRegistrar,
-      final List<@NotNull SubCommandData> subCommands) {
+      final CommandMeta meta,
+      final BukkitAudiences bukkitAudiences,
+      final CommandRegistrar commandRegistrar,
+      final List<SubCommandData> subCommands) {
     super(
         meta.name(),
         meta.description(),
@@ -48,7 +47,7 @@ public final class UltraHardcoreParentCommand extends Command {
     this.helpCommand = new HelpCommand(this);
   }
 
-  public @NotNull Collection<@NotNull SubCommandData> getSubCommands() {
+  public Collection<SubCommandData> getSubCommands() {
     return Lists.newArrayList(this.subCommands);
   }
 

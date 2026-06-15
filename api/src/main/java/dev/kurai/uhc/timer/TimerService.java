@@ -2,30 +2,27 @@ package dev.kurai.uhc.timer;
 
 import java.util.Collection;
 import java.util.Optional;
-import org.jetbrains.annotations.NotNull;
 
 public interface TimerService {
 
-  void registerTimer(final @NotNull AbstractTimer timer);
+  void registerTimer(final AbstractTimer timer);
 
-  default void registerTimers(final AbstractTimer @NotNull ... timers) {
+  default void registerTimers(final AbstractTimer... timers) {
     for (final var timer : timers) {
       this.registerTimer(timer);
     }
   }
 
-  void unregisterTimer(final @NotNull String identifier);
+  void unregisterTimer(final String identifier);
 
-  default void unregisterTimers(final String @NotNull ... identifiers) {
+  default void unregisterTimers(final String... identifiers) {
     for (final var identifier : identifiers) {
       this.unregisterTimer(identifier);
     }
   }
 
-  @NotNull
-  Optional<AbstractTimer> getTimer(final @NotNull String identifier);
+  Optional<AbstractTimer> getTimer(final String identifier);
 
-  @NotNull
   Collection<AbstractTimer> getTimers();
 
   void startAllTimers();

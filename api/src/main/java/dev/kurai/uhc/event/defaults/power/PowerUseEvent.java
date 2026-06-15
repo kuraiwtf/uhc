@@ -16,16 +16,16 @@ public final class PowerUseEvent extends Event implements Cancellable {
 
   private boolean cancelled;
 
-  public PowerUseEvent(final @NotNull Profile profile, final @NotNull AbstractPower power) {
+  public PowerUseEvent(final  Profile profile, final  AbstractPower power) {
     this.profile = profile;
     this.power = power;
   }
 
-  public @NotNull Profile getProfile() {
+  public  Profile getProfile() {
     return this.profile;
   }
 
-  public @NotNull AbstractPower getPower() {
+  public  AbstractPower getPower() {
     return this.power;
   }
 

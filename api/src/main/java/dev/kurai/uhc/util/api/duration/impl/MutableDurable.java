@@ -6,10 +6,10 @@ import org.jetbrains.annotations.NotNull;
 public interface MutableDurable extends Durable {
 
   @Override
-  @NotNull
+  
   Long getDuration();
 
-  void setDuration(final @NotNull Long duration);
+  void setDuration(final  Long duration);
 
   @Override
   default boolean isPermanent() {
@@ -37,6 +37,6 @@ public interface MutableDurable extends Durable {
   }
 
   @Override
-  @NotNull
+  
   Long getCreatedAt();
 }

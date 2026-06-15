@@ -5,5 +5,5 @@ import org.jetbrains.annotations.NotNull;
 @FunctionalInterface
 public interface DeathProcessor {
 
-  void processDeath(final @NotNull DeathContext context);
+  void processDeath(final  DeathContext context);
 }

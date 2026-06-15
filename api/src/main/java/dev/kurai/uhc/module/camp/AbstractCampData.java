@@ -13,7 +13,7 @@ public abstract class AbstractCampData<T extends AbstractCamp<?>>
   }
 
   @Override
-  public @NotNull Class<? extends T> getId() {
+  public  Class<? extends T> getId() {
     return this.identifier;
   }
 }

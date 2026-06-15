@@ -6,14 +6,13 @@ import dev.kurai.uhc.game.scenario.defaults.*;
 import java.util.Collection;
 import java.util.Map;
 import java.util.function.Predicate;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 
 public final class ScenarioServiceImpl implements ScenarioService {
 
-  private final Map<@NotNull String, @NotNull AbstractScenario> scenarios;
+  private final Map<String, AbstractScenario> scenarios;
 
-  public ScenarioServiceImpl(final @NotNull UltraHardcoreAPI ultraHardcore) {
+  public ScenarioServiceImpl(final UltraHardcoreAPI ultraHardcore) {
     this.scenarios = Maps.newHashMap();
     this.registerScenarios(
         new ArmorReplaceScenario(ultraHardcore),
@@ -27,23 +26,23 @@ public final class ScenarioServiceImpl implements ScenarioService {
   }
 
   @Override
-  public @NotNull @Unmodifiable Collection<@NotNull AbstractScenario> getScenarios(
-      final @NotNull Predicate<@NotNull AbstractScenario> filter) {
+  public @Unmodifiable Collection<AbstractScenario> getScenarios(
+      final Predicate<AbstractScenario> filter) {
     return this.scenarios.values().stream().filter(filter).toList();
   }
 
   @Override
-  public void registerScenario(final @NotNull AbstractScenario scenario) {
+  public void registerScenario(final AbstractScenario scenario) {
     this.scenarios.put(scenario.getId(), scenario);
   }
 
   @Override
-  public boolean isRegistered(final @NotNull String scenarioId) {
+  public boolean isRegistered(final String scenarioId) {
     return this.scenarios.containsKey(scenarioId);
   }
 
   @Override
-  public boolean isEnabled(final @NotNull String scenarioId) {
+  public boolean isEnabled(final String scenarioId) {
     return this.scenarios.containsKey(scenarioId) && this.scenarios.get(scenarioId).isEnabled();
   }
 }

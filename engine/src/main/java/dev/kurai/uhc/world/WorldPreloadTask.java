@@ -3,7 +3,6 @@ package dev.kurai.uhc.world;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bukkit.World;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.jetbrains.annotations.NotNull;
 
 public final class WorldPreloadTask extends BukkitRunnable {
 
@@ -15,7 +14,7 @@ public final class WorldPreloadTask extends BukkitRunnable {
   private int currentZ;
 
   public WorldPreloadTask(
-      final @NotNull BukkitAudiences bukkitAudiences, final World world, final int borderSize) {
+      final BukkitAudiences bukkitAudiences, final World world, final int borderSize) {
     this.bukkitAudiences = bukkitAudiences;
     this.world = world;
     this.borderSize = borderSize;

@@ -68,7 +68,7 @@ public class Repository<I, E extends Identifiable<I>> implements Iterable<E> {
   }
 
   @Override
-  public @NotNull Iterator<E> iterator() {
+  public  Iterator<E> iterator() {
     return this.findAll().iterator();
   }
 

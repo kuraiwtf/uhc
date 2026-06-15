@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 public interface EntityState<E> extends State {
 
   @Override
-  @NotNull
+  
   String getId();
 
   void onEntry(final E entity);

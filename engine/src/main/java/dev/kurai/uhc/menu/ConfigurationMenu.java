@@ -38,13 +38,13 @@ public final class ConfigurationMenu extends Menu {
   private final UltraHardcoreAPI ultraHardcore;
 
   public ConfigurationMenu(
-      final @NotNull Player player, final @NotNull UltraHardcoreAPI ultraHardcore) {
+      final  Player player, final  UltraHardcoreAPI ultraHardcore) {
     super("Configuration de la partie", MenuSize.SIX, player);
     this.ultraHardcore = ultraHardcore;
   }
 
   @Override
-  public void setup(final @NotNull BackgroundLayer back, final @NotNull ForegroundLayer front) {
+  public void setup(final  BackgroundLayer back, final  ForegroundLayer front) {
     this.apply(new BorderTemplate(DyeColor.ORANGE.getData()));
 
     front.set(13, new SlotsButton(this.ultraHardcore.gameService().slotService()));
@@ -123,7 +123,7 @@ public final class ConfigurationMenu extends Menu {
     private final ScenarioService scenarioService;
 
     private ScenarioButton(
-        final @NotNull EventService eventService, final @NotNull ScenarioService scenarioService) {
+        final  EventService eventService, final  ScenarioService scenarioService) {
       this.eventService = eventService;
       this.scenarioService = scenarioService;
     }
@@ -214,7 +214,7 @@ public final class ConfigurationMenu extends Menu {
     private final Player player;
     private final AbstractModule module;
 
-    private ModuleButton(final @NotNull Player player, final @NotNull AbstractModule module) {
+    private ModuleButton(final  Player player, final  AbstractModule module) {
       this.player = player;
       this.module = module;
     }
@@ -282,7 +282,7 @@ public final class ConfigurationMenu extends Menu {
 
     private final StartService startService;
 
-    private StartButton(final @NotNull StartService startService) {
+    private StartButton(final  StartService startService) {
       this.startService = startService;
     }
 

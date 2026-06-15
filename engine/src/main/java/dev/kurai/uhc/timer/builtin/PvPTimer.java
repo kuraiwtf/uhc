@@ -10,7 +10,6 @@ import dev.kurai.uhc.util.api.annotation.Name;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
-import org.jetbrains.annotations.NotNull;
 
 @Identifier(PvPTimer.IDENTIFIER)
 @Name("PvP")
@@ -21,7 +20,7 @@ public final class PvPTimer extends AbstractTimer {
 
   private final BukkitAudiences bukkitAudiences;
 
-  public PvPTimer(final @NotNull BukkitAudiences bukkitAudiences) {
+  public PvPTimer(final BukkitAudiences bukkitAudiences) {
     this.bukkitAudiences = bukkitAudiences;
   }
 

@@ -10,25 +10,25 @@ import org.jetbrains.annotations.NotNull;
 public abstract class AbstractCampRegistrar<
     C extends AbstractCamp<?>, D extends AbstractCampData<C>> {
 
-  protected final CampFactory<@NotNull C, @NotNull D> factory;
-  protected final CampRepository<@NotNull C, @NotNull D> repository;
+  protected final CampFactory< C,  D> factory;
+  protected final CampRepository< C,  D> repository;
 
   public AbstractCampRegistrar(
-      final CampFactory<@NotNull C, @NotNull D> factory,
-      final CampRepository<@NotNull C, @NotNull D> repository) {
+      final CampFactory< C,  D> factory,
+      final CampRepository< C,  D> repository) {
     this.factory = factory;
     this.repository = repository;
   }
 
-  public CampRepository<@NotNull C, @NotNull D> getRegistry() {
+  public CampRepository< C,  D> getRegistry() {
     return this.repository;
   }
 
-  public Optional<@NotNull D> getTeam(final @NotNull Class<? extends C> clazz) {
+  public Optional< D> getTeam(final  Class<? extends C> clazz) {
     return this.repository.findById(clazz);
   }
 
-  public void registerTeam(final @NotNull Class<? extends C> clazz) {
+  public void registerTeam(final  Class<? extends C> clazz) {
     if (this.isRegistered(clazz)) {
       return;
     }
@@ -36,7 +36,7 @@ public abstract class AbstractCampRegistrar<
     this.repository.save(this.factory.provideNewInstance(clazz));
   }
 
-  public void unregisterTeam(final @NotNull Class<? extends C> clazz) {
+  public void unregisterTeam(final  Class<? extends C> clazz) {
     if (!this.isRegistered(clazz)) {
       return;
     }
@@ -44,7 +44,7 @@ public abstract class AbstractCampRegistrar<
     this.repository.deleteById(clazz);
   }
 
-  public boolean isRegistered(final @NotNull Class<? extends C> clazz) {
+  public boolean isRegistered(final  Class<? extends C> clazz) {
     return this.repository.findById(clazz).isPresent();
   }
 }

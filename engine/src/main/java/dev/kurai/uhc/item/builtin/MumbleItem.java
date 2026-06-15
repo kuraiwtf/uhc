@@ -16,7 +16,6 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
 
 public final class MumbleItem extends CustomItem {
 
@@ -24,13 +23,13 @@ public final class MumbleItem extends CustomItem {
 
   private final UltraHardcoreAPI ultraHardcore;
 
-  public MumbleItem(final @NotNull UltraHardcoreAPI ultraHardcore) {
+  public MumbleItem(final UltraHardcoreAPI ultraHardcore) {
     super(IDENTIFIER, false, false);
     this.ultraHardcore = ultraHardcore;
   }
 
   @Override
-  public @NotNull ItemStack provideIcon(final @NotNull Player player) {
+  public ItemStack provideIcon(final Player player) {
     return new ItemBuilder(Material.SKULL_ITEM)
         .data(3)
         .name("&b&lMumble&8 " + CC.SQUARE + "&7 Clic-Droit")
@@ -42,7 +41,7 @@ public final class MumbleItem extends CustomItem {
   }
 
   @Override
-  public void onInteract(final @NotNull Player player, final @NotNull PlayerInteractEvent event) {
+  public void onInteract(final Player player, final PlayerInteractEvent event) {
     event.setCancelled(true);
     final var action = event.getAction();
     if (action != RIGHT_CLICK_AIR && action != RIGHT_CLICK_BLOCK) {
@@ -65,13 +64,12 @@ public final class MumbleItem extends CustomItem {
   }
 
   @Override
-  public void onDrop(final @NotNull Player player, final @NotNull PlayerDropItemEvent event) {
+  public void onDrop(final Player player, final PlayerDropItemEvent event) {
     event.setCancelled(true);
   }
 
   @Override
-  public void onInventoryClick(
-      final @NotNull Player player, final @NotNull InventoryClickEvent event) {
+  public void onInventoryClick(final Player player, final InventoryClickEvent event) {
     event.setCancelled(true);
   }
 }

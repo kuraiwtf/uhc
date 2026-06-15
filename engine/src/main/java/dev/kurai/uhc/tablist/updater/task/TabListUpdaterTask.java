@@ -5,7 +5,6 @@ import com.github.retrooper.packetevents.manager.player.PlayerManager;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerPlayerListHeaderAndFooter;
 import dev.kurai.uhc.tablist.TabListService;
 import org.bukkit.Bukkit;
-import org.jetbrains.annotations.NotNull;
 
 public final class TabListUpdaterTask implements Runnable {
 
@@ -13,7 +12,7 @@ public final class TabListUpdaterTask implements Runnable {
 
   private final TabListService tabListService;
 
-  public TabListUpdaterTask(final @NotNull TabListService tabListService) {
+  public TabListUpdaterTask(final TabListService tabListService) {
     this.tabListService = tabListService;
   }
 

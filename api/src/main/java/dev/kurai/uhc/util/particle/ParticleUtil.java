@@ -1109,7 +1109,7 @@ public final class ParticleUtil {
       final Location center,
       final double radius,
       final int amount,
-      final Player @NotNull ... player) {
+      final Player  ... player) {
     final double increment = 6.283185307179586 / amount;
     for (int i = 0; i < amount; ++i) {
       final double angle = i * increment;
@@ -1386,9 +1386,9 @@ public final class ParticleUtil {
   }
 
   public static void playDomeParticle(
-      final @NotNull Player player,
-      final @NotNull Location location,
-      final @NotNull EnumParticle particle,
+      final  Player player,
+      final  Location location,
+      final  EnumParticle particle,
       final double radius,
       final double step) {
     for (double phi = 0; phi <= Math.PI / 2; phi += step) {
@@ -1404,8 +1404,8 @@ public final class ParticleUtil {
   }
 
   public static void spawnColoredLine(
-      final @NotNull Location from,
-      final @NotNull Location to,
+      final  Location from,
+      final  Location to,
       final int count,
       final float red,
       final float green,

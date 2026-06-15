@@ -22,13 +22,13 @@ public final class HelpCommand {
   private final UltraHardcoreParentCommand parentCommand;
   private final int totalPages;
 
-  public HelpCommand(final @NotNull UltraHardcoreParentCommand parentCommand) {
+  public HelpCommand(final  UltraHardcoreParentCommand parentCommand) {
     this.parentCommand = parentCommand;
     this.totalPages =
         (int) Math.ceil((double) parentCommand.getSubCommands().size() / COMMANDS_PER_PAGE);
   }
 
-  public void display(final @NotNull Audience audience, final int page) {
+  public void display(final  Audience audience, final int page) {
     if (page < 1 || page > this.totalPages) {
       audience.sendMessage(
           text()

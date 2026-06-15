@@ -14,7 +14,6 @@ import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
-import org.jetbrains.annotations.NotNull;
 
 @Identifier(BorderTimer.IDENTIFIER)
 @Name("Bordure")
@@ -25,7 +24,7 @@ public final class BorderTimer extends AbstractTimer {
 
   private final BukkitAudiences bukkitAudiences;
 
-  public BorderTimer(final @NotNull BukkitAudiences bukkitAudiences) {
+  public BorderTimer(final BukkitAudiences bukkitAudiences) {
     this.bukkitAudiences = bukkitAudiences;
   }
 

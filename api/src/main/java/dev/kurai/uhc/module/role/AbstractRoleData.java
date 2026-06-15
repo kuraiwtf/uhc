@@ -8,12 +8,12 @@ public abstract class AbstractRoleData<R extends AbstractRole<?>>
 
   private final Class<? extends R> id;
 
-  protected AbstractRoleData(final @NotNull Class<? extends R> role) {
+  protected AbstractRoleData(final  Class<? extends R> role) {
     this.id = role;
   }
 
   @Override
-  public @NotNull Class<? extends R> getId() {
+  public  Class<? extends R> getId() {
     return this.id;
   }
 }

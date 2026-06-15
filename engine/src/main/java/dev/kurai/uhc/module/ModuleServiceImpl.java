@@ -6,7 +6,6 @@ import dev.kurai.uhc.module.camp.module.CampModule;
 import dev.kurai.uhc.module.service.ModuleService;
 import dev.kurai.uhc.module.team.module.TeamModule;
 import java.util.logging.Logger;
-import org.jetbrains.annotations.NotNull;
 
 public final class ModuleServiceImpl implements ModuleService {
 
@@ -15,13 +14,13 @@ public final class ModuleServiceImpl implements ModuleService {
   private final UltraHardcoreAPI ultraHardcore;
   private AbstractModule currentModule;
 
-  public ModuleServiceImpl(final @NotNull UltraHardcoreAPI ultraHardcore) {
+  public ModuleServiceImpl(final UltraHardcoreAPI ultraHardcore) {
     this.ultraHardcore = ultraHardcore;
     this.currentModule = new BuiltinModule(ultraHardcore);
   }
 
   @Override
-  public void installModule(final @NotNull AbstractModule module) {
+  public void installModule(final AbstractModule module) {
     if (module instanceof TeamModule && module instanceof CampModule) {
       LOGGER.warning(
           "Module %s is not compatible with this game mode.".formatted(module.getName()));
@@ -41,7 +40,7 @@ public final class ModuleServiceImpl implements ModuleService {
   }
 
   @Override
-  public @NotNull AbstractModule getCurrentModule() {
+  public AbstractModule getCurrentModule() {
     return this.currentModule;
   }
 }

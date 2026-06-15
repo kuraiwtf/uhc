@@ -5,25 +5,24 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import org.bukkit.plugin.Plugin;
-import org.jetbrains.annotations.NotNull;
 
 public final class TimerServiceImpl implements TimerService {
 
   private final Map<String, AbstractTimer> timers;
   private final Plugin plugin;
 
-  public TimerServiceImpl(final @NotNull Plugin plugin) {
+  public TimerServiceImpl(final Plugin plugin) {
     this.timers = new ConcurrentHashMap<>();
     this.plugin = plugin;
   }
 
   @Override
-  public void registerTimer(final @NotNull AbstractTimer timer) {
+  public void registerTimer(final AbstractTimer timer) {
     this.timers.put(timer.getIdentifier(), timer);
   }
 
   @Override
-  public void unregisterTimer(final @NotNull String identifier) {
+  public void unregisterTimer(final String identifier) {
     final var timer = this.timers.remove(identifier);
     if (timer != null && timer.isRunning()) {
       timer.stop();
@@ -31,12 +30,12 @@ public final class TimerServiceImpl implements TimerService {
   }
 
   @Override
-  public @NotNull Optional<AbstractTimer> getTimer(final @NotNull String identifier) {
+  public Optional<AbstractTimer> getTimer(final String identifier) {
     return Optional.ofNullable(this.timers.get(identifier));
   }
 
   @Override
-  public @NotNull Collection<AbstractTimer> getTimers() {
+  public Collection<AbstractTimer> getTimers() {
     return this.timers.values();
   }
 

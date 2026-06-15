@@ -3,13 +3,13 @@ package dev.kurai.uhc.game.scenario.configuration.defaults;
 import dev.kurai.uhc.game.scenario.configuration.ScenarioConfiguration;
 import org.jetbrains.annotations.NotNull;
 
-public final class BooleanScenarioConfiguration extends ScenarioConfiguration<@NotNull Boolean> {
+public final class BooleanScenarioConfiguration extends ScenarioConfiguration< Boolean> {
 
-  public BooleanScenarioConfiguration(final @NotNull String id) {
+  public BooleanScenarioConfiguration(final  String id) {
     super(id, true);
   }
 
-  public BooleanScenarioConfiguration(final @NotNull String id, final boolean value) {
+  public BooleanScenarioConfiguration(final  String id, final boolean value) {
     super(id, value);
   }
 }

@@ -42,18 +42,17 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
-import org.jetbrains.annotations.NotNull;
 
 public final class PlayingListener implements Listener {
 
   private final UltraHardcoreAPI ultraHardcore;
 
-  public PlayingListener(final @NotNull UltraHardcoreAPI ultraHardcore) {
+  public PlayingListener(final UltraHardcoreAPI ultraHardcore) {
     this.ultraHardcore = ultraHardcore;
   }
 
   @EventHandler
-  public void onJoin(final @NotNull PlayerJoinEvent event) {
+  public void onJoin(final PlayerJoinEvent event) {
     event.setJoinMessage(null);
 
     final Player player = event.getPlayer();
@@ -101,7 +100,7 @@ public final class PlayingListener implements Listener {
   }
 
   @EventHandler
-  public void onPlayerQuit(final @NotNull PlayerQuitEvent event) {
+  public void onPlayerQuit(final PlayerQuitEvent event) {
     event.setQuitMessage(null);
 
     final Player player = event.getPlayer();
@@ -269,7 +268,7 @@ public final class PlayingListener implements Listener {
   }
 
   @EventHandler
-  public void onEntityDamageByEntity(final @NotNull EntityDamageByEntityEvent event) {
+  public void onEntityDamageByEntity(final EntityDamageByEntityEvent event) {
     if (!(event.getEntity() instanceof final Player player)
         || !(event.getDamager() instanceof final Arrow arrow)
         || !(arrow.getShooter() instanceof final Player shooter)
@@ -298,8 +297,8 @@ public final class PlayingListener implements Listener {
             2L);
   }
 
-  private static final Map<@NotNull Material, Consumer<@NotNull ProfileMiningComponent>>
-      MINING_STATISTICS = Maps.newHashMap();
+  private static final Map<Material, Consumer<ProfileMiningComponent>> MINING_STATISTICS =
+      Maps.newHashMap();
 
   static {
     MINING_STATISTICS.put(

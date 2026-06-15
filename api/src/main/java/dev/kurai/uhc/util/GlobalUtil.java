@@ -1,12 +1,13 @@
 package dev.kurai.uhc.util;
 
+import static com.google.common.base.Preconditions.*;
 import static org.bukkit.Material.*;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.event.defaults.player.PlayerExplosionEvent;
 import dev.kurai.uhc.profile.Profile;
+import dev.kurai.uhc.profile.component.SpectatorComponent;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -20,7 +21,6 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.BlockIterator;
 import org.bukkit.util.Vector;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
 
@@ -48,7 +48,7 @@ public final class GlobalUtil {
     viewer.playSound(viewer.getLocation(), Sound.AMBIENCE_THUNDER, 1F, 1F);
   }
 
-  public static List<@NotNull Location> spawnDome(
+  public static List<Location> spawnDome(
       final Location center, final double radius, final double density) {
     final List<Location> list = Lists.newArrayList();
     final World world = center.getWorld();
@@ -136,9 +136,8 @@ public final class GlobalUtil {
   }
 
   public static List<Location> createSphere(
-      final Location origin, final int radius, final boolean borderOnly) {
+      final @Nullable Location origin, final int radius, final boolean borderOnly) {
     final List<Location> list = Lists.newArrayList();
-
     if (origin == null) {
       return list;
     }
@@ -247,14 +246,16 @@ public final class GlobalUtil {
   }
 
   public static List<Location> generateSphere(
-      final Location centerBlock, final int radius, final boolean hollow) {
+      final @Nullable Location centerBlock, final int radius, final boolean hollow) {
     if (centerBlock == null) {
       return new ArrayList<>();
     }
+
     final List<Location> circleBlocks = new ArrayList<>();
     final int bx = centerBlock.getBlockX();
     final int by = centerBlock.getBlockY();
     final int bz = centerBlock.getBlockZ();
+
     for (int x = bx - radius; x <= bx + radius; ++x) {
       for (int y = by - radius; y <= by + radius; ++y) {
         for (int z = bz - radius; z <= bz + radius; ++z) {
@@ -269,7 +270,7 @@ public final class GlobalUtil {
     return circleBlocks;
   }
 
-  public static String getArrow(final Location from, final Location to) {
+  public static String getArrow(final @Nullable Location from, final @Nullable Location to) {
     if (from == null || to == null) {
       return "?";
     }
@@ -290,23 +291,28 @@ public final class GlobalUtil {
     return arrows[(int) a / 45];
   }
 
-  public static @NotNull Collection<@NotNull Player> getPlayersAround(
-      final @NotNull Player player, final double radius) {
-    Preconditions.checkNotNull(player, "Player cannot be null.");
-    Preconditions.checkArgument(radius > 0, "Radius must be greater than 0.");
+  public static Collection<Player> getPlayersAround(final Player player, final double radius) {
+    checkNotNull(player, "Player cannot be null.");
+    checkArgument(radius > 0, "Radius must be greater than 0.");
 
     final var players = Lists.newArrayList(getPlayersAround(player.getLocation(), radius));
     players.remove(player);
     return players;
   }
 
-  public static @NotNull @Unmodifiable Collection<@NotNull Player> getPlayersAround(
-      final @NotNull Location location, final double radius) {
-    Preconditions.checkNotNull(location, "Location cannot be null.");
+  public static @Unmodifiable Collection<Player> getPlayersAround(
+      final Location location, final double radius) {
+    checkNotNull(location, "Location cannot be null.");
+    checkArgument(radius > 0, "Radius must be greater than 0.");
 
-    return location.getWorld().getNearbyEntities(location, radius, radius, radius).stream()
-        .filter(Player.class::isInstance)
-        .map(Player.class::cast)
+    return location.getWorld().getPlayers().stream()
+        .filter(
+            player ->
+                player.getLocation().distance(location) < radius
+                    && !UltraHardcoreAPI.getInstance()
+                        .profileService()
+                        .getOrCreateProfile(player)
+                        .hasComponent(SpectatorComponent.class))
         .toList();
   }
 
@@ -323,7 +329,7 @@ public final class GlobalUtil {
     return loc;
   }
 
-  public static @Nullable Block getTargetBlock(final @NotNull Player player, final int distance) {
+  public static @Nullable Block getTargetBlock(final Player player, final int distance) {
     final var iterator = new BlockIterator(player, distance);
     while (iterator.hasNext()) {
       final var block = iterator.next();
@@ -335,11 +341,21 @@ public final class GlobalUtil {
     return null;
   }
 
-  public static Player getTargetPlayer(final Player player) {
-    return getTarget(player, player.getWorld().getPlayers());
+  public static @Nullable Player getTargetPlayer(final Player player) {
+    return getTarget(
+        player,
+        player.getWorld().getPlayers().stream()
+            .filter(
+                target ->
+                    !UltraHardcoreAPI.getInstance()
+                        .profileService()
+                        .getOrCreateProfile(target)
+                        .hasComponent(SpectatorComponent.class))
+            .toList());
   }
 
-  private static <T extends Entity> T getTarget(final Entity entity, final Iterable<T> entities) {
+  private static <T extends Entity> @Nullable T getTarget(
+      final @Nullable Entity entity, final Iterable<T> entities) {
     if (entity == null) {
       return null;
     }
@@ -362,9 +378,9 @@ public final class GlobalUtil {
     return target;
   }
 
-  public static @NotNull List<Location> getArcBetween(
-      final @NotNull Location origin,
-      final @NotNull Location target,
+  public static List<Location> getArcBetween(
+      final Location origin,
+      final Location target,
       final double pointsPerBlock,
       final double radiusMultiplier,
       final double arcAngle,

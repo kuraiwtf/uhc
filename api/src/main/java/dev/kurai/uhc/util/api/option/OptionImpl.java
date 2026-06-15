@@ -1,7 +1,6 @@
 package dev.kurai.uhc.util.api.option;
 
 import net.kyori.adventure.key.Key;
-import org.jetbrains.annotations.NotNull;
 
 final class OptionImpl<T> implements Option<T> {
 
@@ -14,7 +13,7 @@ final class OptionImpl<T> implements Option<T> {
   }
 
   @Override
-  public @NotNull Key key() {
+  public Key key() {
     return this.key;
   }
 

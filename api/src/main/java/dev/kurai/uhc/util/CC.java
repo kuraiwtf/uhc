@@ -10,7 +10,6 @@ import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.ChatColor;
 import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
 
 public final class CC {
 
@@ -83,7 +82,7 @@ public final class CC {
 
   public static final String BUILTIN_PREFIX = "&e&lUHC&7 &l" + BAR + "&f";
 
-  public static TextComponent.@NotNull Builder prefix() {
+  public static TextComponent.Builder prefix() {
     return text().append(text(BAR, GRAY, BOLD)).appendSpace();
   }
 
@@ -101,7 +100,7 @@ public final class CC {
    * @param message
    * @return
    */
-  public static @NotNull String center(final String message) {
+  public static String center(final String message) {
     return center(message, ' ');
   }
 
@@ -112,7 +111,7 @@ public final class CC {
    * @param centerPx
    * @return
    */
-  public static @NotNull String center(final String message, final int centerPx) {
+  public static String center(final String message, final int centerPx) {
     return center(message, ' ', centerPx);
   }
 
@@ -126,7 +125,7 @@ public final class CC {
    * @param space
    * @return
    */
-  public static @NotNull String center(final String message, final char space) {
+  public static String center(final String message, final char space) {
     return center(message, space, CENTER_PX);
   }
 
@@ -138,7 +137,7 @@ public final class CC {
    * @param centerPx
    * @return
    */
-  public static @NotNull String center(final String message, final char space, final int centerPx) {
+  public static String center(final String message, final char space, final int centerPx) {
     if (message == null || message.isEmpty()) {
       return "";
     }
@@ -187,7 +186,7 @@ public final class CC {
    * @param message the component to center
    * @return centered component
    */
-  public static @NotNull Component center(final Component message) {
+  public static Component center(final Component message) {
     return center(message, ' ');
   }
 
@@ -198,7 +197,7 @@ public final class CC {
    * @param centerPx the center padding in pixels
    * @return centered component
    */
-  public static @NotNull Component center(final Component message, final int centerPx) {
+  public static Component center(final Component message, final int centerPx) {
     return center(message, ' ', centerPx);
   }
 
@@ -211,7 +210,7 @@ public final class CC {
    * @param space the spacing character
    * @return centered component
    */
-  public static @NotNull Component center(final Component message, final char space) {
+  public static Component center(final Component message, final char space) {
     return center(message, space, CENTER_PX);
   }
 
@@ -223,8 +222,7 @@ public final class CC {
    * @param centerPx the center padding in pixels
    * @return centered component
    */
-  public static @NotNull Component center(
-      final Component message, final char space, final int centerPx) {
+  public static Component center(final Component message, final char space, final int centerPx) {
     if (message == null || message.equals(Component.empty())) {
       return Component.empty();
     }
@@ -284,7 +282,7 @@ public final class CC {
   }
 
   @Contract("_ -> new")
-  public static @NotNull String colorize(final String entry) {
+  public static String colorize(final String entry) {
     return ChatColor.translateAlternateColorCodes('&', entry);
   }
 
@@ -292,8 +290,7 @@ public final class CC {
     return ChatColor.stripColor(colorize(entry));
   }
 
-  public static @NotNull Component line(
-      final @NotNull TextColor first, final @NotNull TextColor second) {
+  public static Component line(final TextColor first, final TextColor second) {
     final var segment = 21;
 
     final var component = text().decorate(TextDecoration.STRIKETHROUGH);
@@ -324,7 +321,7 @@ public final class CC {
     return component.build();
   }
 
-  public static @NotNull String emptyLine(final ChatColor first, final ChatColor second) {
+  public static String emptyLine(final ChatColor first, final ChatColor second) {
     final var segment = 21;
 
     final var builder = new StringBuilder();
@@ -356,7 +353,7 @@ public final class CC {
     return CC.colorize(builder.toString());
   }
 
-  public static @NotNull String lineWithText(
+  public static String lineWithText(
       final String text, final ChatColor first, final ChatColor second) {
     final var start = new StringBuilder("--");
     final var end = new StringBuilder("--");

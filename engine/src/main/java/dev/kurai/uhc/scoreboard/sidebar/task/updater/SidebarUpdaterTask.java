@@ -8,7 +8,7 @@ public final class SidebarUpdaterTask implements Runnable {
 
   private final SidebarService sidebarService;
 
-  public SidebarUpdaterTask(final @NotNull SidebarService sidebarService) {
+  public SidebarUpdaterTask(final  SidebarService sidebarService) {
     this.sidebarService = sidebarService;
   }
 

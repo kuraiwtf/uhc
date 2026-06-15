@@ -6,9 +6,9 @@ import org.jetbrains.annotations.NotNull;
 
 public interface Sidebar {
 
-  void editTitle(final @NotNull Component title);
+  void editTitle(final  Component title);
 
-  void overrideLine(final int score, final @NotNull Component content);
+  void overrideLine(final int score, final  Component content);
 
   void removeLine(final int score);
 

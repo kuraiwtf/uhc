@@ -74,11 +74,11 @@ public record PowerArgument(String key, Object object) {
         : Bukkit.getPlayer(defaultValue);
   }
 
-  public <T> @Nullable T as(final @NotNull Class<T> clazz) {
+  public <T> @Nullable T as(final  Class<T> clazz) {
     return this.as(clazz, null);
   }
 
-  public <T> @Nullable T as(final @NotNull Class<T> clazz, final @Nullable T defaultValue) {
+  public <T> @Nullable T as(final  Class<T> clazz, final @Nullable T defaultValue) {
     return clazz.isInstance(this.object) ? clazz.cast(this.object) : defaultValue;
   }
 }

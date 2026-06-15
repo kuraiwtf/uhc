@@ -19,13 +19,13 @@ public final class WorldArgumentResolver implements ArgumentResolver<@Nullable W
 
   private final BukkitAudiences bukkitAudiences;
 
-  public WorldArgumentResolver(final @NotNull BukkitAudiences bukkitAudiences) {
+  public WorldArgumentResolver(final  BukkitAudiences bukkitAudiences) {
     this.bukkitAudiences = bukkitAudiences;
   }
 
   @Override
   public @Nullable World resolve(
-      final @NotNull CommandSender sender, final @NotNull String argument) {
+      final  CommandSender sender, final  String argument) {
     final var world = Bukkit.getWorld(argument);
     if (world == null) {
       this.bukkitAudiences
@@ -43,8 +43,8 @@ public final class WorldArgumentResolver implements ArgumentResolver<@Nullable W
   }
 
   @Override
-  public @NotNull @Unmodifiable Collection<@NotNull String> complete(
-      final @NotNull CommandSender sender, final @NotNull String argument) {
+  public  @Unmodifiable Collection< String> complete(
+      final  CommandSender sender, final  String argument) {
     return Bukkit.getWorlds().stream()
         .map(World::getName)
         .map(String::toLowerCase)

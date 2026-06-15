@@ -14,37 +14,37 @@ public class CoupledCache<O, T extends Identifiable<O>> implements Cache<O, T> {
   private final Cache<O, T> nearCache, sourceOfTruthCache;
 
   public CoupledCache(
-      final @NotNull Cache<O, T> nearCache, final @NotNull Cache<O, T> sourceOfTruthCache) {
+      final  Cache<O, T> nearCache, final  Cache<O, T> sourceOfTruthCache) {
     this.nearCache = nearCache;
     this.sourceOfTruthCache = sourceOfTruthCache;
   }
 
-  public CoupledCache(final @NotNull Cache<O, T> sourceOfTruthCache /* e. g RedisCache<O, T> */) {
+  public CoupledCache(final  Cache<O, T> sourceOfTruthCache /* e. g RedisCache<O, T> */) {
     this(new LocalCache<>(), sourceOfTruthCache);
   }
 
   @Override
-  public @UnmodifiableView @NotNull Collection<@NotNull T> findAll() {
+  public @UnmodifiableView  Collection< T> findAll() {
     final var nearCacheEntities = this.nearCache.findAll();
 
     return nearCacheEntities.isEmpty() ? this.sourceOfTruthCache.findAll() : nearCacheEntities;
   }
 
   @Override
-  public @NotNull T insert(final @NotNull O id, final @NotNull T entity) {
+  public  T insert(final  O id, final  T entity) {
     return this.nearCache.insert(id, entity);
   }
 
-  public @NotNull T insertRemote(@NotNull final O id, final @NotNull T entity) {
+  public  T insertRemote( final O id, final  T entity) {
     return this.sourceOfTruthCache.insert(id, entity);
   }
 
-  public @NotNull T insertRemote(final @NotNull T entity) {
+  public  T insertRemote(final  T entity) {
     return this.sourceOfTruthCache.insert(entity);
   }
 
   @Override
-  public void deleteById(final @NotNull O id) {
+  public void deleteById(final  O id) {
     this.nearCache.deleteById(id);
   }
 
@@ -53,11 +53,11 @@ public class CoupledCache<O, T extends Identifiable<O>> implements Cache<O, T> {
     this.nearCache.deleteAll();
   }
 
-  public void deleteRemote(final @NotNull T entity) {
+  public void deleteRemote(final  T entity) {
     this.sourceOfTruthCache.deleteById(entity.getId());
   }
 
-  public void deleteByIdRemote(final @NotNull O id) {
+  public void deleteByIdRemote(final  O id) {
     this.sourceOfTruthCache.deleteById(id);
   }
 
@@ -66,8 +66,8 @@ public class CoupledCache<O, T extends Identifiable<O>> implements Cache<O, T> {
   }
 
   @Override
-  public @UnmodifiableView @NotNull Collection<@NotNull T> findAll(
-      final @NotNull Predicate<? super T> filter) {
+  public @UnmodifiableView  Collection< T> findAll(
+      final  Predicate<? super T> filter) {
     final var nearCacheEntities = this.nearCache.findAll(filter);
 
     return nearCacheEntities.isEmpty()
@@ -76,35 +76,35 @@ public class CoupledCache<O, T extends Identifiable<O>> implements Cache<O, T> {
   }
 
   @Override
-  public @Nullable T findById(final @NotNull O id) {
+  public @Nullable T findById(final  O id) {
     final var nearCacheEntity = this.nearCache.findById(id);
 
     return nearCacheEntity == null ? this.sourceOfTruthCache.findById(id) : nearCacheEntity;
   }
 
   @Override
-  public @Nullable T findBy(final @NotNull Predicate<? super T> filter) {
+  public @Nullable T findBy(final  Predicate<? super T> filter) {
     final var nearCacheEntity = this.nearCache.findBy(filter);
 
     return nearCacheEntity == null ? this.sourceOfTruthCache.findBy(filter) : nearCacheEntity;
   }
 
   @Override
-  public boolean existsById(final @NotNull O id) {
+  public boolean existsById(final  O id) {
     return this.nearCache.existsById(id) || this.sourceOfTruthCache.existsById(id);
   }
 
   @Override
-  public boolean exists(final @NotNull Predicate<? super T> filter) {
+  public boolean exists(final  Predicate<? super T> filter) {
     return this.nearCache.exists(filter) || this.sourceOfTruthCache.exists(filter);
   }
 
   @Override
-  public @NotNull Iterator<T> iterator() {
+  public  Iterator<T> iterator() {
     return this.nearCache.iterator();
   }
 
-  public @NotNull Iterator<T> iteratorRemote() {
+  public  Iterator<T> iteratorRemote() {
     return this.sourceOfTruthCache.iterator();
   }
 }

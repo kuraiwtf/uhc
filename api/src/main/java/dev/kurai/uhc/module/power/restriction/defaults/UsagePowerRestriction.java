@@ -24,18 +24,18 @@ public final class UsagePowerRestriction implements PowerRestriction {
   }
 
   @Override
-  public @NotNull String getId() {
+  public  String getId() {
     return IDENTIFIER;
   }
 
   @Override
-  public void onUse(final @NotNull AbstractPower power, final @NotNull Player player) {
+  public void onUse(final  AbstractPower power, final  Player player) {
     this.uses++;
   }
 
   @Override
-  public @NotNull Component provideRestrictionMessage(
-      final @NotNull AbstractPower power, final @NotNull Player player) {
+  public  Component provideRestrictionMessage(
+      final  AbstractPower power, final  Player player) {
     return prefix()
         .append(text("Vous ne pouvez plus utiliser ce pouvoir.", RED))
         .appendSpace()
@@ -48,7 +48,7 @@ public final class UsagePowerRestriction implements PowerRestriction {
   }
 
   @Override
-  public boolean restrictsPower(final @NotNull AbstractPower power, final @NotNull Player player) {
+  public boolean restrictsPower(final  AbstractPower power, final  Player player) {
     return this.uses >= this.totalUsages;
   }
 

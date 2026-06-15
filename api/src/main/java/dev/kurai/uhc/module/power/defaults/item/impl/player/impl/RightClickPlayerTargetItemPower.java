@@ -7,10 +7,10 @@ import org.jetbrains.annotations.NotNull;
 
 public abstract class RightClickPlayerTargetItemPower extends PlayerTargetItemPower {
   public RightClickPlayerTargetItemPower(
-      final @NotNull String identifier,
-      final @NotNull String name,
-      final @NotNull UUID owner,
-      final @NotNull UltraHardcoreAPI ultraHardcore) {
+      final  String identifier,
+      final  String name,
+      final  UUID owner,
+      final  UltraHardcoreAPI ultraHardcore) {
     super(identifier, name, owner, ultraHardcore);
   }
 }

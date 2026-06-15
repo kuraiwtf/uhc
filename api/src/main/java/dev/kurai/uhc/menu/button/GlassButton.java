@@ -17,7 +17,7 @@ public final class GlassButton extends Button {
 
   @Contract(pure = true)
   @Override
-  public @NotNull ItemStack getIcon() {
+  public  ItemStack getIcon() {
     return new ItemBuilder(Material.STAINED_GLASS_PANE)
         .data(this.data)
         .name("&0")

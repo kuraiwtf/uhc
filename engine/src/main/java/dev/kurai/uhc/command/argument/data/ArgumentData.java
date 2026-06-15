@@ -4,16 +4,16 @@ import org.jetbrains.annotations.NotNull;
 
 public record ArgumentData(String name, String defaultValue) {
 
-  public ArgumentData(final @NotNull String name, final @NotNull String defaultValue) {
+  public ArgumentData(final  String name, final  String defaultValue) {
     this.name = name;
     this.defaultValue = defaultValue;
   }
 
-  @Override public @NotNull String name() {
+  @Override public  String name() {
     return name;
   }
 
-  @Override public @NotNull String defaultValue() {
+  @Override public  String defaultValue() {
     return defaultValue;
   }
 }

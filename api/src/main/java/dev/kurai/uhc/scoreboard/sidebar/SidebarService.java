@@ -1,7 +1,6 @@
 package dev.kurai.uhc.scoreboard.sidebar;
 
 import java.util.UUID;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public interface SidebarService {
@@ -16,8 +15,7 @@ public interface SidebarService {
 
   void installAdapter(final @Nullable SidebarAdapter adapter);
 
-  default void install(
-      final @NotNull SidebarTitleAdapter titleAdapter, final @NotNull SidebarAdapter adapter) {
+  default void install(final SidebarTitleAdapter titleAdapter, final SidebarAdapter adapter) {
     this.installTitleAdapter(titleAdapter);
     this.installAdapter(adapter);
   }

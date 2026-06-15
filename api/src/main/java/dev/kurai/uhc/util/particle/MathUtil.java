@@ -17,7 +17,7 @@ public final class MathUtil {
   }
 
   public static void sendParticle(
-      final @NotNull Player player, final EnumParticle particle, final Location location) {
+      final  Player player, final EnumParticle particle, final Location location) {
     sendParticle(player, particle, location.getX(), location.getY(), location.getZ());
   }
 
@@ -29,7 +29,7 @@ public final class MathUtil {
   }
 
   public static void sendParticle(
-      final @NotNull Player player,
+      final  Player player,
       final EnumParticle particle,
       final double x,
       final double y,

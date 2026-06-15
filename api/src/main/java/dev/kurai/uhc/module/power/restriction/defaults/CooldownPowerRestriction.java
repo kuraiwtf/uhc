@@ -24,19 +24,19 @@ public final class CooldownPowerRestriction implements PowerRestriction {
 
   private BukkitTask task;
 
-  public CooldownPowerRestriction(final @NotNull Plugin plugin, final int initialCooldownTime) {
+  public CooldownPowerRestriction(final  Plugin plugin, final int initialCooldownTime) {
     this.plugin = plugin;
     this.initialCooldownTime = initialCooldownTime;
     this.timeLeft = 0;
   }
 
   @Override
-  public @NotNull String getId() {
+  public  String getId() {
     return IDENTIFIER;
   }
 
   @Override
-  public void onUse(final @NotNull AbstractPower power, final @NotNull Player player) {
+  public void onUse(final  AbstractPower power, final  Player player) {
     this.timeLeft = this.initialCooldownTime;
 
     if (this.task != null) {
@@ -47,8 +47,8 @@ public final class CooldownPowerRestriction implements PowerRestriction {
   }
 
   @Override
-  public @NotNull Component provideRestrictionMessage(
-      final @NotNull AbstractPower power, final @NotNull Player player) {
+  public  Component provideRestrictionMessage(
+      final  AbstractPower power, final  Player player) {
     return prefix()
         .append(text("Vous devez patienter ", RED))
         .append(text(this.timeLeft, DARK_RED))
@@ -59,7 +59,7 @@ public final class CooldownPowerRestriction implements PowerRestriction {
   }
 
   @Override
-  public boolean restrictsPower(final @NotNull AbstractPower power, final @NotNull Player player) {
+  public boolean restrictsPower(final  AbstractPower power, final  Player player) {
     return this.timeLeft > 0;
   }
 
@@ -83,7 +83,7 @@ public final class CooldownPowerRestriction implements PowerRestriction {
 
     private final CooldownPowerRestriction restriction;
 
-    private CooldownDecrementTask(final @NotNull CooldownPowerRestriction restriction) {
+    private CooldownDecrementTask(final  CooldownPowerRestriction restriction) {
       this.restriction = restriction;
     }
 

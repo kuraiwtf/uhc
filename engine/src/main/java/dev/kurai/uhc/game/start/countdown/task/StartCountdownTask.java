@@ -11,7 +11,6 @@ import net.kyori.adventure.title.Title;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.jetbrains.annotations.NotNull;
 
 public final class StartCountdownTask extends BukkitRunnable {
 
@@ -22,8 +21,7 @@ public final class StartCountdownTask extends BukkitRunnable {
   private int timeLeft;
 
   public StartCountdownTask(
-      final @NotNull BukkitAudiences bukkitAudiences,
-      final @NotNull ScatterService scatterService) {
+      final BukkitAudiences bukkitAudiences, final ScatterService scatterService) {
     this.bukkitAudiences = bukkitAudiences;
     this.scatterService = scatterService;
     this.timeLeft = COUNTDOWN_TIME;

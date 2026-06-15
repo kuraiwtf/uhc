@@ -22,7 +22,7 @@ final class RangedOption implements Option<Integer> {
   }
 
   @Override
-  public @NotNull Key key() {
+  public  Key key() {
     return this.key;
   }
 

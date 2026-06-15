@@ -5,20 +5,20 @@ import static net.kyori.adventure.text.format.NamedTextColor.*;
 
 import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.adventure.UltraHardcoreKey;
+import dev.kurai.uhc.profile.Profile;
+import dev.kurai.uhc.profile.component.SpectatorComponent;
 import dev.kurai.uhc.timer.AbstractTimer;
 import dev.kurai.uhc.timer.annotation.Duration;
 import dev.kurai.uhc.util.api.annotation.Identifier;
 import dev.kurai.uhc.util.api.annotation.Name;
 import net.kyori.adventure.key.Key;
-import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.format.TextDecoration;
-import org.bukkit.Bukkit;
 import org.bukkit.Sound;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
-import org.jetbrains.annotations.NotNull;
 
 @Identifier(InvincibilityTimer.IDENTIFIER)
 @Name("Invincibilité")
@@ -29,13 +29,9 @@ public final class InvincibilityTimer extends AbstractTimer implements Listener 
 
   private static final Key ACTIONBAR_KEY = UltraHardcoreKey.key(IDENTIFIER);
 
-  private final BukkitAudiences bukkitAudiences;
   private final UltraHardcoreAPI ultraHardcore;
 
-  public InvincibilityTimer(
-      final @NotNull BukkitAudiences bukkitAudiences,
-      final @NotNull UltraHardcoreAPI ultraHardcore) {
-    this.bukkitAudiences = bukkitAudiences;
+  public InvincibilityTimer(final UltraHardcoreAPI ultraHardcore) {
     this.ultraHardcore = ultraHardcore;
   }
 
@@ -46,7 +42,7 @@ public final class InvincibilityTimer extends AbstractTimer implements Listener 
 
   @Override
   public void onSecond() {
-    for (final var profile : this.ultraHardcore.profileService().getProfiles()) {
+    for (final var profile : this.ultraHardcore.profileService().getPlayingProfiles()) {
       profile
           .getActionbar()
           .registerEntry(
@@ -65,27 +61,27 @@ public final class InvincibilityTimer extends AbstractTimer implements Listener 
   @Override
   public void onEnd() {
     this.ultraHardcore.eventService().unregisterListener(this);
-    this.bukkitAudiences
-        .all()
-        .sendMessage(
-            text("L'invincibilité est maintenant ", RED)
-                .append(text("désactivée", DARK_RED))
-                .append(text(".", RED)));
 
-    for (final var profile : this.ultraHardcore.profileService().getProfiles()) {
+    for (final var profile : this.ultraHardcore.profileService().getPlayingProfiles()) {
       profile.getActionbar().unregisterEntry(ACTIONBAR_KEY);
+      profile.sendPrefixedMessage("Vous êtes désormais&c vulnérable&r.");
+      profile
+          .findPlayer()
+          .ifPresent(player -> player.playSound(player.getLocation(), Sound.BLAZE_HIT, 1.0f, 1.0f));
     }
-
-    Bukkit.getOnlinePlayers()
-        .forEach(player -> player.playSound(player.getLocation(), Sound.BLAZE_HIT, 1.0f, 1.0f));
   }
 
   @EventHandler
   public void onEntityDamage(final EntityDamageEvent event) {
-    if (event.getEntityType() != EntityType.PLAYER) {
+    final Entity entity = event.getEntity();
+    if (entity.getType() != EntityType.PLAYER) {
       return;
     }
 
-    event.setCancelled(true);
+    final Profile profile =
+        this.ultraHardcore.profileService().getOrCreateProfile(entity.getUniqueId());
+    if (!profile.hasComponent(SpectatorComponent.class)) {
+      event.setCancelled(true);
+    }
   }
 }

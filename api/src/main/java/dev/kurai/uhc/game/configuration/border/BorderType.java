@@ -9,7 +9,7 @@ public enum BorderType {
 
   private final String name;
 
-  BorderType(final @NotNull String name) {
+  BorderType(final  String name) {
     this.name = name;
   }
 

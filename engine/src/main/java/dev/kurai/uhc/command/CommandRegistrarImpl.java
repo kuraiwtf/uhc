@@ -15,7 +15,6 @@ import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bukkit.Bukkit;
 import org.bukkit.command.SimpleCommandMap;
 import org.bukkit.plugin.SimplePluginManager;
-import org.jetbrains.annotations.NotNull;
 
 public final class CommandRegistrarImpl implements CommandRegistrar {
 
@@ -23,19 +22,19 @@ public final class CommandRegistrarImpl implements CommandRegistrar {
   private final UltraHardcoreAPI ultraHardcore;
   private final ArgumentResolverRegistrar argumentResolverRegistrar;
 
-  public CommandRegistrarImpl(final @NotNull UltraHardcoreAPI ultraHardcore) {
+  public CommandRegistrarImpl(final UltraHardcoreAPI ultraHardcore) {
     this.bukkitAudiences = ultraHardcore.bukkitAudiences();
     this.ultraHardcore = ultraHardcore;
     this.argumentResolverRegistrar = new ArgumentResolverRegistrarImpl(this.bukkitAudiences);
   }
 
   @Override
-  public @NotNull ArgumentResolverRegistrar getArgumentResolverRegistrar() {
+  public ArgumentResolverRegistrar getArgumentResolverRegistrar() {
     return this.argumentResolverRegistrar;
   }
 
   @Override
-  public void registerCommand(final @NotNull Object command) {
+  public void registerCommand(final Object command) {
     this.registerOrphanCommand(command);
 
     if (command.getClass().isAnnotationPresent(Command.class)) {
@@ -43,7 +42,7 @@ public final class CommandRegistrarImpl implements CommandRegistrar {
     }
   }
 
-  private void registerParentCommand(final @NotNull Object object) {
+  private void registerParentCommand(final Object object) {
     final var commandAnnotation = object.getClass().getAnnotation(Command.class);
     final var subCommands = Lists.<SubCommandData>newArrayList();
 
@@ -68,7 +67,7 @@ public final class CommandRegistrarImpl implements CommandRegistrar {
             commandAnnotation.value(), this.bukkitAudiences, this, subCommands));
   }
 
-  private void registerOrphanCommand(final @NotNull Object object) {
+  private void registerOrphanCommand(final Object object) {
     for (final var method : object.getClass().getDeclaredMethods()) {
       if (!method.isAnnotationPresent(Command.class)) {
         continue;
@@ -89,7 +88,7 @@ public final class CommandRegistrarImpl implements CommandRegistrar {
     }
   }
 
-  private void registerCommand(final @NotNull org.bukkit.command.Command command) {
+  private void registerCommand(final org.bukkit.command.Command command) {
     this.unregisterCommand(command.getName());
     command.getAliases().forEach(this::unregisterCommand);
 
@@ -97,7 +96,7 @@ public final class CommandRegistrarImpl implements CommandRegistrar {
   }
 
   @Override
-  public void unregisterCommand(final @NotNull String name) {
+  public void unregisterCommand(final String name) {
     try {
       final var commandMap = this.getCommandMap();
       final var map = this.getPrivateField(commandMap, "knownCommands");
@@ -123,7 +122,7 @@ public final class CommandRegistrarImpl implements CommandRegistrar {
     return result;
   }
 
-  private @NotNull SimpleCommandMap getCommandMap() {
+  private SimpleCommandMap getCommandMap() {
     final var server = Bukkit.getServer();
     final var pluginManager = (SimplePluginManager) server.getPluginManager();
 

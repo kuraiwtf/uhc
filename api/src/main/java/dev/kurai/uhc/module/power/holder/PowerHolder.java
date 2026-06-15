@@ -2,26 +2,24 @@ package dev.kurai.uhc.module.power.holder;
 
 import dev.kurai.uhc.module.power.AbstractPower;
 import java.util.Collection;
-import org.jetbrains.annotations.NotNull;
 
 public interface PowerHolder {
 
-  @NotNull
-  Collection<@NotNull AbstractPower> getPowers();
+  Collection<AbstractPower> getPowers();
 
   <T extends AbstractPower> T getPower(final Class<T> clazz);
 
-  void registerPower(final @NotNull AbstractPower power);
+  void registerPower(final AbstractPower power);
 
-  default void registerPowers(final AbstractPower @NotNull ... powers) {
+  default void registerPowers(final AbstractPower... powers) {
     for (final var power : powers) {
       this.registerPower(power);
     }
   }
 
-  void unregisterPower(final @NotNull String id);
+  void unregisterPower(final String id);
 
-  default void unregisterPowers(final String @NotNull ... ids) {
+  default void unregisterPowers(final String... ids) {
     for (final var id : ids) {
       this.unregisterPower(id);
     }

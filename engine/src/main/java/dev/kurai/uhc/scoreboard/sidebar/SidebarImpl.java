@@ -14,14 +14,13 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.jetbrains.annotations.NotNull;
 
 public final class SidebarImpl implements Sidebar {
 
   private static final String OBJECTIVE_NAME = "arena";
 
   private final UUID uniqueId;
-  private final Map<@NotNull Integer, @NotNull Component> entries;
+  private final Map<Integer, Component> entries;
 
   private Component previousTitle;
 
@@ -40,7 +39,7 @@ public final class SidebarImpl implements Sidebar {
   }
 
   @Override
-  public void editTitle(final @NotNull Component title) {
+  public void editTitle(final Component title) {
     Preconditions.checkNotNull(title, "title cannot be null");
     if (this.previousTitle != null && this.previousTitle.equals(title)) {
       return;
@@ -56,7 +55,7 @@ public final class SidebarImpl implements Sidebar {
   }
 
   @Override
-  public void overrideLine(final int score, final @NotNull Component content) {
+  public void overrideLine(final int score, final Component content) {
     Preconditions.checkNotNull(content, "content cannot be null");
 
     if (this.hasEntry(score)) {
@@ -141,7 +140,7 @@ public final class SidebarImpl implements Sidebar {
     return ChatColor.values()[score % ChatColor.values().length];
   }
 
-  private boolean hasEntry(int line) {
+  private boolean hasEntry(final int line) {
     return this.entries.containsKey(line);
   }
 

@@ -12,18 +12,18 @@ public final class SidebarListener implements Listener {
 
   private final SidebarService sidebarService;
 
-  public SidebarListener(final @NotNull SidebarService sidebarService) {
+  public SidebarListener(final  SidebarService sidebarService) {
     this.sidebarService = sidebarService;
   }
 
   @EventHandler
-  public void onJoin(final @NotNull PlayerJoinEvent event) {
+  public void onJoin(final  PlayerJoinEvent event) {
     CompletableFuture.runAsync(
         () -> this.sidebarService.createScoreboard(event.getPlayer().getUniqueId()));
   }
 
   @EventHandler
-  public void onQuit(final @NotNull PlayerQuitEvent event) {
+  public void onQuit(final  PlayerQuitEvent event) {
     CompletableFuture.runAsync(
         () -> this.sidebarService.destroyScoreboard(event.getPlayer().getUniqueId()));
   }

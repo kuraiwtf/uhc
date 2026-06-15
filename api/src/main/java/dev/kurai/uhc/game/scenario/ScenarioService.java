@@ -2,30 +2,28 @@ package dev.kurai.uhc.game.scenario;
 
 import java.util.Collection;
 import java.util.function.Predicate;
-import org.jetbrains.annotations.NotNull;
 
 public interface ScenarioService {
 
-  Collection<@NotNull AbstractScenario> getScenarios(
-      final @NotNull Predicate<@NotNull AbstractScenario> filter);
+  Collection<AbstractScenario> getScenarios(final Predicate<AbstractScenario> filter);
 
-  default Collection<@NotNull AbstractScenario> getScenarios() {
+  default Collection<AbstractScenario> getScenarios() {
     return this.getScenarios(scenario -> true);
   }
 
-  default Collection<@NotNull AbstractScenario> getEnabledScenarios() {
+  default Collection<AbstractScenario> getEnabledScenarios() {
     return this.getScenarios(AbstractScenario::isEnabled);
   }
 
-  void registerScenario(final @NotNull AbstractScenario scenario);
+  void registerScenario(final AbstractScenario scenario);
 
-  default void registerScenarios(final AbstractScenario @NotNull ... scenarios) {
+  default void registerScenarios(final AbstractScenario... scenarios) {
     for (final var scenario : scenarios) {
       this.registerScenario(scenario);
     }
   }
 
-  boolean isRegistered(final @NotNull String scenarioId);
+  boolean isRegistered(final String scenarioId);
 
-  boolean isEnabled(final @NotNull String scenarioId);
+  boolean isEnabled(final String scenarioId);
 }

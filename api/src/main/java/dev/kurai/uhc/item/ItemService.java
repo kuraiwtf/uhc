@@ -11,48 +11,48 @@ import org.jetbrains.annotations.NotNull;
 
 public interface ItemService {
 
-  Collection<@NotNull CustomItem> findAllBy(
-      final @NotNull Predicate<@NotNull CustomItem> filter,
-      final @NotNull Collector<? super CustomItem, ?, ? extends Collection<@NotNull CustomItem>>
+  Collection< CustomItem> findAllBy(
+      final  Predicate< CustomItem> filter,
+      final  Collector<? super CustomItem, ?, ? extends Collection< CustomItem>>
               collector);
 
-  default Collection<@NotNull CustomItem> findAllBy(
-      final @NotNull Predicate<@NotNull CustomItem> filter) {
+  default Collection< CustomItem> findAllBy(
+      final  Predicate< CustomItem> filter) {
     return this.findAllBy(filter, Collectors.toList());
   }
 
-  default Collection<@NotNull CustomItem> findAll() {
+  default Collection< CustomItem> findAll() {
     return this.findAllBy(_ -> true);
   }
 
-  default Collection<@NotNull CustomItem> findAllByHostOnly() {
+  default Collection< CustomItem> findAllByHostOnly() {
     return this.findAllBy(CustomItem::isHostOnly);
   }
 
-  default Collection<@NotNull CustomItem> findAllBySpectatorOnly() {
+  default Collection< CustomItem> findAllBySpectatorOnly() {
     return this.findAllBy(CustomItem::isSpectatorOnly);
   }
 
-  void registerItem(final @NotNull CustomItem item);
+  void registerItem(final  CustomItem item);
 
-  default void registerItems(final CustomItem @NotNull ... items) {
+  default void registerItems(final CustomItem  ... items) {
     for (final var item : items) {
       this.registerItem(item);
     }
   }
 
-  void unregisterItem(final @NotNull CustomItem item);
+  void unregisterItem(final  CustomItem item);
 
-  default void unregisterItems(final CustomItem @NotNull ... items) {
+  default void unregisterItems(final CustomItem  ... items) {
     for (final var item : items) {
       this.unregisterItem(item);
     }
   }
 
-  @NotNull
-  Optional<CustomItem> findByIdentifier(final @NotNull String identifier);
+  
+  Optional<CustomItem> findByIdentifier(final  String identifier);
 
-  Optional<CustomItem> findByIcon(final @NotNull Player player, final @NotNull ItemStack icon);
+  Optional<CustomItem> findByIcon(final  Player player, final  ItemStack icon);
 
-  <T extends CustomItem> @NotNull Optional<T> findByClass(final @NotNull Class<T> clazz);
+  <T extends CustomItem>  Optional<T> findByClass(final  Class<T> clazz);
 }

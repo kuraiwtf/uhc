@@ -9,7 +9,7 @@ public final class NameComponent implements Component {
 
   public NameComponent() {}
 
-  public NameComponent(final @NotNull String name) {
+  public NameComponent(final  String name) {
     this.name = name;
   }
 

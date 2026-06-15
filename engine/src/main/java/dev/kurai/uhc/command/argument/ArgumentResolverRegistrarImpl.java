@@ -21,9 +21,9 @@ import org.jetbrains.annotations.NotNull;
 public final class ArgumentResolverRegistrarImpl implements ArgumentResolverRegistrar {
 
   private final BukkitAudiences bukkitAudiences;
-  private final Map<@NotNull Class<?>, @NotNull ArgumentResolver<?>> argumentResolvers;
+  private final Map< Class<?>,  ArgumentResolver<?>> argumentResolvers;
 
-  public ArgumentResolverRegistrarImpl(final @NotNull BukkitAudiences bukkitAudiences) {
+  public ArgumentResolverRegistrarImpl(final  BukkitAudiences bukkitAudiences) {
     this.bukkitAudiences = bukkitAudiences;
     this.argumentResolvers = Maps.newConcurrentMap();
     this.loadArgumentResolvers();
@@ -52,15 +52,15 @@ public final class ArgumentResolverRegistrarImpl implements ArgumentResolverRegi
 
   @Override
   public void registerArgumentResolver(
-      final @NotNull Class<?> clazz, final @NotNull ArgumentResolver<?> resolver) {
+      final  Class<?> clazz, final  ArgumentResolver<?> resolver) {
     this.argumentResolvers.put(clazz, resolver);
   }
 
   @Override
   public <T> T resolveArgument(
-      final @NotNull Class<?> clazz,
-      final @NotNull CommandSender sender,
-      final @NotNull String argument) {
+      final  Class<?> clazz,
+      final  CommandSender sender,
+      final  String argument) {
     if (!this.argumentResolvers.containsKey(clazz)) {
       throw new RuntimeException("There is no argument resolver for " + clazz.getName());
     }
@@ -69,10 +69,10 @@ public final class ArgumentResolverRegistrarImpl implements ArgumentResolverRegi
   }
 
   @Override
-  public Collection<@NotNull String> complete(
-      final @NotNull Class<?> clazz,
-      final @NotNull CommandSender sender,
-      final @NotNull String argument) {
+  public Collection< String> complete(
+      final  Class<?> clazz,
+      final  CommandSender sender,
+      final  String argument) {
     final var resolver = this.argumentResolvers.get(clazz);
     if (resolver == null) {
       return java.util.Collections.emptyList();

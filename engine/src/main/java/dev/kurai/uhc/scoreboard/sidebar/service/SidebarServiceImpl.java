@@ -13,17 +13,16 @@ import dev.kurai.uhc.scoreboard.sidebar.task.updater.SidebarUpdaterTask;
 import java.util.Map;
 import java.util.UUID;
 import org.bukkit.Bukkit;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public final class SidebarServiceImpl implements SidebarService {
 
-  private final Map<@NotNull UUID, @NotNull Sidebar> sidebars;
+  private final Map<UUID, Sidebar> sidebars;
 
   private SidebarTitleAdapter titleAdapter;
   private SidebarAdapter adapter;
 
-  public SidebarServiceImpl(final @NotNull UltraHardcoreAPI ultraHardcore) {
+  public SidebarServiceImpl(final UltraHardcoreAPI ultraHardcore) {
     this.sidebars = Maps.newHashMap();
     final var adapter = new WaitingSidebarAdapter(ultraHardcore);
     this.install(adapter, adapter);

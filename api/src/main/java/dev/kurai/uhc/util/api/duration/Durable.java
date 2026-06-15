@@ -5,7 +5,7 @@ import org.jetbrains.annotations.NotNull;
 
 public interface Durable extends Traceable<Long> {
 
-  @NotNull
+  
   Long getDuration();
 
   default boolean isPermanent() {

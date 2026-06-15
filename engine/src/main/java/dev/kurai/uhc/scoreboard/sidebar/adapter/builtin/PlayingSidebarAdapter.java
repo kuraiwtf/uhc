@@ -15,18 +15,17 @@ import java.util.List;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
 
 public final class PlayingSidebarAdapter implements SidebarAdapter {
 
   private final UltraHardcoreAPI ultraHardcore;
 
-  public PlayingSidebarAdapter(final @NotNull UltraHardcoreAPI ultraHardcore) {
+  public PlayingSidebarAdapter(final UltraHardcoreAPI ultraHardcore) {
     this.ultraHardcore = ultraHardcore;
   }
 
   @Override
-  public @NotNull List<@NotNull Component> provideLines(final @NotNull Player player) {
+  public List<Component> provideLines(final Player player) {
     final var lines = Lists.<Component>newArrayList();
     lines.add(empty());
     lines.add(

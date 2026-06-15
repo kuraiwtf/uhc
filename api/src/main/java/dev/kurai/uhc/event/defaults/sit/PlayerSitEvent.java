@@ -14,7 +14,7 @@ public final class PlayerSitEvent extends Event implements Cancellable {
   private long durationInTicks;
   private boolean cancelled;
 
-  public PlayerSitEvent(final @NotNull Player player, final long durationInTicks) {
+  public PlayerSitEvent(final  Player player, final long durationInTicks) {
     this.player = player;
     this.durationInTicks = durationInTicks;
   }

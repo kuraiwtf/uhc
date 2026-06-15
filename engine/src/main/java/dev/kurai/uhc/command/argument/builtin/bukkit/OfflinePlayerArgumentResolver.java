@@ -16,13 +16,13 @@ public final class OfflinePlayerArgumentResolver
 
   private final BukkitAudiences bukkitAudiences;
 
-  public OfflinePlayerArgumentResolver(final @NotNull BukkitAudiences bukkitAudiences) {
+  public OfflinePlayerArgumentResolver(final  BukkitAudiences bukkitAudiences) {
     this.bukkitAudiences = bukkitAudiences;
   }
 
   @Override
   public @Nullable OfflinePlayer resolve(
-      final @NotNull CommandSender sender, final @NotNull String argument) {
+      final  CommandSender sender, final  String argument) {
     final var found = Bukkit.getOfflinePlayer(argument);
     if (sender instanceof final OfflinePlayer player && argument.equalsIgnoreCase("self")) {
       return player;
@@ -32,8 +32,8 @@ public final class OfflinePlayerArgumentResolver
   }
 
   @Override
-  public @NotNull @Unmodifiable Collection<@NotNull String> complete(
-      final @NotNull CommandSender sender, final @NotNull String argument) {
+  public  @Unmodifiable Collection< String> complete(
+      final  CommandSender sender, final  String argument) {
     return sender.getServer().getOnlinePlayers().stream()
         .map(Player::getName)
         .filter(s -> s.startsWith(argument))

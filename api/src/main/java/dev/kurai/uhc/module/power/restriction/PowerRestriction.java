@@ -6,17 +6,17 @@ import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-public interface PowerRestriction extends Identifiable<@NotNull String> {
+public interface PowerRestriction extends Identifiable< String> {
 
   @Override
-  @NotNull
+  
   String getId();
 
-  void onUse(final @NotNull AbstractPower power, final @NotNull Player player);
+  void onUse(final  AbstractPower power, final  Player player);
 
-  @NotNull
+  
   Component provideRestrictionMessage(
-      final @NotNull AbstractPower power, final @NotNull Player player);
+      final  AbstractPower power, final  Player player);
 
-  boolean restrictsPower(final @NotNull AbstractPower power, final @NotNull Player player);
+  boolean restrictsPower(final  AbstractPower power, final  Player player);
 }

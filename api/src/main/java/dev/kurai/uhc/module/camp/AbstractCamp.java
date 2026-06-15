@@ -9,14 +9,14 @@ import dev.kurai.uhc.util.api.name.Nameable;
 import org.jetbrains.annotations.NotNull;
 
 public abstract class AbstractCamp<M extends AbstractModule>
-    implements Identifiable<@NotNull String>, Nameable<@NotNull String> {
+    implements Identifiable< String>, Nameable< String> {
 
   protected final String id;
   protected final String name;
 
   protected final M module;
 
-  public AbstractCamp(final @NotNull M module) {
+  public AbstractCamp(final  M module) {
     final var identifierAnnotation = this.getClass().getAnnotation(Identifier.class);
     Preconditions.checkNotNull(identifierAnnotation, "Identifier annotation is missing!");
     this.id = identifierAnnotation.value();
@@ -29,16 +29,16 @@ public abstract class AbstractCamp<M extends AbstractModule>
   }
 
   @Override
-  public final @NotNull String getId() {
+  public final  String getId() {
     return this.id;
   }
 
   @Override
-  public final @NotNull String getName() {
+  public final  String getName() {
     return this.name;
   }
 
-  public final @NotNull M getModule() {
+  public final  M getModule() {
     return this.module;
   }
 }

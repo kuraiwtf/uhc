@@ -9,12 +9,12 @@ final class MinecraftPacketWrapper implements PacketWrapper {
 
   private final Packet<?> packet;
 
-  MinecraftPacketWrapper(final @NotNull Packet<?> packet) {
+  MinecraftPacketWrapper(final  Packet<?> packet) {
     this.packet = packet;
   }
 
   @Override
-  public void send(final @NotNull Player player) {
+  public void send(final  Player player) {
     ((CraftPlayer) player).getHandle().playerConnection.sendPacket(this.packet);
   }
 }

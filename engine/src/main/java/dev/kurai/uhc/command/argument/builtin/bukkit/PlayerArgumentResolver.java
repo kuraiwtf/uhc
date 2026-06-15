@@ -18,13 +18,13 @@ public final class PlayerArgumentResolver implements ArgumentResolver<@Nullable 
 
   private final BukkitAudiences bukkitAudiences;
 
-  public PlayerArgumentResolver(final @NotNull BukkitAudiences bukkitAudiences) {
+  public PlayerArgumentResolver(final  BukkitAudiences bukkitAudiences) {
     this.bukkitAudiences = bukkitAudiences;
   }
 
   @Override
   public @Nullable Player resolve(
-      final @NotNull CommandSender sender, final @NotNull String argument) {
+      final  CommandSender sender, final  String argument) {
     final var found = Bukkit.getPlayer(argument);
     if (sender instanceof final Player player && argument.equalsIgnoreCase("self")) {
       return player;
@@ -46,8 +46,8 @@ public final class PlayerArgumentResolver implements ArgumentResolver<@Nullable 
   }
 
   @Override
-  public @NotNull @Unmodifiable Collection<@NotNull String> complete(
-      final @NotNull CommandSender sender, final @NotNull String argument) {
+  public  @Unmodifiable Collection< String> complete(
+      final  CommandSender sender, final  String argument) {
     return sender.getServer().getOnlinePlayers().stream()
         .map(Player::getName)
         .filter(s -> s.startsWith(argument))

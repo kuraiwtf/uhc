@@ -25,7 +25,7 @@ import org.jspecify.annotations.NullMarked;
 @NullMarked
 public final class BorderConfigurationMenu extends Menu {
 
-  public BorderConfigurationMenu(final @NotNull Player player) {
+  public BorderConfigurationMenu(final  Player player) {
     super("Configuration de la bordure", MenuSize.THREE, player);
   }
 

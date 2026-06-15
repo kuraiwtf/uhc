@@ -11,14 +11,14 @@ import org.jetbrains.annotations.NotNull;
 public abstract class AbstractItemPower extends AbstractPower {
 
   public AbstractItemPower(
-      final @NotNull String identifier,
-      final @NotNull String name,
-      final @NotNull UUID owner,
-      final @NotNull UltraHardcoreAPI ultraHardcore) {
+      final  String identifier,
+      final  String name,
+      final  UUID owner,
+      final  UltraHardcoreAPI ultraHardcore) {
     super(identifier, name, owner, ultraHardcore);
   }
 
-  public abstract @NotNull ItemStack provideIcon(final @NotNull Player player);
+  public abstract  ItemStack provideIcon(final  Player player);
 
   public ItemStack getIcon(final Player player) {
     return new ItemBuilder(this.provideIcon(player))

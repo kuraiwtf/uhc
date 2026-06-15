@@ -20,17 +20,16 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
-import org.jetbrains.annotations.NotNull;
 
 public final class SitUtil {
 
-  private static final Map<@NotNull UUID, Integer> SEATS = Maps.newHashMap();
+  private static final Map<UUID, Integer> SEATS = Maps.newHashMap();
 
-  public static void sit(final @NotNull Player player, final @NotNull Plugin plugin) {
+  public static void sit(final Player player, final Plugin plugin) {
     sit(player, -1L, plugin);
   }
 
-  public static void sit(final Player player, final long ticks, final @NotNull Plugin plugin) {
+  public static void sit(final Player player, final long ticks, final Plugin plugin) {
     if (isSit(player)) {
       removeFromSit(player);
     }

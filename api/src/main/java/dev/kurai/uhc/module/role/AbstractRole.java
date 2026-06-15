@@ -10,7 +10,7 @@ import java.util.UUID;
 import org.jetbrains.annotations.NotNull;
 
 public abstract class AbstractRole<M extends AbstractModule>
-    implements Identifiable<@NotNull String>, Nameable<@NotNull String> {
+    implements Identifiable< String>, Nameable< String> {
 
   protected final String id;
   protected final String name;
@@ -32,20 +32,20 @@ public abstract class AbstractRole<M extends AbstractModule>
   }
 
   @Override
-  public final @NotNull String getId() {
+  public final  String getId() {
     return this.id;
   }
 
   @Override
-  public final @NotNull String getName() {
+  public final  String getName() {
     return this.name;
   }
 
-  public final @NotNull UUID getOwner() {
+  public final  UUID getOwner() {
     return this.owner;
   }
 
-  public final @NotNull M getModule() {
+  public final  M getModule() {
     return this.module;
   }
 }

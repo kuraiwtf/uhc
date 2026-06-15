@@ -13,13 +13,13 @@ import org.jetbrains.annotations.UnmodifiableView;
 public interface Cache<O, T extends Identifiable<O>> extends Iterable<T> {
 
   @UnmodifiableView
-  @NotNull
+  
   Collection<T> findAll();
 
   T insert(final O id, final T entity);
 
   @ApiStatus.NonExtendable
-  default @NotNull T insert(final T entity) {
+  default  T insert(final T entity) {
     return this.insert(entity.getId(), entity);
   }
 
@@ -33,18 +33,18 @@ public interface Cache<O, T extends Identifiable<O>> extends Iterable<T> {
   void deleteAll();
 
   @UnmodifiableView
-  @NotNull
-  Collection<@NotNull T> findAll(final Predicate<? super T> filter);
+  
+  Collection< T> findAll(final Predicate<? super T> filter);
 
   @Nullable
   T findById(final O id);
 
   @Nullable
-  T findBy(final @NotNull Predicate<? super T> filter);
+  T findBy(final  Predicate<? super T> filter);
 
   boolean existsById(final O id);
 
-  boolean exists(final @NotNull Predicate<? super T> filter);
+  boolean exists(final  Predicate<? super T> filter);
 
   @ApiStatus.NonExtendable
   default boolean exists(final T entity) {
@@ -52,6 +52,6 @@ public interface Cache<O, T extends Identifiable<O>> extends Iterable<T> {
   }
 
   @Override
-  @NotNull
+  
   Iterator<T> iterator();
 }

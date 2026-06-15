@@ -6,5 +6,5 @@ import org.jetbrains.annotations.NotNull;
 
 public interface MutableLocalizable extends Localizable {
 
-  void setLocale(final @NotNull Locale locale);
+  void setLocale(final  Locale locale);
 }

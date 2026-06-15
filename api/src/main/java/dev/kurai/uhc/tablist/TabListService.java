@@ -1,22 +1,16 @@
 package dev.kurai.uhc.tablist;
 
-import org.jetbrains.annotations.NotNull;
-
 public interface TabListService {
 
-  @NotNull
   TabListProvider getHeaderProvider();
 
-  @NotNull
   TabListProvider getFooterProvider();
 
-  void installHeaderProvider(final @NotNull TabListProvider headerProvider);
+  void installHeaderProvider(final TabListProvider headerProvider);
 
-  void installFooterProvider(final @NotNull TabListProvider footerProvider);
+  void installFooterProvider(final TabListProvider footerProvider);
 
-  default void install(
-      final @NotNull TabListProvider headerProvider,
-      final @NotNull TabListProvider footerProvider) {
+  default void install(final TabListProvider headerProvider, final TabListProvider footerProvider) {
     this.installHeaderProvider(headerProvider);
     this.installFooterProvider(footerProvider);
   }

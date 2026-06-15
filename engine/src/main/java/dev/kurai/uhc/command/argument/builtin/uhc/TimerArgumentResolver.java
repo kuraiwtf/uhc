@@ -11,7 +11,6 @@ import dev.kurai.uhc.timer.TimerService;
 import java.util.Collection;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bukkit.command.CommandSender;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public final class TimerArgumentResolver implements ArgumentResolver<@Nullable AbstractTimer> {
@@ -20,14 +19,13 @@ public final class TimerArgumentResolver implements ArgumentResolver<@Nullable A
   private final TimerService timerService;
 
   public TimerArgumentResolver(
-      final @NotNull BukkitAudiences bukkitAudiences, final @NotNull TimerService timerService) {
+      final BukkitAudiences bukkitAudiences, final TimerService timerService) {
     this.bukkitAudiences = bukkitAudiences;
     this.timerService = timerService;
   }
 
   @Override
-  public @Nullable AbstractTimer resolve(
-      final @NotNull CommandSender sender, final @NotNull String argument) {
+  public @Nullable AbstractTimer resolve(final CommandSender sender, final String argument) {
     final var found = this.timerService.getTimer(argument).orElse(null);
 
     if (found == null) {
@@ -46,8 +44,7 @@ public final class TimerArgumentResolver implements ArgumentResolver<@Nullable A
   }
 
   @Override
-  public Collection<@NotNull String> complete(
-      final @NotNull CommandSender sender, final @NotNull String argument) {
+  public Collection<String> complete(final CommandSender sender, final String argument) {
     return this.timerService.getTimers().stream()
         .map(AbstractTimer::getIdentifier)
         .filter(s -> s.startsWith(argument.toLowerCase()))

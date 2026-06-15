@@ -7,4 +7,4 @@ import java.util.List;
 import org.jetbrains.annotations.NotNull;
 
 public record SubCommandData(
-    CommandMeta commandMeta, Object object, Method method, List<@NotNull ArgumentData> arguments) {}
+    CommandMeta commandMeta, Object object, Method method, List< ArgumentData> arguments) {}

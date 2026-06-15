@@ -17,21 +17,21 @@ public abstract class AbstractParentItemPower extends LeftClickItemPower {
 
   private static final long SWITCH_DELAY = 200L;
 
-  private final List<@NotNull RightClickItemPower> children;
+  private final List< RightClickItemPower> children;
   private RightClickItemPower currentPower;
   private long lastSwitch;
 
   public AbstractParentItemPower(
-      final @NotNull String identifier,
-      final @NotNull String name,
-      final @NotNull UUID owner,
-      final @NotNull UltraHardcoreAPI ultraHardcore) {
+      final  String identifier,
+      final  String name,
+      final  UUID owner,
+      final  UltraHardcoreAPI ultraHardcore) {
     super(identifier, name, owner, ultraHardcore);
     this.children = Lists.newArrayList();
   }
 
   @Override
-  public final boolean onUse(final @NotNull Player player) {
+  public final boolean onUse(final  Player player) {
     if (this.getChildren().isEmpty()
         || System.currentTimeMillis() - this.lastSwitch < SWITCH_DELAY) {
       return false;
@@ -57,17 +57,17 @@ public abstract class AbstractParentItemPower extends LeftClickItemPower {
     return this.currentPower.getIcon(player);
   }
 
-  public final void registerChild(final @NotNull RightClickItemPower power) {
+  public final void registerChild(final  RightClickItemPower power) {
     this.children.add(power);
   }
 
-  public final void registerChildren(final RightClickItemPower @NotNull ... powers) {
+  public final void registerChildren(final RightClickItemPower  ... powers) {
     for (final var power : powers) {
       this.registerChild(power);
     }
   }
 
-  public final @NotNull Collection<@NotNull RightClickItemPower> getChildren() {
+  public final  Collection< RightClickItemPower> getChildren() {
     return this.children;
   }
 

@@ -3,10 +3,9 @@ package dev.kurai.uhc.game.cycle;
 import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.util.api.Identifiable;
 import lombok.Getter;
-import org.jetbrains.annotations.NotNull;
 
 @Getter
-public abstract class AbstractCycle implements Identifiable<@NotNull String> {
+public abstract class AbstractCycle implements Identifiable<String> {
 
   protected final String id;
   protected final UltraHardcoreAPI ultraHardcore;
@@ -17,7 +16,7 @@ public abstract class AbstractCycle implements Identifiable<@NotNull String> {
   }
 
   @Override
-  public final @NotNull String getId() {
+  public final String getId() {
     return this.id;
   }
 

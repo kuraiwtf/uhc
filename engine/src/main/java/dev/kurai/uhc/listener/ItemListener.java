@@ -7,18 +7,17 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.jetbrains.annotations.NotNull;
 
 public final class ItemListener implements Listener {
 
   private final ItemService itemService;
 
-  public ItemListener(final @NotNull ItemService itemService) {
+  public ItemListener(final ItemService itemService) {
     this.itemService = itemService;
   }
 
   @EventHandler
-  public void onInteract(final @NotNull PlayerInteractEvent event) {
+  public void onInteract(final PlayerInteractEvent event) {
     final var player = event.getPlayer();
     this.itemService
         .findByIcon(player, event.getItem())
@@ -26,7 +25,7 @@ public final class ItemListener implements Listener {
   }
 
   @EventHandler
-  public void onDrop(final @NotNull PlayerDropItemEvent event) {
+  public void onDrop(final PlayerDropItemEvent event) {
     final var player = event.getPlayer();
     this.itemService
         .findByIcon(player, event.getItemDrop().getItemStack())
@@ -34,7 +33,7 @@ public final class ItemListener implements Listener {
   }
 
   @EventHandler
-  public void onClick(final @NotNull InventoryClickEvent event) {
+  public void onClick(final InventoryClickEvent event) {
     if (!(event.getWhoClicked() instanceof final Player player)) {
       return;
     }

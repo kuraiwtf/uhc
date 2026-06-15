@@ -6,7 +6,6 @@ import dev.kurai.uhc.tablist.TabListProvider;
 import dev.kurai.uhc.tablist.TabListService;
 import dev.kurai.uhc.tablist.adapter.BuiltinTablistHeaderProvider;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.jetbrains.annotations.NotNull;
 
 public final class TabListServiceImpl implements TabListService {
 
@@ -24,22 +23,22 @@ public final class TabListServiceImpl implements TabListService {
   }
 
   @Override
-  public @NotNull TabListProvider getHeaderProvider() {
+  public TabListProvider getHeaderProvider() {
     return this.headerProvider;
   }
 
   @Override
-  public @NotNull TabListProvider getFooterProvider() {
+  public TabListProvider getFooterProvider() {
     return this.footerProvider;
   }
 
   @Override
-  public void installHeaderProvider(final @NotNull TabListProvider headerProvider) {
+  public void installHeaderProvider(final TabListProvider headerProvider) {
     this.headerProvider = headerProvider;
   }
 
   @Override
-  public void installFooterProvider(final @NotNull TabListProvider footerProvider) {
+  public void installFooterProvider(final TabListProvider footerProvider) {
     this.footerProvider = footerProvider;
   }
 }

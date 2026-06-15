@@ -6,6 +6,6 @@ import org.jetbrains.annotations.NotNull;
 @FunctionalInterface
 public interface Localizable {
 
-  @NotNull
+  
   Locale getLocale();
 }

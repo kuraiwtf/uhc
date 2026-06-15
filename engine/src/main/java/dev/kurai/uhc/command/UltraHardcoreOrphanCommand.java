@@ -18,7 +18,6 @@ import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
 
 public final class UltraHardcoreOrphanCommand extends Command {
 
@@ -26,15 +25,15 @@ public final class UltraHardcoreOrphanCommand extends Command {
   private final CommandRegistrar commandRegistrar;
   private final Object object;
   private final Method method;
-  private final List<@NotNull ArgumentData> arguments;
+  private final List<ArgumentData> arguments;
 
   public UltraHardcoreOrphanCommand(
-      final @NotNull CommandMeta meta,
-      final @NotNull BukkitAudiences bukkitAudiences,
-      final @NotNull CommandRegistrar commandRegistrar,
-      final @NotNull Object object,
-      final @NotNull Method method,
-      final List<@NotNull ArgumentData> arguments) {
+      final CommandMeta meta,
+      final BukkitAudiences bukkitAudiences,
+      final CommandRegistrar commandRegistrar,
+      final Object object,
+      final Method method,
+      final List<ArgumentData> arguments) {
     super(meta.name(), meta.description(), "/" + meta.name(), Arrays.asList(meta.aliases()));
     this.bukkitAudiences = bukkitAudiences;
     this.commandRegistrar = commandRegistrar;

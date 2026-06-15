@@ -13,7 +13,7 @@ public final class PlayerUnsitEvent extends Event implements Cancellable {
   private final Player player;
   private boolean cancelled;
 
-  public PlayerUnsitEvent(final @NotNull Player player) {
+  public PlayerUnsitEvent(final  Player player) {
     this.player = player;
   }
 

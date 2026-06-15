@@ -7,7 +7,6 @@ import lombok.Setter;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
 
 @Getter
 @Setter
@@ -21,7 +20,7 @@ public final class BuiltinModule extends AbstractModule implements TeamModule {
   private boolean friendlyFire;
   private boolean randomTeam;
 
-  public BuiltinModule(final @NotNull UltraHardcoreAPI ultraHardcore) {
+  public BuiltinModule(final UltraHardcoreAPI ultraHardcore) {
     super("uhc", "UHC", null, ultraHardcore);
     this.minTeamSize = 1;
     this.teamSize = 1;
@@ -29,7 +28,7 @@ public final class BuiltinModule extends AbstractModule implements TeamModule {
   }
 
   @Override
-  public @NotNull ItemStack provideModuleIcon(@NotNull final Player player) {
+  public ItemStack provideModuleIcon(final Player player) {
     return new ItemStack(Material.GOLDEN_APPLE);
   }
 }

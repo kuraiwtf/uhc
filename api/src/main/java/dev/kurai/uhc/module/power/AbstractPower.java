@@ -12,16 +12,15 @@ import dev.kurai.uhc.util.api.Identifiable;
 import dev.kurai.uhc.util.api.name.Nameable;
 import java.util.*;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public abstract class AbstractPower
-    implements Identifiable<@NotNull String>, Nameable<@NotNull String>, PowerRestrictionHolder {
+    implements Identifiable<String>, Nameable<String>, PowerRestrictionHolder {
 
   protected final String identifier;
   protected final String name;
 
-  protected final Map<@NotNull String, @NotNull PowerRestriction> restrictions;
+  protected final Map<String, PowerRestriction> restrictions;
 
   protected final UUID owner;
   protected final UltraHardcoreAPI ultraHardcore;
@@ -29,10 +28,10 @@ public abstract class AbstractPower
   protected final Profile profile;
 
   public AbstractPower(
-      final @NotNull String identifier,
-      final @NotNull String name,
-      final @NotNull UUID owner,
-      final @NotNull UltraHardcoreAPI ultraHardcore) {
+      final String identifier,
+      final String name,
+      final UUID owner,
+      final UltraHardcoreAPI ultraHardcore) {
     this.identifier = identifier;
     this.name = name;
     this.owner = owner;
@@ -43,7 +42,7 @@ public abstract class AbstractPower
     this.profile = ultraHardcore.profileService().getOrCreateProfile(owner);
   }
 
-  public @Nullable ActionbarEntry provideActionbarEntry(final @NotNull Player player) {
+  public @Nullable ActionbarEntry provideActionbarEntry(final Player player) {
     return null;
   }
 
@@ -51,11 +50,11 @@ public abstract class AbstractPower
     return Color.GOLD;
   }
 
-  public abstract boolean onUse(final @NotNull Player player);
+  public abstract boolean onUse(final Player player);
 
-  public void onRemove(final @NotNull Player player) {}
+  public void onRemove(final Player player) {}
 
-  public final void use(final @NotNull Player player) {
+  public final void use(final Player player) {
     for (final var restriction : this.restrictions.values()) {
       if (restriction.restrictsPower(this, player)) {
         this.profile.sendMessage(restriction.provideRestrictionMessage(this, player));
@@ -77,23 +76,23 @@ public abstract class AbstractPower
   }
 
   @Override
-  public final Collection<@NotNull PowerRestriction> getRestrictions() {
+  public final Collection<PowerRestriction> getRestrictions() {
     return this.restrictions.values();
   }
 
   @Override
-  public final void addRestriction(final @NotNull PowerRestriction restriction) {
+  public final void addRestriction(final PowerRestriction restriction) {
     this.restrictions.put(restriction.getId(), restriction);
   }
 
   @Override
-  public final void removeRestriction(final @NotNull String id) {
+  public final void removeRestriction(final String id) {
     this.restrictions.remove(id);
   }
 
   @Override
   public final <T extends PowerRestriction> Optional<T> findOptionalRestriction(
-      final @NotNull Class<T> restrictionClass, final @NotNull String id) {
+      final Class<T> restrictionClass, final String id) {
     return Optional.ofNullable(this.restrictions.get(id))
         .filter(restrictionClass::isInstance)
         .map(restrictionClass::cast);
@@ -103,17 +102,17 @@ public abstract class AbstractPower
     return this.ultraHardcore;
   }
 
-  public final @NotNull Profile getPlayer() {
+  public final Profile getPlayer() {
     return this.profile;
   }
 
   @Override
-  public final @NotNull String getId() {
+  public final String getId() {
     return this.identifier;
   }
 
   @Override
-  public final @NotNull String getName() {
+  public final String getName() {
     return this.name;
   }
 }

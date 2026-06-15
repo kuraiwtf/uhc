@@ -5,9 +5,9 @@ import org.jetbrains.annotations.NotNull;
 
 public final class JavaArgumentResolvers {
 
-  public static final ArgumentResolver<@NotNull String> STRING_RESOLVER = (_, argument) -> argument;
+  public static final ArgumentResolver< String> STRING_RESOLVER = (_, argument) -> argument;
 
-  public static final ArgumentResolver<@NotNull Integer> INTEGER_RESOLVER =
+  public static final ArgumentResolver< Integer> INTEGER_RESOLVER =
       (sender, argument) -> {
         try {
           return Integer.parseInt(argument);
@@ -17,7 +17,7 @@ public final class JavaArgumentResolvers {
         }
       };
 
-  public static final ArgumentResolver<@NotNull Boolean> BOOLEAN_RESOLVER =
+  public static final ArgumentResolver< Boolean> BOOLEAN_RESOLVER =
       (sender, argument) -> {
         try {
           return Boolean.parseBoolean(argument);
@@ -27,7 +27,7 @@ public final class JavaArgumentResolvers {
         }
       };
 
-  public static final ArgumentResolver<@NotNull Double> DOUBLE_RESOLVER =
+  public static final ArgumentResolver< Double> DOUBLE_RESOLVER =
       (sender, argument) -> {
         try {
           return Double.parseDouble(argument);
@@ -37,7 +37,7 @@ public final class JavaArgumentResolvers {
         }
       };
 
-  public static final ArgumentResolver<@NotNull Long> LONG_RESOLVER =
+  public static final ArgumentResolver< Long> LONG_RESOLVER =
       (sender, argument) -> {
         try {
           return Long.parseLong(argument);

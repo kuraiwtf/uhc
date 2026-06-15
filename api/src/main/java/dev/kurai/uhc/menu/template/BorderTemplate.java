@@ -15,7 +15,7 @@ public final class BorderTemplate implements Template {
   }
 
   @Override
-  public void apply(final @NotNull BackgroundLayer background, final ForegroundLayer foreground) {
+  public void apply(final  BackgroundLayer background, final ForegroundLayer foreground) {
     final var size = background.getMenu().getTotalSlots();
     for (int i :
         new int[] {

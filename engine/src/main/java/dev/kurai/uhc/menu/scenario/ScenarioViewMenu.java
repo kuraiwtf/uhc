@@ -75,7 +75,7 @@ public final class ScenarioViewMenu extends PaginatedMenu {
 
     private final AbstractScenario scenario;
 
-    private ScenarioButton(final @NotNull AbstractScenario scenario) {
+    private ScenarioButton(final  AbstractScenario scenario) {
       this.scenario = scenario;
     }
 

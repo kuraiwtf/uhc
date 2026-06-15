@@ -64,7 +64,7 @@ public final class GameServiceImpl implements GameService {
         .registerModifiers(new AppleDropRateModifier(), new FlintDropRateModifier());
     this.episodeService = new EpisodeServiceImpl(ultraHardcore);
     this.hostService = new HostServiceImpl(ultraHardcore);
-    this.scatterService = new ScatterServiceImpl(ultraHardcore, this);
+    this.scatterService = new ScatterServiceImpl(ultraHardcore);
     this.scenarioService = new ScenarioServiceImpl(ultraHardcore);
     this.slotService = new SlotServiceImpl();
     this.startService = new StartServiceImpl(ultraHardcore);
@@ -72,7 +72,7 @@ public final class GameServiceImpl implements GameService {
     final var bukkitAudiences = ultraHardcore.bukkitAudiences();
     (this.timerService = new TimerServiceImpl(ultraHardcore.plugin()))
         .registerTimers(
-            new InvincibilityTimer(bukkitAudiences, ultraHardcore),
+            new InvincibilityTimer(ultraHardcore),
             new PvPTimer(bukkitAudiences),
             new BorderTimer(bukkitAudiences));
   }

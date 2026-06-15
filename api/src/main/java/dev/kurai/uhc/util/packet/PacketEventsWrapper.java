@@ -16,7 +16,7 @@ final class PacketEventsWrapper implements PacketWrapper {
   }
 
   @Override
-  public void send(final @NotNull Player player) {
+  public void send(final  Player player) {
     PLAYER_MANAGER.sendPacket(player, this.packet);
   }
 }

@@ -3,11 +3,10 @@ package dev.kurai.uhc.util;
 import static java.lang.String.format;
 
 import java.time.Duration;
-import org.jetbrains.annotations.NotNull;
 
 public final class TimeUtil {
 
-  public static @NotNull String formatDuration(final long time) {
+  public static String formatDuration(final long time) {
     final var duration = Duration.ofMillis(time);
     final long hours = duration.toHours();
     final long minutes = duration.toMinutesPart();

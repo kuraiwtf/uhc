@@ -36,9 +36,9 @@ public final class ScenarioConfigurationMenu extends PaginatedMenu {
   private boolean filterActiveOnly = false;
 
   public ScenarioConfigurationMenu(
-      final @NotNull Player player,
-      final @NotNull EventService eventService,
-      final @NotNull ScenarioService scenarioService) {
+      final  Player player,
+      final  EventService eventService,
+      final  ScenarioService scenarioService) {
     super("Scénarios", MenuSize.FIVE, player);
     this.eventService = eventService;
     this.scenarioService = scenarioService;
@@ -82,7 +82,7 @@ public final class ScenarioConfigurationMenu extends PaginatedMenu {
     private final AbstractScenario scenario;
 
     private ScenarioButton(
-        final @NotNull EventService eventService, final @NotNull AbstractScenario scenario) {
+        final  EventService eventService, final  AbstractScenario scenario) {
       this.eventService = eventService;
       this.scenario = scenario;
     }

@@ -20,7 +20,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
 
 public final class ItemBuilder {
 
@@ -29,7 +28,7 @@ public final class ItemBuilder {
 
   private ItemStack itemStack;
 
-  public ItemBuilder(@NotNull final ItemStack itemStack) {
+  public ItemBuilder(final ItemStack itemStack) {
     this.itemStack = itemStack.clone();
   }
 
@@ -102,14 +101,14 @@ public final class ItemBuilder {
     return this;
   }
 
-  public ItemBuilder addFlags(final @NotNull ItemFlag... flags) {
+  public ItemBuilder addFlags(final ItemFlag... flags) {
     final var meta = this.itemStack.getItemMeta();
     meta.addItemFlags(flags);
     this.itemStack.setItemMeta(meta);
     return this;
   }
 
-  public ItemBuilder removeFlags(final @NotNull ItemFlag... flags) {
+  public ItemBuilder removeFlags(final ItemFlag... flags) {
     final var meta = this.itemStack.getItemMeta();
     meta.removeItemFlags(flags);
     this.itemStack.setItemMeta(meta);
@@ -148,12 +147,12 @@ public final class ItemBuilder {
     return this.name(SERIALIZER.serialize(component));
   }
 
-  public ItemBuilder lore(final String @NotNull ... lines) {
+  public ItemBuilder lore(final String... lines) {
     return this.lore(Arrays.asList(lines));
   }
 
   @Contract("_ -> this")
-  public ItemBuilder lore(@NotNull final Collection<String> lines) {
+  public ItemBuilder lore(final Collection<String> lines) {
     final var lore = Lists.<String>newArrayList();
     for (final var line : lines) {
       for (final String str :
@@ -172,7 +171,7 @@ public final class ItemBuilder {
     return this;
   }
 
-  public ItemBuilder lore(final String @NotNull [] line, final String... lines) {
+  public ItemBuilder lore(final String[] line, final String... lines) {
     final var lore = Lists.<String>newArrayList();
     lore.addAll(Arrays.asList(line));
     lore.addAll(Arrays.asList(lines));
