@@ -14,6 +14,7 @@ dependencies {
     api(platform(libs.adventure.bom))
     api(libs.bundles.apollo)
     api(libs.bundles.adventure)
+    api(libs.bundles.jackson)
     api(libs.menu.api)
     api(libs.entity.lib)
     api(libs.actionbar.api)

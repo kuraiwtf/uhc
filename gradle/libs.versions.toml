@@ -20,6 +20,8 @@ entity-lib = '1.0.6'
 
 actionbar-api = '0.0.6'
 
+jackson = "2.18.3"
+
 [plugins]
 shadow = { id = 'com.gradleup.shadow', version.ref = 'shadow' }
 
@@ -45,6 +47,13 @@ entity-lib = { module = 'pt.supercrafting:EntityLib', version.ref = 'entity-lib'
 
 actionbar-api = { module = 'dev.kurai:actionbar-api', version.ref = 'actionbar-api' }
 
+jackson-annotations = { module = "com.fasterxml.jackson.core:jackson-annotations", version.ref = "jackson" }
+jackson-core = { module = "com.fasterxml.jackson.core:jackson-core", version.ref = "jackson" }
+jackson-databind = { module = "com.fasterxml.jackson.core:jackson-databind", version.ref = "jackson" }
+jackson-datatype-jdk8 = { module = "com.fasterxml.jackson.datatype:jackson-datatype-jdk8", version.ref = "jackson" }
+jackson-datatype-jsr310 = { module = "com.fasterxml.jackson.datatype:jackson-datatype-jsr310", version.ref = "jackson" }
+
 [bundles]
 apollo = ['apollo-api', 'apollo-wrapper']
 adventure = ['adventure-platform-bukkit', 'adventure-mini-message']
+jackson = ['jackson-core', 'jackson-databind', 'jackson-annotations', 'jackson-datatype-jdk8', 'jackson-datatype-jsr310']
