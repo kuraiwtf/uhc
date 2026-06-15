@@ -101,7 +101,7 @@ public final class ProfileImpl implements Profile {
                 return;
               }
 
-              offlineActionComponent.getActions().add(action::accept);
+              offlineActionComponent.actions().add(action::accept);
             });
   }
 
@@ -116,7 +116,7 @@ public final class ProfileImpl implements Profile {
       return;
     }
 
-    this.getComponent(ClaimComponent.class).getItems().addAll(left.values());
+    this.getComponent(ClaimComponent.class).items().addAll(left.values());
     final var plural = left.size() > 1;
     this.sendPrefixedMessage(
         (plural ? "Plusieurs" : "Un")

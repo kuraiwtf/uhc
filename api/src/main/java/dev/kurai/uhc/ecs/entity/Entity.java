@@ -3,8 +3,8 @@ package dev.kurai.uhc.ecs.entity;
 import dev.kurai.uhc.ecs.component.Component;
 import dev.kurai.uhc.util.api.Identifiable;
 import java.util.Collection;
-import org.jetbrains.annotations.Nullable;
 import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 @NullMarked
 public interface Entity<I> extends Identifiable<I> {

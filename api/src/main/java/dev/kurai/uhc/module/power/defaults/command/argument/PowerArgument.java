@@ -3,8 +3,7 @@ package dev.kurai.uhc.module.power.defaults.command.argument;
 import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public record PowerArgument(String key, Object object) {
 
@@ -74,11 +73,11 @@ public record PowerArgument(String key, Object object) {
         : Bukkit.getPlayer(defaultValue);
   }
 
-  public <T> @Nullable T as(final  Class<T> clazz) {
+  public <T> @Nullable T as(final Class<T> clazz) {
     return this.as(clazz, null);
   }
 
-  public <T> @Nullable T as(final  Class<T> clazz, final @Nullable T defaultValue) {
+  public <T> @Nullable T as(final Class<T> clazz, final @Nullable T defaultValue) {
     return clazz.isInstance(this.object) ? clazz.cast(this.object) : defaultValue;
   }
 }

@@ -1,26 +1,18 @@
 package dev.kurai.uhc.util.particle;
 
-import dev.kurai.uhc.util.GlobalUtil;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.CompletableFuture;
-import net.minecraft.server.v1_8_R3.EntityArmorStand;
 import net.minecraft.server.v1_8_R3.EnumParticle;
 import net.minecraft.server.v1_8_R3.ItemStack;
 import net.minecraft.server.v1_8_R3.NBTTagCompound;
 import net.minecraft.server.v1_8_R3.NBTTagInt;
 import net.minecraft.server.v1_8_R3.PacketPlayOutWorldParticles;
-import net.minecraft.server.v1_8_R3.Vector3f;
-import net.minecraft.server.v1_8_R3.WorldServer;
 import org.bukkit.*;
-import org.bukkit.block.Block;
-import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
-import org.jetbrains.annotations.NotNull;
 
 public final class ParticleUtil {
 
@@ -1109,7 +1101,7 @@ public final class ParticleUtil {
       final Location center,
       final double radius,
       final int amount,
-      final Player  ... player) {
+      final Player... player) {
     final double increment = 6.283185307179586 / amount;
     for (int i = 0; i < amount; ++i) {
       final double angle = i * increment;
@@ -1386,9 +1378,9 @@ public final class ParticleUtil {
   }
 
   public static void playDomeParticle(
-      final  Player player,
-      final  Location location,
-      final  EnumParticle particle,
+      final Player player,
+      final Location location,
+      final EnumParticle particle,
       final double radius,
       final double step) {
     for (double phi = 0; phi <= Math.PI / 2; phi += step) {
@@ -1404,8 +1396,8 @@ public final class ParticleUtil {
   }
 
   public static void spawnColoredLine(
-      final  Location from,
-      final  Location to,
+      final Location from,
+      final Location to,
       final int count,
       final float red,
       final float green,

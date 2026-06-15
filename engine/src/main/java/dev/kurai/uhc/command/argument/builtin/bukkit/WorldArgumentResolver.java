@@ -11,21 +11,19 @@ import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
+import org.jspecify.annotations.Nullable;
 
 public final class WorldArgumentResolver implements ArgumentResolver<@Nullable World> {
 
   private final BukkitAudiences bukkitAudiences;
 
-  public WorldArgumentResolver(final  BukkitAudiences bukkitAudiences) {
+  public WorldArgumentResolver(final BukkitAudiences bukkitAudiences) {
     this.bukkitAudiences = bukkitAudiences;
   }
 
   @Override
-  public @Nullable World resolve(
-      final  CommandSender sender, final  String argument) {
+  public @Nullable World resolve(final CommandSender sender, final String argument) {
     final var world = Bukkit.getWorld(argument);
     if (world == null) {
       this.bukkitAudiences
@@ -43,8 +41,8 @@ public final class WorldArgumentResolver implements ArgumentResolver<@Nullable W
   }
 
   @Override
-  public  @Unmodifiable Collection< String> complete(
-      final  CommandSender sender, final  String argument) {
+  public @Unmodifiable Collection<String> complete(
+      final CommandSender sender, final String argument) {
     return Bukkit.getWorlds().stream()
         .map(World::getName)
         .map(String::toLowerCase)

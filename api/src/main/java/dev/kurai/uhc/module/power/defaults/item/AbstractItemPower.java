@@ -6,19 +6,18 @@ import dev.kurai.uhc.util.ItemBuilder;
 import java.util.UUID;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
 
 public abstract class AbstractItemPower extends AbstractPower {
 
   public AbstractItemPower(
-      final  String identifier,
-      final  String name,
-      final  UUID owner,
-      final  UltraHardcoreAPI ultraHardcore) {
+      final String identifier,
+      final String name,
+      final UUID owner,
+      final UltraHardcoreAPI ultraHardcore) {
     super(identifier, name, owner, ultraHardcore);
   }
 
-  public abstract  ItemStack provideIcon(final  Player player);
+  public abstract ItemStack provideIcon(final Player player);
 
   public ItemStack getIcon(final Player player) {
     return new ItemBuilder(this.provideIcon(player))

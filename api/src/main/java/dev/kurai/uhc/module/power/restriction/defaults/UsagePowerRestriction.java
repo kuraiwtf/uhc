@@ -9,7 +9,6 @@ import dev.kurai.uhc.module.power.AbstractPower;
 import dev.kurai.uhc.module.power.restriction.PowerRestriction;
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
 
 public final class UsagePowerRestriction implements PowerRestriction {
 
@@ -24,18 +23,17 @@ public final class UsagePowerRestriction implements PowerRestriction {
   }
 
   @Override
-  public  String getId() {
+  public String getId() {
     return IDENTIFIER;
   }
 
   @Override
-  public void onUse(final  AbstractPower power, final  Player player) {
+  public void onUse(final AbstractPower power, final Player player) {
     this.uses++;
   }
 
   @Override
-  public  Component provideRestrictionMessage(
-      final  AbstractPower power, final  Player player) {
+  public Component provideRestrictionMessage(final AbstractPower power, final Player player) {
     return prefix()
         .append(text("Vous ne pouvez plus utiliser ce pouvoir.", RED))
         .appendSpace()
@@ -48,7 +46,7 @@ public final class UsagePowerRestriction implements PowerRestriction {
   }
 
   @Override
-  public boolean restrictsPower(final  AbstractPower power, final  Player player) {
+  public boolean restrictsPower(final AbstractPower power, final Player player) {
     return this.uses >= this.totalUsages;
   }
 

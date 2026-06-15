@@ -10,28 +10,27 @@ import java.util.UUID;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public abstract class AbstractParentItemPower extends LeftClickItemPower {
 
   private static final long SWITCH_DELAY = 200L;
 
-  private final List< RightClickItemPower> children;
+  private final List<RightClickItemPower> children;
   private RightClickItemPower currentPower;
   private long lastSwitch;
 
   public AbstractParentItemPower(
-      final  String identifier,
-      final  String name,
-      final  UUID owner,
-      final  UltraHardcoreAPI ultraHardcore) {
+      final String identifier,
+      final String name,
+      final UUID owner,
+      final UltraHardcoreAPI ultraHardcore) {
     super(identifier, name, owner, ultraHardcore);
     this.children = Lists.newArrayList();
   }
 
   @Override
-  public final boolean onUse(final  Player player) {
+  public final boolean onUse(final Player player) {
     if (this.getChildren().isEmpty()
         || System.currentTimeMillis() - this.lastSwitch < SWITCH_DELAY) {
       return false;
@@ -57,17 +56,17 @@ public abstract class AbstractParentItemPower extends LeftClickItemPower {
     return this.currentPower.getIcon(player);
   }
 
-  public final void registerChild(final  RightClickItemPower power) {
+  public final void registerChild(final RightClickItemPower power) {
     this.children.add(power);
   }
 
-  public final void registerChildren(final RightClickItemPower  ... powers) {
+  public final void registerChildren(final RightClickItemPower... powers) {
     for (final var power : powers) {
       this.registerChild(power);
     }
   }
 
-  public final  Collection< RightClickItemPower> getChildren() {
+  public final Collection<RightClickItemPower> getChildren() {
     return this.children;
   }
 

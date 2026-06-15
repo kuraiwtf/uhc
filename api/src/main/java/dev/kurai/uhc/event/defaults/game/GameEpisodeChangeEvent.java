@@ -13,12 +13,12 @@ public final class GameEpisodeChangeEvent extends Event {
     this.episode = episode;
   }
 
-  public int getEpisode() {
-    return this.episode;
-  }
-
   public static HandlerList getHandlerList() {
     return HANDLER_LIST;
+  }
+
+  public int getEpisode() {
+    return this.episode;
   }
 
   @Override

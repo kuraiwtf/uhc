@@ -1,7 +1,6 @@
 package dev.kurai.uhc.util.api.option;
 
 import net.kyori.adventure.key.Key;
-import org.jetbrains.annotations.NotNull;
 
 final class RangedOption implements Option<Integer> {
 
@@ -22,7 +21,7 @@ final class RangedOption implements Option<Integer> {
   }
 
   @Override
-  public  Key key() {
+  public Key key() {
     return this.key;
   }
 

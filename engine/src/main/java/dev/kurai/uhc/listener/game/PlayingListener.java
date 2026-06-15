@@ -14,7 +14,6 @@ import dev.kurai.uhc.event.defaults.player.PlayerDamageByPlayerEvent;
 import dev.kurai.uhc.game.configuration.game.GameConfiguration;
 import dev.kurai.uhc.game.configuration.ore.OreConfiguration;
 import dev.kurai.uhc.game.death.DeathContext;
-import dev.kurai.uhc.item.builtin.*;
 import dev.kurai.uhc.profile.Profile;
 import dev.kurai.uhc.profile.ProfileService;
 import dev.kurai.uhc.profile.component.*;
@@ -159,7 +158,7 @@ public final class PlayingListener implements Listener {
         continue;
       }
 
-      final var poll = component.getActions().poll();
+      final var poll = component.actions().poll();
       if (poll == null) {
         continue;
       }

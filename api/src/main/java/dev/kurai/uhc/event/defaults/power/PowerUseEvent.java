@@ -5,7 +5,6 @@ import dev.kurai.uhc.profile.Profile;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
-import org.jetbrains.annotations.NotNull;
 
 public final class PowerUseEvent extends Event implements Cancellable {
 
@@ -16,25 +15,25 @@ public final class PowerUseEvent extends Event implements Cancellable {
 
   private boolean cancelled;
 
-  public PowerUseEvent(final  Profile profile, final  AbstractPower power) {
+  public PowerUseEvent(final Profile profile, final AbstractPower power) {
     this.profile = profile;
     this.power = power;
   }
 
-  public  Profile getProfile() {
+  public static HandlerList getHandlerList() {
+    return HANDLERS;
+  }
+
+  public Profile getProfile() {
     return this.profile;
   }
 
-  public  AbstractPower getPower() {
+  public AbstractPower getPower() {
     return this.power;
   }
 
   @Override
   public HandlerList getHandlers() {
-    return HANDLERS;
-  }
-
-  public static HandlerList getHandlerList() {
     return HANDLERS;
   }
 

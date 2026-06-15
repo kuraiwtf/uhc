@@ -10,13 +10,10 @@ import org.bukkit.inventory.ItemStack;
 
 public abstract class AbstractScenario implements Identifiable<String>, Nameable<String> {
 
-  private final Map<String, ScenarioConfiguration<?>> configurations;
-
   protected final String id;
   protected final String name;
-
   protected final UltraHardcoreAPI ultraHardcore;
-
+  private final Map<String, ScenarioConfiguration<?>> configurations;
   private boolean enabled;
 
   public AbstractScenario(

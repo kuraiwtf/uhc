@@ -3,7 +3,7 @@ package dev.kurai.uhc.module.power.restriction.holder;
 import dev.kurai.uhc.module.power.restriction.PowerRestriction;
 import java.util.Collection;
 import java.util.Optional;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public interface PowerRestrictionHolder {
 

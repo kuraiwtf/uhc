@@ -1,25 +1,22 @@
 package dev.kurai.uhc.util.api.cache;
 
+import dev.kurai.uhc.util.api.Identifiable;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.function.Predicate;
-
-import dev.kurai.uhc.util.api.Identifiable;
 import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.UnmodifiableView;
+import org.jspecify.annotations.Nullable;
 
 public interface Cache<O, T extends Identifiable<O>> extends Iterable<T> {
 
   @UnmodifiableView
-  
   Collection<T> findAll();
 
   T insert(final O id, final T entity);
 
   @ApiStatus.NonExtendable
-  default  T insert(final T entity) {
+  default T insert(final T entity) {
     return this.insert(entity.getId(), entity);
   }
 
@@ -33,18 +30,15 @@ public interface Cache<O, T extends Identifiable<O>> extends Iterable<T> {
   void deleteAll();
 
   @UnmodifiableView
-  
-  Collection< T> findAll(final Predicate<? super T> filter);
+  Collection<T> findAll(final Predicate<? super T> filter);
 
-  @Nullable
-  T findById(final O id);
+  @Nullable T findById(final O id);
 
-  @Nullable
-  T findBy(final  Predicate<? super T> filter);
+  @Nullable T findBy(final Predicate<? super T> filter);
 
   boolean existsById(final O id);
 
-  boolean exists(final  Predicate<? super T> filter);
+  boolean exists(final Predicate<? super T> filter);
 
   @ApiStatus.NonExtendable
   default boolean exists(final T entity) {
@@ -52,6 +46,5 @@ public interface Cache<O, T extends Identifiable<O>> extends Iterable<T> {
   }
 
   @Override
-  
   Iterator<T> iterator();
 }

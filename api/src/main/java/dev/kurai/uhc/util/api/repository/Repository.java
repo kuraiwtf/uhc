@@ -4,7 +4,6 @@ import dev.kurai.uhc.util.api.Identifiable;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
-import org.jetbrains.annotations.NotNull;
 
 public class Repository<I, E extends Identifiable<I>> implements Iterable<E> {
 
@@ -68,7 +67,7 @@ public class Repository<I, E extends Identifiable<I>> implements Iterable<E> {
   }
 
   @Override
-  public  Iterator<E> iterator() {
+  public Iterator<E> iterator() {
     return this.findAll().iterator();
   }
 

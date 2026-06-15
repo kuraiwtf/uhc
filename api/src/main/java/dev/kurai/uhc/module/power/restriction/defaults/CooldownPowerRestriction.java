@@ -11,7 +11,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
-import org.jetbrains.annotations.NotNull;
 
 public final class CooldownPowerRestriction implements PowerRestriction {
 
@@ -24,19 +23,19 @@ public final class CooldownPowerRestriction implements PowerRestriction {
 
   private BukkitTask task;
 
-  public CooldownPowerRestriction(final  Plugin plugin, final int initialCooldownTime) {
+  public CooldownPowerRestriction(final Plugin plugin, final int initialCooldownTime) {
     this.plugin = plugin;
     this.initialCooldownTime = initialCooldownTime;
     this.timeLeft = 0;
   }
 
   @Override
-  public  String getId() {
+  public String getId() {
     return IDENTIFIER;
   }
 
   @Override
-  public void onUse(final  AbstractPower power, final  Player player) {
+  public void onUse(final AbstractPower power, final Player player) {
     this.timeLeft = this.initialCooldownTime;
 
     if (this.task != null) {
@@ -47,8 +46,7 @@ public final class CooldownPowerRestriction implements PowerRestriction {
   }
 
   @Override
-  public  Component provideRestrictionMessage(
-      final  AbstractPower power, final  Player player) {
+  public Component provideRestrictionMessage(final AbstractPower power, final Player player) {
     return prefix()
         .append(text("Vous devez patienter ", RED))
         .append(text(this.timeLeft, DARK_RED))
@@ -59,7 +57,7 @@ public final class CooldownPowerRestriction implements PowerRestriction {
   }
 
   @Override
-  public boolean restrictsPower(final  AbstractPower power, final  Player player) {
+  public boolean restrictsPower(final AbstractPower power, final Player player) {
     return this.timeLeft > 0;
   }
 
@@ -83,7 +81,7 @@ public final class CooldownPowerRestriction implements PowerRestriction {
 
     private final CooldownPowerRestriction restriction;
 
-    private CooldownDecrementTask(final  CooldownPowerRestriction restriction) {
+    private CooldownDecrementTask(final CooldownPowerRestriction restriction) {
       this.restriction = restriction;
     }
 

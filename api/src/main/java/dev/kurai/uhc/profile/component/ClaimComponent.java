@@ -7,19 +7,9 @@ import org.bukkit.inventory.ItemStack;
 import org.jspecify.annotations.NullMarked;
 
 @NullMarked
-public final class ClaimComponent implements Component {
-
-  private final Collection<ItemStack> items;
+public record ClaimComponent(Collection<ItemStack> items) implements Component {
 
   public ClaimComponent() {
-    this.items = Lists.newArrayList();
-  }
-
-  public ClaimComponent(final Collection<ItemStack> items) {
-    this.items = items;
-  }
-
-  public Collection<ItemStack> getItems() {
-    return this.items;
+    this(Lists.newArrayList());
   }
 }

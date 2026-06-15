@@ -4,19 +4,15 @@ import dev.kurai.uhc.module.power.AbstractPower;
 import dev.kurai.uhc.util.api.Identifiable;
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
 
-public interface PowerRestriction extends Identifiable< String> {
+public interface PowerRestriction extends Identifiable<String> {
 
   @Override
-  
   String getId();
 
-  void onUse(final  AbstractPower power, final  Player player);
+  void onUse(final AbstractPower power, final Player player);
 
-  
-  Component provideRestrictionMessage(
-      final  AbstractPower power, final  Player player);
+  Component provideRestrictionMessage(final AbstractPower power, final Player player);
 
-  boolean restrictsPower(final  AbstractPower power, final  Player player);
+  boolean restrictsPower(final AbstractPower power, final Player player);
 }

@@ -11,7 +11,7 @@ import dev.kurai.uhc.timer.TimerService;
 import java.util.Collection;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bukkit.command.CommandSender;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public final class TimerArgumentResolver implements ArgumentResolver<@Nullable AbstractTimer> {
 

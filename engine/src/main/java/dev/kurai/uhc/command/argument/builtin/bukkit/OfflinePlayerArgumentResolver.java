@@ -7,33 +7,35 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
+import org.jspecify.annotations.Nullable;
 
 public final class OfflinePlayerArgumentResolver
     implements ArgumentResolver<@Nullable OfflinePlayer> {
 
   private final BukkitAudiences bukkitAudiences;
 
-  public OfflinePlayerArgumentResolver(final  BukkitAudiences bukkitAudiences) {
+  public OfflinePlayerArgumentResolver(final BukkitAudiences bukkitAudiences) {
     this.bukkitAudiences = bukkitAudiences;
   }
 
   @Override
-  public @Nullable OfflinePlayer resolve(
-      final  CommandSender sender, final  String argument) {
+  public @Nullable OfflinePlayer resolve(final CommandSender sender, final String argument) {
     final var found = Bukkit.getOfflinePlayer(argument);
     if (sender instanceof final OfflinePlayer player && argument.equalsIgnoreCase("self")) {
       return player;
+    }
+
+    if (found == null || !found.hasPlayedBefore()) {
+      return null;
     }
 
     return found;
   }
 
   @Override
-  public  @Unmodifiable Collection< String> complete(
-      final  CommandSender sender, final  String argument) {
+  public @Unmodifiable Collection<String> complete(
+      final CommandSender sender, final String argument) {
     return sender.getServer().getOnlinePlayers().stream()
         .map(Player::getName)
         .filter(s -> s.startsWith(argument))

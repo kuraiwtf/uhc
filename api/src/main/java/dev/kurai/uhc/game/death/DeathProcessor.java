@@ -1,9 +1,7 @@
 package dev.kurai.uhc.game.death;
 
-import org.jetbrains.annotations.NotNull;
-
 @FunctionalInterface
 public interface DeathProcessor {
 
-  void processDeath(final  DeathContext context);
+  void processDeath(final DeathContext context);
 }

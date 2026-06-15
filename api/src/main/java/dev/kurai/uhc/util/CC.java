@@ -78,9 +78,9 @@ public final class CC {
   /** The vertical lines a player can see at once in his chat history */
   public static final int VISIBLE_CHAT_LINES = 20;
 
-  private CC() {}
-
   public static final String BUILTIN_PREFIX = "&e&lUHC&7 &l" + BAR + "&f";
+
+  private CC() {}
 
   public static TextComponent.Builder prefix() {
     return text().append(text(BAR, GRAY, BOLD)).appendSpace();

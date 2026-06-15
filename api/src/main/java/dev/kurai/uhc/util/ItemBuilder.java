@@ -1,5 +1,7 @@
 package dev.kurai.uhc.util;
 
+import static net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacyAmpersand;
+
 import com.google.common.collect.Lists;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
@@ -23,8 +25,7 @@ import org.jetbrains.annotations.Contract;
 
 public final class ItemBuilder {
 
-  private static final LegacyComponentSerializer SERIALIZER =
-      LegacyComponentSerializer.legacyAmpersand();
+  private static final LegacyComponentSerializer SERIALIZER = legacyAmpersand();
 
   private ItemStack itemStack;
 

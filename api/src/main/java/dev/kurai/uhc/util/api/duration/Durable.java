@@ -1,11 +1,9 @@
 package dev.kurai.uhc.util.api.duration;
 
 import dev.kurai.uhc.util.api.Traceable;
-import org.jetbrains.annotations.NotNull;
 
 public interface Durable extends Traceable<Long> {
 
-  
   Long getDuration();
 
   default boolean isPermanent() {

@@ -8,7 +8,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
 
 public final class MathUtil {
 
@@ -17,7 +16,7 @@ public final class MathUtil {
   }
 
   public static void sendParticle(
-      final  Player player, final EnumParticle particle, final Location location) {
+      final Player player, final EnumParticle particle, final Location location) {
     sendParticle(player, particle, location.getX(), location.getY(), location.getZ());
   }
 
@@ -29,7 +28,7 @@ public final class MathUtil {
   }
 
   public static void sendParticle(
-      final  Player player,
+      final Player player,
       final EnumParticle particle,
       final double x,
       final double y,

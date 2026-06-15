@@ -2,9 +2,9 @@ package dev.kurai.uhc.game.episode;
 
 public interface EpisodeService {
 
-  void setEnabled(final boolean enabled);
-
   boolean isEnabled();
+
+  void setEnabled(final boolean enabled);
 
   int getEpisode();
 

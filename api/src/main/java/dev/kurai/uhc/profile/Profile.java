@@ -85,17 +85,17 @@ public interface Profile
 
   void removeHealth(final double health);
 
-  void setHealth(final double health);
-
   double getHealth();
+
+  void setHealth(final double health);
 
   void addMaxHealth(final double maxHealth);
 
   void removeMaxHealth(final double maxHealth);
 
-  void setMaxHealth(final double maxHealth);
-
   double getMaxHealth();
+
+  void setMaxHealth(final double maxHealth);
 
   default void addDamageImmunity(final EntityDamageEvent.DamageCause cause) {
     this.addDamageImmunity(cause, INFINITE_IMMUNITY_TICKS);

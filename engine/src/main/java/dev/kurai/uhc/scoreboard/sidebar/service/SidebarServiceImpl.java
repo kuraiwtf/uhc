@@ -13,7 +13,7 @@ import dev.kurai.uhc.scoreboard.sidebar.task.updater.SidebarUpdaterTask;
 import java.util.Map;
 import java.util.UUID;
 import org.bukkit.Bukkit;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public final class SidebarServiceImpl implements SidebarService {
 

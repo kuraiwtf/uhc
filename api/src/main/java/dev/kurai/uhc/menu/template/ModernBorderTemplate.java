@@ -4,7 +4,6 @@ import dev.kurai.uhc.menu.button.GlassButton;
 import net.j4c0b3y.api.menu.layer.impl.BackgroundLayer;
 import net.j4c0b3y.api.menu.layer.impl.ForegroundLayer;
 import net.j4c0b3y.api.menu.template.Template;
-import org.jetbrains.annotations.NotNull;
 
 public final class ModernBorderTemplate implements Template {
 
@@ -17,7 +16,7 @@ public final class ModernBorderTemplate implements Template {
   }
 
   @Override
-  public void apply(final  BackgroundLayer background, final ForegroundLayer foreground) {
+  public void apply(final BackgroundLayer background, final ForegroundLayer foreground) {
     final var size = background.getMenu().getTotalSlots();
     for (final int i :
         new int[] {

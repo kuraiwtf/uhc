@@ -1,15 +1,13 @@
 package dev.kurai.uhc.util.api.duration.impl;
 
 import dev.kurai.uhc.util.api.duration.Durable;
-import org.jetbrains.annotations.NotNull;
 
 public interface MutableDurable extends Durable {
 
   @Override
-  
   Long getDuration();
 
-  void setDuration(final  Long duration);
+  void setDuration(final Long duration);
 
   @Override
   default boolean isPermanent() {
@@ -37,6 +35,5 @@ public interface MutableDurable extends Durable {
   }
 
   @Override
-  
   Long getCreatedAt();
 }

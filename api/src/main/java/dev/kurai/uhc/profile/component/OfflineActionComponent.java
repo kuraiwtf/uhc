@@ -7,19 +7,9 @@ import java.util.Queue;
 import org.jspecify.annotations.NullMarked;
 
 @NullMarked
-public final class OfflineActionComponent implements Component {
-
-  private final Queue<OfflinePlayerAction> actions;
+public record OfflineActionComponent(Queue<OfflinePlayerAction> actions) implements Component {
 
   public OfflineActionComponent() {
-    this.actions = Queues.newArrayDeque();
-  }
-
-  public OfflineActionComponent(final Queue<OfflinePlayerAction> actions) {
-    this.actions = actions;
-  }
-
-  public Queue<OfflinePlayerAction> getActions() {
-    return this.actions;
+    this(Queues.newArrayDeque());
   }
 }

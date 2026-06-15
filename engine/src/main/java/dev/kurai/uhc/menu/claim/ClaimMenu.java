@@ -33,7 +33,7 @@ public final class ClaimMenu extends PaginatedMenu {
 
   @Override
   public List<Button> getEntries() {
-    return this.component.getItems().stream()
+    return this.component.items().stream()
         .map(itemStack -> new ClaimButton(this.component, itemStack))
         .map(Button.class::cast)
         .toList();
@@ -76,7 +76,7 @@ public final class ClaimMenu extends PaginatedMenu {
         return;
       }
 
-      this.component.getItems().remove(this.item);
+      this.component.items().remove(this.item);
       click.getMenu().update();
     }
   }

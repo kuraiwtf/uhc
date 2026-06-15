@@ -5,30 +5,28 @@ import dev.kurai.uhc.module.camp.AbstractCampData;
 import dev.kurai.uhc.module.camp.factory.CampFactory;
 import dev.kurai.uhc.module.camp.repository.CampRepository;
 import java.util.Optional;
-import org.jetbrains.annotations.NotNull;
 
 public abstract class AbstractCampRegistrar<
     C extends AbstractCamp<?>, D extends AbstractCampData<C>> {
 
-  protected final CampFactory< C,  D> factory;
-  protected final CampRepository< C,  D> repository;
+  protected final CampFactory<C, D> factory;
+  protected final CampRepository<C, D> repository;
 
   public AbstractCampRegistrar(
-      final CampFactory< C,  D> factory,
-      final CampRepository< C,  D> repository) {
+      final CampFactory<C, D> factory, final CampRepository<C, D> repository) {
     this.factory = factory;
     this.repository = repository;
   }
 
-  public CampRepository< C,  D> getRegistry() {
+  public CampRepository<C, D> getRegistry() {
     return this.repository;
   }
 
-  public Optional< D> getTeam(final  Class<? extends C> clazz) {
+  public Optional<D> getTeam(final Class<? extends C> clazz) {
     return this.repository.findById(clazz);
   }
 
-  public void registerTeam(final  Class<? extends C> clazz) {
+  public void registerTeam(final Class<? extends C> clazz) {
     if (this.isRegistered(clazz)) {
       return;
     }
@@ -36,7 +34,7 @@ public abstract class AbstractCampRegistrar<
     this.repository.save(this.factory.provideNewInstance(clazz));
   }
 
-  public void unregisterTeam(final  Class<? extends C> clazz) {
+  public void unregisterTeam(final Class<? extends C> clazz) {
     if (!this.isRegistered(clazz)) {
       return;
     }
@@ -44,7 +42,7 @@ public abstract class AbstractCampRegistrar<
     this.repository.deleteById(clazz);
   }
 
-  public boolean isRegistered(final  Class<? extends C> clazz) {
+  public boolean isRegistered(final Class<? extends C> clazz) {
     return this.repository.findById(clazz).isPresent();
   }
 }

@@ -33,15 +33,15 @@ public abstract class UltraHardcoreAPI {
     return UltraHardcoreAPI.instance = instance;
   }
 
+  public static UltraHardcoreAPI getInstance() {
+    return instance;
+  }
+
   public void onLoad() {}
 
   public void onEnable() {}
 
   public void onDisable() {}
-
-  public static UltraHardcoreAPI getInstance() {
-    return instance;
-  }
 
   public Plugin plugin() {
     return this.plugin;

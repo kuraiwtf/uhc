@@ -7,10 +7,9 @@ import dev.kurai.uhc.util.api.annotation.Identifier;
 import dev.kurai.uhc.util.api.annotation.Name;
 import dev.kurai.uhc.util.api.name.Nameable;
 import java.util.UUID;
-import org.jetbrains.annotations.NotNull;
 
 public abstract class AbstractRole<M extends AbstractModule>
-    implements Identifiable< String>, Nameable< String> {
+    implements Identifiable<String>, Nameable<String> {
 
   protected final String id;
   protected final String name;
@@ -32,20 +31,20 @@ public abstract class AbstractRole<M extends AbstractModule>
   }
 
   @Override
-  public final  String getId() {
+  public final String getId() {
     return this.id;
   }
 
   @Override
-  public final  String getName() {
+  public final String getName() {
     return this.name;
   }
 
-  public final  UUID getOwner() {
+  public final UUID getOwner() {
     return this.owner;
   }
 
-  public final  M getModule() {
+  public final M getModule() {
     return this.module;
   }
 }

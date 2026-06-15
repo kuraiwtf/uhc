@@ -30,7 +30,7 @@ public final class PlayerCommands {
     }
 
     final var claim = profile.getComponent(ClaimComponent.class);
-    if (claim.getItems().isEmpty()) {
+    if (claim.items().isEmpty()) {
       profile.sendMessage(
           prefix().append(text("Vous n'avez aucun objet à récupérer pour le moment.")).build());
       return;

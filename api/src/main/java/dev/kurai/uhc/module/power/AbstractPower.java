@@ -12,7 +12,7 @@ import dev.kurai.uhc.util.api.Identifiable;
 import dev.kurai.uhc.util.api.name.Nameable;
 import java.util.*;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public abstract class AbstractPower
     implements Identifiable<String>, Nameable<String>, PowerRestrictionHolder {

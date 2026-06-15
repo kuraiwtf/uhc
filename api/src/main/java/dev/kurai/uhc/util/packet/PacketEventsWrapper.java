@@ -3,7 +3,6 @@ package dev.kurai.uhc.util.packet;
 import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.manager.player.PlayerManager;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
 
 final class PacketEventsWrapper implements PacketWrapper {
 
@@ -16,7 +15,7 @@ final class PacketEventsWrapper implements PacketWrapper {
   }
 
   @Override
-  public void send(final  Player player) {
+  public void send(final Player player) {
     PLAYER_MANAGER.sendPacket(player, this.packet);
   }
 }
