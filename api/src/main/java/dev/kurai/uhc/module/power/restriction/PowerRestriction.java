@@ -15,4 +15,6 @@ public interface PowerRestriction extends Identifiable<String> {
   Component provideRestrictionMessage(final AbstractPower power, final Player player);
 
   boolean restrictsPower(final AbstractPower power, final Player player);
+
+  RestrictionStrategy strategy();
 }
