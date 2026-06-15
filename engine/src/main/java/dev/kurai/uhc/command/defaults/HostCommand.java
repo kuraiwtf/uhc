@@ -12,6 +12,8 @@ import dev.kurai.uhc.game.GameService;
 import dev.kurai.uhc.game.configuration.inventory.InventoryConfiguration;
 import dev.kurai.uhc.game.host.HostService;
 import dev.kurai.uhc.menu.ConfigurationMenu;
+import dev.kurai.uhc.module.power.AbstractPower;
+import dev.kurai.uhc.module.power.defaults.item.AbstractItemPower;
 import dev.kurai.uhc.profile.Profile;
 import dev.kurai.uhc.profile.component.DeadComponent;
 import dev.kurai.uhc.profile.component.DisconnectComponent;
@@ -116,6 +118,29 @@ public final class HostCommand {
       }
     }
     profile.sendMessage("");
+  }
+
+  @SubCommand(
+      @CommandMeta(name = "refill", description = "Redonner les objets de pouvoir à un joueur"))
+  public void refill(
+      final Player player, final @Argument(name = "joueur", defaultValue = "self") Player target) {
+    final Profile profile = this.ultraHardcore.profileService().getOrCreateProfile(target);
+    if (!this.ultraHardcore.gameService().hostService().isHost(player)
+        && !player.getUniqueId().equals(target.getUniqueId())) {
+      player.sendMessage(CC.prefix("Vous n'avez pas la permission d'effectuer cette action."));
+      return;
+    }
+
+    for (final AbstractPower power : profile.getPowers()) {
+      if (!(power instanceof final AbstractItemPower itemPower)) {
+        continue;
+      }
+
+      target.getInventory().addItem(itemPower.getIcon(target));
+    }
+
+    player.sendMessage(
+        CC.prefix("Vous avez redonné les pouvoirs à&6 %s&r.".formatted(target.getName())));
   }
 
   @SubCommand(
