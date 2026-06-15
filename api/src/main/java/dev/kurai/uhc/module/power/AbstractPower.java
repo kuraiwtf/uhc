@@ -72,7 +72,9 @@ public abstract class AbstractPower
       return;
     }
 
-    this.restrictions.values().forEach(restriction -> restriction.onUse(this, player));
+    for (final PowerRestriction restriction : this.getRestrictions()) {
+      restriction.strategy().apply(restriction, this, player);
+    }
   }
 
   @Override
