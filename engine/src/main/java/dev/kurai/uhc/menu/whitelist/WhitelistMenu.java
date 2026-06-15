@@ -3,6 +3,7 @@ package dev.kurai.uhc.menu.whitelist;
 import static dev.kurai.uhc.util.CC.BAR;
 import static dev.kurai.uhc.util.CC.SQUARE;
 
+import com.google.common.base.Joiner;
 import dev.kurai.uhc.menu.button.GlassButton;
 import dev.kurai.uhc.menu.template.BackTemplate;
 import dev.kurai.uhc.menu.template.BorderTemplate;
@@ -158,18 +159,13 @@ public final class WhitelistMenu extends PaginatedMenu {
 
     @Override
     public ItemStack getIcon() {
-      final var count =
-          WhitelistMenu.this.whitelistService.getWhitelistedPlayers().stream()
-              .filter(meta -> !meta.asOfflinePlayer().isOnline())
-              .count();
-
       return new ItemBuilder(Material.PAPER)
-          .name("&e&lListe hors-ligne")
+          .name("&c&lJoueurs déconnectés")
           .lore(
               "",
-              "&7" + BAR + "&f Envoie dans le chat la liste",
-              "  de tous les joueurs whitelistés",
-              "  actuellement &chors-ligne&f. &7(&e" + count + "&7)",
+              "&7" + BAR + "&f Envoie la liste de tous",
+              "  les joueurs dans la&b liste blanche",
+              "  actuellement&c hors-ligne&f.",
               "")
           .asItemStack();
     }
@@ -180,8 +176,10 @@ public final class WhitelistMenu extends PaginatedMenu {
       final var offlineNames =
           WhitelistMenu.this.whitelistService.getWhitelistedPlayers().stream()
               .map(WhitelistMeta::asOfflinePlayer)
-              .filter(op -> !op.isOnline())
-              .map(op -> op.getName() != null ? op.getName() : "Inconnu")
+              .filter(offlinePlayer -> !offlinePlayer.isOnline())
+              .map(
+                  offlinePlayer ->
+                      offlinePlayer.getName() != null ? offlinePlayer.getName() : "Inconnu")
               .sorted(String.CASE_INSENSITIVE_ORDER)
               .toList();
 
@@ -191,11 +189,12 @@ public final class WhitelistMenu extends PaginatedMenu {
       }
 
       player.sendMessage(
-          CC.colorize(
+          CC.prefix(
               "&fHors-ligne &7(&c"
                   + offlineNames.size()
                   + "&7)&f: &c"
-                  + String.join("&f, &c", offlineNames)));
+                  + Joiner.on("&f, &c").join(offlineNames)
+                  + "&r."));
     }
   }
 }

@@ -1,101 +1,110 @@
 package dev.kurai.uhc.command.defaults;
 
-import static dev.kurai.uhc.util.CC.prefix;
+import static dev.kurai.uhc.util.CC.*;
 import static net.kyori.adventure.text.Component.text;
+import static net.kyori.adventure.text.format.NamedTextColor.*;
 
+import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.command.annotation.Command;
 import dev.kurai.uhc.command.annotation.CommandMeta;
 import dev.kurai.uhc.command.annotation.SubCommand;
 import dev.kurai.uhc.command.argument.annotation.Argument;
 import dev.kurai.uhc.menu.whitelist.WhitelistMenu;
-import dev.kurai.uhc.util.CC;
 import dev.kurai.uhc.whitelist.WhitelistService;
-import net.kyori.adventure.platform.bukkit.BukkitAudiences;
-import net.kyori.adventure.text.format.NamedTextColor;
+import dev.kurai.uhc.whitelist.hostmc.HostMCWhitelistProviderTask;
+import java.util.regex.Pattern;
+import lombok.RequiredArgsConstructor;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 import org.jspecify.annotations.NullMarked;
 
 @Command(@CommandMeta(name = "whitelist", aliases = "wl"))
 @NullMarked
+@RequiredArgsConstructor
 public final class WhitelistCommand {
 
-  private final BukkitAudiences bukkitAudiences;
-  private final WhitelistService whitelistService;
+  private static final Pattern MATCHER = Pattern.compile("[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}");
 
-  public WhitelistCommand(
-      final BukkitAudiences bukkitAudiences, final WhitelistService whitelistService) {
-    this.bukkitAudiences = bukkitAudiences;
-    this.whitelistService = whitelistService;
-  }
+  private final UltraHardcoreAPI ultraHardcore;
 
   @SubCommand(@CommandMeta(name = "add", description = "Ajouter un joueur à la liste blanche."))
   public void add(final Player player, final @Argument(name = "joueurs") OfflinePlayer[] players) {
+    final WhitelistService whitelistService = this.ultraHardcore.whitelistService();
     final var message = text();
-
     for (var i = 0; i < players.length; i++) {
       final var target = players[i];
       if (i > 0) {
         message.appendNewline();
       }
 
-      if (this.whitelistService.isWhitelisted(target.getUniqueId())) {
-        message.append(
-            text(CC.BURGER, NamedTextColor.GOLD).appendSpace().append(text(target.getName())));
+      if (whitelistService.isWhitelisted(target.getUniqueId())) {
+        message.append(text(BURGER, GOLD).appendSpace().append(text(target.getName())));
         continue;
       }
 
-      this.whitelistService.whitelist(
-          player.getUniqueId(), target.getUniqueId(), "Whitelist Manuelle");
-      message.append(
-          text(CC.CHECKMARK, NamedTextColor.GREEN).appendSpace().append(text(target.getName())));
+      whitelistService.whitelist(player.getUniqueId(), target.getUniqueId(), "Whitelist Manuelle");
+      message.append(text(CHECKMARK, GREEN).appendSpace().append(text(target.getName())));
     }
 
-    this.bukkitAudiences.player(player).sendMessage(message);
+    player.sendMessage(message);
   }
 
   @SubCommand(@CommandMeta(name = "remove", description = "Retirer un joueur de la liste blanche."))
   public void remove(
       final Player player, final @Argument(name = "joueurs") OfflinePlayer[] players) {
+    final WhitelistService whitelistService = this.ultraHardcore.whitelistService();
     final var message = text();
-
     for (var i = 0; i < players.length; i++) {
       final var target = players[i];
       if (i > 0) {
         message.appendNewline();
       }
 
-      if (!this.whitelistService.isWhitelisted(target.getUniqueId())) {
-        message.append(
-            text(CC.BURGER, NamedTextColor.GOLD).appendSpace().append(text(target.getName())));
+      if (!whitelistService.isWhitelisted(target.getUniqueId())) {
+        message.append(text(BURGER, GOLD).appendSpace().append(text(target.getName())));
         continue;
       }
 
-      this.whitelistService.unwhitelist(target.getUniqueId());
-      message.append(
-          text(CC.CROSS, NamedTextColor.RED).appendSpace().append(text(target.getName())));
+      whitelistService.unwhitelist(target.getUniqueId());
+      message.append(text(CROSS, RED).appendSpace().append(text(target.getName())));
     }
 
-    this.bukkitAudiences.player(player).sendMessage(message);
+    player.sendMessage(message);
   }
 
   @SubCommand(@CommandMeta(name = "clear", description = "Vider la liste blanche."))
   public void clear(final Player player) {
-    this.whitelistService.getWhitelistedPlayers().clear();
-    this.bukkitAudiences
-        .player(player)
-        .sendMessage(
-            prefix()
-                .append(text("Vous avez "))
-                .append(text("nettoyé", NamedTextColor.RED))
-                .append(text(" la "))
-                .append(text("liste blanche", NamedTextColor.AQUA))
-                .append(text('.'))
-                .build());
+    this.ultraHardcore.whitelistService().getWhitelistedPlayers().clear();
+    player.sendMessage(prefix("La&b liste blanche&f a bien été&d nettoyée&r."));
   }
 
   @SubCommand(@CommandMeta(name = "list", description = "Voir la liste blanche."))
   public void list(final Player player) {
-    new WhitelistMenu(player, this.whitelistService).open();
+    new WhitelistMenu(player, this.ultraHardcore.whitelistService()).open();
+  }
+
+  @SubCommand(
+      @CommandMeta(
+          name = "setup",
+          description = "Utiliser la liste blanche du bot discord d'Host MC."))
+  public void setup(final Player player, final @Argument(name = "code") String code) {
+    if (!MATCHER.matcher(code).find()) {
+      player.sendMessage(prefix("Le code&b %s&r est&c invalide&r.".formatted(code)));
+      return;
+    }
+
+    final Plugin plugin = this.ultraHardcore.plugin();
+    new HostMCWhitelistProviderTask(
+            this.ultraHardcore.whitelistService(),
+            plugin.getConfig().getString("authorization"),
+            code)
+        .runTaskTimer(plugin, 0L, 10 * 20L);
+
+    player.playSound(player.getLocation(), Sound.ORB_PICKUP, 1, 1);
+    player.sendMessage(
+        prefix(
+            "Tentative de&d liaison&r avec le système du&6 bot discord d'Host MC&r en cours..."));
   }
 }
