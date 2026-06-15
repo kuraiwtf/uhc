@@ -7,19 +7,31 @@ import static net.kyori.adventure.text.format.TextDecoration.*;
 
 import dev.kurai.uhc.module.power.AbstractPower;
 import dev.kurai.uhc.module.power.restriction.PowerRestriction;
+import dev.kurai.uhc.module.power.restriction.RestrictionStrategy;
+import lombok.Getter;
+import lombok.Setter;
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 
+@Getter
+@Setter
 public final class UsagePowerRestriction implements PowerRestriction {
 
   private static final String IDENTIFIER = "cooldown";
 
+  private final RestrictionStrategy strategy;
+
   private int totalUsages;
   private int uses;
 
-  public UsagePowerRestriction(final int totalUsages) {
+  public UsagePowerRestriction(final int totalUsages, final RestrictionStrategy strategy) {
+    this.strategy = strategy;
     this.totalUsages = totalUsages;
     this.uses = 0;
+  }
+
+  public UsagePowerRestriction(final int totalUsages) {
+    this(totalUsages, RestrictionStrategy.onUse());
   }
 
   @Override

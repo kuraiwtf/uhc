@@ -101,11 +101,11 @@ public final class CooldownUpdaterTask implements Runnable {
     final CooldownPowerRestriction cooldown =
         power.findRestriction(CooldownPowerRestriction.class, "cooldown");
     final Color color = power.getColor();
-    if (cooldown != null && cooldown.getTimeLeft() > 0) {
+    if (cooldown != null && cooldown.timeLeft() > 0) {
       return text()
           .append(text(power.getName()))
           .append(text(": "))
-          .append(text(cooldown.getTimeLeft(), color.asAdventureColor(), TextDecoration.BOLD))
+          .append(text(cooldown.timeLeft(), color.asAdventureColor(), TextDecoration.BOLD))
           .append(text("s", color.asAdventureColor()))
           .build();
     }

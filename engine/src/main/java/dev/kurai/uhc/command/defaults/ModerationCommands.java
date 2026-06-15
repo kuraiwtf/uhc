@@ -43,7 +43,7 @@ public final class ModerationCommands {
     for (final AbstractPower power : profile.getPowers()) {
       power
           .findOptionalRestriction(CooldownPowerRestriction.class, "cooldown")
-          .ifPresent(restriction -> restriction.setTimeLeft(0));
+          .ifPresent(restriction -> restriction.timeLeft(0));
     }
 
     player.sendMessage(

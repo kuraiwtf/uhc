@@ -6,27 +6,42 @@ import static net.kyori.adventure.text.format.NamedTextColor.*;
 
 import dev.kurai.uhc.module.power.AbstractPower;
 import dev.kurai.uhc.module.power.restriction.PowerRestriction;
+import dev.kurai.uhc.module.power.restriction.RestrictionStrategy;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
+@Getter
+@Setter
 public final class CooldownPowerRestriction implements PowerRestriction {
 
   private static final String IDENTIFIER = "cooldown";
 
   private final Plugin plugin;
 
+  private final RestrictionStrategy strategy;
+
   private int initialCooldownTime;
   private int timeLeft;
 
+  @Getter(AccessLevel.NONE)
   private BukkitTask task;
 
-  public CooldownPowerRestriction(final Plugin plugin, final int initialCooldownTime) {
+  public CooldownPowerRestriction(
+      final Plugin plugin, final int initialCooldownTime, final RestrictionStrategy strategy) {
     this.plugin = plugin;
+    this.strategy = strategy;
     this.initialCooldownTime = initialCooldownTime;
     this.timeLeft = 0;
+  }
+
+  public CooldownPowerRestriction(final Plugin plugin, final int initialCooldownTime) {
+    this(plugin, initialCooldownTime, RestrictionStrategy.onUse());
   }
 
   @Override
@@ -59,22 +74,6 @@ public final class CooldownPowerRestriction implements PowerRestriction {
   @Override
   public boolean restrictsPower(final AbstractPower power, final Player player) {
     return this.timeLeft > 0;
-  }
-
-  public int getInitialCooldownTime() {
-    return this.initialCooldownTime;
-  }
-
-  public void setInitialCooldownTime(final int initialCooldownTime) {
-    this.initialCooldownTime = initialCooldownTime;
-  }
-
-  public int getTimeLeft() {
-    return this.timeLeft;
-  }
-
-  public void setTimeLeft(final int timeLeft) {
-    this.timeLeft = timeLeft;
   }
 
   private static final class CooldownDecrementTask extends BukkitRunnable {
