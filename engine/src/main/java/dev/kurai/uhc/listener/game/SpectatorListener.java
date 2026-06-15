@@ -2,6 +2,9 @@ package dev.kurai.uhc.listener.game;
 
 import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.ecs.component.Component;
+import dev.kurai.uhc.event.defaults.power.PowerUseEvent;
+import dev.kurai.uhc.module.power.AbstractPower;
+import dev.kurai.uhc.module.power.defaults.item.impl.parent.AbstractParentItemPower;
 import dev.kurai.uhc.profile.Profile;
 import dev.kurai.uhc.profile.component.SpectatorComponent;
 import lombok.RequiredArgsConstructor;
@@ -75,6 +78,23 @@ public final class SpectatorListener implements Listener {
         this.ultraHardcore.profileService().getOrCreateProfile(event.getPlayer().getUniqueId());
     if (profile.hasComponent(SPECTATOR_COMPONENT)) {
       event.setCancelled(true);
+    }
+  }
+
+  @EventHandler
+  public void onPowerUse(final PowerUseEvent event) {
+    final AbstractPower power = event.getPower();
+    if (power instanceof AbstractParentItemPower) {
+      return;
+    }
+
+    for (final Profile profile :
+        this.ultraHardcore
+            .profileService()
+            .getProfiles(profile -> profile.hasComponent(SPECTATOR_COMPONENT))) {
+      profile.sendPrefixedMessage(
+          "&6%s&r vient d'utiliser%s &l%s&r."
+              .formatted(profile.getName(), power.getColor().asBukkitColor(), power.getName()));
     }
   }
 }
