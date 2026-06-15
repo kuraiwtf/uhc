@@ -2,6 +2,7 @@ package dev.kurai.uhc.game.scenario.defaults;
 
 import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.game.scenario.AbstractScenario;
+import dev.kurai.uhc.game.scenario.ScenarioCategory;
 import dev.kurai.uhc.game.scenario.configuration.defaults.BooleanScenarioConfiguration;
 import java.util.function.BiConsumer;
 import org.bukkit.Material;
@@ -27,7 +28,7 @@ public final class ArmorReplaceScenario extends AbstractScenario implements List
       new BooleanScenarioConfiguration("boots");
 
   public ArmorReplaceScenario(final UltraHardcoreAPI ultraHardcore) {
-    super("armor_replace", "Armor Replace", ultraHardcore);
+    super("armor_replace", "Armor Replace", ultraHardcore, ScenarioCategory.COMBAT);
     this.registerConfiguration(HELMET_CONFIGURATION);
     this.registerConfiguration(CHESTPLATE_CONFIGURATION);
     this.registerConfiguration(LEGGINGS_CONFIGURATION);

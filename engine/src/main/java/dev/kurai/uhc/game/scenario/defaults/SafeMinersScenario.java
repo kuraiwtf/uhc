@@ -3,6 +3,7 @@ package dev.kurai.uhc.game.scenario.defaults;
 import com.google.common.collect.Lists;
 import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.game.scenario.AbstractScenario;
+import dev.kurai.uhc.game.scenario.ScenarioCategory;
 import java.util.Collection;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
@@ -23,7 +24,7 @@ public final class SafeMinersScenario extends AbstractScenario implements Listen
           DamageCause.LAVA);
 
   public SafeMinersScenario(final UltraHardcoreAPI ultraHardcore) {
-    super("safe_miners", "Safe Miners", ultraHardcore);
+    super("safe_miners", "Safe Miners", ultraHardcore, ScenarioCategory.MINING);
   }
 
   @Override

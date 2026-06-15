@@ -2,6 +2,7 @@ package dev.kurai.uhc.game.scenario.defaults;
 
 import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.game.scenario.AbstractScenario;
+import dev.kurai.uhc.game.scenario.ScenarioCategory;
 import dev.kurai.uhc.game.scenario.configuration.ScenarioConfiguration;
 import dev.kurai.uhc.game.scenario.configuration.defaults.IntegerScenarioConfiguration;
 import java.util.concurrent.ThreadLocalRandom;
@@ -18,7 +19,7 @@ public final class BetaZombieScenario extends AbstractScenario implements Listen
       new IntegerScenarioConfiguration("rate", 100);
 
   public BetaZombieScenario(final UltraHardcoreAPI ultraHardcore) {
-    super("beta_zombie", "Beta Zombie", ultraHardcore);
+    super("beta_zombie", "Beta Zombie", ultraHardcore, ScenarioCategory.GAMEPLAY);
     this.registerConfiguration(RATE_CONFIGURATION);
   }
 

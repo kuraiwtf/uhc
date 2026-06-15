@@ -1,6 +1,7 @@
 package dev.kurai.uhc.menu.scenario;
 
 import dev.kurai.uhc.game.scenario.AbstractScenario;
+import dev.kurai.uhc.game.scenario.ScenarioCategory;
 import dev.kurai.uhc.game.scenario.ScenarioService;
 import dev.kurai.uhc.menu.button.GlassButton;
 import dev.kurai.uhc.menu.template.BackTemplate;
@@ -20,7 +21,6 @@ import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
 
 public final class ScenarioViewMenu extends PaginatedMenu {
 
@@ -75,14 +75,23 @@ public final class ScenarioViewMenu extends PaginatedMenu {
 
     private final AbstractScenario scenario;
 
-    private ScenarioButton(final  AbstractScenario scenario) {
+    private ScenarioButton(final AbstractScenario scenario) {
       this.scenario = scenario;
     }
 
     @Override
     public ItemStack getIcon() {
+      final ScenarioCategory category = this.scenario.getCategory();
       return new ItemBuilder(this.scenario.provideIcon())
           .name("&a&l" + this.scenario.getName())
+          .lore(
+              "",
+              "&6 "
+                  + CC.SQUARE
+                  + "&r Catégorie: "
+                  + category.color().asBukkitColor()
+                  + category.name(),
+              "")
           .glowing(this.scenario.isEnabled())
           .lunarTag("unclickable", true)
           .asItemStack();

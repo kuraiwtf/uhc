@@ -7,6 +7,7 @@ import static org.bukkit.Material.GOLD_INGOT;
 
 import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.game.scenario.AbstractScenario;
+import dev.kurai.uhc.game.scenario.ScenarioCategory;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
@@ -33,7 +34,7 @@ public final class CutCleanScenario extends AbstractScenario implements Listener
           EntityType.COW, EntityType.PIG, EntityType.CHICKEN, EntityType.SHEEP, EntityType.RABBIT);
 
   public CutCleanScenario(final UltraHardcoreAPI ultraHardcore) {
-    super("cut_clean", "Cut Clean", ultraHardcore);
+    super("cut_clean", "Cut Clean", ultraHardcore, ScenarioCategory.MINING);
   }
 
   @Override

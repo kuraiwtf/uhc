@@ -2,6 +2,7 @@ package dev.kurai.uhc.game.scenario.defaults;
 
 import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.game.scenario.AbstractScenario;
+import dev.kurai.uhc.game.scenario.ScenarioCategory;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -12,7 +13,7 @@ import org.bukkit.inventory.ItemStack;
 public final class NoFoodScenario extends AbstractScenario implements Listener {
 
   public NoFoodScenario(final UltraHardcoreAPI ultraHardcore) {
-    super("no_food", "No Food", ultraHardcore);
+    super("no_food", "No Food", ultraHardcore, ScenarioCategory.GAMEPLAY);
   }
 
   @Override

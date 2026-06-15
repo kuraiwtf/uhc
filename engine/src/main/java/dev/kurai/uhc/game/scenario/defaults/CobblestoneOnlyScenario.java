@@ -2,6 +2,7 @@ package dev.kurai.uhc.game.scenario.defaults;
 
 import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.game.scenario.AbstractScenario;
+import dev.kurai.uhc.game.scenario.ScenarioCategory;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
@@ -13,7 +14,7 @@ import org.bukkit.inventory.ItemStack;
 public final class CobblestoneOnlyScenario extends AbstractScenario implements Listener {
 
   public CobblestoneOnlyScenario(final UltraHardcoreAPI ultraHardcore) {
-    super("cobblestone_only", "Cobble Only", ultraHardcore);
+    super("cobblestone_only", "Cobble Only", ultraHardcore, ScenarioCategory.MINING);
   }
 
   @EventHandler

@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Queues;
 import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.game.scenario.AbstractScenario;
+import dev.kurai.uhc.game.scenario.ScenarioCategory;
 import java.util.List;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -17,7 +18,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 public final class TimberScenario extends AbstractScenario implements Listener {
 
   public TimberScenario(final UltraHardcoreAPI ultraHardcore) {
-    super("timber", "Timber", ultraHardcore);
+    super("timber", "Timber", ultraHardcore, ScenarioCategory.MINING);
   }
 
   @Override

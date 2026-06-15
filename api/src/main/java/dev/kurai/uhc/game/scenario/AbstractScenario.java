@@ -12,12 +12,21 @@ public abstract class AbstractScenario implements Identifiable<String>, Nameable
 
   protected final String id;
   protected final String name;
+
   protected final UltraHardcoreAPI ultraHardcore;
+
+  protected final ScenarioCategory category;
+
   private final Map<String, ScenarioConfiguration<?>> configurations;
+
   private boolean enabled;
 
   public AbstractScenario(
-      final String id, final String name, final UltraHardcoreAPI ultraHardcore) {
+      final String id,
+      final String name,
+      final UltraHardcoreAPI ultraHardcore,
+      final ScenarioCategory category) {
+    this.category = category;
     this.configurations = Maps.newHashMap();
 
     this.id = id;
@@ -44,6 +53,10 @@ public abstract class AbstractScenario implements Identifiable<String>, Nameable
   @Override
   public final String getName() {
     return this.name;
+  }
+
+  public ScenarioCategory getCategory() {
+    return this.category;
   }
 
   public final boolean isEnabled() {

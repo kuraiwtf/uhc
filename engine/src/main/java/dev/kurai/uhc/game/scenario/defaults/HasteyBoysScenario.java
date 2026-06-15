@@ -3,6 +3,7 @@ package dev.kurai.uhc.game.scenario.defaults;
 import com.google.common.collect.Lists;
 import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.game.scenario.AbstractScenario;
+import dev.kurai.uhc.game.scenario.ScenarioCategory;
 import java.util.Collection;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -29,7 +30,7 @@ public final class HasteyBoysScenario extends AbstractScenario implements Listen
   }
 
   public HasteyBoysScenario(final UltraHardcoreAPI ultraHardcore) {
-    super("hastey_boys", "Hastey Boys", ultraHardcore);
+    super("hastey_boys", "Hastey Boys", ultraHardcore, ScenarioCategory.MINING);
   }
 
   @Override
