@@ -2,8 +2,8 @@ package dev.kurai.uhc.module.power.defaults.item.impl.parent;
 
 import com.google.common.collect.Lists;
 import dev.kurai.uhc.UltraHardcoreAPI;
+import dev.kurai.uhc.module.power.defaults.item.AbstractItemPower;
 import dev.kurai.uhc.module.power.defaults.item.impl.LeftClickItemPower;
-import dev.kurai.uhc.module.power.defaults.item.impl.RightClickItemPower;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
@@ -16,8 +16,8 @@ public abstract class AbstractParentItemPower extends LeftClickItemPower {
 
   private static final long SWITCH_DELAY = 200L;
 
-  private final List<RightClickItemPower> children;
-  private RightClickItemPower currentPower;
+  private final List<AbstractItemPower> children;
+  private AbstractItemPower currentPower;
   private long lastSwitch;
 
   public AbstractParentItemPower(
@@ -56,25 +56,25 @@ public abstract class AbstractParentItemPower extends LeftClickItemPower {
     return this.currentPower.getIcon(player);
   }
 
-  public final void registerChild(final RightClickItemPower power) {
+  public final void registerChild(final AbstractItemPower power) {
     this.children.add(power);
   }
 
-  public final void registerChildren(final RightClickItemPower... powers) {
+  public final void registerChildren(final AbstractItemPower... powers) {
     for (final var power : powers) {
       this.registerChild(power);
     }
   }
 
-  public final Collection<RightClickItemPower> getChildren() {
+  public final Collection<AbstractItemPower> getChildren() {
     return this.children;
   }
 
-  public final @Nullable RightClickItemPower getCurrentPower() {
+  public final @Nullable AbstractItemPower getCurrentPower() {
     return this.currentPower;
   }
 
-  public final void setCurrentPower(final @Nullable RightClickItemPower currentPower) {
+  public final void setCurrentPower(final @Nullable AbstractItemPower currentPower) {
     this.currentPower = currentPower;
   }
 }

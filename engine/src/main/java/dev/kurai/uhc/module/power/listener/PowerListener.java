@@ -11,8 +11,11 @@ import dev.kurai.uhc.module.power.defaults.item.impl.LeftClickItemPower;
 import dev.kurai.uhc.module.power.defaults.item.impl.RightClickItemPower;
 import dev.kurai.uhc.module.power.defaults.item.impl.block.BlockPlacePower;
 import dev.kurai.uhc.module.power.defaults.item.impl.player.PlayerTargetItemPower;
+import dev.kurai.uhc.module.power.defaults.item.impl.player.impl.LeftClickPlayerTargetItemPower;
+import dev.kurai.uhc.module.power.defaults.item.impl.player.impl.RightClickPlayerTargetItemPower;
 import dev.kurai.uhc.module.service.ModuleService;
 import dev.kurai.uhc.profile.ProfileService;
+import dev.kurai.uhc.util.CC;
 import dev.kurai.uhc.util.GlobalUtil;
 import net.minecraft.server.v1_8_R3.ItemStack;
 import net.minecraft.server.v1_8_R3.Items;
@@ -109,21 +112,25 @@ public final class PowerListener extends PacketListenerAbstract implements Liste
       return;
     }
 
-    final var powerClass = rightClick ? RightClickItemPower.class : LeftClickItemPower.class;
+    final var simplePowerClass = rightClick ? RightClickItemPower.class : LeftClickItemPower.class;
     final var foundPower =
         profile.getPowers().stream()
-            .filter(powerClass::isInstance)
-            .map(powerClass::cast)
+            .filter(simplePowerClass::isInstance)
+            .map(simplePowerClass::cast)
             .filter(power -> power.getIcon(player).isSimilar(event.getItem()))
             .findFirst()
             .orElse(null);
 
     if (foundPower == null) {
-      return;
-    }
-
-    if (foundPower instanceof final PlayerTargetItemPower targetPower) {
-      this.handleTargetItemPower(player, targetPower, event);
+      final var targetPowerClass =
+          rightClick ? RightClickPlayerTargetItemPower.class : LeftClickPlayerTargetItemPower.class;
+      profile.getPowers().stream()
+          .filter(targetPowerClass::isInstance)
+          .map(targetPowerClass::cast)
+          .filter(power -> power.getIcon(player).isSimilar(event.getItem()))
+          .findFirst()
+          .ifPresent(
+              foundTargetPower -> this.handleTargetItemPower(player, foundTargetPower, event));
       return;
     }
 
@@ -169,6 +176,7 @@ public final class PowerListener extends PacketListenerAbstract implements Liste
     if (target == null
         || target.getLocation().distanceSquared(player.getLocation())
             > power.getRange() * power.getRange()) {
+      player.sendMessage(CC.prefix("&cVous devez cibler un joueur pour utiliser ce pouvoir."));
       return;
     }
 

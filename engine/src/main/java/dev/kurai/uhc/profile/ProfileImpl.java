@@ -12,7 +12,6 @@ import dev.kurai.uhc.ecs.entity.Entity;
 import dev.kurai.uhc.event.defaults.player.PlayerDamageEvent;
 import dev.kurai.uhc.module.power.AbstractPower;
 import dev.kurai.uhc.module.power.defaults.item.AbstractItemPower;
-import dev.kurai.uhc.module.power.defaults.item.impl.RightClickItemPower;
 import dev.kurai.uhc.module.power.defaults.item.impl.parent.AbstractParentItemPower;
 import dev.kurai.uhc.profile.component.*;
 import dev.kurai.uhc.profile.state.ProfileState;
@@ -407,7 +406,7 @@ public final class ProfileImpl implements Profile {
     }
 
     if (power instanceof final AbstractParentItemPower parentPower) {
-      for (final RightClickItemPower child : parentPower.getChildren()) {
+      for (final AbstractItemPower child : parentPower.getChildren()) {
         this.registerChildPower(child);
       }
     }
