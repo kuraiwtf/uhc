@@ -72,7 +72,6 @@ public final class UltraHardcoreEngine extends UltraHardcoreAPI {
 
     this.entityLib = EntityLib.create(this.plugin, PacketEvents.getAPI());
 
-    this.worldService = new WorldServiceImpl(this.plugin, this.bukkitAudiences);
     this.sidebarService = new SidebarServiceImpl(this);
 
     this.actionbarService =
@@ -83,6 +82,9 @@ public final class UltraHardcoreEngine extends UltraHardcoreAPI {
     this.profileService = new ProfileServiceImpl(this);
     this.tabListService = new TabListServiceImpl();
     this.whitelistService = new WhitelistServiceImpl();
+    this.worldService = new WorldServiceImpl(this.plugin, this.profileService);
+
+    this.worldService.preload(this.worldService.getWorld(), 1250);
 
     this.commandRegistrar.registerCommands(
         new PlayerCommands(this),

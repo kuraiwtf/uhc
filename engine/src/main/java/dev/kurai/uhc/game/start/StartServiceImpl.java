@@ -127,7 +127,7 @@ public final class StartServiceImpl implements StartService {
     gameService.startTime(System.currentTimeMillis());
     gameService.timerService().startAllTimers();
     gameService.cycleService().start();
-    gameService.disconnectService().start();
+    //    gameService.disconnectService().start();
     gameService.episodeService().start();
 
     final var world = this.ultraHardcore.worldService().getWorld();
