@@ -8,10 +8,12 @@ import com.github.retrooper.packetevents.event.PacketListenerAbstract;
 import com.github.retrooper.packetevents.event.PacketReceiveEvent;
 import com.github.retrooper.packetevents.protocol.packettype.PacketType;
 import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientResourcePackStatus;
+import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientResourcePackStatus.Result;
 import dev.kurai.uhc.module.component.ModuleResourcePackComponent;
 import dev.kurai.uhc.module.component.ModuleResourcePackComponent.ResourcePack;
 import dev.kurai.uhc.module.service.ModuleService;
 import lombok.RequiredArgsConstructor;
+import net.minecraft.server.v1_8_R3.MinecraftServer;
 import net.minecraft.server.v1_8_R3.PacketPlayOutResourcePackSend;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -42,15 +44,24 @@ public final class ResourcePackListener extends PacketListenerAbstract implement
       final WrapperPlayClientResourcePackStatus packet =
           new WrapperPlayClientResourcePackStatus(event);
       final Player player = event.getPlayer();
-      if (packet.getResult() == WrapperPlayClientResourcePackStatus.Result.ACCEPTED) {
+      final Result result = packet.getResult();
+      if (result == Result.DOWNLOADED) {
         player.sendMessage(
             prefix("Vous avez téléchargé les&d packs de ressource&r avec&a succès&r."));
+        return;
       }
 
-      if (packet.getResult() == WrapperPlayClientResourcePackStatus.Result.DECLINED) {
-        player.kick(
-            text(
-                "Vous avez refusé le pack de ressources, vous avez alors été expulsé de la partie."));
+      if (result == Result.DECLINED
+          || result == Result.DISCARDED
+          || result == Result.FAILED_DOWNLOAD
+          || result == Result.FAILED_RELOAD
+          || result == Result.INVALID_URL) {
+        MinecraftServer.getServer()
+            .postToMainThread(
+                () ->
+                    player.kick(
+                        text(
+                            "Vous avez refusé le pack de ressources, vous avez alors été expulsé de la partie.")));
       }
     }
   }
