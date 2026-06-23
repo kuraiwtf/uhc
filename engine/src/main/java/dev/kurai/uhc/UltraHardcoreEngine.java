@@ -1,6 +1,7 @@
 package dev.kurai.uhc;
 
 import com.github.retrooper.packetevents.PacketEvents;
+import com.github.retrooper.packetevents.event.EventManager;
 import dev.kurai.actionbar.service.ActionbarService;
 import dev.kurai.uhc.command.CommandRegistrar;
 import dev.kurai.uhc.command.CommandRegistrarImpl;
@@ -14,6 +15,7 @@ import dev.kurai.uhc.item.ItemService;
 import dev.kurai.uhc.item.ItemServiceImpl;
 import dev.kurai.uhc.listener.FixListener;
 import dev.kurai.uhc.listener.ItemListener;
+import dev.kurai.uhc.listener.game.ResourcePackListener;
 import dev.kurai.uhc.listener.game.WaitingListener;
 import dev.kurai.uhc.module.ModuleServiceImpl;
 import dev.kurai.uhc.module.service.ModuleService;
@@ -100,11 +102,17 @@ public final class UltraHardcoreEngine extends UltraHardcoreAPI {
             AbstractTimer.class,
             new TimerArgumentResolver(this.bukkitAudiences, this.gameService.timerService()));
 
+    final EventManager eventManager = PacketEvents.getAPI().getEventManager();
+
     final var fixListener = new FixListener();
-    PacketEvents.getAPI().getEventManager().registerListener(fixListener);
+    final var resourcePackListener = new ResourcePackListener(this.moduleService);
+    eventManager.registerListeners(fixListener, resourcePackListener);
 
     this.eventService.registerListeners(
-        fixListener, new ItemListener(this.itemService), new WaitingListener(this));
+        fixListener,
+        resourcePackListener,
+        new ItemListener(this.itemService),
+        new WaitingListener(this));
 
     Bukkit.getScheduler()
         .runTaskTimerAsynchronously(
