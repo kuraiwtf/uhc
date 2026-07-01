@@ -4,6 +4,7 @@ import static net.kyori.adventure.key.Key.key;
 import static net.kyori.adventure.text.format.NamedTextColor.*;
 
 import dev.kurai.uhc.UltraHardcoreAPI;
+import dev.kurai.uhc.event.defaults.game.death.GameDeathEvent;
 import dev.kurai.uhc.game.GameService;
 import dev.kurai.uhc.profile.Profile;
 import dev.kurai.uhc.profile.component.DeadComponent;
@@ -74,6 +75,8 @@ public final class DeathServiceImpl implements DeathService {
           player.setGameMode(GameMode.SPECTATOR);
           player.teleport(this.ultraHardcore.worldService().getWorld().getSpawnLocation());
         });
+
+    new GameDeathEvent(killer, profile).callEvent();
 
     final PlayerInformationComponent component =
         profile.getComponent(PlayerInformationComponent.class);
