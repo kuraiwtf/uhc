@@ -17,6 +17,11 @@ public final class WorldServiceImpl implements WorldService {
     this.profileService = profileService;
 
     this.world = WorldCreator.name("uhc_world").createWorld();
+    this.world.setAutoSave(false);
+    this.world.setGameRuleValue("doDaylightCycle", "false");
+    this.world.setGameRuleValue("doWeatherCycle", "false");
+    this.world.setGameRuleValue("doFireTick", "false");
+    this.world.setGameRuleValue("naturalRegeneration", "false");
     this.world.setSpawnLocation(0, 200, 0);
   }
 
