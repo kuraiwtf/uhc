@@ -2,6 +2,7 @@ package dev.kurai.uhc.tablist.service;
 
 import static net.kyori.adventure.text.Component.text;
 
+import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.tablist.TabListProvider;
 import dev.kurai.uhc.tablist.TabListService;
 import dev.kurai.uhc.tablist.adapter.BuiltinTablistHeaderProvider;
@@ -18,8 +19,8 @@ public final class TabListServiceImpl implements TabListService {
               .build();
   private TabListProvider headerProvider, footerProvider;
 
-  public TabListServiceImpl() {
-    this.install(new BuiltinTablistHeaderProvider(), TAB_LIST_FOOTER);
+  public TabListServiceImpl(final UltraHardcoreAPI ultraHardcore) {
+    this.install(new BuiltinTablistHeaderProvider(ultraHardcore), TAB_LIST_FOOTER);
   }
 
   @Override

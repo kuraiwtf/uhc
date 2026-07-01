@@ -4,6 +4,8 @@ import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.format.NamedTextColor.*;
 import static net.kyori.adventure.text.format.NamedTextColor.RED;
 
+import dev.kurai.uhc.UltraHardcoreAPI;
+import dev.kurai.uhc.module.AbstractModule;
 import dev.kurai.uhc.tablist.TabListProvider;
 import dev.kurai.uhc.util.CC;
 import net.kyori.adventure.text.ComponentLike;
@@ -15,17 +17,25 @@ import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
 public final class BuiltinTablistHeaderProvider implements TabListProvider {
+
+  private final UltraHardcoreAPI ultraHardcore;
+
+  public BuiltinTablistHeaderProvider(final UltraHardcoreAPI ultraHardcore) {
+    this.ultraHardcore = ultraHardcore;
+  }
+
   @Override
   public ComponentLike provideComponent(final Player player) {
     final int ping = ((CraftPlayer) player).getHandle().ping;
     final var pingColor = this.providePingColor(ping);
     final var tps = MinecraftServer.getServer().recentTps[0];
 
+    final AbstractModule module = this.ultraHardcore.moduleService().getCurrentModule();
     return text()
         .appendNewline()
         .append(text('-', DARK_GRAY))
         .appendSpace()
-        .append(text("UHC", GOLD, TextDecoration.BOLD))
+        .append(text(module.getName(), GOLD, TextDecoration.BOLD))
         .appendSpace()
         .append(text('-', DARK_GRAY))
         .appendNewline()

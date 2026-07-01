@@ -82,7 +82,7 @@ public final class UltraHardcoreEngine extends UltraHardcoreAPI {
     this.itemService = new ItemServiceImpl(this);
     this.moduleService = new ModuleServiceImpl(this);
     this.profileService = new ProfileServiceImpl(this);
-    this.tabListService = new TabListServiceImpl();
+    this.tabListService = new TabListServiceImpl(this);
     this.whitelistService = new WhitelistServiceImpl();
     this.worldService = new WorldServiceImpl(this.plugin, this.profileService);
 
