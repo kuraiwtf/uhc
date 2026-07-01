@@ -1,6 +1,7 @@
 package dev.kurai.uhc.timer;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
@@ -9,10 +10,14 @@ import org.bukkit.plugin.Plugin;
 public final class TimerServiceImpl implements TimerService {
 
   private final Map<String, AbstractTimer> timers;
+  private final Collection<AbstractTimer> timersView;
+
   private final Plugin plugin;
 
   public TimerServiceImpl(final Plugin plugin) {
     this.timers = new ConcurrentHashMap<>();
+    this.timersView = Collections.unmodifiableCollection(this.timers.values());
+
     this.plugin = plugin;
   }
 
@@ -35,8 +40,15 @@ public final class TimerServiceImpl implements TimerService {
   }
 
   @Override
+  public Optional<AbstractTimer> getTimer(final Class<? extends AbstractTimer> timerClass) {
+    return this.timersView.stream()
+        .filter(timer -> timerClass.isAssignableFrom(timer.getClass()))
+        .findFirst();
+  }
+
+  @Override
   public Collection<AbstractTimer> getTimers() {
-    return this.timers.values();
+    return this.timersView;
   }
 
   @Override

@@ -23,6 +23,8 @@ public interface TimerService {
 
   Optional<AbstractTimer> getTimer(final String identifier);
 
+  Optional<AbstractTimer> getTimer(final Class<? extends AbstractTimer> timerClass);
+
   Collection<AbstractTimer> getTimers();
 
   void startAllTimers();
