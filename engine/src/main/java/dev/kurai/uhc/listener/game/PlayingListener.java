@@ -254,6 +254,7 @@ public final class PlayingListener implements Listener {
             player.getFallDistance()));
 
     final Player killer = player.getKiller();
+    profile.addComponent(new ProcessingDeathComponent());
     this.ultraHardcore
         .gameService()
         .deathService()
@@ -264,6 +265,16 @@ public final class PlayingListener implements Listener {
                 (killer == null ? null : profileService.getOrCreateProfile(killer)),
                 event,
                 false));
+  }
+
+  @EventHandler
+  public void onDeadDamage(final EntityDamageEvent event) {
+    if (event.getEntity() instanceof final Player player) {
+      final Profile profile = this.ultraHardcore.profileService().getOrCreateProfile(player);
+      if (profile.hasComponent(ProcessingDeathComponent.class)) {
+        event.setCancelled(true);
+      }
+    }
   }
 
   @EventHandler
