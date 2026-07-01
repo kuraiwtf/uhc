@@ -213,6 +213,8 @@ public final class HostCommand {
     target.setSaturation(20.0f);
     target.setExhaustion(0.0f);
 
+    target.setFireTicks(0);
+
     target.teleport(component.location());
 
     final PlayerInventory inventory = target.getInventory();
