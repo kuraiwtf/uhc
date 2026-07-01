@@ -3,6 +3,12 @@ package dev.kurai.uhc.module.power.listener;
 import static dev.kurai.uhc.util.PlayerUtil.updateHeldItem;
 
 import com.github.retrooper.packetevents.event.PacketListenerAbstract;
+import com.github.retrooper.packetevents.event.PacketSendEvent;
+import com.github.retrooper.packetevents.protocol.item.type.ItemTypes;
+import com.github.retrooper.packetevents.protocol.packettype.PacketType;
+import com.github.retrooper.packetevents.protocol.player.Equipment;
+import com.github.retrooper.packetevents.protocol.player.EquipmentSlot;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityEquipment;
 import com.google.common.collect.Lists;
 import dev.kurai.uhc.module.power.defaults.command.AbstractCommandPower;
 import dev.kurai.uhc.module.power.defaults.command.argument.PowerArgument;
@@ -14,9 +20,11 @@ import dev.kurai.uhc.module.power.defaults.item.impl.player.PlayerTargetItemPowe
 import dev.kurai.uhc.module.power.defaults.item.impl.player.impl.LeftClickPlayerTargetItemPower;
 import dev.kurai.uhc.module.power.defaults.item.impl.player.impl.RightClickPlayerTargetItemPower;
 import dev.kurai.uhc.module.service.ModuleService;
+import dev.kurai.uhc.profile.Profile;
 import dev.kurai.uhc.profile.ProfileService;
 import dev.kurai.uhc.util.CC;
 import dev.kurai.uhc.util.GlobalUtil;
+import io.github.retrooper.packetevents.util.SpigotConversionUtil;
 import net.minecraft.server.v1_8_R3.ItemStack;
 import net.minecraft.server.v1_8_R3.Items;
 import net.minecraft.server.v1_8_R3.PacketPlayOutEntityEquipment;
@@ -45,6 +53,54 @@ public final class PowerListener extends PacketListenerAbstract implements Liste
     this.profileService = profileService;
     this.moduleService = moduleService;
     this.plugin = plugin;
+  }
+
+  @Override
+  public void onPacketSend(final PacketSendEvent event) {
+    if (event.getPacketType() != PacketType.Play.Server.ENTITY_EQUIPMENT) {
+      return;
+    }
+
+    final WrapperPlayServerEntityEquipment packet = new WrapperPlayServerEntityEquipment(event);
+    final Equipment hand =
+        packet.getEquipment().stream()
+            .filter(equipment -> equipment.getSlot() == EquipmentSlot.MAIN_HAND)
+            .findFirst()
+            .orElse(null);
+
+    if (hand == null) {
+      return;
+    }
+
+    final Player player = event.getPlayer();
+    if (packet.getEntityId() == player.getEntityId()) {
+      return;
+    }
+
+    final Profile profile = this.profileService.getOrCreateProfile(player);
+    final var foundPower =
+        profile.getPowers().stream()
+            .filter(AbstractItemPower.class::isInstance)
+            .map(AbstractItemPower.class::cast)
+            .filter(
+                power ->
+                    power
+                        .getIcon(player)
+                        .isSimilar(SpigotConversionUtil.toBukkitItemStack(hand.getItem())))
+            .findFirst()
+            .orElse(null);
+
+    if (foundPower == null) {
+      return;
+    }
+
+    hand.setItem(
+        com.github.retrooper.packetevents.protocol.item.ItemStack.builder()
+            .type(ItemTypes.NETHER_STAR)
+            .build());
+
+    packet.setEquipment(packet.getEquipment());
+    event.markForReEncode(true);
   }
 
   @EventHandler
@@ -102,9 +158,6 @@ public final class PowerListener extends PacketListenerAbstract implements Liste
 
     final var player = event.getPlayer();
     final var profile = this.profileService.getOrCreateProfile(player.getUniqueId());
-    if (profile == null) {
-      return;
-    }
 
     final boolean rightClick = event.getAction().name().contains("RIGHT");
     final boolean leftClick = event.getAction().name().contains("LEFT");
@@ -190,19 +243,21 @@ public final class PowerListener extends PacketListenerAbstract implements Liste
   public void onBlockPlace(final BlockPlaceEvent event) {
     final var player = event.getPlayer();
     final var profile = this.profileService.getOrCreateProfile(player.getUniqueId());
-    if (profile == null) {
-      return;
-    }
 
     final var foundPower =
         profile.getPowers().stream()
-            .filter(BlockPlacePower.class::isInstance)
-            .map(BlockPlacePower.class::cast)
+            .filter(AbstractItemPower.class::isInstance)
+            .map(AbstractItemPower.class::cast)
             .filter(power -> power.getIcon(player).isSimilar(event.getItemInHand()))
             .findFirst()
             .orElse(null);
 
     if (foundPower == null) {
+      return;
+    }
+
+    event.setCancelled(true);
+    if (!(foundPower instanceof BlockPlacePower)) {
       return;
     }
 

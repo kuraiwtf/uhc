@@ -1,5 +1,6 @@
 package dev.kurai.uhc.util.packet;
 
+import java.util.function.Predicate;
 import net.minecraft.server.v1_8_R3.Packet;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -21,6 +22,10 @@ public sealed interface PacketWrapper permits MinecraftPacketWrapper, PacketEven
     for (final var player : Bukkit.getOnlinePlayers()) {
       this.send(player);
     }
+  }
+
+  default void send(final Predicate<Player> filter) {
+    this.send(Bukkit.getOnlinePlayers().stream().filter(filter).toList());
   }
 
   default void send(final Iterable<? extends Player> players) {
