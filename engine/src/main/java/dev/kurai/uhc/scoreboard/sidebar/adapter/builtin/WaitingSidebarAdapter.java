@@ -47,38 +47,44 @@ public final class WaitingSidebarAdapter implements SidebarAdapter, SidebarTitle
     final ProfileService profileService = this.ultraHardcore.profileService();
     lines.add(
         text()
-            .append(text("Hôte: "))
+            .append(SEPARATOR)
+            .append(text("Hôte: ", GRAY))
             .append(
                 text(
                     hostId == null ? "Aucun" : profileService.getOrCreateProfile(hostId).getName(),
                     hostId == null ? RED : GOLD))
             .build());
     final var module = this.ultraHardcore.moduleService().getCurrentModule();
-    lines.add(text().append(text("Jeu: ")).append(text(module.getName(), GOLD, BOLD)).build());
-    lines.add(empty());
     lines.add(
         text()
-            .append(text("Joueurs: "))
+            .append(SEPARATOR)
+            .append(text("Jeu: ", GRAY))
+            .append(text(module.getShortName(), GOLD))
+            .build());
+    lines.add(
+        text()
+            .append(SEPARATOR)
+            .append(text("Joueurs: ", GRAY))
             .append(
                 text(
                     profileService
                         .getProfiles(profile -> !profile.hasComponent(SpectatorComponent.class))
                         .size(),
-                    GOLD,
-                    BOLD))
+                    GREEN))
             .append(text('/', DARK_GRAY))
-            .append(text(gameService.slotService().slotProvider().slots(), GOLD))
+            .append(text(gameService.slotService().slotProvider().slots(), GREEN))
             .build());
     if (module instanceof final TeamModule teamModule) {
       lines.add(
           text()
-              .append(text("Équipes: "))
+              .append(SEPARATOR)
+              .append(text("Équipes: ", GRAY))
               .append(
                   text(
                       teamModule.teamSize() == 1
                           ? "FFA"
                           : "%dvs%d".formatted(teamModule.teamSize(), teamModule.teamSize()),
-                      GOLD))
+                      LIGHT_PURPLE))
               .build());
     }
     lines.add(empty());

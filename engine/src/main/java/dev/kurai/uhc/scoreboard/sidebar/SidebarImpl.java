@@ -115,9 +115,8 @@ public final class SidebarImpl implements Sidebar {
 
   @Override
   public void destroy() {
-    for (final var entry : this.entries.entrySet()) {
-      this.removeLine(entry.getKey());
-      this.entries.remove(entry.getKey());
+    for (final var score : Set.copyOf(this.entries.keySet())) {
+      this.removeLine(score);
     }
 
     this.writePacket(

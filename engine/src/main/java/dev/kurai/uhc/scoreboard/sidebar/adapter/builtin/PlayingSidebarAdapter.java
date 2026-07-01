@@ -16,16 +16,12 @@ import dev.kurai.uhc.profile.state.PlayingProfileState;
 import dev.kurai.uhc.scoreboard.sidebar.SidebarAdapter;
 import dev.kurai.uhc.timer.builtin.BorderTimer;
 import dev.kurai.uhc.timer.builtin.PvPTimer;
-import dev.kurai.uhc.util.CC;
 import java.util.List;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 public final class PlayingSidebarAdapter implements SidebarAdapter {
-
-  private static final Component SEPARATOR =
-      text().append(text(CC.BAR, DARK_GRAY)).appendSpace().build();
 
   private final UltraHardcoreAPI ultraHardcore;
 
