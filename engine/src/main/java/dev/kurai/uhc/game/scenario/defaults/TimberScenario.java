@@ -9,6 +9,7 @@ import java.util.List;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -33,7 +34,8 @@ public final class TimberScenario extends AbstractScenario implements Listener {
       return;
     }
 
-    new TimberTask(this.check(block)).runTaskTimer(this.ultraHardcore.plugin(), 0, 4L);
+    new TimberTask(event.getPlayer(), this.check(block))
+        .runTaskTimer(this.ultraHardcore.plugin(), 0, 4L);
   }
 
   private List<Block> check(final Block block) {
@@ -77,9 +79,11 @@ public final class TimberScenario extends AbstractScenario implements Listener {
 
   private static final class TimberTask extends BukkitRunnable {
 
+    private final Player player;
     private final List<Block> blocks;
 
-    public TimberTask(final List<Block> blocks) {
+    public TimberTask(final Player player, final List<Block> blocks) {
+      this.player = player;
       this.blocks = blocks;
     }
 
@@ -97,9 +101,12 @@ public final class TimberScenario extends AbstractScenario implements Listener {
         }
 
         final var world = log.getWorld();
-        world.dropItemNaturally(
-            log.getLocation().clone().add(0.5, 0.5, 0.5),
-            new ItemStack(log.getType(), 1, log.getData()));
+        final var stack = new ItemStack(log.getType(), 1, log.getData());
+        final var leftover = this.player.getInventory().addItem(stack);
+        if (!leftover.isEmpty()) {
+          world.dropItemNaturally(log.getLocation().clone().add(0.5, 0.5, 0.5), stack);
+        }
+
         world.playSound(log.getLocation(), Sound.DIG_WOOD, 1f, 1f);
         log.setType(Material.AIR);
       }
