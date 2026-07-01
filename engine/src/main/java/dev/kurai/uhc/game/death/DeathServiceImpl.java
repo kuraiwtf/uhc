@@ -94,6 +94,10 @@ public final class DeathServiceImpl implements DeathService {
       this.dropAt(location, stack);
     }
 
+    if (killer != null) {
+      killer.kills(killer.kills() + 1);
+    }
+
     final GameService gameService = this.ultraHardcore.gameService();
     gameService.playSound(
         Sound.sound()
