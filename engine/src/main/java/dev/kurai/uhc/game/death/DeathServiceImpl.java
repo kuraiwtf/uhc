@@ -10,6 +10,7 @@ import dev.kurai.uhc.profile.Profile;
 import dev.kurai.uhc.profile.component.DeadComponent;
 import dev.kurai.uhc.profile.component.DisconnectComponent;
 import dev.kurai.uhc.profile.component.PlayerInformationComponent;
+import dev.kurai.uhc.profile.component.ProcessingDeathComponent;
 import dev.kurai.uhc.profile.state.DeadProfileState;
 import lombok.Getter;
 import lombok.Setter;
@@ -106,6 +107,7 @@ public final class DeathServiceImpl implements DeathService {
 
     profile.removeComponent(DisconnectComponent.class);
     profile.removeComponent(PlayerInformationComponent.class);
+    profile.removeComponent(ProcessingDeathComponent.class);
 
     profile.addComponent(
         new DeadComponent(
