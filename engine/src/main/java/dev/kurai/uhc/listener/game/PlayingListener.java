@@ -26,7 +26,6 @@ import java.time.Instant;
 import java.util.Map;
 import java.util.function.Consumer;
 import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Arrow;
@@ -342,40 +341,16 @@ public final class PlayingListener implements Listener {
       final var ironLimit = OreConfiguration.IRON_LIMIT_OPTION.getValue();
       if (ironLimit > 0 && miningComponent.getIronMined() >= ironLimit) {
         limitReached = true;
-        profile.sendMessage(
-            prefix()
-                .append(text("Vous avez atteint la limite de ", NamedTextColor.RED))
-                .append(text("fer", NamedTextColor.GRAY, TextDecoration.BOLD))
-                .append(text(" pour cette partie ", NamedTextColor.RED))
-                .append(text("(" + ironLimit + ")", NamedTextColor.GOLD))
-                .append(text(".", NamedTextColor.RED))
-                .build());
       }
     } else if (blockType == GOLD_ORE) {
       final var goldLimit = OreConfiguration.GOLD_LIMIT_OPTION.getValue();
       if (goldLimit > 0 && miningComponent.getGoldMined() >= goldLimit) {
         limitReached = true;
-        profile.sendMessage(
-            prefix()
-                .append(text("Vous avez atteint la limite d'", NamedTextColor.RED))
-                .append(text("or", NamedTextColor.YELLOW, TextDecoration.BOLD))
-                .append(text(" pour cette partie ", NamedTextColor.RED))
-                .append(text("(" + goldLimit + ")", NamedTextColor.GOLD))
-                .append(text(".", NamedTextColor.RED))
-                .build());
       }
     } else if (blockType == DIAMOND_ORE) {
       final var diamondLimit = OreConfiguration.DIAMOND_LIMIT_OPTION.getValue();
       if (diamondLimit > 0 && miningComponent.getDiamondMined() >= diamondLimit) {
         limitReached = true;
-        profile.sendMessage(
-            prefix()
-                .append(text("Vous avez atteint la limite de ", NamedTextColor.RED))
-                .append(text("diamant", NamedTextColor.AQUA, TextDecoration.BOLD))
-                .append(text(" pour cette partie ", NamedTextColor.RED))
-                .append(text("(" + diamondLimit + ")", NamedTextColor.GOLD))
-                .append(text(".", NamedTextColor.RED))
-                .build());
       }
     }
 
@@ -384,7 +359,7 @@ public final class PlayingListener implements Listener {
         event.getPlayer().getInventory().addItem(new ItemStack(Material.GOLD_INGOT, 2));
       }
 
-      event.setCancelled(true);
+      event.setDropItems(false);
       return;
     }
 

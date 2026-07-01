@@ -6,8 +6,10 @@ import static org.bukkit.Material.DIAMOND_ORE;
 import static org.bukkit.Material.GOLD_INGOT;
 
 import dev.kurai.uhc.UltraHardcoreAPI;
+import dev.kurai.uhc.game.configuration.ore.OreConfiguration;
 import dev.kurai.uhc.game.scenario.AbstractScenario;
 import dev.kurai.uhc.game.scenario.ScenarioCategory;
+import dev.kurai.uhc.profile.component.ProfileMiningComponent;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
@@ -55,11 +57,19 @@ public final class CutCleanScenario extends AbstractScenario implements Listener
     }
 
     final var player = event.getPlayer();
+
+    final var profile = this.ultraHardcore.profileService().getOrCreateProfile(player);
+    final var miningComponent = profile.getComponent(ProfileMiningComponent.class);
+    if (miningComponent != null && this.isOreLimitReached(blockType, miningComponent)) {
+      return;
+    }
+
     final var smeltedMaterial = ALLOWED_MATERIALS.get(blockType);
 
     final var drops = block.getDrops();
 
     event.setDropItems(false);
+    event.setExpToDrop(0);
     player.giveExp(ThreadLocalRandom.current().nextInt(2, 6));
 
     for (final var stack : drops) {
@@ -70,6 +80,25 @@ public final class CutCleanScenario extends AbstractScenario implements Listener
       }
       block.getWorld().dropItemNaturally(player.getLocation(), stack);
     }
+  }
+
+  private boolean isOreLimitReached(
+      final Material blockType, final ProfileMiningComponent miningComponent) {
+    return switch (blockType) {
+      case IRON_ORE -> {
+        final var limit = OreConfiguration.IRON_LIMIT_OPTION.getValue();
+        yield limit > 0 && miningComponent.getIronMined() >= limit;
+      }
+      case GOLD_ORE -> {
+        final var limit = OreConfiguration.GOLD_LIMIT_OPTION.getValue();
+        yield limit > 0 && miningComponent.getGoldMined() >= limit;
+      }
+      case DIAMOND_ORE -> {
+        final var limit = OreConfiguration.DIAMOND_LIMIT_OPTION.getValue();
+        yield limit > 0 && miningComponent.getDiamondMined() >= limit;
+      }
+      default -> false;
+    };
   }
 
   @EventHandler
