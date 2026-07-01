@@ -7,6 +7,7 @@ import static net.kyori.adventure.text.format.TextDecoration.*;
 
 import com.google.common.collect.Lists;
 import dev.kurai.uhc.UltraHardcoreAPI;
+import dev.kurai.uhc.module.AbstractModule;
 import dev.kurai.uhc.module.team.module.TeamModule;
 import dev.kurai.uhc.profile.ProfileService;
 import dev.kurai.uhc.profile.component.SpectatorComponent;
@@ -27,10 +28,11 @@ public final class WaitingSidebarAdapter implements SidebarAdapter, SidebarTitle
 
   @Override
   public Component provideTitle(final Player player) {
+    final AbstractModule module = this.ultraHardcore.moduleService().getCurrentModule();
     return text()
         .append(text('-', DARK_GRAY, BOLD))
         .appendSpace()
-        .append(text("UHC", GOLD, BOLD))
+        .append(text(module.getShortName(), GOLD, BOLD))
         .appendSpace()
         .append(text('-', DARK_GRAY, BOLD))
         .build();

@@ -6,6 +6,7 @@ import dev.kurai.uhc.ecs.component.Component;
 import dev.kurai.uhc.ecs.component.defaults.IdentifierComponent;
 import dev.kurai.uhc.ecs.component.defaults.NameComponent;
 import dev.kurai.uhc.ecs.entity.Entity;
+import dev.kurai.uhc.module.component.ModuleShortNameComponent;
 import dev.kurai.uhc.profile.component.*;
 import dev.kurai.uhc.util.api.Identifiable;
 import dev.kurai.uhc.util.api.name.Nameable;
@@ -87,6 +88,15 @@ public abstract class AbstractModule
     }
 
     return component.getName();
+  }
+
+  public final String getShortName() {
+    final var component = this.getComponent(ModuleShortNameComponent.class);
+    if (component == null) {
+      return this.getName();
+    }
+
+    return component.shortName();
   }
 
   public final @Nullable String getCommandName() {
