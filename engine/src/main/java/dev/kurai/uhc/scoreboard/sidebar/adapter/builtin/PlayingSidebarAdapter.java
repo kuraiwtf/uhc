@@ -11,6 +11,7 @@ import com.google.common.collect.Lists;
 import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.game.group.GroupProvider;
 import dev.kurai.uhc.game.group.GroupService;
+import dev.kurai.uhc.profile.Profile;
 import dev.kurai.uhc.profile.state.PlayingProfileState;
 import dev.kurai.uhc.scoreboard.sidebar.SidebarAdapter;
 import dev.kurai.uhc.timer.builtin.BorderTimer;
@@ -48,6 +49,7 @@ public final class PlayingSidebarAdapter implements SidebarAdapter {
                         .size(),
                     YELLOW))
             .build());
+
     final GroupService groupService = this.ultraHardcore.gameService().groupService();
     final GroupProvider groupProvider = groupService.provider();
     if (groupService.enabled()) {
@@ -56,6 +58,20 @@ public final class PlayingSidebarAdapter implements SidebarAdapter {
               .append(SEPARATOR)
               .append(text("Groupes: ", GRAY))
               .append(text(groupProvider.groups(), YELLOW))
+              .build());
+    }
+
+    final Profile profile = this.ultraHardcore.profileService().getOrCreateProfile(player);
+    if (profile.kills() > 0 || profile.assists() > 0) {
+      lines.add(
+          text()
+              .append(SEPARATOR)
+              .append(text("Kills: ", GRAY))
+              .append(text(profile.kills(), RED))
+              .appendSpace()
+              .append(text('(', GRAY))
+              .append(text(profile.assists(), RED))
+              .append(text(')', GRAY))
               .build());
     }
     lines.add(empty());
@@ -69,7 +85,7 @@ public final class PlayingSidebarAdapter implements SidebarAdapter {
                     formatDuration(
                         (System.currentTimeMillis()
                             - this.ultraHardcore.gameService().startTime())),
-                    YELLOW))
+                    GREEN))
             .build());
 
     this.ultraHardcore
@@ -117,8 +133,11 @@ public final class PlayingSidebarAdapter implements SidebarAdapter {
         text()
             .append(SEPARATOR)
             .append(text("Bordure: ", GRAY))
-            .append(text('±', GREEN, BOLD))
-            .append(text("%.1f".formatted(player.getWorld().getWorldBorder().getSize() / 2), GREEN))
+            .append(text('±', LIGHT_PURPLE, BOLD))
+            .append(
+                text(
+                    "%.1f".formatted(player.getWorld().getWorldBorder().getSize() / 2),
+                    LIGHT_PURPLE))
             .build());
 
     final var centerLocation =
@@ -128,10 +147,11 @@ public final class PlayingSidebarAdapter implements SidebarAdapter {
         text()
             .append(SEPARATOR)
             .append(text("Centre: ", GRAY))
-            .append(text(getArrow(player.getLocation().clone(), centerLocation.clone()), GREEN))
+            .append(
+                text(getArrow(player.getLocation().clone(), centerLocation.clone()), LIGHT_PURPLE))
             .appendSpace()
-            .append(text((int) centerLocation.distance(player.getLocation()), GREEN, BOLD))
-            .append(text('m', GREEN))
+            .append(text((int) centerLocation.distance(player.getLocation()), LIGHT_PURPLE, BOLD))
+            .append(text('m', LIGHT_PURPLE))
             .build());
     lines.add(empty());
     lines.add(text().append(text('@', DARK_AQUA)).append(text("kuraiwtf", AQUA)).build());

@@ -19,6 +19,8 @@ import dev.kurai.uhc.profile.state.WaitingProfileState;
 import dev.kurai.uhc.util.CC;
 import java.util.*;
 import java.util.function.Consumer;
+import lombok.Getter;
+import lombok.Setter;
 import net.kyori.adventure.audience.Audience;
 import net.minecraft.server.v1_8_R3.Packet;
 import org.bukkit.Sound;
@@ -33,12 +35,17 @@ import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 @NullMarked
+@Getter
+@Setter
 public final class ProfileImpl implements Profile {
 
   private final Map<Class<? extends Component>, Component> components;
 
   private final UltraHardcoreAPI ultraHardcore;
   private final Map<String, AbstractPower> powers;
+
+  private int kills;
+  private int assists;
 
   public ProfileImpl(final UUID id, final UltraHardcoreAPI ultraHardcore) {
     this.components = Maps.newHashMap();

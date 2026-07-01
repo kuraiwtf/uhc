@@ -43,6 +43,14 @@ public interface Profile
   @Override
   String getName();
 
+  int kills();
+
+  void kills(final int kills);
+
+  int assists();
+
+  void assists(final int assists);
+
   Actionbar getActionbar();
 
   void executeAction(Consumer<Player> action);
