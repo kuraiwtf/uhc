@@ -1,5 +1,7 @@
 package dev.kurai.uhc;
 
+import static org.bukkit.Material.*;
+
 import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.event.EventManager;
 import dev.kurai.actionbar.service.ActionbarService;
@@ -11,6 +13,7 @@ import dev.kurai.uhc.event.EventService;
 import dev.kurai.uhc.event.EventServiceImpl;
 import dev.kurai.uhc.game.GameService;
 import dev.kurai.uhc.game.GameServiceImpl;
+import dev.kurai.uhc.game.configuration.inventory.InventoryConfiguration;
 import dev.kurai.uhc.item.ItemService;
 import dev.kurai.uhc.item.ItemServiceImpl;
 import dev.kurai.uhc.listener.FixListener;
@@ -35,6 +38,7 @@ import lombok.Getter;
 import net.j4c0b3y.api.menu.MenuHandler;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bukkit.Bukkit;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import pt.supercrafting.entity.EntityLib;
@@ -117,5 +121,13 @@ public final class UltraHardcoreEngine extends UltraHardcoreAPI {
     Bukkit.getScheduler()
         .runTaskTimerAsynchronously(
             this.plugin, new TabListUpdaterTask(this.tabListService), 0, 1L);
+
+    InventoryConfiguration.INVENTORY_CONTENT_OPTION.setValue(
+        new ItemStack[] {
+          new ItemStack(BOOK, 7),
+          new ItemStack(WATER_BUCKET),
+          new ItemStack(ARROW, 16),
+          new ItemStack(GOLDEN_CARROT, 64)
+        });
   }
 }
