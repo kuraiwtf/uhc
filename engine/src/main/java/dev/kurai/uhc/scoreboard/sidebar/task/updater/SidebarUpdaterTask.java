@@ -1,5 +1,6 @@
 package dev.kurai.uhc.scoreboard.sidebar.task.updater;
 
+import com.google.common.collect.Sets;
 import dev.kurai.uhc.scoreboard.sidebar.SidebarService;
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
@@ -31,11 +32,14 @@ public final class SidebarUpdaterTask implements Runnable {
 
       int score = 15;
       final var providedLines = adapter.provideLines(player);
+      final var activeScores = Sets.<Integer>newHashSet();
 
       for (final var entry : providedLines) {
+        activeScores.add(score);
         sidebar.overrideLine(score--, entry);
       }
 
+      sidebar.trimLines(activeScores);
       sidebar.send();
     }
   }

@@ -1,5 +1,6 @@
 package dev.kurai.uhc.scoreboard.sidebar;
 
+import java.util.Set;
 import net.kyori.adventure.text.Component;
 
 public interface Sidebar {
@@ -9,6 +10,8 @@ public interface Sidebar {
   void overrideLine(final int score, final Component content);
 
   void removeLine(final int score);
+
+  void trimLines(final Set<Integer> activeScores);
 
   void destroy();
 

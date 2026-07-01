@@ -9,6 +9,7 @@ import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerUp
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
@@ -103,6 +104,13 @@ public final class SidebarImpl implements Sidebar {
             component,
             ScoreFormat.blankScore()));
     this.entries.remove(score);
+  }
+
+  @Override
+  public void trimLines(final Set<Integer> activeScores) {
+    final var staleScores = Maps.newHashMap(this.entries).keySet();
+    staleScores.removeAll(activeScores);
+    staleScores.forEach(this::removeLine);
   }
 
   @Override
