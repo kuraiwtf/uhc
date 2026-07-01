@@ -8,6 +8,7 @@ import dev.kurai.uhc.game.death.DeathService;
 import dev.kurai.uhc.game.disconnect.DisconnectService;
 import dev.kurai.uhc.game.drop.DropRateService;
 import dev.kurai.uhc.game.episode.EpisodeService;
+import dev.kurai.uhc.game.group.GroupService;
 import dev.kurai.uhc.game.host.HostService;
 import dev.kurai.uhc.game.scatter.ScatterService;
 import dev.kurai.uhc.game.scenario.ScenarioService;
@@ -37,6 +38,8 @@ public interface GameService extends ForwardingAudience {
   DropRateService dropRateService();
 
   EpisodeService episodeService();
+
+  GroupService groupService();
 
   HostService hostService();
 
