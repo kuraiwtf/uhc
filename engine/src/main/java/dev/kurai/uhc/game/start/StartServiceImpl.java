@@ -1,5 +1,6 @@
 package dev.kurai.uhc.game.start;
 
+import com.github.retrooper.packetevents.PacketEvents;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import dev.kurai.uhc.UltraHardcoreAPI;
@@ -115,13 +116,17 @@ public final class StartServiceImpl implements StartService {
 
     final var eventService = this.ultraHardcore.eventService();
     eventService.dispatchEvent(new GameStartEvent());
-    eventService.registerListeners(
-        new PlayingListener(this.ultraHardcore),
-        new SpectatorListener(this.ultraHardcore),
+    final PowerListener powerListener =
         new PowerListener(
             this.ultraHardcore.profileService(),
             this.ultraHardcore.moduleService(),
-            this.ultraHardcore.plugin()));
+            this.ultraHardcore.plugin());
+    eventService.registerListeners(
+        new PlayingListener(this.ultraHardcore),
+        new SpectatorListener(this.ultraHardcore),
+        powerListener);
+
+    PacketEvents.getAPI().getEventManager().registerListeners(powerListener);
 
     final var gameService = this.ultraHardcore.gameService();
     gameService.startTime(System.currentTimeMillis());
