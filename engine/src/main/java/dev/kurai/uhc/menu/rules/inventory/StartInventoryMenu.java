@@ -51,7 +51,7 @@ public final class StartInventoryMenu extends Menu {
   }
 
   private void setupInventory(final ForegroundLayer front, final ItemStack[] savedInventory) {
-    for (int i = 0; i < 36; i++) {
+    for (int i = 0; i < savedInventory.length; i++) {
       final var item = savedInventory[i];
       if (item != null && item.getType() != Material.AIR) {
         front.set(i, new ItemButton(item));

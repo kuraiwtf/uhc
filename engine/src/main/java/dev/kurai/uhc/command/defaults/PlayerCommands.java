@@ -7,6 +7,7 @@ import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.command.annotation.Command;
 import dev.kurai.uhc.command.annotation.CommandMeta;
 import dev.kurai.uhc.menu.claim.ClaimMenu;
+import dev.kurai.uhc.menu.rules.inventory.StartInventoryViewMenu;
 import dev.kurai.uhc.menu.scenario.ScenarioViewMenu;
 import dev.kurai.uhc.profile.component.ClaimComponent;
 import org.bukkit.entity.Player;
@@ -37,6 +38,11 @@ public final class PlayerCommands {
     }
 
     new ClaimMenu(player, claim).open();
+  }
+
+  @Command(@CommandMeta(name = "inv"))
+  public void inv(final Player player) {
+    new StartInventoryViewMenu(player, this.ultraHardcore).open();
   }
 
   @Command(
