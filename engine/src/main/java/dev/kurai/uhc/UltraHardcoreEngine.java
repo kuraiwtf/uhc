@@ -97,14 +97,15 @@ public final class UltraHardcoreEngine extends UltraHardcoreAPI {
     this.worldService.preload(this.worldService.getWorld(), 1250);
 
     this.commandRegistrar.registerCommands(
-        new PlayerCommands(this),
-        new ModuleCommands(this),
-        new ModerationCommands(this),
-        new HostCommand(this.bukkitAudiences, this),
-        new SpectatorCommand(this),
-        new WhitelistCommand(this),
+        new AnswerCommand(this),
+        new GroupCommand(this.gameService().groupService()),
         new HelpOpCommand(this),
-        new AnswerCommand(this));
+        new HostCommand(this.bukkitAudiences, this),
+        new ModerationCommands(this),
+        new ModuleCommands(this),
+        new PlayerCommands(this),
+        new SpectatorCommand(this),
+        new WhitelistCommand(this));
 
     this.commandRegistrar
         .getArgumentResolverRegistrar()
