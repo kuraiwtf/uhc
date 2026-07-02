@@ -11,4 +11,6 @@ public final class GameConfiguration {
       option(key("bow_health_view"), false);
 
   public static final Option<Boolean> SPECTATOR_OPTION = option(key("spectator"), true);
+
+  public static final Option<Boolean> OBSIDIAN_TRAP_OPTION = option(key("obsidian_trap"), true);
 }
