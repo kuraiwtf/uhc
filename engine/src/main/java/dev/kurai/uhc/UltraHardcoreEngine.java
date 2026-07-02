@@ -14,6 +14,8 @@ import dev.kurai.uhc.event.EventServiceImpl;
 import dev.kurai.uhc.game.GameService;
 import dev.kurai.uhc.game.GameServiceImpl;
 import dev.kurai.uhc.game.configuration.inventory.InventoryConfiguration;
+import dev.kurai.uhc.helpop.HelpOpService;
+import dev.kurai.uhc.helpop.HelpOpServiceImpl;
 import dev.kurai.uhc.item.ItemService;
 import dev.kurai.uhc.item.ItemServiceImpl;
 import dev.kurai.uhc.listener.FixListener;
@@ -52,6 +54,7 @@ public final class UltraHardcoreEngine extends UltraHardcoreAPI {
   private EntityLib entityLib;
   private EventService eventService;
   private GameService gameService;
+  private HelpOpService helpOpService;
   private ItemService itemService;
   private ModuleService moduleService;
   private ProfileService profileService;
@@ -83,6 +86,7 @@ public final class UltraHardcoreEngine extends UltraHardcoreAPI {
     this.actionbarService =
         ActionbarService.create(this.plugin, player -> this.bukkitAudiences.player(player));
     this.gameService = new GameServiceImpl(this);
+    this.helpOpService = new HelpOpServiceImpl();
     this.itemService = new ItemServiceImpl(this);
     this.moduleService = new ModuleServiceImpl(this);
     this.profileService = new ProfileServiceImpl(this);
@@ -98,7 +102,9 @@ public final class UltraHardcoreEngine extends UltraHardcoreAPI {
         new ModerationCommands(this),
         new HostCommand(this.bukkitAudiences, this),
         new SpectatorCommand(this),
-        new WhitelistCommand(this));
+        new WhitelistCommand(this),
+        new HelpOpCommand(this),
+        new AnswerCommand(this));
 
     this.commandRegistrar
         .getArgumentResolverRegistrar()
