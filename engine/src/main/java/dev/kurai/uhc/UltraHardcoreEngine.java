@@ -98,7 +98,7 @@ public final class UltraHardcoreEngine extends UltraHardcoreAPI {
 
     this.commandRegistrar.registerCommands(
         new AnswerCommand(this),
-        new GroupCommand(this.gameService().groupService()),
+        new GroupCommand(this.gameService().groupService(), this.profileService),
         new HelpOpCommand(this),
         new HostCommand(this.bukkitAudiences, this),
         new ModerationCommands(this),
