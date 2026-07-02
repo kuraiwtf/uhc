@@ -150,11 +150,19 @@ public final class WaitingListener implements Listener {
 
   @EventHandler
   public void onBlockPlace(final BlockPlaceEvent event) {
+    if (event.getPlayer().isOp()) {
+      return;
+    }
+
     event.setCancelled(true);
   }
 
   @EventHandler
   public void onBlockBreak(final BlockBreakEvent event) {
+    if (event.getPlayer().isOp()) {
+      return;
+    }
+
     event.setCancelled(true);
   }
 
@@ -165,6 +173,10 @@ public final class WaitingListener implements Listener {
 
   @EventHandler
   public void onPlayerInteract(final PlayerInteractEvent event) {
+    if (event.getPlayer().isOp()) {
+      return;
+    }
+
     event.setCancelled(true);
   }
 
