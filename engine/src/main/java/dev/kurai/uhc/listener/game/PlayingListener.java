@@ -1,9 +1,11 @@
 package dev.kurai.uhc.listener.game;
 
+import static dev.kurai.uhc.game.configuration.game.GameConfiguration.OBSIDIAN_TRAP_OPTION;
 import static dev.kurai.uhc.util.CC.prefix;
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.format.Style.style;
 import static org.bukkit.Material.*;
+import static org.bukkit.event.entity.EntityDamageEvent.DamageCause.SUFFOCATION;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -126,6 +128,13 @@ public final class PlayingListener implements Listener {
             Lists.newArrayList(player.getActivePotionEffects()),
             player.getFireTicks(),
             player.getFallDistance()));
+  }
+
+  @EventHandler
+  public void onSuffocationDamage(final EntityDamageEvent event) {
+    if (event.getCause() == SUFFOCATION && !OBSIDIAN_TRAP_OPTION.getValue()) {
+      event.setCancelled(true);
+    }
   }
 
   @EventHandler
