@@ -1,8 +1,5 @@
 package dev.kurai.uhc.game.disconnect;
 
-import static net.kyori.adventure.text.format.NamedTextColor.*;
-import static net.kyori.adventure.text.format.TextDecoration.*;
-
 import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.game.GameService;
 import dev.kurai.uhc.game.death.DeathService;
