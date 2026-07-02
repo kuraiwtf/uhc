@@ -83,7 +83,11 @@ public final class CC {
   private CC() {}
 
   public static TextComponent.Builder prefix() {
-    return text().append(text(BAR, GRAY, BOLD)).appendSpace();
+    return text()
+        .append(text("UHC", YELLOW, BOLD))
+        .appendSpace()
+        .append(text(BAR, GRAY, BOLD))
+        .appendSpace();
   }
 
   public static String prefix(final String text) {
