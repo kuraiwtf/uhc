@@ -52,6 +52,5 @@ public final class ScatterTask extends BukkitRunnable {
 
     final var player = Bukkit.getPlayer(found);
     player.teleport(location);
-    player.sendMessage("Téléportation");
   }
 }
