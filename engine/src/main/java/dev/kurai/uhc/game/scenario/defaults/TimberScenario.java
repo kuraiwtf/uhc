@@ -34,6 +34,7 @@ public final class TimberScenario extends AbstractScenario implements Listener {
       return;
     }
 
+    event.setCancelled(true);
     new TimberTask(event.getPlayer(), this.check(block))
         .runTaskTimer(this.ultraHardcore.plugin(), 0, 4L);
   }
