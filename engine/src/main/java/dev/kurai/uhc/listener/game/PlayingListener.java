@@ -24,6 +24,7 @@ import dev.kurai.uhc.profile.component.*;
 import dev.kurai.uhc.profile.state.PlayingProfileState;
 import dev.kurai.uhc.util.CC;
 import dev.kurai.uhc.util.PlayerUtil;
+import dev.kurai.uhc.util.SitUtil;
 import dev.kurai.uhc.util.TimeUtil;
 import java.time.Duration;
 import java.time.Instant;
@@ -41,10 +42,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.player.PlayerBucketEmptyEvent;
-import org.bukkit.event.player.PlayerBucketFillEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
@@ -133,6 +131,14 @@ public final class PlayingListener implements Listener {
             Lists.newArrayList(player.getActivePotionEffects()),
             player.getFireTicks(),
             player.getFallDistance()));
+  }
+
+  @EventHandler
+  public void onSitKick(final PlayerKickEvent event) {
+    if (event.getReason().equals("Flying is not enabled on this server")
+        && SitUtil.isSit(event.getPlayer())) {
+      event.setCancelled(true);
+    }
   }
 
   @EventHandler
