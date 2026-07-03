@@ -133,6 +133,7 @@ public final class PlayingListener implements Listener {
   @EventHandler
   public void onSuffocationDamage(final EntityDamageEvent event) {
     if (event.getCause() == SUFFOCATION && !OBSIDIAN_TRAP_OPTION.getValue()) {
+      event.getEntity().getLocation().clone().add(0, 1, 0).getBlock().setType(AIR);
       event.setCancelled(true);
     }
   }

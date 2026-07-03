@@ -2,7 +2,6 @@ package dev.kurai.uhc.menu.rules;
 
 import static dev.kurai.uhc.game.configuration.border.BorderConfiguration.*;
 import static dev.kurai.uhc.game.configuration.game.GameConfiguration.*;
-import static dev.kurai.uhc.game.configuration.game.GameConfiguration.BOW_HEALTH_VIEW_OPTION;
 import static dev.kurai.uhc.game.configuration.ore.OreConfiguration.*;
 import static dev.kurai.uhc.util.CC.*;
 
@@ -12,6 +11,7 @@ import dev.kurai.uhc.menu.button.ItemButton;
 import dev.kurai.uhc.menu.rules.border.BorderConfigurationMenu;
 import dev.kurai.uhc.menu.rules.disconnect.DisconnectTimerEditMenu;
 import dev.kurai.uhc.menu.rules.drop.DropRateMenu;
+import dev.kurai.uhc.menu.rules.game.GameRulesMenu;
 import dev.kurai.uhc.menu.rules.inventory.StartInventoryMenu;
 import dev.kurai.uhc.menu.rules.ore.OreLimitMenu;
 import dev.kurai.uhc.menu.rules.timer.TimerDurationMenu;
@@ -81,7 +81,7 @@ public final class RulesMenu extends Menu {
                   .asItemStack()));
     }
 
-    front.set(11, new BowHealthViewButton());
+    front.set(11, new GameRulesButton());
     front.set(12, new SpectatorButton());
     front.set(14, new BorderTimerButton(this.ultraHardcore));
     front.set(15, new BorderButton());
@@ -107,28 +107,23 @@ public final class RulesMenu extends Menu {
     front.set(33, new DisconnectTimerButton(this.ultraHardcore));
   }
 
-  private static final class BowHealthViewButton extends Button {
+  private static final class GameRulesButton extends Button {
 
     @Override
     public ItemStack getIcon() {
-      return new ItemBuilder(Material.BOW)
-          .name("&c&lVie en touchant une flèche")
-          .lore(
-              "",
-              "&c "
-                  + SQUARE
-                  + "&f Statut: "
-                  + (BOW_HEALTH_VIEW_OPTION.getValue() ? "&a&lOui" : "&c&lNon"),
-              "")
-          .amount(BOW_HEALTH_VIEW_OPTION.getValue() ? 1 : 0)
-          .glowing(BOW_HEALTH_VIEW_OPTION.getValue())
+      return new ItemBuilder(Material.REDSTONE_COMPARATOR)
+          .name("&c&lRègles de la partie")
+          .lore("", "&7" + BAR + "&r Permet de modifier", "  les&c règles&r de la&d partie&r.", "")
+          .glowing(true)
           .asItemStack();
     }
 
     @Override
     public void onClick(final ButtonClick click) {
-      BOW_HEALTH_VIEW_OPTION.setValue(!BOW_HEALTH_VIEW_OPTION.getValue());
-      click.getMenu().update();
+      final Menu previousMenu = click.getMenu();
+      final GameRulesMenu menu = new GameRulesMenu(previousMenu.getPlayer());
+      menu.setPreviousMenu(previousMenu);
+      menu.open();
     }
   }
 
