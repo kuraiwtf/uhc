@@ -3,6 +3,7 @@ package dev.kurai.uhc.game.death;
 import static net.kyori.adventure.key.Key.key;
 import static net.kyori.adventure.text.format.NamedTextColor.*;
 
+import com.google.common.collect.Lists;
 import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.event.defaults.game.death.GameDeathEvent;
 import dev.kurai.uhc.game.GameService;
@@ -12,6 +13,8 @@ import dev.kurai.uhc.profile.component.DisconnectComponent;
 import dev.kurai.uhc.profile.component.PlayerInformationComponent;
 import dev.kurai.uhc.profile.component.ProcessingDeathComponent;
 import dev.kurai.uhc.profile.state.DeadProfileState;
+import java.util.List;
+import java.util.UUID;
 import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.sound.Sound;
@@ -86,12 +89,13 @@ public final class DeathServiceImpl implements DeathService {
     }
 
     final Location location = component.lastLocation();
+    final List<UUID> droppedItems = Lists.newArrayList();
     for (final ItemStack stack : component.inventory()) {
-      this.dropAt(location, stack);
+      this.dropAt(location, stack, droppedItems);
     }
 
     for (final ItemStack stack : component.armor()) {
-      this.dropAt(location, stack);
+      this.dropAt(location, stack, droppedItems);
     }
 
     if (killer != null) {
@@ -119,16 +123,18 @@ public final class DeathServiceImpl implements DeathService {
             System.currentTimeMillis() - gameService.startTime(),
             component.lastLocation().clone(),
             component.inventory().clone(),
-            component.armor().clone()));
+            component.armor().clone(),
+            droppedItems));
 
     profile.setState(new DeadProfileState());
   }
 
-  private void dropAt(final Location location, final @Nullable ItemStack item) {
+  private void dropAt(
+      final Location location, final @Nullable ItemStack item, final List<UUID> droppedItems) {
     if (item == null || item.getType() == Material.AIR) {
       return;
     }
 
-    location.getWorld().dropItem(location, item);
+    droppedItems.add(location.getWorld().dropItem(location, item).getUniqueId());
   }
 }

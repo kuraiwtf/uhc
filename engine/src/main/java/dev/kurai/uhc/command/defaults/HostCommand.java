@@ -217,6 +217,13 @@ public final class HostCommand {
 
     target.teleport(component.location());
 
+    final var droppedItems = component.droppedItems();
+    for (final var entity : component.location().getWorld().getEntities()) {
+      if (droppedItems.contains(entity.getUniqueId())) {
+        entity.remove();
+      }
+    }
+
     final PlayerInventory inventory = target.getInventory();
     inventory.setContents(component.inventory());
     inventory.setArmorContents(component.armor());

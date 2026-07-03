@@ -1,6 +1,7 @@
 package dev.kurai.uhc.profile.component;
 
 import dev.kurai.uhc.ecs.component.Component;
+import java.util.List;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -20,4 +21,6 @@ public final class DeadComponent implements Component {
 
   private ItemStack[] inventory;
   private ItemStack[] armor;
+
+  private List<UUID> droppedItems;
 }
