@@ -1,5 +1,6 @@
 package dev.kurai.uhc.listener.game;
 
+import static dev.kurai.uhc.game.configuration.game.GameConfiguration.LAVA_OPTION;
 import static dev.kurai.uhc.game.configuration.game.GameConfiguration.OBSIDIAN_TRAP_OPTION;
 import static dev.kurai.uhc.util.CC.prefix;
 import static net.kyori.adventure.text.Component.text;
@@ -38,6 +39,8 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.player.PlayerBucketEmptyEvent;
+import org.bukkit.event.player.PlayerBucketFillEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
@@ -134,6 +137,22 @@ public final class PlayingListener implements Listener {
   public void onSuffocationDamage(final EntityDamageEvent event) {
     if (event.getCause() == SUFFOCATION && !OBSIDIAN_TRAP_OPTION.getValue()) {
       event.getEntity().getLocation().clone().add(0, 1, 0).getBlock().setType(AIR);
+      event.setCancelled(true);
+    }
+  }
+
+  @EventHandler
+  public void onLavaPickup(final PlayerBucketFillEvent event) {
+    final Material bucket = event.getItemStack().getType();
+    if (bucket == LAVA_BUCKET && !LAVA_OPTION.getValue()) {
+      event.setCancelled(true);
+    }
+  }
+
+  @EventHandler
+  public void onLavaPlace(final PlayerBucketEmptyEvent event) {
+    final Material bucket = event.getBucket();
+    if (bucket == LAVA_BUCKET && !LAVA_OPTION.getValue()) {
       event.setCancelled(true);
     }
   }

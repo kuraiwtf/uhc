@@ -1,7 +1,6 @@
 package dev.kurai.uhc.menu.rules.game;
 
-import static dev.kurai.uhc.game.configuration.game.GameConfiguration.BOW_HEALTH_VIEW_OPTION;
-import static dev.kurai.uhc.game.configuration.game.GameConfiguration.OBSIDIAN_TRAP_OPTION;
+import static dev.kurai.uhc.game.configuration.game.GameConfiguration.*;
 import static dev.kurai.uhc.util.CC.SQUARE;
 
 import dev.kurai.uhc.menu.template.BackTemplate;
@@ -31,6 +30,7 @@ public final class GameRulesMenu extends Menu {
 
     foreground.set(11, new BowHealthViewButton());
     foreground.set(12, new ObsidianTrapButton());
+    foreground.set(14, new LavaButton());
   }
 
   private static final class BowHealthViewButton extends Button {
@@ -79,6 +79,28 @@ public final class GameRulesMenu extends Menu {
     @Override
     public void onClick(final ButtonClick click) {
       OBSIDIAN_TRAP_OPTION.setValue(!OBSIDIAN_TRAP_OPTION.getValue());
+      click.getMenu().update();
+    }
+  }
+
+  private static final class LavaButton extends Button {
+
+    @Override
+    public ItemStack getIcon() {
+      return new ItemBuilder(Material.LAVA_BUCKET)
+          .name("&6&lLave")
+          .lore(
+              "",
+              "&6 " + SQUARE + "&f Statut: " + (LAVA_OPTION.getValue() ? "&a&lOui" : "&c&lNon"),
+              "")
+          .amount(LAVA_OPTION.getValue() ? 1 : 0)
+          .glowing(LAVA_OPTION.getValue())
+          .asItemStack();
+    }
+
+    @Override
+    public void onClick(final ButtonClick click) {
+      LAVA_OPTION.setValue(!LAVA_OPTION.getValue());
       click.getMenu().update();
     }
   }

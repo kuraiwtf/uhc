@@ -13,4 +13,6 @@ public final class GameConfiguration {
   public static final Option<Boolean> SPECTATOR_OPTION = option(key("spectator"), true);
 
   public static final Option<Boolean> OBSIDIAN_TRAP_OPTION = option(key("obsidian_trap"), true);
+
+  public static final Option<Boolean> LAVA_OPTION = option(key("lava"), true);
 }
