@@ -17,6 +17,7 @@ import dev.kurai.uhc.event.defaults.player.PlayerDamageByPlayerEvent;
 import dev.kurai.uhc.game.configuration.game.GameConfiguration;
 import dev.kurai.uhc.game.configuration.ore.OreConfiguration;
 import dev.kurai.uhc.game.death.DeathContext;
+import dev.kurai.uhc.menu.rules.ore.OreType;
 import dev.kurai.uhc.profile.Profile;
 import dev.kurai.uhc.profile.ProfileService;
 import dev.kurai.uhc.profile.component.*;
@@ -28,6 +29,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.Map;
 import java.util.function.Consumer;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -393,5 +395,56 @@ public final class PlayingListener implements Listener {
     }
 
     MINING_STATISTICS.get(blockType).accept(miningComponent);
+
+    final var oreName = ORE_NAMES.get(blockType);
+    if (oreName != null) {
+      final var limit = ORE_TYPES.get(blockType).getOption().getValue();
+      if (limit > 0) {
+        final var oreColor = oreName.color();
+        profile
+            .getActionbar()
+            .registerEntry(
+                UltraHardcoreKey.key("ore_mined"),
+                text("Vous venez de miner ")
+                    .append(text(ARTICLES.get(blockType)))
+                    .append(oreName)
+                    .append(text("."))
+                    .appendSpace()
+                    .append(text('(', NamedTextColor.GRAY))
+                    .append(text(this.getMinedAmount(miningComponent, blockType), oreColor))
+                    .append(text('/', NamedTextColor.GRAY))
+                    .append(text(limit, oreColor))
+                    .append(text(')', NamedTextColor.GRAY)),
+                Duration.ofSeconds(3L));
+      }
+    }
+  }
+
+  private static final Map<Material, OreType> ORE_TYPES =
+      Map.of(
+          IRON_ORE, OreType.IRON,
+          GOLD_ORE, OreType.GOLD,
+          DIAMOND_ORE, OreType.DIAMOND);
+
+  private static final Map<Material, Component> ORE_NAMES =
+      Map.of(
+          IRON_ORE, text("fer", NamedTextColor.GRAY),
+          GOLD_ORE, text("or", NamedTextColor.YELLOW),
+          DIAMOND_ORE, text("diamant", NamedTextColor.AQUA));
+
+  private static final Map<Material, String> ARTICLES =
+      Map.of(
+          IRON_ORE, "du ",
+          GOLD_ORE, "de l'",
+          DIAMOND_ORE, "du ");
+
+  private int getMinedAmount(final ProfileMiningComponent component, final Material blockType) {
+    if (blockType == IRON_ORE) {
+      return component.getIronMined();
+    } else if (blockType == GOLD_ORE) {
+      return component.getGoldMined();
+    } else {
+      return component.getDiamondMined();
+    }
   }
 }
