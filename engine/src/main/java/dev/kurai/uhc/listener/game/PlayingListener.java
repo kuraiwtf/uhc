@@ -332,12 +332,16 @@ public final class PlayingListener implements Listener {
                   .getActionbar()
                   .registerEntry(
                       UltraHardcoreKey.key("health_view"),
-                      PlayerUtil.formatHealthAsHeartBar(
-                          player,
-                          style(NamedTextColor.DARK_RED),
-                          style(NamedTextColor.RED),
-                          style(NamedTextColor.YELLOW),
-                          style(NamedTextColor.DARK_GRAY)),
+                      text(player.getName())
+                          .append(text(':'))
+                          .appendSpace()
+                          .append(
+                              PlayerUtil.formatHealthAsHeartBar(
+                                  player,
+                                  style(NamedTextColor.DARK_RED),
+                                  style(NamedTextColor.RED),
+                                  style(NamedTextColor.YELLOW),
+                                  style(NamedTextColor.DARK_GRAY))),
                       Duration.ofSeconds(3L));
             },
             2L);
