@@ -15,7 +15,6 @@ import dev.kurai.uhc.scoreboard.sidebar.SidebarAdapter;
 import dev.kurai.uhc.scoreboard.sidebar.SidebarTitleAdapter;
 import java.util.List;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.entity.Player;
 
 public final class WaitingSidebarAdapter implements SidebarAdapter, SidebarTitleAdapter {
@@ -68,31 +67,28 @@ public final class WaitingSidebarAdapter implements SidebarAdapter, SidebarTitle
             .append(
                 text(
                     profileService
-                        .getProfiles(profile -> !profile.hasComponent(SpectatorComponent.class))
+                        .getProfiles(
+                            profile ->
+                                profile.findPlayer().isPresent()
+                                    && !profile.hasComponent(SpectatorComponent.class))
                         .size(),
                     GREEN))
             .append(text('/', DARK_GRAY))
             .append(text(gameService.slotService().slotProvider().slots(), GREEN))
             .build());
     if (module instanceof final TeamModule teamModule) {
+      final int teamSize = teamModule.teamSize();
       lines.add(
           text()
               .append(SEPARATOR)
               .append(text("Équipes: ", GRAY))
               .append(
                   text(
-                      teamModule.teamSize() == 1
-                          ? "FFA"
-                          : "%dvs%d".formatted(teamModule.teamSize(), teamModule.teamSize()),
-                      LIGHT_PURPLE))
+                      teamSize == 1 ? "FFA" : "%dvs%d".formatted(teamSize, teamSize), LIGHT_PURPLE))
               .build());
     }
     lines.add(empty());
     lines.add(text().append(text('@', DARK_AQUA)).append(text("kuraiwtf", AQUA)).build());
     return lines;
-  }
-
-  private TextColor provideTpsColor(final double tps) {
-    return tps > 15 ? GREEN : tps > 10 ? YELLOW : tps > 5 ? GOLD : RED;
   }
 }
