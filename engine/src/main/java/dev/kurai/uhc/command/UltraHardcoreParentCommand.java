@@ -114,6 +114,14 @@ public final class UltraHardcoreParentCommand extends Command {
       return true;
     }
 
+    final String permission = subCommand.commandMeta().permission();
+    if (!permission.isEmpty()
+        && sender instanceof final Player player
+        && !player.hasPermission(permission)) {
+      player.sendMessage(prefix("&cVous n'avez pas la permission d'utiliser cette commande."));
+      return false;
+    }
+
     // Find first array parameter (1-based index; 0 = sender).
     int arrayParamIndex = -1;
     for (var i = 1; i < method.getParameterTypes().length; i++) {
@@ -127,7 +135,9 @@ public final class UltraHardcoreParentCommand extends Command {
     if (arrayParamIndex < 0) {
       int required = 0;
       for (final var argument : subCommand.arguments()) {
-        if (argument.defaultValue().isEmpty()) required++;
+        if (argument.defaultValue().isEmpty()) {
+          required++;
+        }
       }
       minArgs = required;
     } else {
@@ -160,7 +170,8 @@ public final class UltraHardcoreParentCommand extends Command {
             i - 1 < rawArguments.size()
                 ? rawArguments.get(i - 1)
                 : subCommand.arguments().get(i - 1).defaultValue();
-        final var resolved = registrar.resolveArgument(method.getParameterTypes()[i], sender, rawArg);
+        final var resolved =
+            registrar.resolveArgument(method.getParameterTypes()[i], sender, rawArg);
         if (resolved == null) {
           audience.sendMessage(
               text().append(prefix()).append(text("Un argument est invalide.", RED)).build());
@@ -242,6 +253,13 @@ public final class UltraHardcoreParentCommand extends Command {
       final var partial = args.length == 0 ? "" : args[0].toLowerCase();
 
       for (final var subCommandData : this.subCommands) {
+        final String permission = subCommandData.commandMeta().permission();
+        if (sender instanceof final Player player
+            && !permission.isEmpty()
+            && !player.hasPermission(permission)) {
+          continue;
+        }
+
         if (subCommandData.commandMeta().name().toLowerCase().startsWith(partial)) {
           completions.add(subCommandData.commandMeta().name());
         } else if ("help".startsWith(partial)) {
@@ -270,6 +288,13 @@ public final class UltraHardcoreParentCommand extends Command {
             .orElse(null);
 
     if (subCommand == null) {
+      return defaultCompletions;
+    }
+
+    final String permission = subCommand.commandMeta().permission();
+    if (!permission.isEmpty()
+        && sender instanceof final Player player
+        && !player.hasPermission(permission)) {
       return defaultCompletions;
     }
 
