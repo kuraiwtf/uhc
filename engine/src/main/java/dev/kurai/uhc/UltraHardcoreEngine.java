@@ -18,6 +18,7 @@ import dev.kurai.uhc.helpop.HelpOpService;
 import dev.kurai.uhc.helpop.HelpOpServiceImpl;
 import dev.kurai.uhc.item.ItemService;
 import dev.kurai.uhc.item.ItemServiceImpl;
+import dev.kurai.uhc.listener.AccessListener;
 import dev.kurai.uhc.listener.FixListener;
 import dev.kurai.uhc.listener.ItemListener;
 import dev.kurai.uhc.listener.game.ResourcePackListener;
@@ -116,12 +117,13 @@ public final class UltraHardcoreEngine extends UltraHardcoreAPI {
     final EventManager eventManager = PacketEvents.getAPI().getEventManager();
 
     final var fixListener = new FixListener();
-    final var resourcePackListener = new ResourcePackListener(this.moduleService);
+    final var resourcePackListener = new ResourcePackListener(this.plugin, this.moduleService);
     eventManager.registerListeners(fixListener, resourcePackListener);
 
     this.eventService.registerListeners(
         fixListener,
         resourcePackListener,
+        new AccessListener(this.moduleService, this.whitelistService),
         new ItemListener(this.itemService),
         new WaitingListener(this));
 

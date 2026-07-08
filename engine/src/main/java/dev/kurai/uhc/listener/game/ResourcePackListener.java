@@ -15,27 +15,38 @@ import dev.kurai.uhc.module.service.ModuleService;
 import lombok.RequiredArgsConstructor;
 import net.minecraft.server.v1_8_R3.MinecraftServer;
 import net.minecraft.server.v1_8_R3.PacketPlayOutResourcePackSend;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.plugin.Plugin;
 
 @RequiredArgsConstructor
 public final class ResourcePackListener extends PacketListenerAbstract implements Listener {
 
+  private final Plugin plugin;
   private final ModuleService moduleService;
 
   @EventHandler
   public void onJoin(final PlayerJoinEvent event) {
-    final ModuleResourcePackComponent component =
-        this.moduleService.getCurrentModule().getComponent(ModuleResourcePackComponent.class);
-    if (component != null) {
-      final Player player = event.getPlayer();
-      for (final ResourcePack pack : component.packs()) {
-        createPacketWrapper(new PacketPlayOutResourcePackSend(pack.url(), pack.hash()))
-            .send(player);
-      }
-    }
+    Bukkit.getScheduler()
+        .runTaskLater(
+            this.plugin,
+            () -> {
+              final ModuleResourcePackComponent component =
+                  this.moduleService
+                      .getCurrentModule()
+                      .getComponent(ModuleResourcePackComponent.class);
+              if (component != null) {
+                final Player player = event.getPlayer();
+                for (final ResourcePack pack : component.packs()) {
+                  createPacketWrapper(new PacketPlayOutResourcePackSend(pack.url(), pack.hash()))
+                      .send(player);
+                }
+              }
+            },
+            20L);
   }
 
   @Override
