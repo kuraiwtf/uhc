@@ -16,8 +16,6 @@ import org.bukkit.entity.Player;
 
 public final class MumbleExtension {
 
-  private static final String PREFIX = "&b&lMUMBLE&7 &l" + BAR + "&r";
-
   private final UltraHardcoreAPI ultraHardcore;
 
   private boolean initialized;
