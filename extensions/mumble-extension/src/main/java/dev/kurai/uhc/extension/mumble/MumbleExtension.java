@@ -8,6 +8,7 @@ import static net.kyori.adventure.text.event.HoverEvent.showText;
 import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.event.EventService;
 import dev.kurai.uhc.extension.mumble.command.MumbleCommand;
+import dev.kurai.uhc.extension.mumble.item.MumbleItem;
 import dev.kurai.uhc.extension.mumble.listener.GameListener;
 import dev.kurai.uhc.extension.mumble.listener.PlayerJoinListener;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -30,6 +31,8 @@ public final class MumbleExtension {
 
       final EventService eventService = this.ultraHardcore.eventService();
       eventService.registerListeners(new PlayerJoinListener(this), new GameListener(this));
+
+      this.ultraHardcore.itemService().registerWaitingItem(1, new MumbleItem(this));
 
       this.initialized = true;
     }
