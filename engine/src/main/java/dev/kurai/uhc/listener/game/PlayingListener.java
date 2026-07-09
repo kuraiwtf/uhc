@@ -34,6 +34,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -143,8 +144,11 @@ public final class PlayingListener implements Listener {
 
   @EventHandler
   public void onSuffocationDamage(final EntityDamageEvent event) {
-    if (event.getCause() == SUFFOCATION && !OBSIDIAN_TRAP_OPTION.getValue()) {
-      event.getEntity().getLocation().clone().add(0, 1, 0).getBlock().setType(AIR);
+    final Block block = event.getEntity().getLocation().clone().add(0, 1, 0).getBlock();
+    if (event.getCause() == SUFFOCATION
+        && block.getType() != AIR
+        && !OBSIDIAN_TRAP_OPTION.getValue()) {
+      block.setType(AIR);
       event.setCancelled(true);
     }
   }
