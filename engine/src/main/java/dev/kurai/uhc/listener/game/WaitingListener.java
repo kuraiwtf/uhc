@@ -7,8 +7,8 @@ import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.event.defaults.game.GameStartEvent;
 import dev.kurai.uhc.event.defaults.host.HostAccessUpdateEvent;
 import dev.kurai.uhc.item.CustomItem;
+import dev.kurai.uhc.item.WaitingItem;
 import dev.kurai.uhc.item.builtin.*;
-import java.util.Map;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -30,15 +30,6 @@ import org.jspecify.annotations.NullMarked;
 
 @NullMarked
 public final class WaitingListener implements Listener {
-
-  private static final Map<Integer, Class<? extends CustomItem>> WAITING_ITEMS =
-      Map.of(
-          0, ScenarioItem.class,
-          1, MumbleItem.class,
-          7, JumpItem.class,
-          8, LogoutItem.class);
-  private static final Map<Integer, Class<? extends CustomItem>> HOST_WAITING_ITEMS =
-      Map.of(4, ConfigurationItem.class);
 
   private final UltraHardcoreAPI ultraHardcore;
 
@@ -95,13 +86,12 @@ public final class WaitingListener implements Listener {
                 .append(text(')', DARK_GRAY))
                 .build());
 
-    WAITING_ITEMS.forEach((slot, itemClass) -> this.setItem(player, slot, itemClass));
-
-    if (!this.ultraHardcore.gameService().hostService().hasHostAccess(player)) {
-      return;
+    for (final WaitingItem item : this.ultraHardcore.itemService().findWaitingItems()) {
+      if (!item.item().isHostOnly()
+          || this.ultraHardcore.gameService().hostService().hasHostAccess(player)) {
+        this.setItem(player, item.slot(), item.item().getClass());
+      }
     }
-
-    HOST_WAITING_ITEMS.forEach((slot, itemClass) -> this.setItem(player, slot, itemClass));
   }
 
   @EventHandler
@@ -111,11 +101,16 @@ public final class WaitingListener implements Listener {
       return;
     }
 
-    if (event.getStatus() == HostAccessUpdateEvent.Status.ALLOWED) {
-      HOST_WAITING_ITEMS.forEach((slot, itemClass) -> this.setItem(player, slot, itemClass));
-    } else {
-      for (final var i : HOST_WAITING_ITEMS.keySet()) {
-        player.getInventory().setItem(i, new ItemStack(Material.AIR));
+    for (final WaitingItem item : this.ultraHardcore.itemService().findWaitingItems()) {
+      if (!item.item().isHostOnly()) {
+        continue;
+      }
+
+      final int slot = item.slot();
+      if (event.getStatus() == HostAccessUpdateEvent.Status.ALLOWED) {
+        this.setItem(player, slot, item.item().getClass());
+      } else {
+        player.getInventory().setItem(slot, new ItemStack(Material.AIR));
       }
     }
   }
