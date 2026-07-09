@@ -1,5 +1,4 @@
 plugins {
-  id("uhc.java-library-conventions")
   id("uhc.maven-publishing-conventions")
 }
 
