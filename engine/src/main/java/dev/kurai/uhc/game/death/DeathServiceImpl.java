@@ -1,5 +1,6 @@
 package dev.kurai.uhc.game.death;
 
+import static dev.kurai.uhc.util.CC.center;
 import static net.kyori.adventure.key.Key.key;
 import static net.kyori.adventure.text.format.NamedTextColor.*;
 
@@ -127,6 +128,15 @@ public final class DeathServiceImpl implements DeathService {
             droppedItems));
 
     profile.setState(new DeadProfileState());
+
+    profile.sendMessage("");
+    profile.sendMessage(center("&d&l»&r &lSPECTATEUR&d &l«"));
+    profile.sendMessage(center("Suite à votre&c mort&r, vous êtes devenu"));
+    profile.sendMessage(center("un&d spectateur&r de la&d partie&r."));
+    profile.sendMessage("");
+    profile.sendMessage(center("Utilisez la&c boussole&r dans votre&a inventaire"));
+    profile.sendMessage(center("pour accéder à l'interface&d spectateur&r."));
+    profile.sendMessage("");
   }
 
   private void dropAt(
