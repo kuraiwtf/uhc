@@ -15,5 +15,7 @@ public interface DeathService {
 
   void deathProcessor(final DeathProcessor deathProcessor);
 
+  void processDeath(final DeathContext context);
+
   void eliminate(final Profile profile, final @Nullable Profile killer, final boolean offline);
 }

@@ -298,7 +298,6 @@ public final class PlayingListener implements Listener {
     this.ultraHardcore
         .gameService()
         .deathService()
-        .deathProcessor()
         .processDeath(
             new DeathContext(
                 profile,

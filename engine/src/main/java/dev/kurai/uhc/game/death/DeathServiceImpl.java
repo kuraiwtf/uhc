@@ -7,6 +7,7 @@ import static net.kyori.adventure.text.format.NamedTextColor.*;
 import com.google.common.collect.Lists;
 import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.event.defaults.game.death.GameDeathEvent;
+import dev.kurai.uhc.event.defaults.game.death.GamePreDeathEvent;
 import dev.kurai.uhc.game.GameService;
 import dev.kurai.uhc.profile.Profile;
 import dev.kurai.uhc.profile.component.DeadComponent;
@@ -69,6 +70,44 @@ public final class DeathServiceImpl implements DeathService {
                   : this.ultraHardcore.profileService().getOrCreateProfile(killer),
               false);
         };
+  }
+
+  @Override
+  public void processDeath(final DeathContext context) {
+    final GamePreDeathEvent event =
+        new GamePreDeathEvent(context.profile(), context.killer(), context);
+    event.callEvent();
+
+    if (event.isCancelled()) {
+      this.revive(context.profile(), event.getRespawnLocation());
+      return;
+    }
+
+    this.deathProcessor.processDeath(context);
+  }
+
+  private void revive(final Profile profile, final @Nullable Location location) {
+    profile.executeAction(
+        player -> {
+          final Location target = location != null ? location : this.randomLocation();
+          player.spigot().respawn();
+          player.teleport(target);
+        });
+
+    profile.removeComponent(ProcessingDeathComponent.class);
+    profile.removeComponent(PlayerInformationComponent.class);
+  }
+
+  private Location randomLocation() {
+    final World world = this.ultraHardcore.worldService().getWorld();
+    final int radius = (int) (world.getWorldBorder().getSize() / 2);
+    return this.ultraHardcore
+        .gameService()
+        .scatterService()
+        .getPositionProvider()
+        .provideLocations(radius, 1)
+        .iterator()
+        .next();
   }
 
   @Override
