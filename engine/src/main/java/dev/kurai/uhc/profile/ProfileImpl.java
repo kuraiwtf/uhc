@@ -1,5 +1,7 @@
 package dev.kurai.uhc.profile;
 
+import static dev.kurai.uhc.util.packet.PacketWrapper.createPacketWrapper;
+
 import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.wrapper.PacketWrapper;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityAnimation;
@@ -227,7 +229,7 @@ public final class ProfileImpl implements Profile {
           }
 
           if (finalVisible) {
-            dev.kurai.uhc.util.packet.PacketWrapper.createPacketWrapper(
+            createPacketWrapper(
                     new WrapperPlayServerEntityAnimation(
                         player.getEntityId(),
                         WrapperPlayServerEntityAnimation.EntityAnimationType.HURT))
