@@ -35,6 +35,8 @@ import dev.kurai.uhc.tablist.updater.task.TabListUpdaterTask;
 import dev.kurai.uhc.timer.AbstractTimer;
 import dev.kurai.uhc.whitelist.WhitelistService;
 import dev.kurai.uhc.whitelist.WhitelistServiceImpl;
+import dev.kurai.uhc.win.WinService;
+import dev.kurai.uhc.win.WinServiceImpl;
 import dev.kurai.uhc.world.WorldService;
 import dev.kurai.uhc.world.WorldServiceImpl;
 import lombok.Getter;
@@ -62,6 +64,7 @@ public final class UltraHardcoreEngine extends UltraHardcoreAPI {
   private SidebarService sidebarService;
   private TabListService tabListService;
   private WhitelistService whitelistService;
+  private WinService winService;
   private WorldService worldService;
 
   public UltraHardcoreEngine(final Plugin plugin) {
@@ -93,6 +96,7 @@ public final class UltraHardcoreEngine extends UltraHardcoreAPI {
     this.profileService = new ProfileServiceImpl(this);
     this.tabListService = new TabListServiceImpl(this);
     this.whitelistService = new WhitelistServiceImpl();
+    this.winService = new WinServiceImpl(this.profileService);
     this.worldService = new WorldServiceImpl(this.plugin, this.profileService);
 
     this.worldService.preload(this.worldService.getWorld(), 1250);

@@ -12,6 +12,7 @@ import dev.kurai.uhc.profile.ProfileService;
 import dev.kurai.uhc.scoreboard.sidebar.SidebarService;
 import dev.kurai.uhc.tablist.TabListService;
 import dev.kurai.uhc.whitelist.WhitelistService;
+import dev.kurai.uhc.win.WinService;
 import dev.kurai.uhc.world.WorldService;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bukkit.plugin.Plugin;
@@ -73,6 +74,8 @@ public abstract class UltraHardcoreAPI {
   public abstract TabListService tabListService();
 
   public abstract WhitelistService whitelistService();
+
+  public abstract WinService winService();
 
   public abstract WorldService worldService();
 }
