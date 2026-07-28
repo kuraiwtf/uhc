@@ -265,13 +265,7 @@ public final class HostCommand {
     inventory.setContents(editorComponent.savedInventory());
     inventory.setArmorContents(editorComponent.savedArmor());
 
-    this.bukkitAudiences
-        .player(player)
-        .sendMessage(
-            prefix()
-                .append(text("Inventaire de départ ", NamedTextColor.GRAY))
-                .append(text("sauvegardé", NamedTextColor.GREEN, TextDecoration.BOLD))
-                .append(text(" avec succès!", NamedTextColor.GRAY))
-                .build());
+    player.setGameMode(GameMode.SURVIVAL);
+    player.sendMessage(CC.prefix("Vous venez de&a sauvegarder&r l'&ainventaire de départ&r."));
   }
 }
