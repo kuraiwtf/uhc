@@ -15,6 +15,7 @@ import dev.kurai.uhc.listener.game.PlayingListener;
 import dev.kurai.uhc.listener.game.SpectatorListener;
 import dev.kurai.uhc.module.power.listener.PowerListener;
 import dev.kurai.uhc.module.power.task.updater.CooldownUpdaterTask;
+import dev.kurai.uhc.module.power.task.updater.GlowingTargetUpdaterTask;
 import dev.kurai.uhc.profile.component.DisconnectComponent;
 import dev.kurai.uhc.profile.component.SpectatorComponent;
 import dev.kurai.uhc.profile.state.PlayingProfileState;
@@ -28,6 +29,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scheduler.BukkitTask;
 
 public final class StartServiceImpl implements StartService {
@@ -141,18 +143,22 @@ public final class StartServiceImpl implements StartService {
     worldBorder.setSize(initialSize);
     worldBorder.setCenter(0, 0);
 
-    Bukkit.getScheduler()
-        .runTaskTimer(
-            this.ultraHardcore.plugin(),
-            () -> Bukkit.getPluginManager().callEvent(new GameTickEvent()),
-            0,
-            1L);
-    Bukkit.getScheduler()
-        .runTaskTimerAsynchronously(
-            this.ultraHardcore.plugin(),
-            new CooldownUpdaterTask(this.ultraHardcore.profileService()),
-            0,
-            1L);
+    final BukkitScheduler scheduler = Bukkit.getScheduler();
+    scheduler.runTaskTimer(
+        this.ultraHardcore.plugin(),
+        () -> Bukkit.getPluginManager().callEvent(new GameTickEvent()),
+        0,
+        1L);
+    scheduler.runTaskTimerAsynchronously(
+        this.ultraHardcore.plugin(),
+        new CooldownUpdaterTask(this.ultraHardcore.profileService()),
+        0,
+        1L);
+    scheduler.runTaskTimerAsynchronously(
+        this.ultraHardcore.plugin(),
+        new GlowingTargetUpdaterTask(this.ultraHardcore.profileService()),
+        0,
+        1L);
 
     final var profileService = this.ultraHardcore.profileService();
     for (final var profile : profileService.getProfiles()) {
