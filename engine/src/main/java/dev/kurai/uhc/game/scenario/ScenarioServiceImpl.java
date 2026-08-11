@@ -25,7 +25,8 @@ public final class ScenarioServiceImpl implements ScenarioService {
         new NoFallScenario(ultraHardcore),
         new NoFoodScenario(ultraHardcore),
         new SafeMinersScenario(ultraHardcore),
-        new TimberScenario(ultraHardcore));
+        new TimberScenario(ultraHardcore),
+        new UnbreakableScenario(ultraHardcore));
   }
 
   @Override
