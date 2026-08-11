@@ -33,6 +33,10 @@ import dev.kurai.uhc.tablist.TabListService;
 import dev.kurai.uhc.tablist.service.TabListServiceImpl;
 import dev.kurai.uhc.tablist.updater.task.TabListUpdaterTask;
 import dev.kurai.uhc.timer.AbstractTimer;
+import dev.kurai.uhc.timer.TimerService;
+import dev.kurai.uhc.timer.builtin.BorderTimer;
+import dev.kurai.uhc.timer.builtin.InvincibilityTimer;
+import dev.kurai.uhc.timer.builtin.PvPTimer;
 import dev.kurai.uhc.whitelist.WhitelistService;
 import dev.kurai.uhc.whitelist.WhitelistServiceImpl;
 import dev.kurai.uhc.win.WinService;
@@ -112,11 +116,11 @@ public final class UltraHardcoreEngine extends UltraHardcoreAPI {
         new SpectatorCommand(this),
         new WhitelistCommand(this));
 
+    final TimerService timerService = this.gameService.timerService();
     this.commandRegistrar
         .getArgumentResolverRegistrar()
         .registerArgumentResolver(
-            AbstractTimer.class,
-            new TimerArgumentResolver(this.bukkitAudiences, this.gameService.timerService()));
+            AbstractTimer.class, new TimerArgumentResolver(this.bukkitAudiences, timerService));
 
     final EventManager eventManager = PacketEvents.getAPI().getEventManager();
 
@@ -143,5 +147,10 @@ public final class UltraHardcoreEngine extends UltraHardcoreAPI {
           new ItemStack(ARROW, 16),
           new ItemStack(GOLDEN_CARROT, 64)
         });
+
+    timerService.registerTimers(
+        new InvincibilityTimer(this),
+        new PvPTimer(this.worldService),
+        new BorderTimer(this.worldService, this.bukkitAudiences));
   }
 }

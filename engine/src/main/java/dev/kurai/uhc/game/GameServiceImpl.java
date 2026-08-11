@@ -27,9 +27,6 @@ import dev.kurai.uhc.game.start.StartServiceImpl;
 import dev.kurai.uhc.game.start.service.StartService;
 import dev.kurai.uhc.timer.TimerService;
 import dev.kurai.uhc.timer.TimerServiceImpl;
-import dev.kurai.uhc.timer.builtin.BorderTimer;
-import dev.kurai.uhc.timer.builtin.InvincibilityTimer;
-import dev.kurai.uhc.timer.builtin.PvPTimer;
 import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.audience.Audience;
@@ -72,13 +69,7 @@ public final class GameServiceImpl implements GameService {
     this.scenarioService = new ScenarioServiceImpl(ultraHardcore);
     this.slotService = new SlotServiceImpl();
     this.startService = new StartServiceImpl(ultraHardcore);
-
-    final var bukkitAudiences = ultraHardcore.bukkitAudiences();
-    (this.timerService = new TimerServiceImpl(ultraHardcore.plugin()))
-        .registerTimers(
-            new InvincibilityTimer(ultraHardcore),
-            new PvPTimer(ultraHardcore.worldService()),
-            new BorderTimer(ultraHardcore.worldService(), bukkitAudiences));
+    this.timerService = new TimerServiceImpl(ultraHardcore.plugin());
   }
 
   @Override
