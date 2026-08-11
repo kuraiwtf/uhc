@@ -138,6 +138,8 @@ public final class StartServiceImpl implements StartService {
     gameService.episodeService().start();
 
     final var world = this.ultraHardcore.worldService().getWorld();
+    world.setPVP(false);
+
     final var worldBorder = world.getWorldBorder();
     final var initialSize = BorderConfiguration.INITIAL_SIZE_OPTION.getValue() * 2;
     worldBorder.setSize(initialSize);
