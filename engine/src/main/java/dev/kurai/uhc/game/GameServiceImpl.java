@@ -78,7 +78,7 @@ public final class GameServiceImpl implements GameService {
         .registerTimers(
             new InvincibilityTimer(ultraHardcore),
             new PvPTimer(ultraHardcore.worldService()),
-            new BorderTimer(bukkitAudiences));
+            new BorderTimer(ultraHardcore.worldService(), bukkitAudiences));
   }
 
   @Override
