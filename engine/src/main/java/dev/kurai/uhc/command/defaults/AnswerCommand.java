@@ -104,8 +104,8 @@ public final class AnswerCommand {
 
     player.sendMessage(
         CC.prefix(
-            "Le ticket&6 #%s&r a été posé par&6 %s&r."
-                .formatted(id, ticketOptional.get().askerName())));
+            "Le joueur&6 %s&r a posé la question liée au help-op&6 #%s&r&r."
+                .formatted(ticketOptional.get().askerName(), id)));
   }
 
   @SubCommand(@CommandMeta(name = "liste"))
@@ -141,7 +141,7 @@ public final class AnswerCommand {
   private Optional<HelpOpTicket> resolveTicket(final Player player, final int id) {
     final var ticket = this.ultraHardcore.helpOpService().getTicket(id);
     if (ticket.isEmpty()) {
-      player.sendMessage(CC.prefix("Le ticket&6 #%s&r n'existe pas.".formatted(id)));
+      player.sendMessage(CC.prefix("La question&6 #%s&r n'existe pas.".formatted(id)));
     }
     return ticket;
   }
