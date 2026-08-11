@@ -34,6 +34,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Player;
@@ -53,6 +54,21 @@ public final class PlayingListener implements Listener {
 
   public PlayingListener(final UltraHardcoreAPI ultraHardcore) {
     this.ultraHardcore = ultraHardcore;
+  }
+
+  @EventHandler
+  public void onPreLogin(final AsyncPlayerPreLoginEvent event) {
+    final Profile profile =
+        this.ultraHardcore.profileService().getOrCreateProfile(event.getUniqueId());
+    final OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(event.getUniqueId());
+    if (!(profile.getState() instanceof PlayingProfileState)
+        && !offlinePlayer.isOp()
+        && !offlinePlayer.isWhitelisted()
+        && !GameConfiguration.SPECTATOR_OPTION.getValue()) {
+      event.disallow(
+          AsyncPlayerPreLoginEvent.Result.KICK_OTHER,
+          "Les spectateurs sont interdits dans la partie.");
+    }
   }
 
   @EventHandler
