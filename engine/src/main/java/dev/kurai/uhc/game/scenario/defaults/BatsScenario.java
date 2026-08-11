@@ -21,7 +21,7 @@ public final class BatsScenario extends AbstractScenario implements Listener {
       new IntegerScenarioConfiguration("rate", 99);
 
   public BatsScenario(final UltraHardcoreAPI ultraHardcore) {
-    super("bats", "Bats", ultraHardcore, ScenarioCategory.GAMEPLAY);
+    super("bats", "Bats", ultraHardcore, ScenarioCategory.MINING);
     this.registerConfiguration(RATE_CONFIGURATION);
   }
 
