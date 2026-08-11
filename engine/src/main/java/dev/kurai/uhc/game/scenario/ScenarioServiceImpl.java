@@ -16,6 +16,7 @@ public final class ScenarioServiceImpl implements ScenarioService {
     this.scenarios = Maps.newHashMap();
     this.registerScenarios(
         new ArmorReplaceScenario(ultraHardcore),
+        new BatsScenario(ultraHardcore),
         new BetaZombieScenario(ultraHardcore),
         new CobblestoneOnlyScenario(ultraHardcore),
         new CutCleanScenario(ultraHardcore),
