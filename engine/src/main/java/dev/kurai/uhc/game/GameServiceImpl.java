@@ -77,7 +77,7 @@ public final class GameServiceImpl implements GameService {
     (this.timerService = new TimerServiceImpl(ultraHardcore.plugin()))
         .registerTimers(
             new InvincibilityTimer(ultraHardcore),
-            new PvPTimer(bukkitAudiences),
+            new PvPTimer(ultraHardcore.worldService()),
             new BorderTimer(bukkitAudiences));
   }
 

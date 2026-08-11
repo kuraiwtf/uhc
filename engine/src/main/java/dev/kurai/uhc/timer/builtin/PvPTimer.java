@@ -1,13 +1,11 @@
 package dev.kurai.uhc.timer.builtin;
 
-import static net.kyori.adventure.text.Component.text;
-import static net.kyori.adventure.text.format.NamedTextColor.*;
-
 import dev.kurai.uhc.timer.AbstractTimer;
 import dev.kurai.uhc.timer.annotation.Duration;
+import dev.kurai.uhc.util.CC;
 import dev.kurai.uhc.util.api.annotation.Identifier;
 import dev.kurai.uhc.util.api.annotation.Name;
-import net.kyori.adventure.platform.bukkit.BukkitAudiences;
+import dev.kurai.uhc.world.WorldService;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 
@@ -18,20 +16,21 @@ public final class PvPTimer extends AbstractTimer {
 
   static final String IDENTIFIER = "pvp";
 
-  private final BukkitAudiences bukkitAudiences;
+  private final WorldService worldService;
 
-  public PvPTimer(final BukkitAudiences bukkitAudiences) {
-    this.bukkitAudiences = bukkitAudiences;
+  public PvPTimer(final WorldService worldService) {
+    this.worldService = worldService;
   }
 
   @Override
   public void onEnd() {
-    this.bukkitAudiences
-        .all()
-        .sendMessage(text("Le PvP est désormais ").append(text("actif", GREEN)).append(text('.')));
+    this.worldService.getWorld().setPVP(true);
 
     Bukkit.getOnlinePlayers()
         .forEach(
-            player -> player.playSound(player.getLocation(), Sound.ENDERDRAGON_GROWL, 1.0f, 1.0f));
+            player -> {
+              player.sendMessage(CC.prefix("Le PvP est désormais&a actif&r."));
+              player.playSound(player.getLocation(), Sound.ENDERDRAGON_GROWL, 1.0f, 1.0f);
+            });
   }
 }
