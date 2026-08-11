@@ -2,6 +2,7 @@ package dev.kurai.uhc.menu;
 
 import static dev.kurai.uhc.game.GameService.WHITELIST_OPTION;
 import static dev.kurai.uhc.util.CC.BAR;
+import static dev.kurai.uhc.util.CC.SQUARE;
 
 import com.google.common.collect.Lists;
 import dev.kurai.uhc.UltraHardcoreAPI;
@@ -31,20 +32,18 @@ import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
 
 public final class ConfigurationMenu extends Menu {
 
   private final UltraHardcoreAPI ultraHardcore;
 
-  public ConfigurationMenu(
-      final  Player player, final  UltraHardcoreAPI ultraHardcore) {
+  public ConfigurationMenu(final Player player, final UltraHardcoreAPI ultraHardcore) {
     super("Configuration de la partie", MenuSize.SIX, player);
     this.ultraHardcore = ultraHardcore;
   }
 
   @Override
-  public void setup(final  BackgroundLayer back, final  ForegroundLayer front) {
+  public void setup(final BackgroundLayer back, final ForegroundLayer front) {
     this.apply(new BorderTemplate(DyeColor.ORANGE.getData()));
 
     front.set(13, new SlotsButton(this.ultraHardcore.gameService().slotService()));
@@ -122,15 +121,23 @@ public final class ConfigurationMenu extends Menu {
     private final EventService eventService;
     private final ScenarioService scenarioService;
 
-    private ScenarioButton(
-        final  EventService eventService, final  ScenarioService scenarioService) {
+    private ScenarioButton(final EventService eventService, final ScenarioService scenarioService) {
       this.eventService = eventService;
       this.scenarioService = scenarioService;
     }
 
     @Override
     public ItemStack getIcon() {
-      return new ItemBuilder(Material.BOOK).name("&a&lScénarios").glowing(true).asItemStack();
+      return new ItemBuilder(Material.BOOK_AND_QUILL)
+          .name("&a&lScénarios")
+          .lore(
+              "",
+              "&7" + BAR + "&r Permet de configurer",
+              "  les&a scénarios&r de la",
+              "  &dpartie&r.",
+              "")
+          .glowing(true)
+          .asItemStack();
     }
 
     @Override
@@ -153,7 +160,12 @@ public final class ConfigurationMenu extends Menu {
       return new ItemBuilder(Material.BANNER)
           .data(DyeColor.RED.getDyeData())
           .name("&a&lÉquipes")
-          .lore("", "&7" + BAR + "&f Permet d'accéder aux&c paramètres", "&f  des équipes.", "")
+          .lore(
+              "",
+              "&7" + BAR + "&f Permet d'accéder",
+              "&f  aux&c paramètres",
+              "&f  des équipes.",
+              "")
           .asItemStack();
     }
 
@@ -214,7 +226,7 @@ public final class ConfigurationMenu extends Menu {
     private final Player player;
     private final AbstractModule module;
 
-    private ModuleButton(final  Player player, final  AbstractModule module) {
+    private ModuleButton(final Player player, final AbstractModule module) {
       this.player = player;
       this.module = module;
     }
@@ -263,10 +275,17 @@ public final class ConfigurationMenu extends Menu {
     @Override
     public ItemStack getIcon() {
       return new ItemBuilder(Material.MINECART)
-          .name(
-              "&6&lAccès à la partie&8 ("
-                  + (WHITELIST_OPTION.getValue() ? "&cFermée" : "&aOuverte")
-                  + "&8)")
+          .name("&6&lAccès à la partie")
+          .lore(
+              "",
+              "&6 "
+                  + SQUARE
+                  + "&r Accès: "
+                  + (WHITELIST_OPTION.getValue() ? "&cFermé" : "&aPublic"),
+              "",
+              "&7" + BAR + "&r Permet de configurer",
+              "  l'accès à la&d partie&r.",
+              "")
           .glowing(!WHITELIST_OPTION.getValue())
           .asItemStack();
     }
@@ -282,7 +301,7 @@ public final class ConfigurationMenu extends Menu {
 
     private final StartService startService;
 
-    private StartButton(final  StartService startService) {
+    private StartButton(final StartService startService) {
       this.startService = startService;
     }
 
