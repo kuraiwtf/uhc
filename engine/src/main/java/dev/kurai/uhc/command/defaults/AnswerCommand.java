@@ -44,7 +44,7 @@ public final class AnswerCommand {
         CC.prefix("Vous avez été téléporté au joueur du ticket&6 #%s&r.".formatted(id)));
   }
 
-  @SubCommand(@CommandMeta(name = "inventaire"))
+  @SubCommand(@CommandMeta(name = "inv"))
   public void inventory(final Player player, final @Argument(name = "id") int id) {
     if (!this.hasAccess(player)) {
       return;
@@ -64,7 +64,7 @@ public final class AnswerCommand {
     player.openInventory(target.getInventory());
   }
 
-  @SubCommand(@CommandMeta(name = "repondre"))
+  @SubCommand(@CommandMeta(name = "msg"))
   public void reply(
       final Player player,
       final @Argument(name = "id") int id,
@@ -91,7 +91,7 @@ public final class AnswerCommand {
     player.sendMessage(CC.prefix("Votre réponse a été envoyée au ticket&6 #%s&r.".formatted(id)));
   }
 
-  @SubCommand(@CommandMeta(name = "qui"))
+  @SubCommand(@CommandMeta(name = "whois"))
   public void who(final Player player, final @Argument(name = "id") int id) {
     if (!this.hasAccess(player)) {
       return;

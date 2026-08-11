@@ -37,21 +37,21 @@ public final class HelpOpServiceImpl implements HelpOpService {
             NamedTextColor.YELLOW,
             "Voir son inventaire.",
             false,
-            id -> "/helpopanswer inventaire " + id));
+            id -> "/helpopanswer inv " + id));
     this.registerAction(
         new HelpOpAction(
             "Répondre",
             NamedTextColor.AQUA,
             "Lui répondre.",
             true,
-            id -> "/helpopanswer repondre " + id + " "));
+            id -> "/helpopanswer msg " + id + " "));
     this.registerAction(
         new HelpOpAction(
             "Pseudo",
             NamedTextColor.LIGHT_PURPLE,
             "Voir son pseudo.",
             false,
-            id -> "/helpopanswer qui " + id));
+            id -> "/helpopanswer whois " + id));
   }
 
   @Override
