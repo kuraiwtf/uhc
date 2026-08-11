@@ -1,5 +1,7 @@
 package dev.kurai.uhc.command.defaults;
 
+import static dev.kurai.uhc.util.CC.prefix;
+
 import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.command.annotation.Command;
 import dev.kurai.uhc.command.annotation.CommandMeta;
@@ -35,13 +37,13 @@ public final class AnswerCommand {
 
     final var target = Bukkit.getPlayer(ticketOptional.get().askerId());
     if (target == null) {
-      player.sendMessage(CC.prefix("Ce joueur n'est&c plus en ligne&r."));
+      player.sendMessage(prefix("Ce joueur n'est&c plus en ligne&r."));
       return;
     }
 
     player.teleport(target.getLocation());
     player.sendMessage(
-        CC.prefix("Vous avez été téléporté au joueur du ticket&6 #%s&r.".formatted(id)));
+        prefix("Vous avez été téléporté au joueur du help-op&6 #%s&r.".formatted(id)));
   }
 
   @SubCommand(@CommandMeta(name = "inv"))
@@ -57,7 +59,7 @@ public final class AnswerCommand {
 
     final var target = Bukkit.getPlayer(ticketOptional.get().askerId());
     if (target == null) {
-      player.sendMessage(CC.prefix("Ce joueur n'est&c plus en ligne&r."));
+      player.sendMessage(prefix("Ce joueur n'est&c plus en ligne&r."));
       return;
     }
 
@@ -80,15 +82,13 @@ public final class AnswerCommand {
 
     final var target = Bukkit.getPlayer(ticketOptional.get().askerId());
     if (target == null) {
-      player.sendMessage(CC.prefix("Ce joueur n'est&c plus en ligne&r."));
+      player.sendMessage(prefix("Ce joueur n'est&c plus en ligne&r."));
       return;
     }
 
     final var response = String.join(" ", message);
-    target.sendMessage(
-        CC.prefix(
-            "&d[HelpOp #%s]&r Un membre de l'équipe vous répond&7:&r %s".formatted(id, response)));
-    player.sendMessage(CC.prefix("Votre réponse a été envoyée au ticket&6 #%s&r.".formatted(id)));
+    target.sendMessage(prefix("Un membre de l'équipe vous a répondu&7:&a %s".formatted(response)));
+    player.sendMessage(prefix("Votre réponse a été envoyée au help-op&6 #%s&r.".formatted(id)));
   }
 
   @SubCommand(@CommandMeta(name = "whois"))
@@ -103,7 +103,7 @@ public final class AnswerCommand {
     }
 
     player.sendMessage(
-        CC.prefix(
+        prefix(
             "Le joueur&6 %s&r a posé la question liée au help-op&6 #%s&r&r."
                 .formatted(ticketOptional.get().askerName(), id)));
   }
@@ -116,11 +116,11 @@ public final class AnswerCommand {
 
     final var tickets = this.ultraHardcore.helpOpService().getTickets();
     if (tickets.isEmpty()) {
-      player.sendMessage(CC.prefix("Il n'y a aucune question en attente."));
+      player.sendMessage(prefix("Il n'y a aucune question en attente."));
       return;
     }
 
-    player.sendMessage(CC.prefix("Voici la liste des questions en attente&7:"));
+    player.sendMessage(prefix("Voici la liste des questions en attente&7:"));
     for (final var ticket : tickets) {
       player.sendMessage(
           CC.colorize("&8 -&r &6#%s&r: %s".formatted(ticket.id(), ticket.question())));
@@ -134,14 +134,14 @@ public final class AnswerCommand {
       return true;
     }
 
-    player.sendMessage(CC.prefix("Vous n'avez pas la permission d'effectuer cette action."));
+    player.sendMessage(prefix("Vous n'avez pas la permission d'effectuer cette action."));
     return false;
   }
 
   private Optional<HelpOpTicket> resolveTicket(final Player player, final int id) {
     final var ticket = this.ultraHardcore.helpOpService().getTicket(id);
     if (ticket.isEmpty()) {
-      player.sendMessage(CC.prefix("La question&6 #%s&r n'existe pas.".formatted(id)));
+      player.sendMessage(prefix("La question&6 #%s&r n'existe pas.".formatted(id)));
     }
     return ticket;
   }
