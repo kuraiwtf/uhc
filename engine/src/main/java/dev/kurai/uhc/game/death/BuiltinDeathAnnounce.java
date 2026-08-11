@@ -1,12 +1,11 @@
 package dev.kurai.uhc.game.death;
 
 import static net.kyori.adventure.text.Component.text;
-import static net.kyori.adventure.text.format.NamedTextColor.*;
-import static net.kyori.adventure.text.format.NamedTextColor.YELLOW;
-import static net.kyori.adventure.text.format.TextDecoration.BOLD;
+import static net.kyori.adventure.text.minimessage.MiniMessage.miniMessage;
+import static net.kyori.adventure.text.minimessage.tag.Tag.inserting;
+import static net.kyori.adventure.text.minimessage.tag.resolver.TagResolver.resolver;
 
 import dev.kurai.uhc.profile.Profile;
-import dev.kurai.uhc.util.CC;
 import net.kyori.adventure.text.Component;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
@@ -17,19 +16,18 @@ public final class BuiltinDeathAnnounce implements DeathAnnounce {
   @Override
   public Component provideDeathMessage(
       final Profile profile, final @Nullable Profile killer, final boolean offline) {
-    final String killerName =
-        offline ? "déconnexion" : (killer == null ? "Rien" : killer.getName());
+    if (killer == null) {
+      return miniMessage()
+          .deserialize(
+              "<yellow><b>UHC</b></yellow> <gray><b>|</b></gray> <red><victim></red> est mort.",
+              resolver("victim", inserting(text(profile.getName()))));
+    }
 
-    return text()
-        .append(text("UHC", YELLOW, BOLD))
-        .appendSpace()
-        .append(text(CC.BAR, GRAY, BOLD))
-        .appendSpace()
-        .append(text(profile.getName(), RED))
-        .appendSpace()
-        .append(text("est mort de "))
-        .append(text(killerName, RED))
-        .append(text('.'))
-        .build();
+    return miniMessage()
+        .deserialize(
+            "<yellow><b>UHC</b></yellow> <gray><b>|</b></gray> <red><victim></red> est mort de <red><killer></red>.",
+            resolver(
+                resolver("victim", inserting(text(profile.getName()))),
+                resolver("killer", inserting(text(killer.getName())))));
   }
 }
