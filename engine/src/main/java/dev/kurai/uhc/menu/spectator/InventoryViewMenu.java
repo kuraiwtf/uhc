@@ -11,6 +11,7 @@ import dev.kurai.uhc.util.ItemBuilder;
 import java.text.DecimalFormat;
 import net.j4c0b3y.api.menu.Menu;
 import net.j4c0b3y.api.menu.MenuSize;
+import net.j4c0b3y.api.menu.annotation.AutoUpdate;
 import net.j4c0b3y.api.menu.button.Button;
 import net.j4c0b3y.api.menu.layer.impl.BackgroundLayer;
 import net.j4c0b3y.api.menu.layer.impl.ForegroundLayer;
@@ -22,6 +23,7 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 
+@AutoUpdate(2)
 public final class InventoryViewMenu extends Menu {
 
   private final Player target;
