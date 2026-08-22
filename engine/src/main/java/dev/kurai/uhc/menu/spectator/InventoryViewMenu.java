@@ -1,12 +1,13 @@
 package dev.kurai.uhc.menu.spectator;
 
+import static dev.kurai.uhc.util.CC.*;
+
 import com.google.common.collect.Lists;
 import dev.kurai.uhc.menu.button.GlassButton;
 import dev.kurai.uhc.menu.button.ItemButton;
 import dev.kurai.uhc.module.power.AbstractPower;
 import dev.kurai.uhc.module.power.restriction.PowerRestriction;
 import dev.kurai.uhc.profile.Profile;
-import dev.kurai.uhc.util.CC;
 import dev.kurai.uhc.util.ItemBuilder;
 import java.text.DecimalFormat;
 import net.j4c0b3y.api.menu.Menu;
@@ -96,15 +97,22 @@ public final class InventoryViewMenu extends Menu {
           .name("&c&lSanté")
           .lore(
               "",
-              "Vie: &c" + decimalFormat.format(this.target.getHealth() / 2) + "§4" + CC.HEART,
-              "Absorption: &e"
+              "&c "
+                  + SQUARE
+                  + "Vie: &c"
+                  + decimalFormat.format(this.target.getHealth() / 2)
+                  + "§4"
+                  + HEART,
+              "&e "
+                  + SQUARE
+                  + "Absorption: &e"
                   + decimalFormat.format(
                       ((CraftPlayer) this.target).getHandle().getAbsorptionHearts() / 2)
                   + "§6"
-                  + CC.HEART,
+                  + HEART,
               "",
-              "Nourriture: &a" + decimalFormat.format(this.target.getFoodLevel()),
-              "Saturation: &a" + decimalFormat.format(this.target.getSaturation()),
+              "&a " + SQUARE + "Nourriture: &a" + decimalFormat.format(this.target.getFoodLevel()),
+              "&a " + SQUARE + "Saturation: &a" + decimalFormat.format(this.target.getSaturation()),
               "")
           .asItemStack();
     }
@@ -126,7 +134,7 @@ public final class InventoryViewMenu extends Menu {
       lines.add("");
       final var powers = this.profile.getPowers();
       if (powers.isEmpty()) {
-        lines.add("&c " + CC.SQUARE + "&r Aucun pouvoir");
+        lines.add("&c " + SQUARE + "&r Aucun pouvoir");
       } else {
         for (final AbstractPower power : powers) {
           boolean restricted = false;
@@ -140,7 +148,7 @@ public final class InventoryViewMenu extends Menu {
 
           lines.add(
               "&a "
-                  + CC.SQUARE
+                  + SQUARE
                   + "&r "
                   + power.getName()
                   + " "
@@ -167,12 +175,12 @@ public final class InventoryViewMenu extends Menu {
       lines.add("");
       final var effects = this.target.getActivePotionEffects();
       if (effects.isEmpty()) {
-        lines.add("&c " + CC.SQUARE + "&r Aucun effet");
+        lines.add("&c " + SQUARE + "&r Aucun effet");
       } else {
         for (final PotionEffect effect : effects) {
           lines.add(
               "&d "
-                  + CC.SQUARE
+                  + SQUARE
                   + "&r "
                   + effect.getType().getName()
                   + ": &d"
@@ -211,14 +219,29 @@ public final class InventoryViewMenu extends Menu {
           .name("&b&l%s".formatted(this.target.getName()))
           .lore(
               "",
-              "Éliminations:&c %d &8(&c%d&8)"
-                  .formatted(this.profile.kills(), this.profile.assists()),
+              "&c "
+                  + SQUARE
+                  + "&r Éliminations:&c %d &8(&c%d&8)"
+                      .formatted(this.profile.kills(), this.profile.assists()),
               "",
-              "Position: &b%.1f&f, &b%.1f&f, &b%.1f&f"
-                  .formatted(location.getX(), location.getY(), location.getZ()),
-              "Monde: &b%s".formatted(location.getWorld().getName()),
+              "&b "
+                  + SQUARE
+                  + "&r Position: &b%.1f&f, &b%.1f&f, &b%.1f&f"
+                      .formatted(location.getX(), location.getY(), location.getZ()),
+              "&b " + SQUARE + "&r Monde: &b%s".formatted(location.getWorld().getName()),
               "",
-              "Feu: &c%d ticks".formatted(Math.max(0, this.target.getFireTicks())),
+              "&a "
+                  + SQUARE
+                  + "&r Feu: &c%d ticks".formatted(Math.max(0, this.target.getFireTicks())),
+              "&a "
+                  + SQUARE
+                  + "&r En l'air: %s".formatted((this.target.isOnGround() ? "&cNon" : "&aOui")),
+              "&a "
+                  + SQUARE
+                  + "&r Marche: &a%.1f%%".formatted(((this.target.getWalkSpeed() / 0.2) * 100)),
+              "&a "
+                  + SQUARE
+                  + "&r Vol: &a%.1f%%".formatted(((this.target.getFlySpeed() / 0.1) * 100)),
               "")
           .skullOwner(this.target.getName())
           .asItemStack();
