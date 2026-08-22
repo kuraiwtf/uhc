@@ -8,6 +8,8 @@ import dev.kurai.uhc.command.annotation.CommandMeta;
 import dev.kurai.uhc.command.annotation.SubCommand;
 import dev.kurai.uhc.command.argument.annotation.Argument;
 import dev.kurai.uhc.helpop.HelpOpTicket;
+import dev.kurai.uhc.menu.spectator.InventoryViewMenu;
+import dev.kurai.uhc.profile.Profile;
 import dev.kurai.uhc.profile.component.SpectatorComponent;
 import dev.kurai.uhc.util.CC;
 import java.util.Optional;
@@ -63,7 +65,8 @@ public final class AnswerCommand {
       return;
     }
 
-    player.openInventory(target.getInventory());
+    final Profile profile = this.ultraHardcore.profileService().getOrCreateProfile(target);
+    new InventoryViewMenu(player, target, profile).open();
   }
 
   @SubCommand(@CommandMeta(name = "msg"))
