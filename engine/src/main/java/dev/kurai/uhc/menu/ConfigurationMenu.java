@@ -54,11 +54,11 @@ public final class ConfigurationMenu extends Menu {
             this.ultraHardcore.eventService(), this.ultraHardcore.gameService().scenarioService()));
 
     final var module = this.ultraHardcore.moduleService().getCurrentModule();
-    if (module instanceof final TeamModule teamModule) {
-      front.set(30, new TeamButton(teamModule));
-    } else {
-      back.set(30, new TeamDisabledButton());
-    }
+    //    if (module instanceof final TeamModule teamModule) {
+    //      front.set(30, new TeamButton(teamModule));
+    //    } else {
+    back.set(30, new TeamDisabledButton());
+    //    }
 
     front.set(31, new SettingsButton(this.ultraHardcore));
 
