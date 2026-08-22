@@ -29,7 +29,7 @@ public final class ScatterServiceImpl implements ScatterService {
             final int x = (int) (center.getX() + radius * Math.cos(angle));
             final int z = (int) (center.getZ() + radius * Math.sin(angle));
 
-            locations.add(world.getHighestBlockAt(x, z).getLocation());
+            locations.add(world.getHighestBlockAt(x, z).getLocation().add(0, 1, 0));
           }
 
           return locations;
