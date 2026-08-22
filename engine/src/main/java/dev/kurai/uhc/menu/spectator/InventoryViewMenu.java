@@ -97,22 +97,28 @@ public final class InventoryViewMenu extends Menu {
           .name("&c&lSanté")
           .lore(
               "",
-              "&c "
+              "&8 "
                   + SQUARE
-                  + "Vie: &c"
+                  + "&r Vie: &c"
                   + decimalFormat.format(this.target.getHealth() / 2)
                   + "§4"
                   + HEART,
-              "&e "
+              "&8 "
                   + SQUARE
-                  + "Absorption: &e"
+                  + "&r Absorption: &e"
                   + decimalFormat.format(
                       ((CraftPlayer) this.target).getHandle().getAbsorptionHearts() / 2)
                   + "§6"
                   + HEART,
               "",
-              "&a " + SQUARE + "Nourriture: &a" + decimalFormat.format(this.target.getFoodLevel()),
-              "&a " + SQUARE + "Saturation: &a" + decimalFormat.format(this.target.getSaturation()),
+              "&8 "
+                  + SQUARE
+                  + "&r Nourriture: &a"
+                  + decimalFormat.format(this.target.getFoodLevel()),
+              "&8 "
+                  + SQUARE
+                  + "&r Saturation: &a"
+                  + decimalFormat.format(this.target.getSaturation()),
               "")
           .asItemStack();
     }
@@ -134,7 +140,7 @@ public final class InventoryViewMenu extends Menu {
       lines.add("");
       final var powers = this.profile.getPowers();
       if (powers.isEmpty()) {
-        lines.add("&c " + SQUARE + "&r Aucun pouvoir");
+        lines.add("&8 " + SQUARE + "&r Aucun pouvoir");
       } else {
         for (final AbstractPower power : powers) {
           boolean restricted = false;
@@ -147,7 +153,7 @@ public final class InventoryViewMenu extends Menu {
           }
 
           lines.add(
-              "&a "
+              "&8 "
                   + SQUARE
                   + "&r "
                   + power.getName()
@@ -175,11 +181,11 @@ public final class InventoryViewMenu extends Menu {
       lines.add("");
       final var effects = this.target.getActivePotionEffects();
       if (effects.isEmpty()) {
-        lines.add("&c " + SQUARE + "&r Aucun effet");
+        lines.add("&8 " + SQUARE + "&r Aucun effet");
       } else {
         for (final PotionEffect effect : effects) {
           lines.add(
-              "&d "
+              "&8 "
                   + SQUARE
                   + "&r "
                   + effect.getType().getName()
@@ -219,27 +225,27 @@ public final class InventoryViewMenu extends Menu {
           .name("&b&l%s".formatted(this.target.getName()))
           .lore(
               "",
-              "&c "
+              "&8 "
                   + SQUARE
                   + "&r Éliminations:&c %d &8(&c%d&8)"
                       .formatted(this.profile.kills(), this.profile.assists()),
               "",
-              "&b "
+              "&8 "
                   + SQUARE
                   + "&r Position: &b%.1f&f, &b%.1f&f, &b%.1f&f"
                       .formatted(location.getX(), location.getY(), location.getZ()),
-              "&b " + SQUARE + "&r Monde: &b%s".formatted(location.getWorld().getName()),
+              "&8 " + SQUARE + "&r Monde: &b%s".formatted(location.getWorld().getName()),
               "",
-              "&a "
+              "&8 "
                   + SQUARE
                   + "&r Feu: &c%d ticks".formatted(Math.max(0, this.target.getFireTicks())),
-              "&a "
+              "&8 "
                   + SQUARE
                   + "&r En l'air: %s".formatted((this.target.isOnGround() ? "&cNon" : "&aOui")),
-              "&a "
+              "&8 "
                   + SQUARE
                   + "&r Marche: &a%.1f%%".formatted(((this.target.getWalkSpeed() / 0.2) * 100)),
-              "&a "
+              "&8 "
                   + SQUARE
                   + "&r Vol: &a%.1f%%".formatted(((this.target.getFlySpeed() / 0.1) * 100)),
               "")
