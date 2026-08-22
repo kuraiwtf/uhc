@@ -22,6 +22,7 @@ public final class WorldServiceImpl implements WorldService {
     this.world.setGameRuleValue("doWeatherCycle", "false");
     this.world.setGameRuleValue("doFireTick", "false");
     this.world.setGameRuleValue("naturalRegeneration", "false");
+    this.world.setGameRuleValue("doTileDrops", "true");
     this.world.setSpawnLocation(0, 200, 0);
   }
 
