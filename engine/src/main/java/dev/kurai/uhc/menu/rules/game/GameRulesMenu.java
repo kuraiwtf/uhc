@@ -58,8 +58,12 @@ public final class GameRulesMenu extends PaginatedMenu {
       final ChatColor color = this.rule.color();
       return new ItemBuilder(this.rule.icon())
           .name(color + "&l" + this.rule.getName())
-          .lore("", color + " " + SQUARE + "&r Statut: " + color + this.rule.state(), "")
+          .lore(
+              "",
+              color + " " + SQUARE + "&r Statut: " + (this.rule.state() ? "&aOui" : "&cNon"),
+              "")
           .glowing(this.rule.state())
+          .amount(this.rule.state() ? 1 : 0)
           .asItemStack();
     }
 
