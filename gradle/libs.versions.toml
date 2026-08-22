@@ -22,6 +22,8 @@ actionbar-api = '0.0.6'
 
 jackson = "2.18.3"
 
+fastutil = "8.5.19"
+
 [plugins]
 shadow = { id = 'com.gradleup.shadow', version.ref = 'shadow' }
 
@@ -52,6 +54,8 @@ jackson-core = { module = "com.fasterxml.jackson.core:jackson-core", version.ref
 jackson-databind = { module = "com.fasterxml.jackson.core:jackson-databind", version.ref = "jackson" }
 jackson-datatype-jdk8 = { module = "com.fasterxml.jackson.datatype:jackson-datatype-jdk8", version.ref = "jackson" }
 jackson-datatype-jsr310 = { module = "com.fasterxml.jackson.datatype:jackson-datatype-jsr310", version.ref = "jackson" }
+
+fastutil = { module = "it.unimi.dsi:fastutil", version.ref = "fastutil" }
 
 [bundles]
 apollo = ['apollo-api', 'apollo-wrapper']

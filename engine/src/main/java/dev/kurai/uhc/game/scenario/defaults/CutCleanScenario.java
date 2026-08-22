@@ -65,10 +65,8 @@ public final class CutCleanScenario extends AbstractScenario implements Listener
     }
 
     final var smeltedMaterial = ALLOWED_MATERIALS.get(blockType);
-
     final var drops = block.getDrops();
-
-    event.setDropItems(false);
+    event.getBlock().setType(AIR);
     event.setExpToDrop(0);
     player.giveExp(ThreadLocalRandom.current().nextInt(2, 6));
 

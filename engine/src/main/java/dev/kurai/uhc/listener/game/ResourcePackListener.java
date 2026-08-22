@@ -2,7 +2,6 @@ package dev.kurai.uhc.listener.game;
 
 import static dev.kurai.uhc.util.CC.prefix;
 import static dev.kurai.uhc.util.packet.PacketWrapper.createPacketWrapper;
-import static net.kyori.adventure.text.Component.text;
 
 import com.github.retrooper.packetevents.event.PacketListenerAbstract;
 import com.github.retrooper.packetevents.event.PacketReceiveEvent;
@@ -70,9 +69,8 @@ public final class ResourcePackListener extends PacketListenerAbstract implement
         MinecraftServer.getServer()
             .postToMainThread(
                 () ->
-                    player.kick(
-                        text(
-                            "Vous avez refusé le pack de ressources, vous avez alors été expulsé de la partie.")));
+                    player.kickPlayer(
+                        "Le pack étant obligatoire, vous avez été expulsé de la partie pour l'avoir refusé."));
       }
     }
   }

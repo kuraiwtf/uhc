@@ -419,7 +419,7 @@ public final class PlayingListener implements Listener {
         event.getPlayer().getInventory().addItem(new ItemStack(Material.GOLD_INGOT, 2));
       }
 
-      event.setDropItems(false);
+      event.getBlock().setType(AIR);
       return;
     }
 

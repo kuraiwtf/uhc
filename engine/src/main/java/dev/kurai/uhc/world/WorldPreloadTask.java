@@ -11,7 +11,6 @@ import java.time.Duration;
 import java.time.Instant;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
-import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -45,7 +44,7 @@ public final class WorldPreloadTask extends BukkitRunnable {
   @Override
   public void run() {
     for (int i = 0; i <= CHUNKS_PER_TICK; i++) {
-      this.world.getChunkAtAsync(this.currentX >> 4, this.currentZ >> 4, Chunk::load);
+      this.world.getChunkAt(this.currentX >> 4, this.currentZ >> 4).load();
 
       for (final Profile profile : this.profileService.getProfiles()) {
         final Actionbar actionbar = profile.getActionbar();

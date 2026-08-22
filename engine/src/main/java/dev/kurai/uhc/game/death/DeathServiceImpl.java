@@ -76,7 +76,7 @@ public final class DeathServiceImpl implements DeathService {
   public void processDeath(final DeathContext context) {
     final GamePreDeathEvent event =
         new GamePreDeathEvent(context.profile(), context.killer(), context);
-    event.callEvent();
+    Bukkit.getPluginManager().callEvent(event);
 
     if (event.isCancelled()) {
       this.revive(context.profile(), event.getRespawnLocation());
@@ -120,7 +120,7 @@ public final class DeathServiceImpl implements DeathService {
           player.teleport(this.ultraHardcore.worldService().getWorld().getSpawnLocation());
         });
 
-    new GameDeathEvent(killer, profile).callEvent();
+    Bukkit.getPluginManager().callEvent(new GameDeathEvent(killer, profile));
 
     final PlayerInformationComponent component =
         profile.getComponent(PlayerInformationComponent.class);

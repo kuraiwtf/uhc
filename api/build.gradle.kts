@@ -18,6 +18,7 @@ dependencies {
   api(libs.entity.lib)
   api(libs.actionbar.api)
   api(libs.lombok)
+  api(libs.fastutil)
   annotationProcessor(libs.lombok)
   compileOnly(libs.packetevents.spigot)
   compileOnly(libs.spigot)

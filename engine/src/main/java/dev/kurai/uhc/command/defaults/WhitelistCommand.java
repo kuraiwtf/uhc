@@ -1,7 +1,6 @@
 package dev.kurai.uhc.command.defaults;
 
 import static dev.kurai.uhc.util.CC.*;
-import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.format.NamedTextColor.*;
 
 import dev.kurai.uhc.UltraHardcoreAPI;
@@ -32,46 +31,30 @@ public final class WhitelistCommand {
   @SubCommand(@CommandMeta(name = "add", description = "Ajouter un joueur à la liste blanche."))
   public void add(final Player player, final @Argument(name = "joueurs") OfflinePlayer[] players) {
     final WhitelistService whitelistService = this.ultraHardcore.whitelistService();
-    final var message = text();
-    for (var i = 0; i < players.length; i++) {
-      final var target = players[i];
-      if (i > 0) {
-        message.appendNewline();
-      }
-
+    for (final OfflinePlayer target : players) {
       if (whitelistService.isWhitelisted(target.getUniqueId())) {
-        message.append(text(BURGER, GOLD).appendSpace().append(text(target.getName())));
+        player.sendMessage("§6" + BURGER + " " + target.getName());
         continue;
       }
 
       whitelistService.whitelist(player.getUniqueId(), target.getUniqueId(), "Whitelist Manuelle");
-      message.append(text(CHECKMARK, GREEN).appendSpace().append(text(target.getName())));
+      player.sendMessage("§a" + CHECKMARK + " " + target.getName());
     }
-
-    player.sendMessage(message);
   }
 
   @SubCommand(@CommandMeta(name = "remove", description = "Retirer un joueur de la liste blanche."))
   public void remove(
       final Player player, final @Argument(name = "joueurs") OfflinePlayer[] players) {
     final WhitelistService whitelistService = this.ultraHardcore.whitelistService();
-    final var message = text();
-    for (var i = 0; i < players.length; i++) {
-      final var target = players[i];
-      if (i > 0) {
-        message.appendNewline();
-      }
-
+    for (final OfflinePlayer target : players) {
       if (!whitelistService.isWhitelisted(target.getUniqueId())) {
-        message.append(text(BURGER, GOLD).appendSpace().append(text(target.getName())));
+        player.sendMessage("§6" + BURGER + " " + target.getName());
         continue;
       }
 
       whitelistService.unwhitelist(target.getUniqueId());
-      message.append(text(CROSS, RED).appendSpace().append(text(target.getName())));
+      player.sendMessage("§c" + CROSS + " " + target.getName());
     }
-
-    player.sendMessage(message);
   }
 
   @SubCommand(@CommandMeta(name = "clear", description = "Vider la liste blanche."))
