@@ -21,7 +21,7 @@ public final class UnbreakableScenario extends AbstractScenario implements Liste
   }
 
   @EventHandler
-  public void onEntityDeath(final PlayerItemDamageEvent event) {
+  public void onItemDamage(final PlayerItemDamageEvent event) {
     event.setCancelled(true);
   }
 }
