@@ -1,27 +1,32 @@
 package dev.kurai.uhc.world;
 
+import static dev.kurai.uhc.util.TimeUtil.formatDuration;
+import static java.time.Duration.between;
+import static java.time.Instant.now;
 import static net.kyori.adventure.text.Component.*;
+import static net.kyori.adventure.text.format.NamedTextColor.GREEN;
+import static net.kyori.adventure.text.format.TextDecoration.BOLD;
 
 import dev.kurai.actionbar.Actionbar;
 import dev.kurai.uhc.adventure.UltraHardcoreKey;
 import dev.kurai.uhc.profile.Profile;
 import dev.kurai.uhc.profile.ProfileService;
-import dev.kurai.uhc.util.TimeUtil;
-import java.time.Duration;
 import java.time.Instant;
-import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.format.TextDecoration;
+import java.util.concurrent.CompletableFuture;
 import org.bukkit.World;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public final class WorldPreloadTask extends BukkitRunnable {
 
-  private static final int CHUNKS_PER_TICK = 8;
+  private static final int CHUNKS_PER_TICK = 10;
 
   private final ProfileService profileService;
 
   private final World world;
   private final int borderSize;
+
+  private final int totalChunks;
+  private int loadedChunks;
 
   private int currentX;
   private int currentZ;
@@ -38,44 +43,37 @@ public final class WorldPreloadTask extends BukkitRunnable {
     this.currentX = -borderSize;
     this.currentZ = -borderSize;
 
-    this.start = Instant.now();
+    final int chunksPerAxis = ((2 * borderSize) / 16) + 1;
+    this.totalChunks = chunksPerAxis * chunksPerAxis;
+    this.loadedChunks = 0;
+
+    this.start = now();
   }
 
   @Override
   public void run() {
     for (int i = 0; i <= CHUNKS_PER_TICK; i++) {
-      this.world.getChunkAt(this.currentX >> 4, this.currentZ >> 4).load();
+      CompletableFuture.runAsync(
+          () -> this.world.getChunkAt(this.currentX >> 4, this.currentZ >> 4).load());
+
+      this.loadedChunks++;
+      final double progress = Math.min(100.0, (this.loadedChunks * 100.0) / this.totalChunks);
 
       for (final Profile profile : this.profileService.getProfiles()) {
         final Actionbar actionbar = profile.getActionbar();
         actionbar.registerEntry(
             UltraHardcoreKey.key("preload"),
             text()
-                .append(text("X: "))
-                .append(text(this.currentX, NamedTextColor.GREEN))
+                .append(text("C/s: "))
+                .append(text(CHUNKS_PER_TICK * 20, GREEN, BOLD))
                 .appendSpace()
                 .appendSpace()
                 .appendSpace()
-                .append(text("Z: "))
-                .append(text(this.currentZ, NamedTextColor.GREEN))
+                .append(text("%.1f%%".formatted(progress), GREEN))
                 .appendSpace()
                 .appendSpace()
                 .appendSpace()
-                .append(text("Chunk/tick: "))
-                .append(text(CHUNKS_PER_TICK, NamedTextColor.GREEN))
-                .appendSpace()
-                .append(text('(', NamedTextColor.DARK_GRAY))
-                .append(text(CHUNKS_PER_TICK * 20, NamedTextColor.GREEN, TextDecoration.BOLD))
-                .append(text(')', NamedTextColor.DARK_GRAY))
-                .appendSpace()
-                .appendSpace()
-                .appendSpace()
-                .append(
-                    text(
-                        TimeUtil.formatDuration(
-                            Duration.between(this.start, Instant.now()).toMillis()),
-                        NamedTextColor.GREEN,
-                        TextDecoration.BOLD))
+                .append(text(formatDuration(between(this.start, now()).toMillis()), GREEN, BOLD))
                 .build());
       }
       this.currentX += 16;
@@ -92,9 +90,7 @@ public final class WorldPreloadTask extends BukkitRunnable {
 
           profile.sendPrefixedMessage(
               "Le monde de la partie a été&a pré-généré&r en &a%s&r."
-                  .formatted(
-                      TimeUtil.formatDuration(
-                          Duration.between(this.start, Instant.now()).toMillis())));
+                  .formatted(formatDuration(between(this.start, now()).toMillis())));
         }
 
         this.cancel();
