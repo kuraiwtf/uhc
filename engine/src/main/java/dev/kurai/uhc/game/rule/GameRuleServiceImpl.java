@@ -4,6 +4,9 @@ import com.google.common.collect.Maps;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
+import org.bukkit.ChatColor;
+import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
 
 public final class GameRuleServiceImpl implements GameRuleService {
 
@@ -13,6 +16,14 @@ public final class GameRuleServiceImpl implements GameRuleService {
   public GameRuleServiceImpl() {
     this.rules = Maps.newHashMap();
     this.rulesView = Collections.unmodifiableCollection(this.rules.values());
+
+    this.addRule(
+        new GameRule(
+            "obsidian_trap",
+            "Obsi Trap",
+            ChatColor.LIGHT_PURPLE,
+            new ItemStack(Material.OBSIDIAN)));
+    this.addRule(new GameRule("lava", "Lave", ChatColor.GOLD, new ItemStack(Material.LAVA_BUCKET)));
   }
 
   @Override

@@ -7,6 +7,7 @@ import static dev.kurai.uhc.util.CC.*;
 
 import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.game.drop.DropRateService;
+import dev.kurai.uhc.game.rule.GameRuleService;
 import dev.kurai.uhc.menu.button.ItemButton;
 import dev.kurai.uhc.menu.rules.border.BorderConfigurationMenu;
 import dev.kurai.uhc.menu.rules.disconnect.DisconnectTimerEditMenu;
@@ -81,7 +82,7 @@ public final class RulesMenu extends Menu {
                   .asItemStack()));
     }
 
-    front.set(11, new GameRulesButton());
+    front.set(11, new GameRulesButton(this.ultraHardcore.gameService().ruleService()));
     front.set(12, new SpectatorButton());
     front.set(14, new BorderTimerButton(this.ultraHardcore));
     front.set(15, new BorderButton());
@@ -109,6 +110,12 @@ public final class RulesMenu extends Menu {
 
   private static final class GameRulesButton extends Button {
 
+    private final GameRuleService ruleService;
+
+    private GameRulesButton(final GameRuleService ruleService) {
+      this.ruleService = ruleService;
+    }
+
     @Override
     public ItemStack getIcon() {
       return new ItemBuilder(Material.REDSTONE_COMPARATOR)
@@ -121,7 +128,7 @@ public final class RulesMenu extends Menu {
     @Override
     public void onClick(final ButtonClick click) {
       final Menu previousMenu = click.getMenu();
-      final GameRulesMenu menu = new GameRulesMenu(previousMenu.getPlayer());
+      final GameRulesMenu menu = new GameRulesMenu(previousMenu.getPlayer(), this.ruleService);
       menu.setPreviousMenu(previousMenu);
       menu.open();
     }

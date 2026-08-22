@@ -1,10 +1,7 @@
 package dev.kurai.uhc.listener.game;
 
-import static dev.kurai.uhc.game.configuration.game.GameConfiguration.LAVA_OPTION;
-import static dev.kurai.uhc.game.configuration.game.GameConfiguration.OBSIDIAN_TRAP_OPTION;
 import static dev.kurai.uhc.util.CC.prefix;
 import static net.kyori.adventure.text.Component.text;
-import static net.kyori.adventure.text.format.Style.style;
 import static org.bukkit.Material.*;
 import static org.bukkit.event.entity.EntityDamageEvent.DamageCause.SUFFOCATION;
 
@@ -17,13 +14,13 @@ import dev.kurai.uhc.event.defaults.player.PlayerDamageByPlayerEvent;
 import dev.kurai.uhc.game.configuration.game.GameConfiguration;
 import dev.kurai.uhc.game.configuration.ore.OreConfiguration;
 import dev.kurai.uhc.game.death.DeathContext;
+import dev.kurai.uhc.game.rule.GameRuleService;
 import dev.kurai.uhc.menu.rules.ore.OreType;
 import dev.kurai.uhc.profile.Profile;
 import dev.kurai.uhc.profile.ProfileService;
 import dev.kurai.uhc.profile.component.*;
 import dev.kurai.uhc.profile.state.PlayingProfileState;
 import dev.kurai.uhc.util.CC;
-import dev.kurai.uhc.util.PlayerUtil;
 import dev.kurai.uhc.util.SitUtil;
 import dev.kurai.uhc.util.TimeUtil;
 import java.time.Duration;
@@ -36,7 +33,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
-import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -160,10 +156,11 @@ public final class PlayingListener implements Listener {
 
   @EventHandler
   public void onSuffocationDamage(final EntityDamageEvent event) {
+    final GameRuleService ruleService = this.ultraHardcore.gameService().ruleService();
     final Block block = event.getEntity().getLocation().clone().add(0, 1, 0).getBlock();
     if (event.getCause() == SUFFOCATION
         && block.getType() != AIR
-        && !OBSIDIAN_TRAP_OPTION.getValue()) {
+        && !ruleService.isRuleEnabled("obsidian_trap")) {
       block.setType(AIR);
       event.setCancelled(true);
     }
@@ -171,16 +168,18 @@ public final class PlayingListener implements Listener {
 
   @EventHandler
   public void onLavaPickup(final PlayerBucketFillEvent event) {
+    final GameRuleService ruleService = this.ultraHardcore.gameService().ruleService();
     final Material bucket = event.getItemStack().getType();
-    if (bucket == LAVA_BUCKET && !LAVA_OPTION.getValue()) {
+    if (bucket == LAVA_BUCKET && !ruleService.isRuleEnabled("lava")) {
       event.setCancelled(true);
     }
   }
 
   @EventHandler
   public void onLavaPlace(final PlayerBucketEmptyEvent event) {
+    final GameRuleService ruleService = this.ultraHardcore.gameService().ruleService();
     final Material bucket = event.getBucket();
-    if (bucket == LAVA_BUCKET && !LAVA_OPTION.getValue()) {
+    if (bucket == LAVA_BUCKET && !ruleService.isRuleEnabled("lava")) {
       event.setCancelled(true);
     }
   }
@@ -330,40 +329,6 @@ public final class PlayingListener implements Listener {
         event.setCancelled(true);
       }
     }
-  }
-
-  @EventHandler
-  public void onEntityDamageByEntity(final EntityDamageByEntityEvent event) {
-    if (!(event.getEntity() instanceof final Player player)
-        || !(event.getDamager() instanceof final Arrow arrow)
-        || !(arrow.getShooter() instanceof final Player shooter)
-        || !GameConfiguration.BOW_HEALTH_VIEW_OPTION.getValue()) {
-      return;
-    }
-
-    Bukkit.getScheduler()
-        .runTaskLaterAsynchronously(
-            this.ultraHardcore.plugin(),
-            () -> {
-              final var profile =
-                  this.ultraHardcore.profileService().getOrCreateProfile(shooter.getUniqueId());
-              profile
-                  .getActionbar()
-                  .registerEntry(
-                      UltraHardcoreKey.key("health_view"),
-                      text(player.getName())
-                          .append(text(':'))
-                          .appendSpace()
-                          .append(
-                              PlayerUtil.formatHealthAsHeartBar(
-                                  player,
-                                  style(NamedTextColor.DARK_RED),
-                                  style(NamedTextColor.RED),
-                                  style(NamedTextColor.YELLOW),
-                                  style(NamedTextColor.DARK_GRAY))),
-                      Duration.ofSeconds(3L));
-            },
-            2L);
   }
 
   private static final Map<Material, Consumer<ProfileMiningComponent>> MINING_STATISTICS =

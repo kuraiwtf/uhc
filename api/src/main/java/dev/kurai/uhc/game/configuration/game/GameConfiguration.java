@@ -7,12 +7,9 @@ import dev.kurai.uhc.util.api.option.Option;
 
 public final class GameConfiguration {
 
-  public static final Option<Boolean> BOW_HEALTH_VIEW_OPTION =
-      option(key("bow_health_view"), false);
+  private GameConfiguration() {
+    /* This utility class should not be instantiated */
+  }
 
   public static final Option<Boolean> SPECTATOR_OPTION = option(key("spectator"), true);
-
-  public static final Option<Boolean> OBSIDIAN_TRAP_OPTION = option(key("obsidian_trap"), true);
-
-  public static final Option<Boolean> LAVA_OPTION = option(key("lava"), true);
 }
