@@ -11,6 +11,7 @@ import dev.kurai.uhc.extension.mumble.command.MumbleCommand;
 import dev.kurai.uhc.extension.mumble.item.MumbleItem;
 import dev.kurai.uhc.extension.mumble.listener.GameListener;
 import dev.kurai.uhc.extension.mumble.listener.PlayerJoinListener;
+import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -52,7 +53,8 @@ public final class MumbleExtension {
     player.sendMessage(center("Utilisez le lien ci-dessous pour vous"));
     player.sendMessage(center("&aconnecter&r automatiquement au&b Mumble&r."));
     player.sendMessage("");
-    player.sendMessage(
+    final Audience audience = this.ultraHardcore.bukkitAudiences().player(player);
+    audience.sendMessage(
         center(
             text("Cliquez-ici")
                 .decorate(TextDecoration.UNDERLINED)
