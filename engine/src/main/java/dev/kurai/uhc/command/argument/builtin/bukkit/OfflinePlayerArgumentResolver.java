@@ -26,7 +26,7 @@ public final class OfflinePlayerArgumentResolver
       return player;
     }
 
-    if (found == null || !found.hasPlayedBefore()) {
+    if (found == null) {
       return null;
     }
 
