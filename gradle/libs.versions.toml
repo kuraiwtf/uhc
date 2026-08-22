@@ -5,7 +5,7 @@ shadow = '9.1.0'
 apollo-api = '1.2.6'
 apollo-wrapper = '0.0.1'
 
-spigot-api = '1.2.3'
+spigot = '1.8.8-R0.1-SNAPSHOT'
 
 adventure-api = '4.26.1'
 adventure-platform-bukkit = '4.4.1'
@@ -31,7 +31,7 @@ kotlin-gradle-plugin = { module = 'org.jetbrains.kotlin:kotlin-gradle-plugin', v
 apollo-api = { module = 'com.lunarclient:apollo-api', version.ref = 'apollo-api' }
 apollo-wrapper = { module = 'io.github.kuraiwtf:apollo-wrapper', version.ref = 'apollo-wrapper' }
 
-spigot-api = { module = 'org.imanity.imanityspigot:server', version.ref = 'spigot-api' }
+spigot = { module = 'org.spigotmc:spigot', version.ref = 'spigot' }
 
 adventure-bom = { module = 'net.kyori:adventure-bom', version.ref = 'adventure-api' }
 adventure-platform-bukkit = { module = 'net.kyori:adventure-platform-bukkit', version.ref = 'adventure-platform-bukkit' }

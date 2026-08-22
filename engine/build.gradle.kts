@@ -7,7 +7,7 @@ dependencies {
   implementation(project(":api"))
   annotationProcessor(libs.lombok)
   compileOnly(libs.packetevents.spigot)
-  compileOnly(libs.spigot.api)
+  compileOnly(libs.spigot)
 }
 
 tasks {

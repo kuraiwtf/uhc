@@ -4,5 +4,5 @@ plugins {
 
 dependencies {
   annotationProcessor(libs.lombok)
-  compileOnly(libs.spigot.api)
+  compileOnly(libs.spigot)
 }
