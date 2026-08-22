@@ -7,12 +7,12 @@ public final class GameStartEvent extends Event {
 
   private static final HandlerList HANDLERS = new HandlerList();
 
-  @Override
-  public HandlerList getHandlers() {
+  public static HandlerList getHandlerList() {
     return HANDLERS;
   }
 
-  public static HandlerList getHandlerList() {
+  @Override
+  public HandlerList getHandlers() {
     return HANDLERS;
   }
 }

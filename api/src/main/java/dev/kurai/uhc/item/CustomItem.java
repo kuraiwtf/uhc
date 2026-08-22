@@ -5,7 +5,6 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
 
 public abstract class CustomItem {
 
@@ -19,14 +18,13 @@ public abstract class CustomItem {
     this.spectatorOnly = spectatorOnly;
   }
 
-  public abstract @NotNull ItemStack provideIcon(final @NotNull Player player);
+  public abstract ItemStack provideIcon(final Player player);
 
-  public void onInteract(final @NotNull Player player, final @NotNull PlayerInteractEvent event) {}
+  public void onInteract(final Player player, final PlayerInteractEvent event) {}
 
-  public void onInventoryClick(
-      final @NotNull Player player, final @NotNull InventoryClickEvent event) {}
+  public void onInventoryClick(final Player player, final InventoryClickEvent event) {}
 
-  public void onDrop(final @NotNull Player player, final @NotNull PlayerDropItemEvent event) {}
+  public void onDrop(final Player player, final PlayerDropItemEvent event) {}
 
   public final String getIdentifier() {
     return this.identifier;

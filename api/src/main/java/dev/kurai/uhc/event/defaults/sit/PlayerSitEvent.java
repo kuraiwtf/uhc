@@ -4,7 +4,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
-import org.jetbrains.annotations.NotNull;
 
 public final class PlayerSitEvent extends Event implements Cancellable {
 
@@ -14,9 +13,13 @@ public final class PlayerSitEvent extends Event implements Cancellable {
   private long durationInTicks;
   private boolean cancelled;
 
-  public PlayerSitEvent(final @NotNull Player player, final long durationInTicks) {
+  public PlayerSitEvent(final Player player, final long durationInTicks) {
     this.player = player;
     this.durationInTicks = durationInTicks;
+  }
+
+  public static HandlerList getHandlerList() {
+    return HANDLERS;
   }
 
   public Player getPlayer() {
@@ -43,10 +46,6 @@ public final class PlayerSitEvent extends Event implements Cancellable {
 
   @Override
   public HandlerList getHandlers() {
-    return HANDLERS;
-  }
-
-  public static HandlerList getHandlerList() {
     return HANDLERS;
   }
 }

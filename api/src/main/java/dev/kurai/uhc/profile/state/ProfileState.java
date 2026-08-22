@@ -2,13 +2,14 @@ package dev.kurai.uhc.profile.state;
 
 import dev.kurai.uhc.profile.Profile;
 import dev.kurai.uhc.util.api.state.entity.EntityState;
-import org.jetbrains.annotations.NotNull;
+import lombok.ToString;
 
+@ToString
 public abstract class ProfileState implements EntityState<Profile> {
 
   protected final String id;
 
-  public ProfileState(final @NotNull String id) {
+  public ProfileState(final String id) {
     this.id = id;
   }
 
@@ -19,7 +20,7 @@ public abstract class ProfileState implements EntityState<Profile> {
   public abstract void onExit(final Profile profile);
 
   @Override
-  public @NotNull String getId() {
+  public String getId() {
     return this.id;
   }
 }

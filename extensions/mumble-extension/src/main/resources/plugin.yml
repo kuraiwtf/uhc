@@ -1,0 +1,7 @@
+name: Mumble-Extension
+version: ${version}
+author: kurai
+main: dev.kurai.uhc.extension.mumble.MumbleExtensionPlugin
+
+depend:
+  - UHC-Engine

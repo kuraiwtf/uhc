@@ -1,33 +1,26 @@
 package dev.kurai.uhc.profile.component;
 
 import dev.kurai.uhc.ecs.component.Component;
+import java.util.List;
 import java.util.UUID;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+import org.bukkit.Location;
+import org.bukkit.inventory.ItemStack;
 
+@AllArgsConstructor
+@Getter
+@Setter
 public final class DeadComponent implements Component {
 
   private UUID killer;
   private long deathTime;
 
-  public DeadComponent() {}
+  private Location location;
 
-  public DeadComponent(final UUID killer, final long deathTime) {
-    this.killer = killer;
-    this.deathTime = deathTime;
-  }
+  private ItemStack[] inventory;
+  private ItemStack[] armor;
 
-  public UUID getKiller() {
-    return this.killer;
-  }
-
-  public void setKiller(final UUID killer) {
-    this.killer = killer;
-  }
-
-  public long getDeathTime() {
-    return this.deathTime;
-  }
-
-  public void setDeathTime(final long deathTime) {
-    this.deathTime = deathTime;
-  }
+  private List<UUID> droppedItems;
 }

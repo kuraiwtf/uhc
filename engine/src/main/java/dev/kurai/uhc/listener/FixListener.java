@@ -20,14 +20,13 @@ import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * @author Super_Crafting
  */
 public final class FixListener extends PacketListenerAbstract implements Listener {
 
-  private static void refreshWorld(final @NotNull World world, final @NotNull Player player) {
+  private static void refreshWorld(final World world, final Player player) {
     for (final var worldPlayer : world.getPlayers()) {
       if (worldPlayer == player) {
         continue;
@@ -38,8 +37,7 @@ public final class FixListener extends PacketListenerAbstract implements Listene
     }
   }
 
-  private static void updateEntity(
-      @NotNull final Entity entity, final List<@NotNull Player> observers) {
+  private static void updateEntity(final Entity entity, final List<Player> observers) {
     final var world = entity.getWorld();
     final var worldServer = ((CraftWorld) world).getHandle();
 
@@ -57,7 +55,7 @@ public final class FixListener extends PacketListenerAbstract implements Listene
     }
   }
 
-  private static @NotNull List<EntityPlayer> getNmsPlayers(@NotNull final List<Player> players) {
+  private static List<EntityPlayer> getNmsPlayers(final List<Player> players) {
     return players.stream().map(CraftPlayer.class::cast).map(CraftPlayer::getHandle).toList();
   }
 
@@ -87,27 +85,26 @@ public final class FixListener extends PacketListenerAbstract implements Listene
         final var potionType = removeEffectPacket.getPotionType();
         if (potionType != PotionTypes.INVISIBILITY) {
           event.setCancelled(true);
-          return;
         }
       }
     }
   }
 
   @EventHandler(priority = EventPriority.HIGHEST)
-  public void onLogin(@NotNull final AsyncPlayerPreLoginEvent event) {
+  public void onLogin(final AsyncPlayerPreLoginEvent event) {
     if (event.getLoginResult() == AsyncPlayerPreLoginEvent.Result.KICK_FULL) {
       event.setLoginResult(AsyncPlayerPreLoginEvent.Result.ALLOWED);
     }
   }
 
   @EventHandler
-  public void onTeleport(@NotNull final PlayerTeleportEvent event) {
+  public void onTeleport(final PlayerTeleportEvent event) {
     final var player = event.getPlayer();
     updateEntity(player, player.getWorld().getPlayers());
   }
 
   @EventHandler
-  public void onWorldChange(final @NotNull PlayerChangedWorldEvent event) {
+  public void onWorldChange(final PlayerChangedWorldEvent event) {
     final var player = event.getPlayer();
     refreshWorld(event.getFrom(), player);
     refreshWorld(player.getWorld(), player);

@@ -1,135 +1,215 @@
 package dev.kurai.uhc.game.scenario.defaults;
 
-import com.google.common.collect.Maps;
+import static net.kyori.adventure.text.Component.text;
+import static org.bukkit.Material.*;
+import static org.bukkit.Material.DIAMOND;
+import static org.bukkit.Material.DIAMOND_ORE;
+import static org.bukkit.Material.GOLD_INGOT;
+
 import dev.kurai.uhc.UltraHardcoreAPI;
-import dev.kurai.uhc.event.defaults.scenario.CutCleanDropEvent;
+import dev.kurai.uhc.adventure.UltraHardcoreKey;
+import dev.kurai.uhc.game.configuration.ore.OreConfiguration;
 import dev.kurai.uhc.game.scenario.AbstractScenario;
+import dev.kurai.uhc.game.scenario.ScenarioCategory;
+import dev.kurai.uhc.profile.Profile;
+import dev.kurai.uhc.profile.component.ProfileMiningComponent;
+import java.time.Duration;
+import java.util.Collection;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
-import net.minecraft.server.v1_8_R3.*;
-import org.bukkit.Bukkit;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
-import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.ExperienceOrb;
+import org.bukkit.entity.EntityType;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.inventory.FurnaceRecipe;
+import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
 
 public final class CutCleanScenario extends AbstractScenario implements Listener {
 
-  private static final Map<ItemStack, ItemStack> FURNACE_RECIPES = Maps.newHashMap();
+  private static final Map<Material, Material> ALLOWED_MATERIALS =
+      Map.of(
+          IRON_ORE, IRON_INGOT,
+          GOLD_ORE, GOLD_INGOT,
+          DIAMOND_ORE, DIAMOND);
 
-  static {
-    final var recipeIterator = Bukkit.getServer().recipeIterator();
-    while (recipeIterator.hasNext()) {
-      final var recipe = recipeIterator.next();
+  private static final Collection<EntityType> ALLOWED_ENTITIES =
+      Set.of(
+          EntityType.COW, EntityType.PIG, EntityType.CHICKEN, EntityType.SHEEP, EntityType.RABBIT);
 
-      if (recipe instanceof final FurnaceRecipe furnaceRecipe) {
-        final var input = furnaceRecipe.getInput();
-        final var result = furnaceRecipe.getResult();
-
-        FURNACE_RECIPES.put(input.clone(), result.clone());
-      }
-    }
-  }
-
-  public CutCleanScenario(final @NotNull UltraHardcoreAPI ultraHardcore) {
-    super("cut_clean", "Cut Clean", ultraHardcore);
+  public CutCleanScenario(final UltraHardcoreAPI ultraHardcore) {
+    super("cut_clean", "Cut Clean", ultraHardcore, ScenarioCategory.MINING);
   }
 
   @Override
-  public @NotNull ItemStack provideIcon() {
+  public ItemStack provideIcon() {
     return new ItemStack(Material.IRON_INGOT);
   }
 
-  @EventHandler
-  public void onBlockBreak(final BlockBreakEvent event) {
+  @EventHandler(priority = EventPriority.LOWEST)
+  public void onBreak(final BlockBreakEvent event) {
+    if (event.isCancelled()) {
+      return;
+    }
+
     final var block = event.getBlock();
-    final var type = block.getType();
-    if (!type.name().contains("ORE")) {
+    final var blockType = block.getType();
+    if (!ALLOWED_MATERIALS.containsKey(blockType)) {
       return;
     }
 
-    final var result = this.findFurnaceResult(new ItemStack(block.getType(), 1, block.getData()));
-    if (result == null) {
+    final var player = event.getPlayer();
+
+    final var profile = this.ultraHardcore.profileService().getOrCreateProfile(player);
+    final var miningComponent = profile.getComponent(ProfileMiningComponent.class);
+    if (miningComponent != null && this.isOreLimitReached(blockType, miningComponent)) {
+      if (blockType == DIAMOND_ORE) {
+        player.getInventory().addItem(new ItemStack(GOLD_INGOT, 2));
+      }
+
+      event.getBlock().setType(AIR);
       return;
     }
 
-    if (type == Material.LAPIS_ORE) {
-      result.setAmount(ThreadLocalRandom.current().nextInt(4, 7));
+    if (miningComponent != null) {
+      this.incrementMined(blockType, miningComponent);
+      this.sendLimitActionbar(profile, blockType, miningComponent);
     }
 
-    final var hand = event.getPlayer().getItemInHand();
-    if (hand != null
-        && hand.hasItemMeta()
-        && hand.getItemMeta().hasEnchant(Enchantment.LOOT_BONUS_BLOCKS)) {
-      result.setAmount(
-          result.getAmount()
-              + ThreadLocalRandom.current()
-                  .nextInt(
-                      1, hand.getItemMeta().getEnchantLevel(Enchantment.LOOT_BONUS_BLOCKS) + 2));
+    final var smeltedMaterial = ALLOWED_MATERIALS.get(blockType);
+    final var drops = block.getDrops();
+    event.getBlock().setType(AIR);
+    event.setExpToDrop(0);
+    player.giveExp(ThreadLocalRandom.current().nextInt(2, 6));
+
+    for (final var stack : drops) {
+      stack.setType(smeltedMaterial);
+      final var map = player.getInventory().addItem(stack);
+      if (map.isEmpty()) {
+        continue;
+      }
+      block.getWorld().dropItemNaturally(player.getLocation(), stack);
     }
-
-    final var experience =
-        this.calculateExperience(
-            result.getAmount(), ThreadLocalRandom.current().nextFloat(2f, 3.5f));
-    final var dropEvent =
-        this.ultraHardcore
-            .getEventService()
-            .dispatchEvent(new CutCleanDropEvent(event.getPlayer(), result, experience));
-
-    block.setType(Material.AIR);
-    if (dropEvent.isCancelled()) {
-      return;
-    }
-
-    final var world = block.getWorld();
-    final var location = block.getLocation().clone().add(0.5, 0.5, 0.5);
-    world.dropItem(location, result);
-    final var orb = world.spawn(location, ExperienceOrb.class);
-    orb.setExperience(experience);
   }
 
-  private ItemStack findFurnaceResult(final ItemStack input) {
-    for (final var entry : FURNACE_RECIPES.entrySet()) {
-      final ItemStack recipeInput = entry.getKey();
+  private static final Map<Material, Component> ORE_NAMES =
+      Map.of(
+          IRON_ORE, text("fer", NamedTextColor.GRAY),
+          GOLD_ORE, text("or", NamedTextColor.YELLOW),
+          DIAMOND_ORE, text("diamant", NamedTextColor.AQUA));
 
-      if (recipeInput.getType() == input.getType()
-          && recipeInput.getDurability() == input.getDurability()) {
-        return entry.getValue().clone();
-      }
+  private static final Map<Material, String> ARTICLES =
+      Map.of(
+          IRON_ORE, "du ",
+          GOLD_ORE, "de l'",
+          DIAMOND_ORE, "du ");
+
+  private void sendLimitActionbar(
+      final Profile profile, final Material blockType, final ProfileMiningComponent miningComponent) {
+    final var oreName = ORE_NAMES.get(blockType);
+    if (oreName == null) {
+      return;
     }
 
-    for (final var entry : FURNACE_RECIPES.entrySet()) {
-      if (entry.getKey().getType() == input.getType()) {
-        return entry.getValue().clone();
-      }
+    final var limit =
+        switch (blockType) {
+          case IRON_ORE -> OreConfiguration.IRON_LIMIT_OPTION.getValue();
+          case GOLD_ORE -> OreConfiguration.GOLD_LIMIT_OPTION.getValue();
+          default -> OreConfiguration.DIAMOND_LIMIT_OPTION.getValue();
+        };
+    if (limit <= 0) {
+      return;
     }
-    return null;
+
+    final var mined =
+        switch (blockType) {
+          case IRON_ORE -> miningComponent.getIronMined();
+          case GOLD_ORE -> miningComponent.getGoldMined();
+          default -> miningComponent.getDiamondMined();
+        };
+
+    final var oreColor = oreName.color();
+    profile
+        .getActionbar()
+        .registerEntry(
+            UltraHardcoreKey.key("ore_mined"),
+            text("Vous venez de miner ")
+                .append(text(ARTICLES.get(blockType)))
+                .append(oreName)
+                .append(text("."))
+                .appendSpace()
+                .append(text('(', NamedTextColor.GRAY))
+                .append(text(mined, oreColor))
+                .append(text('/', NamedTextColor.GRAY))
+                .append(text(limit, oreColor))
+                .append(text(')', NamedTextColor.GRAY)),
+            Duration.ofSeconds(3L));
   }
 
-  private int calculateExperience(final int count, final float xpPerItem) {
-    if (xpPerItem == 0.0f) {
-      return 0;
+  private void incrementMined(final Material blockType, final ProfileMiningComponent miningComponent) {
+    switch (blockType) {
+      case IRON_ORE -> miningComponent.setIronMined(miningComponent.getIronMined() + 1);
+      case GOLD_ORE -> miningComponent.setGoldMined(miningComponent.getGoldMined() + 1);
+      case DIAMOND_ORE -> miningComponent.setDiamondMined(miningComponent.getDiamondMined() + 1);
+      default -> {}
     }
+  }
 
-    final int totalXp;
-
-    if (xpPerItem < 1.0f) {
-      int j = (int) Math.floor((float) count * xpPerItem);
-      final float exactXp = (float) count * xpPerItem;
-      if (j < Math.ceil(exactXp) && Math.random() < (double) (exactXp - (float) j)) {
-        ++j;
+  private boolean isOreLimitReached(
+      final Material blockType, final ProfileMiningComponent miningComponent) {
+    return switch (blockType) {
+      case IRON_ORE -> {
+        final var limit = OreConfiguration.IRON_LIMIT_OPTION.getValue();
+        yield limit > 0 && miningComponent.getIronMined() >= limit;
       }
+      case GOLD_ORE -> {
+        final var limit = OreConfiguration.GOLD_LIMIT_OPTION.getValue();
+        yield limit > 0 && miningComponent.getGoldMined() >= limit;
+      }
+      case DIAMOND_ORE -> {
+        final var limit = OreConfiguration.DIAMOND_LIMIT_OPTION.getValue();
+        yield limit > 0 && miningComponent.getDiamondMined() >= limit;
+      }
+      default -> false;
+    };
+  }
 
-      totalXp = j;
-    } else {
-      totalXp = (int) ((float) count * xpPerItem);
+  @EventHandler
+  public void onDeath(final EntityDeathEvent event) {
+    final var entity = event.getEntity();
+    if (!ALLOWED_ENTITIES.contains(entity.getType())) {
+      return;
     }
 
-    return totalXp;
+    event.getDrops().clear();
+
+    final var world = entity.getWorld();
+    final var location = entity.getLocation();
+
+    final var leather = new ItemStack(LEATHER, 2);
+
+    switch (entity.getType()) {
+      case COW -> {
+        world.dropItemNaturally(location, new ItemStack(COOKED_BEEF, 2));
+        world.dropItemNaturally(location, leather);
+      }
+      case CHICKEN -> {
+        world.dropItemNaturally(location, new ItemStack(COOKED_CHICKEN, 2));
+        world.dropItemNaturally(location, new ItemStack(FEATHER, 2));
+      }
+      case PIG -> world.dropItemNaturally(location, new ItemStack(GRILLED_PORK, 2));
+      case SHEEP -> {
+        world.dropItemNaturally(location, new ItemStack(COOKED_MUTTON, 2));
+        world.dropItemNaturally(location, new ItemStack(WOOL));
+      }
+      case RABBIT -> {
+        world.dropItemNaturally(location, new ItemStack(COOKED_RABBIT, 2));
+        world.dropItemNaturally(location, leather);
+      }
+    }
   }
 }

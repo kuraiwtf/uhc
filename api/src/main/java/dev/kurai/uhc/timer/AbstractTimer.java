@@ -6,7 +6,6 @@ import dev.kurai.uhc.util.api.annotation.Name;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitTask;
-import org.jetbrains.annotations.NotNull;
 
 public abstract class AbstractTimer {
 
@@ -95,7 +94,7 @@ public abstract class AbstractTimer {
     }
   }
 
-  public final void start(final @NotNull Plugin plugin) {
+  public final void start(final Plugin plugin) {
     if (this.task != null) {
       return;
     }
@@ -138,11 +137,11 @@ public abstract class AbstractTimer {
 
   public void onEnd() {}
 
-  public @NotNull String getIdentifier() {
+  public String getIdentifier() {
     return this.identifier;
   }
 
-  public @NotNull String getName() {
+  public String getName() {
     return this.name;
   }
 

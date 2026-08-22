@@ -1,7 +1,6 @@
 package dev.kurai.uhc.ecs.component.defaults;
 
 import dev.kurai.uhc.ecs.component.Component;
-import org.jetbrains.annotations.NotNull;
 
 public final class NameComponent implements Component {
 
@@ -9,7 +8,7 @@ public final class NameComponent implements Component {
 
   public NameComponent() {}
 
-  public NameComponent(final @NotNull String name) {
+  public NameComponent(final String name) {
     this.name = name;
   }
 

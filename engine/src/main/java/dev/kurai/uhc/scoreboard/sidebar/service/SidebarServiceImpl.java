@@ -3,34 +3,33 @@ package dev.kurai.uhc.scoreboard.sidebar.service;
 import com.google.common.collect.Maps;
 import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.scoreboard.sidebar.Sidebar;
+import dev.kurai.uhc.scoreboard.sidebar.SidebarAdapter;
 import dev.kurai.uhc.scoreboard.sidebar.SidebarImpl;
-import dev.kurai.uhc.scoreboard.sidebar.adapter.SidebarAdapter;
-import dev.kurai.uhc.scoreboard.sidebar.adapter.SidebarTitleAdapter;
+import dev.kurai.uhc.scoreboard.sidebar.SidebarService;
+import dev.kurai.uhc.scoreboard.sidebar.SidebarTitleAdapter;
 import dev.kurai.uhc.scoreboard.sidebar.adapter.builtin.WaitingSidebarAdapter;
 import dev.kurai.uhc.scoreboard.sidebar.listener.SidebarListener;
 import dev.kurai.uhc.scoreboard.sidebar.task.updater.SidebarUpdaterTask;
 import java.util.Map;
 import java.util.UUID;
 import org.bukkit.Bukkit;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public final class SidebarServiceImpl implements SidebarService {
 
-  private final Map<@NotNull UUID, @NotNull Sidebar> sidebars;
+  private final Map<UUID, Sidebar> sidebars;
 
   private SidebarTitleAdapter titleAdapter;
   private SidebarAdapter adapter;
 
-  public SidebarServiceImpl(final @NotNull UltraHardcoreAPI ultraHardcore) {
+  public SidebarServiceImpl(final UltraHardcoreAPI ultraHardcore) {
     this.sidebars = Maps.newHashMap();
     final var adapter = new WaitingSidebarAdapter(ultraHardcore);
     this.install(adapter, adapter);
-    ultraHardcore.getEventService().registerListener(new SidebarListener(this));
+    ultraHardcore.eventService().registerListener(new SidebarListener(this));
 
     Bukkit.getScheduler()
-        .runTaskTimerAsynchronously(
-            ultraHardcore.getPlugin(), new SidebarUpdaterTask(this), 0L, 1L);
+        .runTaskTimerAsynchronously(ultraHardcore.plugin(), new SidebarUpdaterTask(this), 0L, 1L);
   }
 
   @Override

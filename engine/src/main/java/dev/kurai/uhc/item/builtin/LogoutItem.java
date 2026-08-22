@@ -10,7 +10,6 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
 
 public final class LogoutItem extends CustomItem {
 
@@ -21,7 +20,7 @@ public final class LogoutItem extends CustomItem {
   }
 
   @Override
-  public @NotNull ItemStack provideIcon(final @NotNull Player player) {
+  public ItemStack provideIcon(final Player player) {
     return new ItemBuilder(Material.DARK_OAK_DOOR_ITEM)
         .name("&c&lQuitter&8 " + CC.SQUARE + " &7Clic-Droit")
         .lore("", "&7" + CC.BAR + "&f Permet de quitter la partie.", "")
@@ -30,7 +29,7 @@ public final class LogoutItem extends CustomItem {
   }
 
   @Override
-  public void onInteract(final @NotNull Player player, final @NotNull PlayerInteractEvent event) {
+  public void onInteract(final Player player, final PlayerInteractEvent event) {
     event.setCancelled(true);
     if (event.getAction() != Action.RIGHT_CLICK_AIR
         && event.getAction() != Action.RIGHT_CLICK_BLOCK) {
@@ -41,13 +40,12 @@ public final class LogoutItem extends CustomItem {
   }
 
   @Override
-  public void onDrop(final @NotNull Player player, final @NotNull PlayerDropItemEvent event) {
+  public void onDrop(final Player player, final PlayerDropItemEvent event) {
     event.setCancelled(true);
   }
 
   @Override
-  public void onInventoryClick(
-      final @NotNull Player player, final @NotNull InventoryClickEvent event) {
+  public void onInventoryClick(final Player player, final InventoryClickEvent event) {
     event.setCancelled(true);
   }
 }

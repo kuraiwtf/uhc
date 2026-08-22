@@ -1,32 +1,35 @@
 plugins {
-    id("uhc.java-library-conventions")
-    id("uhc.maven-publishing-conventions")
+  id("uhc.maven-publishing-conventions")
 }
 
-val targetJavaVersion = 23
-
 java {
-    toolchain.languageVersion = JavaLanguageVersion.of(targetJavaVersion)
+  toolchain { languageVersion = JavaLanguageVersion.of(25) }
 
-    withSourcesJar()
-    withJavadocJar()
+  withSourcesJar()
+  withJavadocJar()
 }
 
 dependencies {
-    api(platform(libs.adventure.bom))
-    api(libs.bundles.apollo)
-    api(libs.bundles.adventure)
-    api(libs.menu.api)
-    compileOnly(libs.packetevents.spigot)
-    compileOnly(libs.spigot.api)
+  api(platform(libs.adventure.bom))
+  api(libs.bundles.apollo)
+  api(libs.bundles.adventure)
+  api(libs.bundles.jackson)
+  api(libs.menu.api)
+  api(libs.entity.lib)
+  api(libs.actionbar.api)
+  api(libs.lombok)
+  api(libs.fastutil)
+  annotationProcessor(libs.lombok)
+  compileOnly(libs.packetevents.spigot)
+  compileOnly(libs.spigot)
 }
 
 publishing {
-    publications.create<MavenPublication>("maven") {
-        from(components["java"])
+  publications.create<MavenPublication>("maven") {
+    from(components["java"])
 
-        groupId = project.group.toString()
-        artifactId = project.name
-        version = project.version.toString()
-    }
+    groupId = project.group.toString()
+    artifactId = "${rootProject.name}-${project.name}"
+    version = project.version.toString()
+  }
 }

@@ -8,7 +8,7 @@ import com.google.common.collect.Lists;
 import dev.kurai.uhc.command.annotation.CommandMeta;
 import dev.kurai.uhc.command.help.HelpCommand;
 import dev.kurai.uhc.command.impl.SubCommandData;
-import dev.kurai.uhc.command.registrar.CommandRegistrar;
+import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.Collection;
@@ -20,20 +20,19 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
 
 public final class UltraHardcoreParentCommand extends Command {
 
   private final BukkitAudiences bukkitAudiences;
   private final CommandRegistrar commandRegistrar;
-  private final List<@NotNull SubCommandData> subCommands;
+  private final List<SubCommandData> subCommands;
   private final HelpCommand helpCommand;
 
   public UltraHardcoreParentCommand(
-      final @NotNull CommandMeta meta,
-      final @NotNull BukkitAudiences bukkitAudiences,
-      final @NotNull CommandRegistrar commandRegistrar,
-      final List<@NotNull SubCommandData> subCommands) {
+      final CommandMeta meta,
+      final BukkitAudiences bukkitAudiences,
+      final CommandRegistrar commandRegistrar,
+      final List<SubCommandData> subCommands) {
     super(
         meta.name(),
         meta.description(),
@@ -48,7 +47,7 @@ public final class UltraHardcoreParentCommand extends Command {
     this.helpCommand = new HelpCommand(this);
   }
 
-  public @NotNull Collection<@NotNull SubCommandData> getSubCommands() {
+  public Collection<SubCommandData> getSubCommands() {
     return Lists.newArrayList(this.subCommands);
   }
 
@@ -115,7 +114,37 @@ public final class UltraHardcoreParentCommand extends Command {
       return true;
     }
 
-    if (rawArguments.size() < subCommand.arguments().size()) {
+    final String permission = subCommand.commandMeta().permission();
+    if (!permission.isEmpty()
+        && sender instanceof final Player player
+        && !player.hasPermission(permission)) {
+      player.sendMessage(prefix("&cVous n'avez pas la permission d'utiliser cette commande."));
+      return false;
+    }
+
+    // Find first array parameter (1-based index; 0 = sender).
+    int arrayParamIndex = -1;
+    for (var i = 1; i < method.getParameterTypes().length; i++) {
+      if (method.getParameterTypes()[i].isArray()) {
+        arrayParamIndex = i;
+        break;
+      }
+    }
+
+    final int minArgs;
+    if (arrayParamIndex < 0) {
+      int required = 0;
+      for (final var argument : subCommand.arguments()) {
+        if (argument.defaultValue().isEmpty()) {
+          required++;
+        }
+      }
+      minArgs = required;
+    } else {
+      minArgs = method.getParameters().length - 1;
+    }
+
+    if (rawArguments.size() < minArgs) {
       audience.sendMessage(
           text()
               .append(prefix())
@@ -124,7 +153,7 @@ public final class UltraHardcoreParentCommand extends Command {
               .append(text("(", DARK_GRAY))
               .append(text(rawArguments.size(), DARK_RED, TextDecoration.BOLD))
               .append(text("/", DARK_GRAY))
-              .append(text(args.length, DARK_RED))
+              .append(text(minArgs, DARK_RED))
               .append(text(")", DARK_GRAY))
               .build());
       return false;
@@ -132,20 +161,71 @@ public final class UltraHardcoreParentCommand extends Command {
 
     final var resolvedArguments = Lists.newArrayList();
     resolvedArguments.add(sender);
+    final var registrar = this.commandRegistrar.getArgumentResolverRegistrar();
 
-    for (var i = 1; i < method.getParameters().length; i++) {
-      final var resolved =
-          this.commandRegistrar
-              .getArgumentResolverRegistrar()
-              .resolveArgument(
-                  method.getParameters()[i].getType(), sender, rawArguments.get(i - 1));
-      if (resolved == null) {
-        audience.sendMessage(
-            text().append(prefix()).append(text("Un argument est invalide.", RED)).build());
-        return false;
+    if (arrayParamIndex < 0) {
+      // No array params: one arg per param, sequential.
+      for (var i = 1; i < method.getParameters().length; i++) {
+        final String rawArg =
+            i - 1 < rawArguments.size()
+                ? rawArguments.get(i - 1)
+                : subCommand.arguments().get(i - 1).defaultValue();
+        final var resolved =
+            registrar.resolveArgument(method.getParameterTypes()[i], sender, rawArg);
+        if (resolved == null) {
+          audience.sendMessage(
+              text().append(prefix()).append(text("Un argument est invalide.", RED)).build());
+          return false;
+        }
+        resolvedArguments.add(resolved);
       }
+    } else {
+      // Array param present: layout is  [prefix args] [array args…] [suffix args]
+      final int prefixCount = arrayParamIndex - 1;
+      final int suffixCount = method.getParameters().length - arrayParamIndex - 1;
+      final int arrayLength = rawArguments.size() - prefixCount - suffixCount;
 
-      resolvedArguments.add(resolved);
+      for (var i = 1; i < method.getParameters().length; i++) {
+        final Class<?> type = method.getParameterTypes()[i];
+
+        if (i < arrayParamIndex) {
+          // Prefix param: sequential.
+          final var resolved = registrar.resolveArgument(type, sender, rawArguments.get(i - 1));
+          if (resolved == null) {
+            audience.sendMessage(
+                text().append(prefix()).append(text("Un argument est invalide.", RED)).build());
+            return false;
+          }
+          resolvedArguments.add(resolved);
+
+        } else if (i == arrayParamIndex) {
+          // Array param: consume arrayLength args.
+          final Class<?> componentType = type.getComponentType();
+          final Object array = Array.newInstance(componentType, arrayLength);
+          for (var j = 0; j < arrayLength; j++) {
+            final var resolved =
+                registrar.resolveArgument(componentType, sender, rawArguments.get(prefixCount + j));
+            if (resolved == null) {
+              audience.sendMessage(
+                  text().append(prefix()).append(text("Un argument est invalide.", RED)).build());
+              return false;
+            }
+            Array.set(array, j, resolved);
+          }
+          resolvedArguments.add(array);
+
+        } else {
+          // Suffix param: counted from the end of rawArguments.
+          final int argIndex = rawArguments.size() - (method.getParameters().length - i);
+          final var resolved = registrar.resolveArgument(type, sender, rawArguments.get(argIndex));
+          if (resolved == null) {
+            audience.sendMessage(
+                text().append(prefix()).append(text("Un argument est invalide.", RED)).build());
+            return false;
+          }
+          resolvedArguments.add(resolved);
+        }
+      }
     }
 
     try {
@@ -173,6 +253,13 @@ public final class UltraHardcoreParentCommand extends Command {
       final var partial = args.length == 0 ? "" : args[0].toLowerCase();
 
       for (final var subCommandData : this.subCommands) {
+        final String permission = subCommandData.commandMeta().permission();
+        if (sender instanceof final Player player
+            && !permission.isEmpty()
+            && !player.hasPermission(permission)) {
+          continue;
+        }
+
         if (subCommandData.commandMeta().name().toLowerCase().startsWith(partial)) {
           completions.add(subCommandData.commandMeta().name());
         } else if ("help".startsWith(partial)) {
@@ -187,40 +274,84 @@ public final class UltraHardcoreParentCommand extends Command {
       }
 
       return completions;
-    } else {
-      final var subCommandName = args[0];
-      final var subCommand =
-          this.subCommands.stream()
-              .filter(
-                  subCommandData ->
-                      subCommandData.commandMeta().name().equalsIgnoreCase(subCommandName)
-                          || Arrays.stream(subCommandData.commandMeta().aliases())
-                              .anyMatch(s -> s.equalsIgnoreCase(subCommandName)))
-              .findFirst()
-              .orElse(null);
+    }
 
-      if (subCommand != null) {
-        final var method = subCommand.method();
-        if (method.getParameterTypes()[0].isAssignableFrom(Player.class)
-            && !(sender instanceof Player)) {
-          return defaultCompletions;
-        }
+    final var subCommandName = args[0];
+    final var subCommand =
+        this.subCommands.stream()
+            .filter(
+                subCommandData ->
+                    subCommandData.commandMeta().name().equalsIgnoreCase(subCommandName)
+                        || Arrays.stream(subCommandData.commandMeta().aliases())
+                            .anyMatch(s -> s.equalsIgnoreCase(subCommandName)))
+            .findFirst()
+            .orElse(null);
 
-        final var rawArguments = Lists.newArrayList(args);
-        rawArguments.removeFirst();
+    if (subCommand == null) {
+      return defaultCompletions;
+    }
 
-        if (rawArguments.size() > subCommand.arguments().size()) {
-          return defaultCompletions;
-        }
+    final String permission = subCommand.commandMeta().permission();
+    if (!permission.isEmpty()
+        && sender instanceof final Player player
+        && !player.hasPermission(permission)) {
+      return defaultCompletions;
+    }
 
-        final var type = method.getParameterTypes()[rawArguments.size()];
-        return Lists.newArrayList(
-            this.commandRegistrar
-                .getArgumentResolverRegistrar()
-                .complete(type, sender, !rawArguments.isEmpty() ? rawArguments.getLast() : ""));
+    final var method = subCommand.method();
+    if (method.getParameterTypes()[0].isAssignableFrom(Player.class)
+        && !(sender instanceof Player)) {
+      return defaultCompletions;
+    }
+
+    // rawArguments = args without the subcommand name; its size mirrors args.length
+    // in the orphan command for index computations.
+    final var rawArguments = Lists.newArrayList(args);
+    rawArguments.removeFirst();
+
+    // Find first array parameter (1-based index; 0 = sender).
+    int arrayParamIndex = -1;
+    for (var i = 1; i < method.getParameterTypes().length; i++) {
+      if (method.getParameterTypes()[i].isArray()) {
+        arrayParamIndex = i;
+        break;
       }
     }
 
-    return defaultCompletions;
+    final Class<?> typeToComplete;
+
+    if (arrayParamIndex < 0) {
+      // No array: stop once all params are filled.
+      if (rawArguments.size() >= method.getParameters().length) {
+        return defaultCompletions;
+      }
+      // rawArguments.size() == 1 when typing first param → param[1] (skipping sender).
+      typeToComplete = method.getParameterTypes()[rawArguments.size()];
+
+    } else {
+      final int prefixCount = arrayParamIndex - 1;
+      final int suffixCount = method.getParameters().length - arrayParamIndex - 1;
+      final int currentArgIndex = rawArguments.size() - 1; // 0-based index of the arg being typed
+
+      if (currentArgIndex < prefixCount) {
+        // Prefix zone.
+        typeToComplete = method.getParameterTypes()[currentArgIndex + 1];
+
+      } else if (suffixCount > 0 && rawArguments.size() > prefixCount + suffixCount) {
+        // Suffix zone: once more args than (prefix + suffix) have been typed,
+        // the last suffixCount positions belong to suffix params.
+        final int posInSuffix = currentArgIndex - (rawArguments.size() - suffixCount);
+        typeToComplete = method.getParameterTypes()[arrayParamIndex + 1 + posInSuffix];
+
+      } else {
+        // Array zone: complete with the array's component type.
+        typeToComplete = method.getParameterTypes()[arrayParamIndex].getComponentType();
+      }
+    }
+
+    return Lists.newArrayList(
+        this.commandRegistrar
+            .getArgumentResolverRegistrar()
+            .complete(typeToComplete, sender, rawArguments.getLast()));
   }
 }

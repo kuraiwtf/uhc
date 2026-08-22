@@ -2,6 +2,7 @@ package dev.kurai.uhc.menu.rules.timer;
 
 import static dev.kurai.uhc.util.CC.*;
 
+import com.google.common.collect.Lists;
 import dev.kurai.uhc.menu.template.BackTemplate;
 import dev.kurai.uhc.menu.template.BorderTemplate;
 import dev.kurai.uhc.timer.AbstractTimer;
@@ -97,32 +98,31 @@ public final class TimerDurationMenu extends Menu {
       final var minTime = this.timer.getMinDuration();
       final var maxTime = this.timer.getMaxDuration();
 
-      final var loreBuilder =
-          new ItemBuilder(Material.WATCH)
-              .name("&6&l" + this.timer.getName())
-              .lore(
-                  "",
-                  "&6 "
-                      + SQUARE
-                      + "&f Temps actuel: &b"
-                      + TimeUtil.formatDuration(timeLeft * 1000L),
-                  "");
+      final var lines = Lists.<String>newArrayList();
+      lines.add("");
+      lines.add(
+          "&6 " + SQUARE + "&f Durée actuelle: &b" + TimeUtil.formatDuration(timeLeft * 1000L));
 
       if (minTime > 0 || maxTime != -1) {
-        loreBuilder.lore("&7 " + SQUARE + "&f Limites:");
+        lines.add("&6 " + SQUARE + "&f Limites:");
         if (minTime > 0) {
-          loreBuilder.lore("  &7Min: &c" + TimeUtil.formatDuration(minTime * 1000L));
+          lines.add("   &2" + SQUARE + "&f Min:&a " + TimeUtil.formatDuration(minTime * 1000L));
         }
+
         if (maxTime != -1) {
-          loreBuilder.lore("  &7Max: &a" + TimeUtil.formatDuration(maxTime * 1000L));
+          lines.add("   &4" + SQUARE + "&f Max:&c " + TimeUtil.formatDuration(maxTime * 1000L));
         }
-        loreBuilder.lore("");
       }
 
-      loreBuilder.lore("&7" + BAR + "&f Modifiez le temps avec", "  les boutons autour.", "");
+      lines.add("");
+      lines.add("&7" + BAR + "&f Modifiez le temps avec");
+      lines.add("  les boutons autour.");
+      lines.add("");
 
-      return loreBuilder
-          .amount(Math.min(Math.max(1, timeLeft / 60), 64))
+      return new ItemBuilder(Material.WATCH)
+          .name("&6&l" + this.timer.getName())
+          .lore(lines)
+          .amount(Math.clamp(timeLeft / 60, 1, 64))
           .lunarTag("unclickable", true)
           .lunarTag("hideSlotHighlight", true)
           .asItemStack();

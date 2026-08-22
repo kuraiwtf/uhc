@@ -1,36 +1,57 @@
 package dev.kurai.uhc.game;
 
 import dev.kurai.uhc.UltraHardcoreAPI;
-import dev.kurai.uhc.game.death.service.DeathService;
-import dev.kurai.uhc.game.death.service.DeathServiceImpl;
+import dev.kurai.uhc.game.cycle.CycleService;
+import dev.kurai.uhc.game.cycle.CycleServiceImpl;
+import dev.kurai.uhc.game.death.DeathService;
+import dev.kurai.uhc.game.death.DeathServiceImpl;
+import dev.kurai.uhc.game.disconnect.DisconnectService;
+import dev.kurai.uhc.game.disconnect.DisconnectServiceImpl;
+import dev.kurai.uhc.game.drop.DropRateService;
+import dev.kurai.uhc.game.drop.DropRateServiceImpl;
 import dev.kurai.uhc.game.drop.defaults.AppleDropRateModifier;
 import dev.kurai.uhc.game.drop.defaults.FlintDropRateModifier;
-import dev.kurai.uhc.game.drop.service.DropRateService;
-import dev.kurai.uhc.game.drop.service.DropRateServiceImpl;
-import dev.kurai.uhc.game.scatter.service.ScatterService;
-import dev.kurai.uhc.game.scatter.service.ScatterServiceImpl;
-import dev.kurai.uhc.game.scenario.service.ScenarioService;
-import dev.kurai.uhc.game.scenario.service.ScenarioServiceImpl;
+import dev.kurai.uhc.game.episode.EpisodeService;
+import dev.kurai.uhc.game.episode.EpisodeServiceImpl;
+import dev.kurai.uhc.game.group.GroupService;
+import dev.kurai.uhc.game.group.GroupServiceImpl;
+import dev.kurai.uhc.game.host.HostService;
+import dev.kurai.uhc.game.host.HostServiceImpl;
+import dev.kurai.uhc.game.rule.GameRuleService;
+import dev.kurai.uhc.game.rule.GameRuleServiceImpl;
+import dev.kurai.uhc.game.scatter.ScatterService;
+import dev.kurai.uhc.game.scatter.ScatterServiceImpl;
+import dev.kurai.uhc.game.scenario.ScenarioService;
+import dev.kurai.uhc.game.scenario.ScenarioServiceImpl;
+import dev.kurai.uhc.game.slot.SlotService;
+import dev.kurai.uhc.game.slot.SlotServiceImpl;
+import dev.kurai.uhc.game.start.StartServiceImpl;
 import dev.kurai.uhc.game.start.service.StartService;
-import dev.kurai.uhc.game.start.service.StartServiceImpl;
-import dev.kurai.uhc.timer.builtin.BorderTimer;
-import dev.kurai.uhc.timer.builtin.InvincibilityTimer;
-import dev.kurai.uhc.timer.builtin.PvPTimer;
-import dev.kurai.uhc.timer.service.TimerService;
-import dev.kurai.uhc.timer.service.TimerServiceImpl;
+import dev.kurai.uhc.timer.TimerService;
+import dev.kurai.uhc.timer.TimerServiceImpl;
+import lombok.Getter;
+import lombok.Setter;
 import net.kyori.adventure.audience.Audience;
-import org.jetbrains.annotations.Range;
 import org.jspecify.annotations.NullMarked;
 
 @NullMarked
+@Getter
+@Setter
 public final class GameServiceImpl implements GameService {
 
   private final UltraHardcoreAPI ultraHardcore;
 
+  private final CycleService cycleService;
   private final DeathService deathService;
+  private final DisconnectService disconnectService;
   private final DropRateService dropRateService;
+  private final EpisodeService episodeService;
+  private final GroupService groupService;
+  private final HostService hostService;
+  private final GameRuleService ruleService;
   private final ScatterService scatterService;
   private final ScenarioService scenarioService;
+  private final SlotService slotService;
   private final StartService startService;
   private final TimerService timerService;
 
@@ -39,67 +60,26 @@ public final class GameServiceImpl implements GameService {
   public GameServiceImpl(final UltraHardcoreAPI ultraHardcore) {
     this.ultraHardcore = ultraHardcore;
 
+    this.cycleService = new CycleServiceImpl(ultraHardcore);
     this.deathService = new DeathServiceImpl(ultraHardcore);
-    (this.dropRateService = new DropRateServiceImpl(ultraHardcore.getEventService()))
+    this.disconnectService = new DisconnectServiceImpl(ultraHardcore);
+    (this.dropRateService = new DropRateServiceImpl(ultraHardcore.eventService()))
         .registerModifiers(new AppleDropRateModifier(), new FlintDropRateModifier());
-    this.scatterService = new ScatterServiceImpl(ultraHardcore, this);
+    this.episodeService = new EpisodeServiceImpl(ultraHardcore);
+    this.groupService = new GroupServiceImpl();
+    this.hostService = new HostServiceImpl(ultraHardcore);
+    this.ruleService = new GameRuleServiceImpl();
+    this.scatterService = new ScatterServiceImpl(ultraHardcore);
     this.scenarioService = new ScenarioServiceImpl(ultraHardcore);
-
-    final var bukkitAudiences = ultraHardcore.getBukkitAudiences();
-
+    this.slotService = new SlotServiceImpl();
     this.startService = new StartServiceImpl(ultraHardcore);
-
-    (this.timerService = new TimerServiceImpl(ultraHardcore.getPlugin()))
-        .registerTimers(
-            new InvincibilityTimer(bukkitAudiences, ultraHardcore),
-            new PvPTimer(bukkitAudiences),
-            new BorderTimer(bukkitAudiences));
-  }
-
-  @Override
-  public long getStartTime() {
-    return this.startTime;
-  }
-
-  @Override
-  public void setStartTime(@Range(from = 0L, to = Long.MAX_VALUE) final long startTime) {
-    this.startTime = startTime;
-  }
-
-  @Override
-  public DeathService getDeathService() {
-    return this.deathService;
-  }
-
-  @Override
-  public DropRateService getDropRateService() {
-    return this.dropRateService;
-  }
-
-  @Override
-  public ScatterService getScatterService() {
-    return this.scatterService;
-  }
-
-  @Override
-  public ScenarioService getScenarioService() {
-    return this.scenarioService;
-  }
-
-  @Override
-  public StartService getStartService() {
-    return this.startService;
-  }
-
-  @Override
-  public TimerService getTimerService() {
-    return this.timerService;
+    this.timerService = new TimerServiceImpl(ultraHardcore.plugin());
   }
 
   @Override
   public Iterable<? extends Audience> audiences() {
     return this.ultraHardcore
-        .getProfileService()
+        .profileService()
         .getProfiles(profile -> profile.findPlayer().isPresent());
   }
 }

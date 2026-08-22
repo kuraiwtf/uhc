@@ -2,15 +2,17 @@ package dev.kurai.uhc.menu.rules;
 
 import static dev.kurai.uhc.game.configuration.border.BorderConfiguration.*;
 import static dev.kurai.uhc.game.configuration.game.GameConfiguration.*;
-import static dev.kurai.uhc.game.configuration.game.GameConfiguration.BOW_HEALTH_VIEW_OPTION;
 import static dev.kurai.uhc.game.configuration.ore.OreConfiguration.*;
 import static dev.kurai.uhc.util.CC.*;
 
 import dev.kurai.uhc.UltraHardcoreAPI;
-import dev.kurai.uhc.game.drop.service.DropRateService;
+import dev.kurai.uhc.game.drop.DropRateService;
+import dev.kurai.uhc.game.rule.GameRuleService;
 import dev.kurai.uhc.menu.button.ItemButton;
 import dev.kurai.uhc.menu.rules.border.BorderConfigurationMenu;
+import dev.kurai.uhc.menu.rules.disconnect.DisconnectTimerEditMenu;
 import dev.kurai.uhc.menu.rules.drop.DropRateMenu;
+import dev.kurai.uhc.menu.rules.game.GameRulesMenu;
 import dev.kurai.uhc.menu.rules.inventory.StartInventoryMenu;
 import dev.kurai.uhc.menu.rules.ore.OreLimitMenu;
 import dev.kurai.uhc.menu.rules.timer.TimerDurationMenu;
@@ -45,12 +47,47 @@ public final class RulesMenu extends Menu {
     this.apply(new BackTemplate(this.getPreviousMenu()));
     this.apply(new ModernBorderTemplate(DyeColor.RED.getData(), DyeColor.GRAY.getData()));
 
-    front.set(11, new BowHealthViewButton());
+    final var gameService = this.ultraHardcore.gameService();
+    final var cycleService = gameService.cycleService();
+    if (cycleService.enabled()) {
+      front.set(
+          4,
+          new ItemButton(
+              new ItemBuilder(Material.WATCH)
+                  .name("&6&lDurée d'un cycle")
+                  .lore(
+                      "",
+                      "&6 " + SQUARE + "&f Temps:&b %d",
+                      "",
+                      "&7" + BAR + "&f Permet de modifier la",
+                      "  durée d'un&e cycle complet",
+                      "  au cours de la partie.",
+                      "")
+                  .amount(cycleService.totalCycleDuration() / 60)
+                  .asItemStack()));
+    } else {
+      front.set(
+          4,
+          new ItemButton(
+              new ItemBuilder(Material.WATCH)
+                  .name("&6&lCycle")
+                  .lore(
+                      "",
+                      "&7" + BAR + "&f Il est impossible de",
+                      "&d  configurer&f la durée",
+                      "&f  du&e cycle&f de la partie",
+                      "&f  car il est&c désactivé&f.",
+                      "")
+                  .amount(0)
+                  .asItemStack()));
+    }
+
+    front.set(11, new GameRulesButton(this.ultraHardcore.gameService().ruleService()));
     front.set(12, new SpectatorButton());
     front.set(14, new BorderTimerButton(this.ultraHardcore));
     front.set(15, new BorderButton());
 
-    front.set(18, new DropRateButton(this.ultraHardcore.getGameService().getDropRateService()));
+    front.set(18, new DropRateButton(gameService.dropRateService()));
     front.set(19, new StartInventoryButton(this.ultraHardcore));
     front.set(26, new InvincibilityTimerButton(this.ultraHardcore));
 
@@ -68,45 +105,32 @@ public final class RulesMenu extends Menu {
                     "")
                 .asItemStack()));
     front.set(32, new PvPTimerButton(this.ultraHardcore));
-    front.set(
-        33,
-        new ItemButton(
-            new ItemBuilder(Material.DARK_OAK_DOOR_ITEM)
-                .name("&6&lTemps de Déconnexion")
-                .lore(
-                    "",
-                    "&6 " + SQUARE + "&f Temps:&b 05:00",
-                    "",
-                    "&7" + BAR + "&f Permet de modifier",
-                    "  la limite du temps de",
-                    "  &cdéconnexion&f de la partie.",
-                    "")
-                .amount(5)
-                .asItemStack()));
+    front.set(33, new DisconnectTimerButton(this.ultraHardcore));
   }
 
-  private static final class BowHealthViewButton extends Button {
+  private static final class GameRulesButton extends Button {
+
+    private final GameRuleService ruleService;
+
+    private GameRulesButton(final GameRuleService ruleService) {
+      this.ruleService = ruleService;
+    }
 
     @Override
     public ItemStack getIcon() {
-      return new ItemBuilder(Material.BOW)
-          .name("&c&lVie en touchant une flèche")
-          .lore(
-              "",
-              "&c "
-                  + SQUARE
-                  + "&f Statut: "
-                  + (BOW_HEALTH_VIEW_OPTION.getValue() ? "&a&lOui" : "&c&lNon"),
-              "")
-          .amount(BOW_HEALTH_VIEW_OPTION.getValue() ? 1 : 0)
-          .glowing(BOW_HEALTH_VIEW_OPTION.getValue())
+      return new ItemBuilder(Material.REDSTONE_COMPARATOR)
+          .name("&c&lRègles de la partie")
+          .lore("", "&7" + BAR + "&r Permet de modifier", "  les&c règles&r de la&d partie&r.", "")
+          .glowing(true)
           .asItemStack();
     }
 
     @Override
     public void onClick(final ButtonClick click) {
-      BOW_HEALTH_VIEW_OPTION.setValue(!BOW_HEALTH_VIEW_OPTION.getValue());
-      click.getMenu().update();
+      final Menu previousMenu = click.getMenu();
+      final GameRulesMenu menu = new GameRulesMenu(previousMenu.getPlayer(), this.ruleService);
+      menu.setPreviousMenu(previousMenu);
+      menu.open();
     }
   }
 
@@ -202,7 +226,7 @@ public final class RulesMenu extends Menu {
 
     @Override
     public ItemStack getIcon() {
-      final var timerService = this.ultraHardcore.getGameService().getTimerService();
+      final var timerService = this.ultraHardcore.gameService().timerService();
       final var pvpTimerOpt = timerService.getTimer("pvp");
 
       if (pvpTimerOpt.isEmpty()) {
@@ -230,7 +254,7 @@ public final class RulesMenu extends Menu {
     @Override
     public void onClick(final ButtonClick click) {
       final var menu = click.getMenu();
-      final var timerService = this.ultraHardcore.getGameService().getTimerService();
+      final var timerService = this.ultraHardcore.gameService().timerService();
       final var timerOpt = timerService.getTimer("pvp");
 
       if (timerOpt.isEmpty()) {
@@ -238,6 +262,43 @@ public final class RulesMenu extends Menu {
       }
 
       final var configMenu = new TimerDurationMenu(menu.getPlayer(), timerOpt.get());
+      configMenu.setPreviousMenu(menu);
+      configMenu.open();
+    }
+  }
+
+  private static final class DisconnectTimerButton extends Button {
+
+    private final UltraHardcoreAPI ultraHardcore;
+
+    private DisconnectTimerButton(final UltraHardcoreAPI ultraHardcore) {
+      this.ultraHardcore = ultraHardcore;
+    }
+
+    @Override
+    public ItemStack getIcon() {
+      final long time = this.ultraHardcore.gameService().disconnectService().disconnectTime();
+      return new ItemBuilder(Material.DARK_OAK_DOOR_ITEM)
+          .name("&6&lTemps de déconnexion")
+          .lore(
+              "",
+              "&6 " + SQUARE + "&f Temps: &b" + TimeUtil.formatDuration(time),
+              "",
+              "&7" + BAR + "&f Permet de modifier le",
+              "  temps avant l'élimination",
+              "  automatique d'un joueur.",
+              "  &chors-ligne&r.",
+              "")
+          .amount(Math.clamp((int) (time / (60 * 1_000L)), 1, 64))
+          .asItemStack();
+    }
+
+    @Override
+    public void onClick(final ButtonClick click) {
+      final Menu menu = click.getMenu();
+      final Menu configMenu =
+          new DisconnectTimerEditMenu(
+              menu.getPlayer(), this.ultraHardcore.gameService().disconnectService());
       configMenu.setPreviousMenu(menu);
       configMenu.open();
     }
@@ -253,7 +314,7 @@ public final class RulesMenu extends Menu {
 
     @Override
     public ItemStack getIcon() {
-      final var timerService = this.ultraHardcore.getGameService().getTimerService();
+      final var timerService = this.ultraHardcore.gameService().timerService();
       final var borderTimerOpt = timerService.getTimer("border");
 
       if (borderTimerOpt.isEmpty()) {
@@ -280,7 +341,7 @@ public final class RulesMenu extends Menu {
     @Override
     public void onClick(final ButtonClick click) {
       final var menu = click.getMenu();
-      final var timerService = this.ultraHardcore.getGameService().getTimerService();
+      final var timerService = this.ultraHardcore.gameService().timerService();
       final var timerOpt = timerService.getTimer("border");
 
       if (timerOpt.isEmpty()) {
@@ -303,7 +364,7 @@ public final class RulesMenu extends Menu {
 
     @Override
     public ItemStack getIcon() {
-      final var timerService = this.ultraHardcore.getGameService().getTimerService();
+      final var timerService = this.ultraHardcore.gameService().timerService();
       final var invincibilityTimerOpt = timerService.getTimer("invincibility");
 
       if (invincibilityTimerOpt.isEmpty()) {
@@ -332,7 +393,7 @@ public final class RulesMenu extends Menu {
     @Override
     public void onClick(final ButtonClick click) {
       final var menu = click.getMenu();
-      final var timerService = this.ultraHardcore.getGameService().getTimerService();
+      final var timerService = this.ultraHardcore.gameService().timerService();
       final var timerOpt = timerService.getTimer("invincibility");
 
       if (timerOpt.isEmpty()) {

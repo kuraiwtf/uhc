@@ -8,7 +8,7 @@ import static net.kyori.adventure.text.format.NamedTextColor.DARK_GRAY;
 import com.google.common.collect.Lists;
 import dev.kurai.uhc.command.annotation.CommandMeta;
 import dev.kurai.uhc.command.argument.data.ArgumentData;
-import dev.kurai.uhc.command.registrar.CommandRegistrar;
+import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -18,7 +18,6 @@ import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
 
 public final class UltraHardcoreOrphanCommand extends Command {
 
@@ -26,15 +25,15 @@ public final class UltraHardcoreOrphanCommand extends Command {
   private final CommandRegistrar commandRegistrar;
   private final Object object;
   private final Method method;
-  private final List<@NotNull ArgumentData> arguments;
+  private final List<ArgumentData> arguments;
 
   public UltraHardcoreOrphanCommand(
-      final @NotNull CommandMeta meta,
-      final @NotNull BukkitAudiences bukkitAudiences,
-      final @NotNull CommandRegistrar commandRegistrar,
-      final @NotNull Object object,
-      final @NotNull Method method,
-      final List<@NotNull ArgumentData> arguments) {
+      final CommandMeta meta,
+      final BukkitAudiences bukkitAudiences,
+      final CommandRegistrar commandRegistrar,
+      final Object object,
+      final Method method,
+      final List<ArgumentData> arguments) {
     super(meta.name(), meta.description(), "/" + meta.name(), Arrays.asList(meta.aliases()));
     this.bukkitAudiences = bukkitAudiences;
     this.commandRegistrar = commandRegistrar;
@@ -58,7 +57,26 @@ public final class UltraHardcoreOrphanCommand extends Command {
       return true;
     }
 
-    if (args.length < this.arguments.size()) {
+    int arrayParamIndex = -1;
+    for (var i = 1; i < this.method.getParameterTypes().length; i++) {
+      if (this.method.getParameterTypes()[i].isArray()) {
+        arrayParamIndex = i;
+        break;
+      }
+    }
+
+    final int minArgs;
+    if (arrayParamIndex < 0) {
+      int required = 0;
+      for (final var argument : this.arguments) {
+        if (argument.defaultValue().isEmpty()) required++;
+      }
+      minArgs = required;
+    } else {
+      minArgs = this.method.getParameters().length - 1;
+    }
+
+    if (args.length < minArgs) {
       audience.sendMessage(
           text()
               .append(prefix())
@@ -66,7 +84,7 @@ public final class UltraHardcoreOrphanCommand extends Command {
               .append(text("Vous n'avez pas fourni suffisament d'arguments.", RED))
               .appendSpace()
               .append(text("(", DARK_GRAY))
-              .append(text(this.arguments.size(), DARK_RED, TextDecoration.BOLD))
+              .append(text(minArgs, DARK_RED, TextDecoration.BOLD))
               .append(text("/", DARK_GRAY))
               .append(text(args.length, DARK_RED))
               .append(text(")", DARK_GRAY))
@@ -76,23 +94,80 @@ public final class UltraHardcoreOrphanCommand extends Command {
 
     final var resolvedArguments = Lists.newArrayList();
     resolvedArguments.add(sender);
+    final var registrar = this.commandRegistrar.getArgumentResolverRegistrar();
 
-    for (var i = 1; i < this.method.getParameters().length; i++) {
-      final var resolved =
-          this.commandRegistrar
-              .getArgumentResolverRegistrar()
-              .resolveArgument(this.method.getParameters()[i].getType(), sender, args[i - 1]);
-      if (resolved == null) {
-        audience.sendMessage(
-            text()
-                .append(prefix())
-                .appendSpace()
-                .append(text("Un argument est invalide.", RED))
-                .build());
-        return false;
+    if (arrayParamIndex < 0) {
+      for (var i = 1; i < this.method.getParameters().length; i++) {
+        final String rawArg =
+            i - 1 < args.length ? args[i - 1] : this.arguments.get(i - 1).defaultValue();
+        final var resolved =
+            registrar.resolveArgument(this.method.getParameterTypes()[i], sender, rawArg);
+        if (resolved == null) {
+          audience.sendMessage(
+              text()
+                  .append(prefix())
+                  .appendSpace()
+                  .append(text("Un argument est invalide.", RED))
+                  .build());
+          return false;
+        }
+        resolvedArguments.add(resolved);
       }
+    } else {
+      final int prefixCount = arrayParamIndex - 1;
+      final int suffixCount = this.method.getParameters().length - arrayParamIndex - 1;
+      final int arrayLength = args.length - prefixCount - suffixCount;
 
-      resolvedArguments.add(resolved);
+      for (var i = 1; i < this.method.getParameters().length; i++) {
+        final Class<?> type = this.method.getParameterTypes()[i];
+
+        if (i < arrayParamIndex) {
+          final var resolved = registrar.resolveArgument(type, sender, args[i - 1]);
+          if (resolved == null) {
+            audience.sendMessage(
+                text()
+                    .append(prefix())
+                    .appendSpace()
+                    .append(text("Un argument est invalide.", RED))
+                    .build());
+            return false;
+          }
+
+          resolvedArguments.add(resolved);
+        } else if (i == arrayParamIndex) {
+          final Class<?> componentType = type.getComponentType();
+          final Object array = Array.newInstance(componentType, arrayLength);
+          for (var j = 0; j < arrayLength; j++) {
+            final var resolved =
+                registrar.resolveArgument(componentType, sender, args[prefixCount + j]);
+            if (resolved == null) {
+              audience.sendMessage(
+                  text()
+                      .append(prefix())
+                      .appendSpace()
+                      .append(text("Un argument est invalide.", RED))
+                      .build());
+              return false;
+            }
+            Array.set(array, j, resolved);
+          }
+          resolvedArguments.add(array);
+
+        } else {
+          final int argIndex = args.length - (this.method.getParameters().length - i);
+          final var resolved = registrar.resolveArgument(type, sender, args[argIndex]);
+          if (resolved == null) {
+            audience.sendMessage(
+                text()
+                    .append(prefix())
+                    .appendSpace()
+                    .append(text("Un argument est invalide.", RED))
+                    .build());
+            return false;
+          }
+          resolvedArguments.add(resolved);
+        }
+      }
     }
 
     try {
@@ -102,7 +177,7 @@ public final class UltraHardcoreOrphanCommand extends Command {
           text()
               .append(prefix())
               .appendSpace()
-              .append(text("Une erreur est survenue lors de l'exécution de cette commande..", RED))
+              .append(text("Une erreur est survenue lors de l'exécution de cette commande.", RED))
               .build());
       e.printStackTrace();
     }
@@ -113,14 +188,42 @@ public final class UltraHardcoreOrphanCommand extends Command {
   public List<String> tabComplete(
       final CommandSender sender, final String alias, final String[] args)
       throws IllegalArgumentException {
-    if (args.length - 1 < this.arguments.size()) {
-      final var type = this.method.getParameterTypes()[args.length - 1];
-      return Lists.newArrayList(
-          this.commandRegistrar
-              .getArgumentResolverRegistrar()
-              .complete(type, sender, args[args.length - 1]));
+
+    int arrayParamIndex = -1;
+    for (var i = 1; i < this.method.getParameterTypes().length; i++) {
+      if (this.method.getParameterTypes()[i].isArray()) {
+        arrayParamIndex = i;
+        break;
+      }
     }
 
-    return Lists.newArrayList();
+    final Class<?> typeToComplete;
+
+    if (arrayParamIndex < 0) {
+      if (args.length >= this.method.getParameters().length) {
+        return Lists.newArrayList();
+      }
+      typeToComplete = this.method.getParameterTypes()[args.length];
+
+    } else {
+      final int prefixCount = arrayParamIndex - 1;
+      final int suffixCount = this.method.getParameters().length - arrayParamIndex - 1;
+      final int currentArgIndex = args.length - 1;
+
+      if (currentArgIndex < prefixCount) {
+        typeToComplete = this.method.getParameterTypes()[currentArgIndex + 1];
+
+      } else if (suffixCount > 0 && args.length > prefixCount + suffixCount) {
+        final int posInSuffix = currentArgIndex - (args.length - suffixCount);
+        typeToComplete = this.method.getParameterTypes()[arrayParamIndex + 1 + posInSuffix];
+      } else {
+        typeToComplete = this.method.getParameterTypes()[arrayParamIndex].getComponentType();
+      }
+    }
+
+    return Lists.newArrayList(
+        this.commandRegistrar
+            .getArgumentResolverRegistrar()
+            .complete(typeToComplete, sender, args[args.length - 1]));
   }
 }

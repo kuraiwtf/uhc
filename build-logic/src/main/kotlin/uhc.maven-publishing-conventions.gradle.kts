@@ -1,3 +1,4 @@
 plugins {
-    `maven-publish`
+  id("uhc.java-library-conventions")
+  `maven-publish`
 }

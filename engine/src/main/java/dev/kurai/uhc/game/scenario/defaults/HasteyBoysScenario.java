@@ -3,6 +3,7 @@ package dev.kurai.uhc.game.scenario.defaults;
 import com.google.common.collect.Lists;
 import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.game.scenario.AbstractScenario;
+import dev.kurai.uhc.game.scenario.ScenarioCategory;
 import java.util.Collection;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -10,11 +11,10 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
 
 public final class HasteyBoysScenario extends AbstractScenario implements Listener {
 
-  private static final Collection<@NotNull Material> TOOLS = Lists.newArrayList();
+  private static final Collection<Material> TOOLS = Lists.newArrayList();
 
   static {
     for (final var material : Material.values()) {
@@ -29,12 +29,12 @@ public final class HasteyBoysScenario extends AbstractScenario implements Listen
     TOOLS.add(Material.SHEARS);
   }
 
-  public HasteyBoysScenario(final @NotNull UltraHardcoreAPI ultraHardcore) {
-    super("hastey_boys", "Hastey Boys", ultraHardcore);
+  public HasteyBoysScenario(final UltraHardcoreAPI ultraHardcore) {
+    super("hastey_boys", "Hastey Boys", ultraHardcore, ScenarioCategory.MINING);
   }
 
   @Override
-  public @NotNull ItemStack provideIcon() {
+  public ItemStack provideIcon() {
     return new ItemStack(Material.IRON_PICKAXE);
   }
 

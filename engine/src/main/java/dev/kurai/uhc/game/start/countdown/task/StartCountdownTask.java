@@ -3,7 +3,7 @@ package dev.kurai.uhc.game.start.countdown.task;
 import static net.kyori.adventure.text.Component.empty;
 import static net.kyori.adventure.text.Component.text;
 
-import dev.kurai.uhc.game.scatter.service.ScatterService;
+import dev.kurai.uhc.game.scatter.ScatterService;
 import java.time.Duration;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -11,7 +11,6 @@ import net.kyori.adventure.title.Title;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.jetbrains.annotations.NotNull;
 
 public final class StartCountdownTask extends BukkitRunnable {
 
@@ -22,8 +21,7 @@ public final class StartCountdownTask extends BukkitRunnable {
   private int timeLeft;
 
   public StartCountdownTask(
-      final @NotNull BukkitAudiences bukkitAudiences,
-      final @NotNull ScatterService scatterService) {
+      final BukkitAudiences bukkitAudiences, final ScatterService scatterService) {
     this.bukkitAudiences = bukkitAudiences;
     this.scatterService = scatterService;
     this.timeLeft = COUNTDOWN_TIME;

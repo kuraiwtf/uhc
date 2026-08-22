@@ -1,7 +1,6 @@
 package dev.kurai.uhc.module.camp;
 
 import dev.kurai.uhc.util.api.Identifiable;
-import org.jetbrains.annotations.NotNull;
 
 public abstract class AbstractCampData<T extends AbstractCamp<?>>
     implements Identifiable<Class<? extends T>> {
@@ -13,7 +12,7 @@ public abstract class AbstractCampData<T extends AbstractCamp<?>>
   }
 
   @Override
-  public @NotNull Class<? extends T> getId() {
+  public Class<? extends T> getId() {
     return this.identifier;
   }
 }

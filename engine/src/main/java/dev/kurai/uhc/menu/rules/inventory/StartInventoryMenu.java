@@ -1,8 +1,6 @@
 package dev.kurai.uhc.menu.rules.inventory;
 
 import static dev.kurai.uhc.util.CC.*;
-import static net.kyori.adventure.text.Component.text;
-import static net.kyori.adventure.text.event.ClickEvent.runCommand;
 import static net.kyori.adventure.text.format.NamedTextColor.*;
 
 import dev.kurai.uhc.UltraHardcoreAPI;
@@ -11,6 +9,7 @@ import dev.kurai.uhc.menu.button.GlassButton;
 import dev.kurai.uhc.menu.button.ItemButton;
 import dev.kurai.uhc.menu.template.BackTemplate;
 import dev.kurai.uhc.profile.component.InventoryEditorComponent;
+import dev.kurai.uhc.util.CC;
 import dev.kurai.uhc.util.ItemBuilder;
 import net.j4c0b3y.api.menu.Menu;
 import net.j4c0b3y.api.menu.MenuSize;
@@ -19,6 +18,7 @@ import net.j4c0b3y.api.menu.button.ButtonClick;
 import net.j4c0b3y.api.menu.layer.impl.BackgroundLayer;
 import net.j4c0b3y.api.menu.layer.impl.ForegroundLayer;
 import org.bukkit.DyeColor;
+import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -51,7 +51,7 @@ public final class StartInventoryMenu extends Menu {
   }
 
   private void setupInventory(final ForegroundLayer front, final ItemStack[] savedInventory) {
-    for (int i = 0; i < 36; i++) {
+    for (int i = 0; i < savedInventory.length; i++) {
       final var item = savedInventory[i];
       if (item != null && item.getType() != Material.AIR) {
         front.set(i, new ItemButton(item));
@@ -141,16 +141,23 @@ public final class StartInventoryMenu extends Menu {
     @Override
     public void onClick(final ButtonClick click) {
       final var player = click.getMenu().getPlayer();
-      final var profile = this.ultraHardcore.getProfileService().getProfile(player.getUniqueId());
+      final var profile =
+          this.ultraHardcore.profileService().getOrCreateProfile(player.getUniqueId());
       if (profile == null) {
         return;
       }
 
-      profile.addComponent(new InventoryEditorComponent());
+      final var inventory = player.getInventory();
+      final var currentInventory = inventory.getContents().clone();
+      final var currentArmor = inventory.getArmorContents().clone();
+
+      profile.addComponent(new InventoryEditorComponent(currentInventory, currentArmor));
       player.closeInventory();
 
       this.loadInventoryForEditing(player);
       this.sendEditModeMessage(player);
+
+      player.setGameMode(GameMode.CREATIVE);
     }
 
     private void loadInventoryForEditing(final Player player) {
@@ -166,16 +173,12 @@ public final class StartInventoryMenu extends Menu {
     }
 
     private void sendEditModeMessage(final Player player) {
-      this.ultraHardcore
-          .getBukkitAudiences()
-          .player(player)
-          .sendMessage(
-              text()
-                  .append(text("Mode édition activé! ", GREEN))
-                  .append(text("Configurez votre inventaire et utilisez ", GRAY))
-                  .append(text("/save", GOLD).clickEvent(runCommand("/save")))
-                  .append(text(" pour sauvegarder.", GRAY))
-                  .build());
+      player.sendMessage("");
+      player.sendMessage(CC.center("&a&lINVENTAIRE DE DEPART"));
+      player.sendMessage("");
+      player.sendMessage(CC.center("Utilisez la commande&a /save&r pour"));
+      player.sendMessage(CC.center("&asauvegarder&r l'&ainventaire&r."));
+      player.sendMessage("");
     }
   }
 

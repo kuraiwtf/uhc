@@ -1,5 +1,7 @@
 package dev.kurai.uhc.profile.component;
 
 import dev.kurai.uhc.ecs.component.Component;
+import org.bukkit.inventory.ItemStack;
 
-public final class InventoryEditorComponent implements Component {}
+public record InventoryEditorComponent(ItemStack[] savedInventory, ItemStack[] savedArmor)
+    implements Component {}

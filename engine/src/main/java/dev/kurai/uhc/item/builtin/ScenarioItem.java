@@ -13,7 +13,6 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
 
 public final class ScenarioItem extends CustomItem {
 
@@ -21,13 +20,13 @@ public final class ScenarioItem extends CustomItem {
 
   private final UltraHardcoreAPI ultraHardcore;
 
-  public ScenarioItem(final @NotNull UltraHardcoreAPI ultraHardcore) {
+  public ScenarioItem(final UltraHardcoreAPI ultraHardcore) {
     super(IDENTIFIER, false, false);
     this.ultraHardcore = ultraHardcore;
   }
 
   @Override
-  public @NotNull ItemStack provideIcon(final @NotNull Player player) {
+  public ItemStack provideIcon(final Player player) {
     return new ItemBuilder(Material.BOOK)
         .name("&a&lScénarios&8 " + CC.SQUARE + "&7 Clic-Droit")
         .lore("", "&7" + CC.BAR + "&f Permet de voir les scénarios.", "")
@@ -36,24 +35,23 @@ public final class ScenarioItem extends CustomItem {
   }
 
   @Override
-  public void onInteract(final @NotNull Player player, final @NotNull PlayerInteractEvent event) {
+  public void onInteract(final Player player, final PlayerInteractEvent event) {
     event.setCancelled(true);
     final var action = event.getAction();
     if (action != RIGHT_CLICK_AIR && action != RIGHT_CLICK_BLOCK) {
       return;
     }
 
-    new ScenarioViewMenu(player, this.ultraHardcore.getGameService().getScenarioService()).open();
+    new ScenarioViewMenu(player, this.ultraHardcore.gameService().scenarioService()).open();
   }
 
   @Override
-  public void onDrop(final @NotNull Player player, final @NotNull PlayerDropItemEvent event) {
+  public void onDrop(final Player player, final PlayerDropItemEvent event) {
     event.setCancelled(true);
   }
 
   @Override
-  public void onInventoryClick(
-      final @NotNull Player player, final @NotNull InventoryClickEvent event) {
+  public void onInventoryClick(final Player player, final InventoryClickEvent event) {
     event.setCancelled(true);
   }
 }

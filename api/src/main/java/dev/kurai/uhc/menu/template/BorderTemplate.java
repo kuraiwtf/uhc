@@ -4,7 +4,6 @@ import dev.kurai.uhc.menu.button.GlassButton;
 import net.j4c0b3y.api.menu.layer.impl.BackgroundLayer;
 import net.j4c0b3y.api.menu.layer.impl.ForegroundLayer;
 import net.j4c0b3y.api.menu.template.Template;
-import org.jetbrains.annotations.NotNull;
 
 public final class BorderTemplate implements Template {
 
@@ -15,9 +14,9 @@ public final class BorderTemplate implements Template {
   }
 
   @Override
-  public void apply(final @NotNull BackgroundLayer background, final ForegroundLayer foreground) {
+  public void apply(final BackgroundLayer background, final ForegroundLayer foreground) {
     final var size = background.getMenu().getTotalSlots();
-    for (int i :
+    for (final int i :
         new int[] {
           0, 1, 7, 8, 9, 17, size - 18, size - 10, size - 9, size - 8, size - 2, size - 1
         }) {

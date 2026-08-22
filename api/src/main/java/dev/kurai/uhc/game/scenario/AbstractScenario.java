@@ -7,24 +7,26 @@ import dev.kurai.uhc.util.api.Identifiable;
 import dev.kurai.uhc.util.api.name.Nameable;
 import java.util.Map;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
 
-public abstract class AbstractScenario
-    implements Identifiable<@NotNull String>, Nameable<@NotNull String> {
-
-  private final Map<@NotNull String, @NotNull ScenarioConfiguration<?>> configurations;
+public abstract class AbstractScenario implements Identifiable<String>, Nameable<String> {
 
   protected final String id;
   protected final String name;
 
   protected final UltraHardcoreAPI ultraHardcore;
 
+  protected final ScenarioCategory category;
+
+  private final Map<String, ScenarioConfiguration<?>> configurations;
+
   private boolean enabled;
 
   public AbstractScenario(
-      final @NotNull String id,
-      final @NotNull String name,
-      final @NotNull UltraHardcoreAPI ultraHardcore) {
+      final String id,
+      final String name,
+      final UltraHardcoreAPI ultraHardcore,
+      final ScenarioCategory category) {
+    this.category = category;
     this.configurations = Maps.newHashMap();
 
     this.id = id;
@@ -33,9 +35,9 @@ public abstract class AbstractScenario
     this.ultraHardcore = ultraHardcore;
   }
 
-  public abstract @NotNull ItemStack provideIcon();
+  public abstract ItemStack provideIcon();
 
-  public final void registerConfiguration(final @NotNull ScenarioConfiguration<?> configuration) {
+  public final void registerConfiguration(final ScenarioConfiguration<?> configuration) {
     this.configurations.put(configuration.getId(), configuration);
   }
 
@@ -44,13 +46,17 @@ public abstract class AbstractScenario
   public void onDisable() {}
 
   @Override
-  public final @NotNull String getId() {
+  public final String getId() {
     return this.id;
   }
 
   @Override
-  public final @NotNull String getName() {
+  public final String getName() {
     return this.name;
+  }
+
+  public ScenarioCategory getCategory() {
+    return this.category;
   }
 
   public final boolean isEnabled() {

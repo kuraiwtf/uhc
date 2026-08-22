@@ -4,7 +4,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
-import org.jetbrains.annotations.NotNull;
 
 public final class PlayerUnsitEvent extends Event implements Cancellable {
 
@@ -13,8 +12,12 @@ public final class PlayerUnsitEvent extends Event implements Cancellable {
   private final Player player;
   private boolean cancelled;
 
-  public PlayerUnsitEvent(final @NotNull Player player) {
+  public PlayerUnsitEvent(final Player player) {
     this.player = player;
+  }
+
+  public static HandlerList getHandlerList() {
+    return HANDLERS;
   }
 
   @Override
@@ -29,10 +32,6 @@ public final class PlayerUnsitEvent extends Event implements Cancellable {
 
   @Override
   public HandlerList getHandlers() {
-    return HANDLERS;
-  }
-
-  public static HandlerList getHandlerList() {
     return HANDLERS;
   }
 }

@@ -3,31 +3,32 @@ package dev.kurai.uhc.game.scenario.defaults;
 import com.google.common.collect.Lists;
 import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.game.scenario.AbstractScenario;
+import dev.kurai.uhc.game.scenario.ScenarioCategory;
 import java.util.Collection;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
 
 public final class SafeMinersScenario extends AbstractScenario implements Listener {
 
-  private static final Collection<EntityDamageEvent.@NotNull DamageCause> IMMUNE =
+  private static final Collection<DamageCause> IMMUNE =
       Lists.newArrayList(
-          EntityDamageEvent.DamageCause.FALL,
-          EntityDamageEvent.DamageCause.FALLING_BLOCK,
-          EntityDamageEvent.DamageCause.FIRE_TICK,
-          EntityDamageEvent.DamageCause.FIRE,
-          EntityDamageEvent.DamageCause.LAVA);
+          DamageCause.FALL,
+          DamageCause.FALLING_BLOCK,
+          DamageCause.FIRE_TICK,
+          DamageCause.FIRE,
+          DamageCause.LAVA);
 
-  public SafeMinersScenario(final @NotNull UltraHardcoreAPI ultraHardcore) {
-    super("safe_miners", "Safe Miners", ultraHardcore);
+  public SafeMinersScenario(final UltraHardcoreAPI ultraHardcore) {
+    super("safe_miners", "Safe Miners", ultraHardcore, ScenarioCategory.MINING);
   }
 
   @Override
-  public @NotNull ItemStack provideIcon() {
+  public ItemStack provideIcon() {
     return new ItemStack(Material.LAVA_BUCKET);
   }
 

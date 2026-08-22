@@ -19,6 +19,10 @@ public final class GameDeathEvent extends Event {
     this.victim = victim;
   }
 
+  public static HandlerList getHandlerList() {
+    return HANDLERS;
+  }
+
   public @Nullable Profile getKiller() {
     return this.killer;
   }
@@ -29,10 +33,6 @@ public final class GameDeathEvent extends Event {
 
   @Override
   public HandlerList getHandlers() {
-    return HANDLERS;
-  }
-
-  public static HandlerList getHandlerList() {
     return HANDLERS;
   }
 }

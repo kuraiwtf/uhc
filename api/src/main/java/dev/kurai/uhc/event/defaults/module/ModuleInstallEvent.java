@@ -19,6 +19,10 @@ public final class ModuleInstallEvent extends Event implements Cancellable {
     this.newModule = newModule;
   }
 
+  public static HandlerList getHandlerList() {
+    return HANDLERS;
+  }
+
   public AbstractModule getPreviousModule() {
     return this.previousModule;
   }
@@ -39,10 +43,6 @@ public final class ModuleInstallEvent extends Event implements Cancellable {
 
   @Override
   public HandlerList getHandlers() {
-    return HANDLERS;
-  }
-
-  public static HandlerList getHandlerList() {
     return HANDLERS;
   }
 }

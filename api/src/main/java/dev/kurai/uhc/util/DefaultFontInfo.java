@@ -107,8 +107,11 @@ public enum DefaultFontInfo {
   }
 
   public static DefaultFontInfo getDefaultFontInfo(final char c) {
-    for (final DefaultFontInfo dFI : DefaultFontInfo.values())
-      if (dFI.getCharacter() == c) return dFI;
+    for (final DefaultFontInfo dFI : DefaultFontInfo.values()) {
+      if (dFI.getCharacter() == c) {
+        return dFI;
+      }
+    }
 
     return DefaultFontInfo.DEFAULT;
   }
@@ -122,7 +125,9 @@ public enum DefaultFontInfo {
   }
 
   public int getBoldLength() {
-    if (this == DefaultFontInfo.SPACE) return this.getLength();
+    if (this == DefaultFontInfo.SPACE) {
+      return this.getLength();
+    }
     return this.length + 1;
   }
 }

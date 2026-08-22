@@ -1,7 +1,5 @@
 package dev.kurai.uhc.game.configuration.border;
 
-import org.jetbrains.annotations.NotNull;
-
 public enum BorderType {
   DAMAGE("Dégâts"),
   TELEPORT("Téléportation"),
@@ -9,7 +7,7 @@ public enum BorderType {
 
   private final String name;
 
-  BorderType(final @NotNull String name) {
+  BorderType(final String name) {
     this.name = name;
   }
 
