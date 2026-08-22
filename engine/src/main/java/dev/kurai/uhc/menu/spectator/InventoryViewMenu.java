@@ -16,6 +16,7 @@ import net.j4c0b3y.api.menu.button.Button;
 import net.j4c0b3y.api.menu.layer.impl.BackgroundLayer;
 import net.j4c0b3y.api.menu.layer.impl.ForegroundLayer;
 import org.bukkit.DyeColor;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
@@ -77,7 +78,7 @@ public final class InventoryViewMenu extends Menu {
     front.set(5, 5, new HealthButton(this.target));
     front.set(6, 5, new AbilitiesButton(this.target, this.profile));
     front.set(7, 5, new EffectButton(this.target));
-    front.set(8, 5, new InformationButton(this.target));
+    front.set(8, 5, new InformationButton(this.target, this.profile));
   }
 
   private static final class HealthButton extends Button {
@@ -195,17 +196,30 @@ public final class InventoryViewMenu extends Menu {
   private static final class InformationButton extends Button {
 
     private final Player target;
+    private final Profile profile;
 
-    private InformationButton(final Player target) {
+    private InformationButton(final Player target, final Profile profile) {
       this.target = target;
+      this.profile = profile;
     }
 
     @Override
     public ItemStack getIcon() {
+      final Location location = this.target.getLocation();
       return new ItemBuilder(Material.SKULL_ITEM)
           .data(3)
-          .name("&b&lInformations")
-          .lore("", "Feu: &c" + Math.max(0, this.target.getFireTicks()) + " ticks", "")
+          .name("&b&l%s".formatted(this.target.getName()))
+          .lore(
+              "",
+              "Éliminations:&c %d &8(&c%d&8)"
+                  .formatted(this.profile.kills(), this.profile.assists()),
+              "",
+              "Position: &b%.1f&f, &b%.1f&f, &b%.1f&f"
+                  .formatted(location.getX(), location.getY(), location.getZ()),
+              "Monde: &b%s".formatted(location.getWorld().getName()),
+              "",
+              "Feu: &c%d ticks".formatted(Math.max(0, this.target.getFireTicks())),
+              "")
           .skullOwner(this.target.getName())
           .asItemStack();
     }
