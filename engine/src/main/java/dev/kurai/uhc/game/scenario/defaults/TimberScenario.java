@@ -34,7 +34,7 @@ public final class TimberScenario extends AbstractScenario implements Listener {
       return;
     }
 
-    event.setCancelled(true);
+    event.getBlock().setType(Material.AIR);
     new TimberTask(event.getPlayer(), this.check(block))
         .runTaskTimer(this.ultraHardcore.plugin(), 0, 4L);
   }
