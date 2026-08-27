@@ -203,7 +203,6 @@ public final class PowerListener extends PacketListenerAbstract implements Liste
       return;
     }
 
-    event.setCancelled(true);
     if (!(foundPower instanceof BlockPlacePower)) {
       return;
     }
