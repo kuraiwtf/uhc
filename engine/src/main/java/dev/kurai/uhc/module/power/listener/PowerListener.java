@@ -25,11 +25,6 @@ import dev.kurai.uhc.profile.ProfileService;
 import dev.kurai.uhc.util.CC;
 import dev.kurai.uhc.util.GlobalUtil;
 import io.github.retrooper.packetevents.util.SpigotConversionUtil;
-import net.minecraft.server.v1_8_R3.ItemStack;
-import net.minecraft.server.v1_8_R3.Items;
-import net.minecraft.server.v1_8_R3.PacketPlayOutEntityEquipment;
-import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.EventHandler;
@@ -37,7 +32,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.plugin.Plugin;
 import org.jspecify.annotations.NullMarked;
 
@@ -101,53 +95,6 @@ public final class PowerListener extends PacketListenerAbstract implements Liste
 
     packet.setEquipment(packet.getEquipment());
     event.markForReEncode(true);
-  }
-
-  @EventHandler
-  public void onHeldSwap(final PlayerItemHeldEvent event) {
-    final var player = event.getPlayer();
-    final var profile = this.profileService.getOrCreateProfile(player.getUniqueId());
-
-    final var item = player.getInventory().getItem(event.getNewSlot());
-    if (item == null || item.getType().name().contains("SWORD") || item.getType().isBlock()) {
-      return;
-    }
-
-    final var foundPower =
-        profile.getPowers().stream()
-            .filter(AbstractItemPower.class::isInstance)
-            .map(AbstractItemPower.class::cast)
-            .filter(power -> power.getIcon(player).isSimilar(item))
-            .findFirst()
-            .orElse(null);
-
-    if (foundPower == null) {
-      return;
-    }
-
-    Bukkit.getScheduler()
-        .runTaskLaterAsynchronously(
-            this.plugin,
-            () -> {
-              final var packet =
-                  new PacketPlayOutEntityEquipment(
-                      ((CraftPlayer) player).getHandle().getId(),
-                      0,
-                      new ItemStack(Items.NETHER_STAR));
-
-              for (final var arenaProfile : this.profileService.getProfiles()) {
-                if (arenaProfile.getId().equals(player.getUniqueId())) {
-                  continue;
-                }
-
-                arenaProfile
-                    .findPlayer()
-                    .ifPresent(
-                        target ->
-                            ((CraftPlayer) target).getHandle().playerConnection.sendPacket(packet));
-              }
-            },
-            1L);
   }
 
   @EventHandler
