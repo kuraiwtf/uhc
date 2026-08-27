@@ -9,7 +9,7 @@ import org.bukkit.inventory.ItemStack;
 
 public abstract class AbstractItemPower extends AbstractPower {
 
-  public AbstractItemPower(
+  protected AbstractItemPower(
       final String identifier,
       final String name,
       final UUID owner,
@@ -22,6 +22,7 @@ public abstract class AbstractItemPower extends AbstractPower {
   public ItemStack getIcon(final Player player) {
     return new ItemBuilder(this.provideIcon(player))
         .name("&8&l»%s &l%s&8 &l«".formatted(this.getColor().asBukkitColor(), this.name))
+        .lore("", this.lore(), "")
         .asItemStack();
   }
 

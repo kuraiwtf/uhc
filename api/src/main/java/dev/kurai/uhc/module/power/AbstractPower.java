@@ -27,7 +27,7 @@ public abstract class AbstractPower
 
   protected final Profile profile;
 
-  public AbstractPower(
+  protected AbstractPower(
       final String identifier,
       final String name,
       final UUID owner,
@@ -40,6 +40,10 @@ public abstract class AbstractPower
     this.restrictions = Maps.newConcurrentMap();
 
     this.profile = ultraHardcore.profileService().getOrCreateProfile(owner);
+  }
+
+  public String lore() {
+    return "§cLa description de ce pouvoir est introuvable.";
   }
 
   public @Nullable ActionbarEntry provideActionbarEntry(final Player player) {
