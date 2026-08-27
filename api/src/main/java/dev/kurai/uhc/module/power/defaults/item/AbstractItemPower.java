@@ -1,5 +1,6 @@
 package dev.kurai.uhc.module.power.defaults.item;
 
+import com.google.common.collect.Lists;
 import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.module.power.AbstractPower;
 import dev.kurai.uhc.util.ItemBuilder;
@@ -20,9 +21,14 @@ public abstract class AbstractItemPower extends AbstractPower {
   public abstract ItemStack provideIcon(final Player player);
 
   public ItemStack getIcon(final Player player) {
+    final var lore = Lists.<String>newArrayList();
+    lore.add("");
+    lore.addAll(this.lore());
+    lore.add("");
+
     return new ItemBuilder(this.provideIcon(player))
         .name("&8&l»%s &l%s&8 &l«".formatted(this.getColor().asBukkitColor(), this.name))
-        .lore("", this.lore(), "")
+        .lore(lore)
         .asItemStack();
   }
 

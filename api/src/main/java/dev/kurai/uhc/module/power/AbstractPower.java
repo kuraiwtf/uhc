@@ -42,8 +42,8 @@ public abstract class AbstractPower
     this.profile = ultraHardcore.profileService().getOrCreateProfile(owner);
   }
 
-  public String lore() {
-    return "§cLa description de ce pouvoir est introuvable.";
+  public List<String> lore() {
+    return List.of("§cLa description de ce pouvoir est introuvable.");
   }
 
   public @Nullable ActionbarEntry provideActionbarEntry(final Player player) {
