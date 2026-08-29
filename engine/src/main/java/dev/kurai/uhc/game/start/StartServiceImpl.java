@@ -21,6 +21,8 @@ import dev.kurai.uhc.profile.component.SpectatorComponent;
 import dev.kurai.uhc.profile.state.PlayingProfileState;
 import dev.kurai.uhc.profile.state.WaitingProfileState;
 import dev.kurai.uhc.scoreboard.sidebar.adapter.builtin.PlayingSidebarAdapter;
+import dev.kurai.uhc.tablist.TabListService;
+import dev.kurai.uhc.tablist.part.EffectTabListPart;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -129,6 +131,9 @@ public final class StartServiceImpl implements StartService {
         powerListener);
 
     PacketEvents.getAPI().getEventManager().registerListeners(powerListener);
+
+    final TabListService tabListService = this.ultraHardcore.tabListService();
+    tabListService.addPart(new EffectTabListPart(this.ultraHardcore.profileService()));
 
     final var gameService = this.ultraHardcore.gameService();
     gameService.startTime(System.currentTimeMillis());

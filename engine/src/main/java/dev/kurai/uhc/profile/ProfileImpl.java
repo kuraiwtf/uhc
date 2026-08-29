@@ -11,6 +11,8 @@ import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.ecs.component.Component;
 import dev.kurai.uhc.ecs.component.defaults.NameComponent;
 import dev.kurai.uhc.ecs.entity.Entity;
+import dev.kurai.uhc.effect.EffectHolderImpl;
+import dev.kurai.uhc.effect.component.EffectHoldingComponent;
 import dev.kurai.uhc.event.defaults.player.PlayerDamageEvent;
 import dev.kurai.uhc.module.power.AbstractPower;
 import dev.kurai.uhc.module.power.defaults.item.AbstractItemPower;
@@ -58,7 +60,8 @@ public final class ProfileImpl implements Profile {
         new DamageImmunityComponent(),
         new ProfileMiningComponent(),
         new OfflineActionComponent(),
-        new ProfileStateComponent(new WaitingProfileState()));
+        new ProfileStateComponent(new WaitingProfileState()),
+        new EffectHoldingComponent(new EffectHolderImpl(id)));
 
     this.ultraHardcore = ultraHardcore;
     this.powers = Maps.newHashMap();

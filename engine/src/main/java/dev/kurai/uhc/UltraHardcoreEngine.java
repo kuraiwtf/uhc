@@ -9,6 +9,9 @@ import dev.kurai.uhc.command.CommandRegistrar;
 import dev.kurai.uhc.command.CommandRegistrarImpl;
 import dev.kurai.uhc.command.argument.builtin.uhc.TimerArgumentResolver;
 import dev.kurai.uhc.command.defaults.*;
+import dev.kurai.uhc.effect.EffectService;
+import dev.kurai.uhc.effect.EffectServiceImpl;
+import dev.kurai.uhc.effect.EffectValidatorTask;
 import dev.kurai.uhc.event.EventService;
 import dev.kurai.uhc.event.EventServiceImpl;
 import dev.kurai.uhc.game.GameService;
@@ -30,8 +33,8 @@ import dev.kurai.uhc.profile.ProfileServiceImpl;
 import dev.kurai.uhc.scoreboard.sidebar.SidebarService;
 import dev.kurai.uhc.scoreboard.sidebar.service.SidebarServiceImpl;
 import dev.kurai.uhc.tablist.TabListService;
-import dev.kurai.uhc.tablist.service.TabListServiceImpl;
-import dev.kurai.uhc.tablist.updater.task.TabListUpdaterTask;
+import dev.kurai.uhc.tablist.TabListServiceImpl;
+import dev.kurai.uhc.tablist.TabListUpdaterTask;
 import dev.kurai.uhc.timer.AbstractTimer;
 import dev.kurai.uhc.timer.TimerService;
 import dev.kurai.uhc.timer.builtin.BorderTimer;
@@ -58,6 +61,7 @@ public final class UltraHardcoreEngine extends UltraHardcoreAPI {
   private BukkitAudiences bukkitAudiences;
   private ActionbarService actionbarService;
   private CommandRegistrar commandRegistrar;
+  private EffectService effectService;
   private EntityLib entityLib;
   private EventService eventService;
   private GameService gameService;
@@ -87,6 +91,7 @@ public final class UltraHardcoreEngine extends UltraHardcoreAPI {
     this.commandRegistrar = new CommandRegistrarImpl(this);
     this.eventService = new EventServiceImpl(this.plugin);
 
+    this.effectService = new EffectServiceImpl();
     this.entityLib = EntityLib.create(this.plugin, PacketEvents.getAPI());
 
     this.sidebarService = new SidebarServiceImpl(this);
@@ -152,5 +157,9 @@ public final class UltraHardcoreEngine extends UltraHardcoreAPI {
         new InvincibilityTimer(this),
         new PvPTimer(this.worldService),
         new BorderTimer(this.worldService, this.bukkitAudiences));
+
+    Bukkit.getScheduler()
+        .runTaskTimerAsynchronously(
+            this.plugin, new EffectValidatorTask(this.profileService), 0, 1);
   }
 }

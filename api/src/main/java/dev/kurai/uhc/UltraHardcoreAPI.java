@@ -3,6 +3,7 @@ package dev.kurai.uhc;
 import com.google.common.base.Preconditions;
 import dev.kurai.actionbar.service.ActionbarService;
 import dev.kurai.uhc.command.CommandRegistrar;
+import dev.kurai.uhc.effect.EffectService;
 import dev.kurai.uhc.event.EventService;
 import dev.kurai.uhc.game.GameService;
 import dev.kurai.uhc.helpop.HelpOpService;
@@ -54,6 +55,8 @@ public abstract class UltraHardcoreAPI {
   public abstract ActionbarService actionbarService();
 
   public abstract CommandRegistrar commandRegistrar();
+
+  public abstract EffectService effectService();
 
   public abstract EntityLib entityLib();
 
