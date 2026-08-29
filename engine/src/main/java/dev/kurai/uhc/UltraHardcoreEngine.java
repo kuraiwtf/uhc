@@ -9,6 +9,7 @@ import dev.kurai.uhc.command.CommandRegistrar;
 import dev.kurai.uhc.command.CommandRegistrarImpl;
 import dev.kurai.uhc.command.argument.builtin.uhc.TimerArgumentResolver;
 import dev.kurai.uhc.command.defaults.*;
+import dev.kurai.uhc.effect.EffectListener;
 import dev.kurai.uhc.effect.EffectService;
 import dev.kurai.uhc.effect.EffectServiceImpl;
 import dev.kurai.uhc.effect.EffectValidatorTask;
@@ -139,7 +140,8 @@ public final class UltraHardcoreEngine extends UltraHardcoreAPI {
         new AccessListener(
             this.gameService.hostService(), this.moduleService, this.whitelistService),
         new ItemListener(this.itemService),
-        new WaitingListener(this));
+        new WaitingListener(this),
+        new EffectListener(this.effectService, this.profileService));
 
     Bukkit.getScheduler()
         .runTaskTimerAsynchronously(

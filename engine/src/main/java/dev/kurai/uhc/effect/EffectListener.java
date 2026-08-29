@@ -28,7 +28,6 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 public final class EffectListener implements Listener {
 
   private static final PlayerManager PLAYER_MANAGER = PacketEvents.getAPI().getPlayerManager();
-  private static final double EPSILON = 1e-9;
 
   private final EffectService effectService;
   private final ProfileService profileService;
