@@ -1,6 +1,8 @@
 package dev.kurai.uhc.world;
 
+import com.google.common.collect.Sets;
 import dev.kurai.uhc.profile.ProfileService;
+import java.util.Set;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
 import org.bukkit.plugin.Plugin;
@@ -11,6 +13,8 @@ public final class WorldServiceImpl implements WorldService {
 
   private final Plugin plugin;
   private final ProfileService profileService;
+
+  private final Set<String> preloadedWorlds;
 
   public WorldServiceImpl(final Plugin plugin, final ProfileService profileService) {
     this.plugin = plugin;
@@ -24,6 +28,8 @@ public final class WorldServiceImpl implements WorldService {
     this.world.setGameRuleValue("naturalRegeneration", "false");
     this.world.setGameRuleValue("doTileDrops", "true");
     this.world.setSpawnLocation(0, 200, 0);
+
+    this.preloadedWorlds = Sets.newHashSet();
   }
 
   @Override
@@ -33,6 +39,8 @@ public final class WorldServiceImpl implements WorldService {
 
   @Override
   public void preload(final World world, final int radius) {
-    new WorldPreloadTask(this.profileService, world, radius).runTaskTimer(this.plugin, 0, 1L);
+    if (this.preloadedWorlds.add(world.getName())) {
+      new WorldPreloadTask(this.profileService, world, radius).runTaskTimer(this.plugin, 0, 1L);
+    }
   }
 }

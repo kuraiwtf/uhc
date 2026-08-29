@@ -291,6 +291,7 @@ public final class ConfigurationMenu extends Menu {
     @Override
     public void onClick(final ButtonClick click) {
       this.worldService.preload(this.worldService.getWorld(), 1250);
+      click.getMenu().close();
     }
   }
 
