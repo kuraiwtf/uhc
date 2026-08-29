@@ -21,6 +21,7 @@ import dev.kurai.uhc.module.AbstractModule;
 import dev.kurai.uhc.module.team.module.TeamModule;
 import dev.kurai.uhc.util.CC;
 import dev.kurai.uhc.util.ItemBuilder;
+import dev.kurai.uhc.world.WorldService;
 import lombok.RequiredArgsConstructor;
 import net.j4c0b3y.api.menu.Menu;
 import net.j4c0b3y.api.menu.MenuSize;
@@ -68,6 +69,7 @@ public final class ConfigurationMenu extends Menu {
       back.set(32, new EmptyModuleButton());
     }
 
+    front.set(37, new PreloadButton(this.ultraHardcore.worldService()));
     front.set(43, new AccessibilityButton());
 
     front.set(49, new StartButton(this.ultraHardcore.gameService().startService()));
@@ -267,6 +269,28 @@ public final class ConfigurationMenu extends Menu {
           .lunarTag("unclickable", true)
           .lunarTag("hideSlotHighlight", true)
           .asItemStack();
+    }
+  }
+
+  private static final class PreloadButton extends Button {
+
+    private final WorldService worldService;
+
+    private PreloadButton(final WorldService worldService) {
+      this.worldService = worldService;
+    }
+
+    @Override
+    public ItemStack getIcon() {
+      return new ItemBuilder(Material.GRASS)
+          .name("&a&lPré-générer")
+          .lore("", "&7" + BAR + "&r Cliquez pour pré-générer", "&r  le monde de la partie.", "")
+          .asItemStack();
+    }
+
+    @Override
+    public void onClick(final ButtonClick click) {
+      this.worldService.preload(this.worldService.getWorld(), 1250);
     }
   }
 

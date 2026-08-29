@@ -109,8 +109,6 @@ public final class UltraHardcoreEngine extends UltraHardcoreAPI {
     this.winService = new WinServiceImpl(this.profileService);
     this.worldService = new WorldServiceImpl(this.plugin, this.profileService);
 
-    this.worldService.preload(this.worldService.getWorld(), 1250);
-
     this.commandRegistrar.registerCommands(
         new AnswerCommand(this),
         new GroupCommand(this.gameService().groupService(), this.profileService),
