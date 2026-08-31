@@ -6,10 +6,14 @@ import static net.kyori.adventure.text.Component.text;
 import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.command.annotation.Command;
 import dev.kurai.uhc.command.annotation.CommandMeta;
+import dev.kurai.uhc.command.argument.annotation.Argument;
 import dev.kurai.uhc.menu.claim.ClaimMenu;
+import dev.kurai.uhc.menu.color.ColorMenu;
 import dev.kurai.uhc.menu.rules.inventory.StartInventoryViewMenu;
 import dev.kurai.uhc.menu.scenario.ScenarioViewMenu;
+import dev.kurai.uhc.nickname.NicknameHolder;
 import dev.kurai.uhc.profile.component.ClaimComponent;
+import java.util.Arrays;
 import org.bukkit.entity.Player;
 import org.jspecify.annotations.NullMarked;
 
@@ -20,6 +24,12 @@ public final class PlayerCommands {
 
   public PlayerCommands(final UltraHardcoreAPI ultraHardcore) {
     this.ultraHardcore = ultraHardcore;
+  }
+
+  @Command(@CommandMeta(name = "color"))
+  public void color(final Player player, final @Argument(name = "joueurs") Player[] players) {
+    final NicknameHolder holder = this.ultraHardcore.nicknameService().holder(player.getUniqueId());
+    new ColorMenu(player, holder, Arrays.stream(players).toList()).open();
   }
 
   @Command(@CommandMeta(name = "claim", aliases = "full"))
