@@ -10,6 +10,7 @@ import dev.kurai.uhc.module.power.restriction.defaults.CooldownPowerRestriction;
 import dev.kurai.uhc.profile.Profile;
 import dev.kurai.uhc.profile.ProfileService;
 import dev.kurai.uhc.util.Color;
+import dev.kurai.uhc.util.TimeUtil;
 import java.util.Objects;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
@@ -105,8 +106,11 @@ public final class CooldownUpdaterTask implements Runnable {
       return text()
           .append(text(power.getName()))
           .append(text(": "))
-          .append(text(cooldown.timeLeft(), color.asAdventureColor(), TextDecoration.BOLD))
-          .append(text("s", color.asAdventureColor()))
+          .append(
+              text(
+                  TimeUtil.formatDuration(cooldown.timeLeft() * 1000L),
+                  color.asTextColor(),
+                  TextDecoration.BOLD))
           .build();
     }
 
