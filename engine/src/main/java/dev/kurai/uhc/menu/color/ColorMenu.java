@@ -65,7 +65,7 @@ public final class ColorMenu extends Menu {
       final ChatColor chatColor = this.color.asBukkitColor();
       return new ItemBuilder(Material.INK_SACK)
           .data(this.color.asDyeColor().getDyeData())
-          .name(chatColor + "&l" + this.color.asBukkitColor())
+          .name(chatColor + "&l" + this.color.name())
           .asItemStack();
     }
 
