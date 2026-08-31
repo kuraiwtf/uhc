@@ -2,10 +2,7 @@ package dev.kurai.uhc.effect;
 
 import com.google.common.collect.Maps;
 import dev.kurai.uhc.effect.event.*;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import org.bukkit.Bukkit;
 
 public final class EffectHolderImpl implements EffectHolder {
@@ -27,7 +24,12 @@ public final class EffectHolderImpl implements EffectHolder {
 
   @Override
   public void validateEffects() {
-    this.effects.values().removeIf(Effect::isExpired);
+    for (final Effect effect : this.effects.values()) {
+      if (effect.isExpired()) {
+        this.removeEffect(effect.key());
+      }
+    }
+
     Bukkit.getPluginManager().callEvent(new EffectValidateEvent(this.uniqueId));
   }
 
