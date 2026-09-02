@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.2](https://github.com/kuraiwtf/uhc/compare/v1.4.1...v1.4.2) (2026-09-02)
+
+
+### Code Refactoring
+
+* remove player notification and sound from `PvPTimer`'s onEnd method to simplify implementation ([6a07d22](https://github.com/kuraiwtf/uhc/commit/6a07d222d36d229bdf790b6a88808e8c17a59a51))
+
 ## [1.4.1](https://github.com/kuraiwtf/uhc/compare/v1.4.0...v1.4.1) (2026-09-02)
 
 
