@@ -12,7 +12,6 @@ import dev.kurai.uhc.adventure.UltraHardcoreKey;
 import dev.kurai.uhc.profile.Profile;
 import dev.kurai.uhc.profile.ProfileService;
 import java.time.Instant;
-import java.util.concurrent.CompletableFuture;
 import org.bukkit.World;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -53,9 +52,7 @@ public final class WorldPreloadTask extends BukkitRunnable {
   @Override
   public void run() {
     for (int i = 0; i <= CHUNKS_PER_TICK; i++) {
-      CompletableFuture.runAsync(
-          () -> this.world.getChunkAt(this.currentX >> 4, this.currentZ >> 4).load());
-
+      this.world.getChunkAt(this.currentX >> 4, this.currentZ >> 4).load();
       this.loadedChunks++;
       final double progress = Math.min(100.0, (this.loadedChunks * 100.0) / this.totalChunks);
 
