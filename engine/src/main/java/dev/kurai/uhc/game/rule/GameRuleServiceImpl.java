@@ -4,6 +4,7 @@ import com.google.common.collect.Maps;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Optional;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -34,6 +35,11 @@ public final class GameRuleServiceImpl implements GameRuleService {
   @Override
   public Collection<GameRule> enabledGameRules() {
     return this.rulesView.stream().filter(GameRule::state).toList();
+  }
+
+  @Override
+  public Optional<GameRule> findRule(final String identifier) {
+    return Optional.ofNullable(this.rules.get(identifier));
   }
 
   @Override
