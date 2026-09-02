@@ -397,7 +397,7 @@ public final class PlayingListener implements Listener {
         final var oreColor = oreName.color();
         profile
             .getActionbar()
-            .registerEntry(
+            .registerActionbarEntry(
                 UltraHardcoreKey.key("ore_mined"),
                 text("Vous venez de miner ")
                     .append(text(ARTICLES.get(blockType)))

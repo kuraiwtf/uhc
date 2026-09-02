@@ -58,7 +58,7 @@ public final class WorldPreloadTask extends BukkitRunnable {
 
       for (final Profile profile : this.profileService.getProfiles()) {
         final Actionbar actionbar = profile.getActionbar();
-        actionbar.registerEntry(
+        actionbar.registerActionbarEntry(
             UltraHardcoreKey.key("preload"),
             text()
                 .append(text("C/s: "))
@@ -83,7 +83,7 @@ public final class WorldPreloadTask extends BukkitRunnable {
       if (this.currentZ > this.borderSize) {
         for (final Profile profile : this.profileService.getProfiles()) {
           final Actionbar actionbar = profile.getActionbar();
-          actionbar.unregisterEntry(UltraHardcoreKey.key("preload"));
+          actionbar.unregisterActionbarEntry(UltraHardcoreKey.key("preload"));
 
           profile.sendPrefixedMessage(
               "Le monde de la partie a été&a pré-généré&r en &a%s&r."

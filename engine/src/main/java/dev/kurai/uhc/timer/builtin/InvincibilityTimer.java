@@ -45,7 +45,7 @@ public final class InvincibilityTimer extends AbstractTimer implements Listener 
     for (final var profile : this.ultraHardcore.profileService().getPlayingProfiles()) {
       profile
           .getActionbar()
-          .registerEntry(
+          .registerActionbarEntry(
               ACTIONBAR_KEY,
               text()
                   .append(text("Vous êtes "))
@@ -63,7 +63,7 @@ public final class InvincibilityTimer extends AbstractTimer implements Listener 
     this.ultraHardcore.eventService().unregisterListener(this);
 
     for (final var profile : this.ultraHardcore.profileService().getPlayingProfiles()) {
-      profile.getActionbar().unregisterEntry(ACTIONBAR_KEY);
+      profile.getActionbar().unregisterActionbarEntry(ACTIONBAR_KEY);
       profile.sendPrefixedMessage("Vous êtes désormais&c vulnérable&r.");
       profile
           .findPlayer()

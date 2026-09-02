@@ -16,9 +16,9 @@ packetevents-api = '2.11.1'
 
 lombok = '1.18.46'
 
-entity-lib = '1.0.6'
+entity-lib = '668b0d0a68'
 
-actionbar-api = '0.0.6'
+actionbar-api = '0.0.9'
 
 jackson = "2.18.3"
 
@@ -39,15 +39,13 @@ adventure-bom = { module = 'net.kyori:adventure-bom', version.ref = 'adventure-a
 adventure-platform-bukkit = { module = 'net.kyori:adventure-platform-bukkit', version.ref = 'adventure-platform-bukkit' }
 adventure-mini-message = { module = 'net.kyori:adventure-text-minimessage' }
 
-menu-api = { module = 'net.j4c0b3y:MenuAPI-core', version.ref = 'menu-api' }
-
 packetevents-spigot = { module = 'com.github.retrooper:packetevents-spigot', version.ref = 'packetevents-api' }
 
 lombok = { module = 'org.projectlombok:lombok', version.ref = 'lombok' }
 
-entity-lib = { module = 'pt.supercrafting:EntityLib', version.ref = 'entity-lib' }
+entity-lib = { module = 'com.github.SuperCrafting:EntityLib', version.ref = 'entity-lib' }
 
-actionbar-api = { module = 'dev.kurai:actionbar-api', version.ref = 'actionbar-api' }
+actionbar-api = { module = 'com.github.kuraiwtf:actionbar-api', version.ref = 'actionbar-api' }
 
 jackson-annotations = { module = "com.fasterxml.jackson.core:jackson-annotations", version.ref = "jackson" }
 jackson-core = { module = "com.fasterxml.jackson.core:jackson-core", version.ref = "jackson" }

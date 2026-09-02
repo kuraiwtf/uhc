@@ -65,12 +65,12 @@ public final class CooldownUpdaterTask implements Runnable {
     final var actionbar = profile.getActionbar();
     final var actionbarEntry = itemPower.provideActionbarEntry(player);
     if (actionbarEntry == null) {
-      actionbar.registerEntry(
+      actionbar.registerActionbarEntry(
           UltraHardcoreKey.key(itemPower.getId()), this.buildStatusComponent(itemPower));
       return;
     }
 
-    actionbar.registerEntry(actionbarEntry);
+    actionbar.registerActionbarEntry(actionbarEntry);
   }
 
   private void removeItemPowerEntry(
@@ -79,9 +79,9 @@ public final class CooldownUpdaterTask implements Runnable {
     final var actionbar = profile.getActionbar();
 
     if (actionbarEntry == null) {
-      actionbar.unregisterEntry(UltraHardcoreKey.key(itemPower.getId()));
+      actionbar.unregisterActionbarEntry(UltraHardcoreKey.key(itemPower.getId()));
     } else {
-      actionbar.unregisterEntry(actionbarEntry.key());
+      actionbar.unregisterActionbarEntry(actionbarEntry.key());
     }
   }
 
@@ -91,11 +91,11 @@ public final class CooldownUpdaterTask implements Runnable {
     final var actionbar = profile.getActionbar();
 
     if (actionbarEntry == null) {
-      actionbar.unregisterEntry(Key.key(power.getId()));
+      actionbar.unregisterActionbarEntry(Key.key(power.getId()));
       return;
     }
 
-    actionbar.registerEntry(actionbarEntry);
+    actionbar.registerActionbarEntry(actionbarEntry);
   }
 
   private Component buildStatusComponent(final AbstractPower power) {

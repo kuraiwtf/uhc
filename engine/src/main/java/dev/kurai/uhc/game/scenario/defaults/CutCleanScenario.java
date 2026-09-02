@@ -109,7 +109,9 @@ public final class CutCleanScenario extends AbstractScenario implements Listener
           DIAMOND_ORE, "du ");
 
   private void sendLimitActionbar(
-      final Profile profile, final Material blockType, final ProfileMiningComponent miningComponent) {
+      final Profile profile,
+      final Material blockType,
+      final ProfileMiningComponent miningComponent) {
     final var oreName = ORE_NAMES.get(blockType);
     if (oreName == null) {
       return;
@@ -135,7 +137,7 @@ public final class CutCleanScenario extends AbstractScenario implements Listener
     final var oreColor = oreName.color();
     profile
         .getActionbar()
-        .registerEntry(
+        .registerActionbarEntry(
             UltraHardcoreKey.key("ore_mined"),
             text("Vous venez de miner ")
                 .append(text(ARTICLES.get(blockType)))
@@ -150,7 +152,8 @@ public final class CutCleanScenario extends AbstractScenario implements Listener
             Duration.ofSeconds(3L));
   }
 
-  private void incrementMined(final Material blockType, final ProfileMiningComponent miningComponent) {
+  private void incrementMined(
+      final Material blockType, final ProfileMiningComponent miningComponent) {
     switch (blockType) {
       case IRON_ORE -> miningComponent.setIronMined(miningComponent.getIronMined() + 1);
       case GOLD_ORE -> miningComponent.setGoldMined(miningComponent.getGoldMined() + 1);

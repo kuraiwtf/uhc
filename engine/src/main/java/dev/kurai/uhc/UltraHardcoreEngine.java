@@ -4,7 +4,7 @@ import static org.bukkit.Material.*;
 
 import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.event.EventManager;
-import dev.kurai.actionbar.service.ActionbarService;
+import dev.kurai.actionbar.ActionbarService;
 import dev.kurai.uhc.command.CommandRegistrar;
 import dev.kurai.uhc.command.CommandRegistrarImpl;
 import dev.kurai.uhc.command.argument.builtin.uhc.TimerArgumentResolver;
@@ -104,7 +104,8 @@ public final class UltraHardcoreEngine extends UltraHardcoreAPI {
     this.sidebarService = new SidebarServiceImpl(this);
 
     this.actionbarService =
-        ActionbarService.create(this.plugin, player -> this.bukkitAudiences.player(player));
+        ActionbarService.actionbarService(
+            this.plugin, player -> this.bukkitAudiences.player(player));
     this.gameService = new GameServiceImpl(this);
     this.helpOpService = new HelpOpServiceImpl();
     this.itemService = new ItemServiceImpl(this);
