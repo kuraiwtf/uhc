@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.1](https://github.com/kuraiwtf/uhc/compare/v1.4.0...v1.4.1) (2026-09-02)
+
+
+### Code Refactoring
+
+* rename `registerEntry` and `unregisterEntry` methods to `registerActionbarEntry` and `unregisterActionbarEntry` respectively; update dependencies and Gradle version ([dcf402a](https://github.com/kuraiwtf/uhc/commit/dcf402a9b1b3c7764e9ae86305adf43eedf3ef62))
+
 ## [1.4.0](https://github.com/kuraiwtf/uhc/compare/v1.3.0...v1.4.0) (2026-09-02)
 
 
