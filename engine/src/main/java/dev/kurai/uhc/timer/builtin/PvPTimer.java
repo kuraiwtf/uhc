@@ -2,12 +2,9 @@ package dev.kurai.uhc.timer.builtin;
 
 import dev.kurai.uhc.timer.AbstractTimer;
 import dev.kurai.uhc.timer.annotation.Duration;
-import dev.kurai.uhc.util.CC;
 import dev.kurai.uhc.util.api.annotation.Identifier;
 import dev.kurai.uhc.util.api.annotation.Name;
 import dev.kurai.uhc.world.WorldService;
-import org.bukkit.Bukkit;
-import org.bukkit.Sound;
 
 @Identifier(PvPTimer.IDENTIFIER)
 @Name("PvP")
@@ -25,12 +22,5 @@ public final class PvPTimer extends AbstractTimer {
   @Override
   public void onEnd() {
     this.worldService.getWorld().setPVP(true);
-
-    Bukkit.getOnlinePlayers()
-        .forEach(
-            player -> {
-              player.sendMessage(CC.prefix("Le PvP est désormais&a actif&r."));
-              player.playSound(player.getLocation(), Sound.ENDERDRAGON_GROWL, 1.0f, 1.0f);
-            });
   }
 }
