@@ -11,6 +11,7 @@ permissions:
 jobs:
   publish:
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v4
 
@@ -22,8 +23,7 @@ jobs:
           distribution: temurin
           java-version: '25'
 
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
+      - uses: gradle/actions/setup-gradle@v4
 
       - name: Build
         run: ./gradlew build
@@ -36,12 +36,30 @@ jobs:
 
       - name: Attach deployable jars to release
         run: |
-          files=(engine/build/libs/uhc-engine.jar)
+          files=()
+
           while IFS= read -r -d '' f; do
             files+=("$f")
-          done < <(find extensions -path "*/build/libs/*.jar" \
-            ! -name "*-sources.jar" ! -name "*-javadoc.jar" -print0)
+          done < <(
+            find engine extensions \
+              -path "*/build/libs/*.jar" \
+              -type f \
+              ! -name "*-sources.jar" \
+              ! -name "*-javadoc.jar" \
+              -print0
+          )
 
-          gh release upload ${{ github.event.release.tag_name }} "${files[@]}" --clobber
+          if [ "${#files[@]}" -eq 0 ]; then
+            echo "No deployable JARs found"
+            exit 1
+          fi
+
+          echo "JARs to upload:"
+          printf '  %s\n' "${files[@]}"
+
+          gh release upload \
+            "${{ github.event.release.tag_name }}" \
+            "${files[@]}" \
+            --clobber
         env:
           GH_TOKEN: ${{ secrets.RELEASE_PLEASE_TOKEN }}
