@@ -25,11 +25,24 @@ dependencies {
 }
 
 publishing {
-  publications.create<MavenPublication>("maven") {
-    from(components["java"])
+  publications {
+    create<MavenPublication>("maven") {
+      from(components["java"])
 
-    groupId = project.group.toString()
-    artifactId = "${rootProject.name}-${project.name}"
-    version = project.version.toString()
+      groupId = project.group.toString()
+      artifactId = "${rootProject.name}-${project.name}"
+      version = project.version.toString()
+    }
+  }
+
+  repositories {
+    maven {
+      name = "GitHubPackages"
+      url = uri("https://maven.pkg.github.com/kuraiwtf/uhc")
+      credentials {
+        username = System.getenv("GITHUB_ACTOR")
+        password = System.getenv("GITHUB_TOKEN")
+      }
+    }
   }
 }
