@@ -5,13 +5,12 @@ import static dev.kurai.uhc.util.CC.SQUARE;
 
 import dev.kurai.uhc.event.EventService;
 import dev.kurai.uhc.game.scenario.AbstractScenario;
-import dev.kurai.uhc.game.scenario.ScenarioCategory;
 import dev.kurai.uhc.game.scenario.ScenarioService;
 import dev.kurai.uhc.menu.button.GlassButton;
+import dev.kurai.uhc.menu.scenario.button.ScenarioButton;
 import dev.kurai.uhc.menu.template.BackTemplate;
 import dev.kurai.uhc.menu.template.BorderTemplate;
 import dev.kurai.uhc.menu.template.PaginationTemplate;
-import dev.kurai.uhc.util.CC;
 import dev.kurai.uhc.util.ItemBuilder;
 import java.util.Comparator;
 import java.util.List;
@@ -25,7 +24,6 @@ import net.j4c0b3y.api.menu.pagination.PaginationSlot;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 
 public final class ScenarioConfigurationMenu extends PaginatedMenu {
@@ -52,7 +50,7 @@ public final class ScenarioConfigurationMenu extends PaginatedMenu {
 
     return scenarios.stream()
         .sorted(Comparator.comparing(AbstractScenario::getName))
-        .map(scenario -> new ScenarioButton(this.eventService, scenario))
+        .map(scenario -> new ScenarioButton(this.eventService, scenario, true))
         .map(Button.class::cast)
         .toList();
   }
@@ -72,57 +70,6 @@ public final class ScenarioConfigurationMenu extends PaginatedMenu {
 
     if (this.filterActiveOnly && this.scenarioService.getEnabledScenarios().isEmpty()) {
       foreground.set(22, new NoActiveScenarioButton());
-    }
-  }
-
-  private static final class ScenarioButton extends Button {
-
-    private final EventService eventService;
-    private final AbstractScenario scenario;
-
-    private ScenarioButton(final EventService eventService, final AbstractScenario scenario) {
-      this.eventService = eventService;
-      this.scenario = scenario;
-    }
-
-    @Override
-    public ItemStack getIcon() {
-      final ScenarioCategory category = this.scenario.getCategory();
-      final var enabled = this.scenario.isEnabled();
-      return new ItemBuilder(this.scenario.provideIcon())
-          .name("&a&l" + this.scenario.getName())
-          .lore(
-              "",
-              "&6 "
-                  + CC.SQUARE
-                  + "&r Catégorie: "
-                  + category.color().asBukkitColor()
-                  + category.name(),
-              "&6 " + CC.SQUARE + "&r Statut: " + (enabled ? "&aActivé" : "&cDésactivé"),
-              "")
-          .glowing(enabled)
-          .amount(enabled ? 1 : 0)
-          .asItemStack();
-    }
-
-    @Override
-    public void onClick(final ButtonClick click) {
-      this.scenario.setEnabled(!this.scenario.isEnabled());
-      click.getMenu().update();
-
-      if (this.scenario.isEnabled()) {
-        this.scenario.onEnable();
-
-        if (this.scenario instanceof final Listener listener) {
-          this.eventService.registerListener(listener);
-        }
-      } else {
-        this.scenario.onDisable();
-
-        if (this.scenario instanceof final Listener listener) {
-          this.eventService.unregisterListener(listener);
-        }
-      }
     }
   }
 

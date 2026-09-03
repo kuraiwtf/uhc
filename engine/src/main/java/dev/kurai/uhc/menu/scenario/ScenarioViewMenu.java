@@ -1,9 +1,9 @@
 package dev.kurai.uhc.menu.scenario;
 
 import dev.kurai.uhc.game.scenario.AbstractScenario;
-import dev.kurai.uhc.game.scenario.ScenarioCategory;
 import dev.kurai.uhc.game.scenario.ScenarioService;
 import dev.kurai.uhc.menu.button.GlassButton;
+import dev.kurai.uhc.menu.scenario.button.ScenarioButton;
 import dev.kurai.uhc.menu.template.BackTemplate;
 import dev.kurai.uhc.menu.template.BorderTemplate;
 import dev.kurai.uhc.menu.template.PaginationTemplate;
@@ -66,33 +66,6 @@ public final class ScenarioViewMenu extends PaginatedMenu {
           .data(DyeColor.RED.getDyeData())
           .name("&c&lAucun scénario activé")
           .lore("", "&7" + CC.BAR + "&f Aucun scénario n'est actif.", "")
-          .lunarTag("unclickable", true)
-          .asItemStack();
-    }
-  }
-
-  private static final class ScenarioButton extends Button {
-
-    private final AbstractScenario scenario;
-
-    private ScenarioButton(final AbstractScenario scenario) {
-      this.scenario = scenario;
-    }
-
-    @Override
-    public ItemStack getIcon() {
-      final ScenarioCategory category = this.scenario.getCategory();
-      return new ItemBuilder(this.scenario.provideIcon())
-          .name("&a&l" + this.scenario.getName())
-          .lore(
-              "",
-              "&6 "
-                  + CC.SQUARE
-                  + "&r Catégorie: "
-                  + category.color().asBukkitColor()
-                  + category.name(),
-              "")
-          .glowing(this.scenario.isEnabled())
           .lunarTag("unclickable", true)
           .asItemStack();
     }
