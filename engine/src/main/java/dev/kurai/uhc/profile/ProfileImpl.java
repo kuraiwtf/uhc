@@ -434,7 +434,18 @@ public final class ProfileImpl implements Profile {
 
   @Override
   public void unregisterPower(final String id) {
-    this.powers.remove(id);
+    final AbstractPower power = this.powers.remove(id);
+    if (power == null) {
+      return;
+    }
+
+    if (power instanceof final AbstractItemPower itemPower) {
+      this.executeAction(player -> player.getInventory().remove(itemPower.getIcon(player)));
+    }
+
+    if (power instanceof final Listener listener) {
+      this.ultraHardcore.eventService().unregisterListener(listener);
+    }
   }
 
   @Override
