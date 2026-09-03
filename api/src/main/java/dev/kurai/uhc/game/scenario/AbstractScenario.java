@@ -5,6 +5,8 @@ import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.game.scenario.configuration.ScenarioConfiguration;
 import dev.kurai.uhc.util.api.Identifiable;
 import dev.kurai.uhc.util.api.name.Nameable;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import org.bukkit.inventory.ItemStack;
 
@@ -33,6 +35,10 @@ public abstract class AbstractScenario implements Identifiable<String>, Nameable
     this.name = name;
 
     this.ultraHardcore = ultraHardcore;
+  }
+
+  public List<String> provideLore() {
+    return Collections.singletonList("§cCe scénario ne possède pas de description.");
   }
 
   public abstract ItemStack provideIcon();
