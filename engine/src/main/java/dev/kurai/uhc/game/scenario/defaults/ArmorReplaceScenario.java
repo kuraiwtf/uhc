@@ -1,9 +1,11 @@
 package dev.kurai.uhc.game.scenario.defaults;
 
+import com.google.common.collect.Lists;
 import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.game.scenario.AbstractScenario;
 import dev.kurai.uhc.game.scenario.ScenarioCategory;
 import dev.kurai.uhc.game.scenario.configuration.defaults.BooleanScenarioConfiguration;
+import java.util.List;
 import java.util.function.BiConsumer;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -33,6 +35,11 @@ public final class ArmorReplaceScenario extends AbstractScenario implements List
     this.registerConfiguration(CHESTPLATE_CONFIGURATION);
     this.registerConfiguration(LEGGINGS_CONFIGURATION);
     this.registerConfiguration(BOOTS_CONFIGURATION);
+  }
+
+  @Override
+  public List<String> provideLore() {
+    return Lists.newArrayList("Effectuer un Clic-Droit avec une", "pièce d'armure la remplace.");
   }
 
   @Override

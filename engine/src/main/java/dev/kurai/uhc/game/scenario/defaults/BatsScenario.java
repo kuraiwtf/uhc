@@ -1,10 +1,12 @@
 package dev.kurai.uhc.game.scenario.defaults;
 
+import com.google.common.collect.Lists;
 import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.game.scenario.AbstractScenario;
 import dev.kurai.uhc.game.scenario.ScenarioCategory;
 import dev.kurai.uhc.game.scenario.configuration.ScenarioConfiguration;
 import dev.kurai.uhc.game.scenario.configuration.defaults.IntegerScenarioConfiguration;
+import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
@@ -23,6 +25,12 @@ public final class BatsScenario extends AbstractScenario implements Listener {
   public BatsScenario(final UltraHardcoreAPI ultraHardcore) {
     super("bats", "Bats", ultraHardcore, ScenarioCategory.MINING);
     this.registerConfiguration(RATE_CONFIGURATION);
+  }
+
+  @Override
+  public List<String> provideLore() {
+    return Lists.newArrayList(
+        "Les chauve-souris ont une chance de vous", "tuer ou donner une pomme en or à leur mort.");
   }
 
   @Override

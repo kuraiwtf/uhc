@@ -1,8 +1,10 @@
 package dev.kurai.uhc.game.scenario.defaults;
 
+import com.google.common.collect.Lists;
 import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.game.scenario.AbstractScenario;
 import dev.kurai.uhc.game.scenario.ScenarioCategory;
+import java.util.List;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
@@ -37,6 +39,11 @@ public final class CobblestoneOnlyScenario extends AbstractScenario implements L
         .getWorld()
         .dropItem(
             block.getLocation().clone().add(0.5, 0.5, 0.5), new ItemStack(Material.COBBLESTONE));
+  }
+
+  @Override
+  public List<String> provideLore() {
+    return Lists.newArrayList("Les variantes de pierre", "sont§c désactivées§r.");
   }
 
   @Override

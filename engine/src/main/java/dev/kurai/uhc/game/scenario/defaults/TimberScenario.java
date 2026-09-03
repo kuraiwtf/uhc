@@ -23,6 +23,11 @@ public final class TimberScenario extends AbstractScenario implements Listener {
   }
 
   @Override
+  public List<String> provideLore() {
+    return Lists.newArrayList("Les arbres tombent automatiquement.");
+  }
+
+  @Override
   public ItemStack provideIcon() {
     return new ItemStack(Material.LOG);
   }

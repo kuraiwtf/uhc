@@ -5,6 +5,7 @@ import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.game.scenario.AbstractScenario;
 import dev.kurai.uhc.game.scenario.ScenarioCategory;
 import java.util.Collection;
+import java.util.List;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.EventHandler;
@@ -25,6 +26,11 @@ public final class SafeMinersScenario extends AbstractScenario implements Listen
 
   public SafeMinersScenario(final UltraHardcoreAPI ultraHardcore) {
     super("safe_miners", "Safe Miners", ultraHardcore, ScenarioCategory.MINING);
+  }
+
+  @Override
+  public List<String> provideLore() {
+    return Lists.newArrayList("Les dégâts sont annulés", "en dessous de la couche 40.");
   }
 
   @Override

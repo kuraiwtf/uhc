@@ -1,8 +1,10 @@
 package dev.kurai.uhc.game.scenario.defaults;
 
+import com.google.common.collect.Lists;
 import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.game.scenario.AbstractScenario;
 import dev.kurai.uhc.game.scenario.ScenarioCategory;
+import java.util.List;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -19,6 +21,11 @@ public final class NoFoodScenario extends AbstractScenario implements Listener {
   @Override
   public ItemStack provideIcon() {
     return new ItemStack(Material.GOLDEN_CARROT);
+  }
+
+  @Override
+  public List<String> provideLore() {
+    return Lists.newArrayList("La nourriture est supprimée.");
   }
 
   @EventHandler

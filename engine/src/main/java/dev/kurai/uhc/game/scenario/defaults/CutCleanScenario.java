@@ -6,6 +6,7 @@ import static org.bukkit.Material.DIAMOND;
 import static org.bukkit.Material.DIAMOND_ORE;
 import static org.bukkit.Material.GOLD_INGOT;
 
+import com.google.common.collect.Lists;
 import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.adventure.UltraHardcoreKey;
 import dev.kurai.uhc.game.configuration.ore.OreConfiguration;
@@ -15,6 +16,7 @@ import dev.kurai.uhc.profile.Profile;
 import dev.kurai.uhc.profile.component.ProfileMiningComponent;
 import java.time.Duration;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
@@ -43,6 +45,11 @@ public final class CutCleanScenario extends AbstractScenario implements Listener
 
   public CutCleanScenario(final UltraHardcoreAPI ultraHardcore) {
     super("cut_clean", "Cut Clean", ultraHardcore, ScenarioCategory.MINING);
+  }
+
+  @Override
+  public List<String> provideLore() {
+    return Lists.newArrayList("La viande et les minerais", "sont cuits automatiquement.");
   }
 
   @Override

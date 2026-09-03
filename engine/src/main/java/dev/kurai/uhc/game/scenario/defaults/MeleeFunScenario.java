@@ -1,9 +1,11 @@
 package dev.kurai.uhc.game.scenario.defaults;
 
+import com.google.common.collect.Lists;
 import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.event.defaults.player.PlayerDamageByPlayerEvent;
 import dev.kurai.uhc.game.scenario.AbstractScenario;
 import dev.kurai.uhc.game.scenario.ScenarioCategory;
+import java.util.List;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -21,13 +23,16 @@ public final class MeleeFunScenario extends AbstractScenario implements Listener
     return new ItemStack(Material.IRON_SWORD);
   }
 
-  @EventHandler
-  public void onEntityDeath(final PlayerDamageByPlayerEvent event) {
-    final Player player = event.victim().getPlayer();
-    if (player == null) {
-      return;
-    }
+  @Override
+  public List<String> provideLore() {
+    return Lists.newArrayList("Le délai des coups est supprimé.");
+  }
 
-    player.setNoDamageTicks(0);
+  @EventHandler
+  public void onPlayerDamage(final PlayerDamageByPlayerEvent event) {
+    final Player player = event.victim().getPlayer();
+    if (player != null) {
+      player.setNoDamageTicks(0);
+    }
   }
 }

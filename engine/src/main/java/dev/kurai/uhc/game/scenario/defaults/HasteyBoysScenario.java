@@ -5,6 +5,7 @@ import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.game.scenario.AbstractScenario;
 import dev.kurai.uhc.game.scenario.ScenarioCategory;
 import java.util.Collection;
+import java.util.List;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.event.EventHandler;
@@ -31,6 +32,12 @@ public final class HasteyBoysScenario extends AbstractScenario implements Listen
 
   public HasteyBoysScenario(final UltraHardcoreAPI ultraHardcore) {
     super("hastey_boys", "Hastey Boys", ultraHardcore, ScenarioCategory.MINING);
+  }
+
+  @Override
+  public List<String> provideLore() {
+    return Lists.newArrayList(
+        "Les outils fabriqués sont enchantés", "§bEfficacité III§r ainsi que§b Solidité III§r.");
   }
 
   @Override
