@@ -4,7 +4,7 @@ import dev.kurai.uhc.profile.ProfileService;
 
 public final class WinServiceImpl implements WinService {
 
-  private WinCelebration<?> celebration;
+  private WinCelebration celebration;
   private WinCondition condition;
 
   public WinServiceImpl(final ProfileService profileService) {
@@ -13,12 +13,12 @@ public final class WinServiceImpl implements WinService {
   }
 
   @Override
-  public WinCelebration<?> winCelebration() {
+  public WinCelebration winCelebration() {
     return this.celebration;
   }
 
   @Override
-  public void installWinCelebration(final WinCelebration<?> winCelebration) {
+  public void installWinCelebration(final WinCelebration winCelebration) {
     this.celebration = winCelebration;
   }
 

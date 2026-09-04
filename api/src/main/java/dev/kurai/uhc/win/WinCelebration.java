@@ -2,7 +2,7 @@ package dev.kurai.uhc.win;
 
 import org.bukkit.Location;
 
-public interface WinCelebration<I extends WinInformation> {
+public interface WinCelebration {
 
-  void celebrate(final Location location, final I information);
+  void celebrate(final Location location, final WinInformation information);
 }

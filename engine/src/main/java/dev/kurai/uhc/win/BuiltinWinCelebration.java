@@ -6,7 +6,7 @@ import static org.bukkit.Bukkit.broadcastMessage;
 import dev.kurai.uhc.profile.Profile;
 import org.bukkit.Location;
 
-public final class BuiltinWinCelebration implements WinCelebration<WinInformation> {
+public final class BuiltinWinCelebration implements WinCelebration {
 
   @Override
   public void celebrate(final Location location, final WinInformation information) {

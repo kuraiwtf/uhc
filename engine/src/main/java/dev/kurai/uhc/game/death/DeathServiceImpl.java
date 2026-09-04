@@ -15,6 +15,10 @@ import dev.kurai.uhc.profile.component.DisconnectComponent;
 import dev.kurai.uhc.profile.component.PlayerInformationComponent;
 import dev.kurai.uhc.profile.component.ProcessingDeathComponent;
 import dev.kurai.uhc.profile.state.DeadProfileState;
+import dev.kurai.uhc.win.BuiltinWinInformation;
+import dev.kurai.uhc.win.WinCelebration;
+import dev.kurai.uhc.win.WinService;
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 import lombok.Getter;
@@ -124,7 +128,7 @@ public final class DeathServiceImpl implements DeathService {
     gameService.sendMessage(this.deathAnnounce.provideDeathMessage(profile, killer, offline));
 
     this.processVictimDeath(profile, killer, component, droppedItems);
-    this.processWin();
+    this.processWin(location.clone());
   }
 
   private void processVictimDeath(
@@ -157,7 +161,14 @@ public final class DeathServiceImpl implements DeathService {
     profile.sendMessage("");
   }
 
-  private void processWin() {}
+  private void processWin(final Location location) {
+    final WinService winService = this.ultraHardcore.winService();
+    final Collection<Profile> profiles = winService.winCondition().validateWin();
+    if (profiles != null && !profiles.isEmpty()) {
+      final WinCelebration celebration = winService.winCelebration();
+      celebration.celebrate(location, new BuiltinWinInformation(profiles));
+    }
+  }
 
   private void dropAt(
       final Location location, final @Nullable ItemStack item, final List<UUID> droppedItems) {
