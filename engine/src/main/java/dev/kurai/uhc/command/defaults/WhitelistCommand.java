@@ -11,15 +11,17 @@ import dev.kurai.uhc.command.argument.annotation.Argument;
 import dev.kurai.uhc.menu.whitelist.WhitelistMenu;
 import dev.kurai.uhc.whitelist.WhitelistService;
 import dev.kurai.uhc.whitelist.hostmc.HostMCWhitelistProviderTask;
+import java.util.UUID;
 import java.util.regex.Pattern;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Sound;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.jspecify.annotations.NullMarked;
 
-@Command(@CommandMeta(name = "whitelist", aliases = "wl"))
+@Command(@CommandMeta(name = "whitelist", aliases = "wl", permission = "uhc.command.whitelist"))
 @NullMarked
 @RequiredArgsConstructor
 public final class WhitelistCommand {
@@ -28,42 +30,62 @@ public final class WhitelistCommand {
 
   private final UltraHardcoreAPI ultraHardcore;
 
-  @SubCommand(@CommandMeta(name = "add", description = "Ajouter un joueur à la liste blanche."))
-  public void add(final Player player, final @Argument(name = "joueurs") OfflinePlayer[] players) {
+  @SubCommand(
+      @CommandMeta(
+          name = "add",
+          description = "Ajouter un joueur à la liste blanche.",
+          permission = "uhc.command.whitelist.add"))
+  public void add(
+      final CommandSender sender, final @Argument(name = "joueurs") OfflinePlayer[] players) {
     final WhitelistService whitelistService = this.ultraHardcore.whitelistService();
     for (final OfflinePlayer target : players) {
       if (whitelistService.isWhitelisted(target.getUniqueId())) {
-        player.sendMessage("§6" + BURGER + " " + target.getName());
+        sender.sendMessage("§6" + BURGER + " " + target.getName());
         continue;
       }
 
-      whitelistService.whitelist(player.getUniqueId(), target.getUniqueId(), "Whitelist Manuelle");
-      player.sendMessage("§a" + CHECKMARK + " " + target.getName());
+      whitelistService.whitelist(
+          sender instanceof final Player player ? player.getUniqueId() : new UUID(0, 0),
+          target.getUniqueId(),
+          "Whitelist Manuelle");
+      sender.sendMessage("§a" + CHECKMARK + " " + target.getName());
     }
   }
 
-  @SubCommand(@CommandMeta(name = "remove", description = "Retirer un joueur de la liste blanche."))
+  @SubCommand(
+      @CommandMeta(
+          name = "remove",
+          description = "Retirer un joueur de la liste blanche.",
+          permission = "uhc.command.whitelist.remove"))
   public void remove(
-      final Player player, final @Argument(name = "joueurs") OfflinePlayer[] players) {
+      final CommandSender sender, final @Argument(name = "joueurs") OfflinePlayer[] players) {
     final WhitelistService whitelistService = this.ultraHardcore.whitelistService();
     for (final OfflinePlayer target : players) {
       if (!whitelistService.isWhitelisted(target.getUniqueId())) {
-        player.sendMessage("§6" + BURGER + " " + target.getName());
+        sender.sendMessage("§6" + BURGER + " " + target.getName());
         continue;
       }
 
       whitelistService.unwhitelist(target.getUniqueId());
-      player.sendMessage("§c" + CROSS + " " + target.getName());
+      sender.sendMessage("§c" + CROSS + " " + target.getName());
     }
   }
 
-  @SubCommand(@CommandMeta(name = "clear", description = "Vider la liste blanche."))
-  public void clear(final Player player) {
+  @SubCommand(
+      @CommandMeta(
+          name = "clear",
+          description = "Vider la liste blanche.",
+          permission = "uhc.command.whitelist.clear"))
+  public void clear(final CommandSender sender) {
     this.ultraHardcore.whitelistService().getWhitelistedPlayers().clear();
-    player.sendMessage(prefix("La&b liste blanche&f a bien été&d nettoyée&r."));
+    sender.sendMessage(prefix("La&b liste blanche&f a bien été&d nettoyée&r."));
   }
 
-  @SubCommand(@CommandMeta(name = "list", description = "Voir la liste blanche."))
+  @SubCommand(
+      @CommandMeta(
+          name = "list",
+          description = "Voir la liste blanche.",
+          permission = "uhc.command.whitelist.list"))
   public void list(final Player player) {
     new WhitelistMenu(player, this.ultraHardcore.whitelistService()).open();
   }
@@ -71,7 +93,8 @@ public final class WhitelistCommand {
   @SubCommand(
       @CommandMeta(
           name = "setup",
-          description = "Utiliser la liste blanche du bot discord d'Host MC."))
+          description = "Utiliser la liste blanche du bot discord d'Host MC.",
+          permission = "uhc.command.whitelist.setup"))
   public void setup(final Player player, final @Argument(name = "code") String code) {
     if (!MATCHER.matcher(code).find()) {
       player.sendMessage(prefix("Le code&b %s&r est&c invalide&r.".formatted(code)));
