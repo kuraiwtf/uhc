@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.7.0](https://github.com/kuraiwtf/uhc/compare/v1.6.1...v1.7.0) (2026-09-04)
+
+
+### Features
+
+* introduce `developer` method in `AbstractModule` with implementation in `BuiltinModule` ([b782cf1](https://github.com/kuraiwtf/uhc/commit/b782cf104b0c1998aa47195ec1d766e17fbe2093))
+
+
+### Code Refactoring
+
+* centralize sidebar credit handling via `sidebarCredit` method ([7d7d11e](https://github.com/kuraiwtf/uhc/commit/7d7d11eb536a8c2907748963a0465b40626bf8d1))
+* inject `ModuleService` into `CreditTabListPart` for dynamic developer display ([bcf59bd](https://github.com/kuraiwtf/uhc/commit/bcf59bd752177b973a93d10ae724989050cc8312))
+
 ## [1.6.1](https://github.com/kuraiwtf/uhc/compare/v1.6.0...v1.6.1) (2026-09-04)
 
 
