@@ -1,10 +1,13 @@
 package dev.kurai.uhc;
 
+import static net.kyori.adventure.text.Component.text;
+import static net.kyori.adventure.text.format.NamedTextColor.DARK_GRAY;
 import static org.bukkit.Material.*;
 
 import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.event.EventManager;
 import dev.kurai.actionbar.ActionbarService;
+import dev.kurai.actionbar.update.configuration.ActionbarUpdateConfiguration;
 import dev.kurai.uhc.command.CommandRegistrar;
 import dev.kurai.uhc.command.CommandRegistrarImpl;
 import dev.kurai.uhc.command.argument.builtin.uhc.TimerArgumentResolver;
@@ -54,6 +57,8 @@ import dev.kurai.uhc.world.WorldServiceImpl;
 import lombok.Getter;
 import net.j4c0b3y.api.menu.MenuHandler;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.JoinConfiguration;
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
@@ -105,7 +110,14 @@ public final class UltraHardcoreEngine extends UltraHardcoreAPI {
 
     this.actionbarService =
         ActionbarService.actionbarService(
-            this.plugin, player -> this.bukkitAudiences.player(player));
+            this.plugin,
+            player -> this.bukkitAudiences.player(player),
+            JoinConfiguration.builder()
+                .prefix(text("»", DARK_GRAY).appendSpace())
+                .separator(Component.space().append(text("❘", DARK_GRAY)).appendSpace())
+                .suffix(Component.space().append(text("«", DARK_GRAY)))
+                .build(),
+            ActionbarUpdateConfiguration.EVERY_TICK);
     this.gameService = new GameServiceImpl(this);
     this.helpOpService = new HelpOpServiceImpl();
     this.itemService = new ItemServiceImpl(this);
