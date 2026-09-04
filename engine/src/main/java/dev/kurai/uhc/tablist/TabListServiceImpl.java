@@ -21,7 +21,7 @@ public final class TabListServiceImpl implements TabListService {
     this.partsView = Collections.unmodifiableCollection(this.parts.values());
 
     this.addPart(new GlobalInformationTablistPart(ultraHardcore));
-    this.addPart(new CreditTabListPart());
+    this.addPart(new CreditTabListPart(ultraHardcore.moduleService()));
   }
 
   @Contract(pure = true)
