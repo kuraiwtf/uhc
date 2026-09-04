@@ -246,6 +246,13 @@ public final class HostCommand {
 
     this.ultraHardcore.gameService().scatterService().handlePlayerLateScatter(target);
 
+    Bukkit.broadcastMessage(
+        CC.prefix(
+            "&b"
+                + player.getName()
+                + "&f vient d'ajouter le joueur &d"
+                + target.getName()
+                + "&f à la partie."));
     player.sendMessage(
         CC.prefix(
             "Vous venez d'ajouter le joueur&6 %s&r à la partie.".formatted(target.getName())));
