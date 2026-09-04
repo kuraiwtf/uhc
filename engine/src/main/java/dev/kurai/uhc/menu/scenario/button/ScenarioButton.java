@@ -11,6 +11,7 @@ import dev.kurai.uhc.util.ItemBuilder;
 import net.j4c0b3y.api.menu.button.Button;
 import net.j4c0b3y.api.menu.button.ButtonClick;
 import org.bukkit.event.Listener;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.jspecify.annotations.Nullable;
 
@@ -66,6 +67,7 @@ public final class ScenarioButton extends Button {
         .lore(lore)
         .glowing(enabled)
         .amount(enabled ? 1 : 0)
+        .addFlags(ItemFlag.values())
         .asItemStack();
   }
 
