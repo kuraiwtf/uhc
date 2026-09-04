@@ -158,7 +158,7 @@ public final class AnswerCommand {
       return true;
     }
 
-    player.sendMessage(prefix("Vous n'avez pas la permission d'effectuer cette action."));
+    player.sendMessage(CC.MISSING_PERMISSION);
     return false;
   }
 
