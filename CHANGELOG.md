@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.6.1](https://github.com/kuraiwtf/uhc/compare/v1.6.0...v1.6.1) (2026-09-04)
+
+
+### Bug Fixes
+
+* add fall damage immunity for players during scatter ([5d18594](https://github.com/kuraiwtf/uhc/commit/5d1859438357f542f2d51539718604b991032771))
+* add NameComponent to player profiles during scatter ([b5a09ff](https://github.com/kuraiwtf/uhc/commit/b5a09ffe8c0573eb335175d0b838ef7c9b885692))
+* reformat message sent for invalid player addition in `HostCommand` ([be85299](https://github.com/kuraiwtf/uhc/commit/be852999367511bc0a8097a3de29107a01e5ee8d))
+* remove SpectatorComponent from players during scatter ([c9d96a3](https://github.com/kuraiwtf/uhc/commit/c9d96a34f6cd11e8cbc29e03677cf20d4a415ff2))
+* set player GameMode to SURVIVAL after teleport during scatter ([dcbe48d](https://github.com/kuraiwtf/uhc/commit/dcbe48d990dd93dfd0580d50fd5eafa2f93bcac2))
+* set spectator mode for non-playing players to prevent unintended spawn interactions ([d9080eb](https://github.com/kuraiwtf/uhc/commit/d9080ebadc88b77b5ec4e9489e587e18a4f09bc6))
+* update player state check to prevent adding invalid players to the game ([714f319](https://github.com/kuraiwtf/uhc/commit/714f319d3b1351be25503250a3e9fcbacbe74d6d))
+
 ## [1.6.0](https://github.com/kuraiwtf/uhc/compare/v1.5.0...v1.6.0) (2026-09-04)
 
 
