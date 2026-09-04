@@ -30,6 +30,7 @@ import java.util.function.Consumer;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
@@ -76,6 +77,7 @@ public final class PlayingListener implements Listener {
     final Profile profile = this.ultraHardcore.profileService().getOrCreateProfile(player);
     if (!(profile.getState() instanceof PlayingProfileState)) {
       player.teleport(this.ultraHardcore.worldService().getWorld().getSpawnLocation());
+      player.setGameMode(GameMode.SPECTATOR);
       return;
     }
 
