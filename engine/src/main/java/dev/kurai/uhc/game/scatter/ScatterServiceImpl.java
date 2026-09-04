@@ -12,6 +12,7 @@ import java.time.Instant;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.event.entity.EntityDamageEvent;
 
 public final class ScatterServiceImpl implements ScatterService {
 
@@ -78,6 +79,7 @@ public final class ScatterServiceImpl implements ScatterService {
     profile.addComponent(
         new DisconnectComponent(
             this.ultraHardcore.gameService().disconnectService().disconnectTime(), Instant.now()));
+    profile.addDamageImmunityUntilNext(EntityDamageEvent.DamageCause.FALL);
 
     final var inventory = player.getInventory();
     inventory.setContents(InventoryConfiguration.INVENTORY_CONTENT_OPTION.getValue());
