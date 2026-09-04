@@ -1,5 +1,34 @@
 # Changelog
 
+## [1.5.0](https://github.com/kuraiwtf/uhc/compare/v1.4.2...v1.5.0) (2026-09-04)
+
+
+### Features
+
+* add `ItemFlag` support to `ScenarioButton` for improved item customization ([33d4b8e](https://github.com/kuraiwtf/uhc/commit/33d4b8e80b85087df7c26b34533716d578b767e5))
+* add `MISSING_PERMISSION` constant for permission-related messages in `CC` utility class ([c038a4d](https://github.com/kuraiwtf/uhc/commit/c038a4dbad2edd6ad58a8563ae8950bf58015588))
+* add default lore provider method in `AbstractScenario` ([5cbc708](https://github.com/kuraiwtf/uhc/commit/5cbc70808afc3950da366f0f277d07a39b600ad7))
+* add descriptions to subcommands in `AnswerCommand` and `GroupCommand` for better clarity ([6add019](https://github.com/kuraiwtf/uhc/commit/6add0193292a814805bd533494d344d51bfdb7af))
+* add lore definitions for default scenarios using the new `provideLore` method ([f8dced3](https://github.com/kuraiwtf/uhc/commit/f8dced3684f977a2df8e015d26d0fad532cfe060))
+* add permission requirements to various commands and their subcommands ([86cb067](https://github.com/kuraiwtf/uhc/commit/86cb0677488c55dea7f0424675e3a3d9b29369ef))
+* add permission support and CommandSender usage to `WhitelistCommand` subcommands ([df28a35](https://github.com/kuraiwtf/uhc/commit/df28a35658dc8db38fca2a0919bb51b580f363f0))
+* annotate `command` and `command.help` packages with `@NullMarked` for null-safety compliance ([08112a7](https://github.com/kuraiwtf/uhc/commit/08112a762f70305ad97b5375e8e6d867b236a5a2))
+* enhance `ActionbarService` with customizable join configuration and per-tick update frequency ([235a669](https://github.com/kuraiwtf/uhc/commit/235a6691ec957cdcf8b91abbd25b00f4ec672108))
+
+
+### Bug Fixes
+
+* adjust lore color formatting in `ScenarioButton` for consistency with theme ([eeeb919](https://github.com/kuraiwtf/uhc/commit/eeeb919f2814628ca15d48d5ed319ada7c20357e))
+
+
+### Code Refactoring
+
+* enhance `unregisterPower` to handle `AbstractItemPower` and `Listener` cleanup ([18ac22e](https://github.com/kuraiwtf/uhc/commit/18ac22e3d5295f862dd120b2d7ab008d67bf8c88))
+* extract `ScenarioButton` to a dedicated class and replace inline implementations in scenario menus ([8af3f4c](https://github.com/kuraiwtf/uhc/commit/8af3f4c93fdc0a48df5fcd743a4ea72db40ae327))
+* extract death processing logic to `BuiltinDeathProcessor` to improve modularity and readability ([8ca573f](https://github.com/kuraiwtf/uhc/commit/8ca573fd9ff23d90d6a5edec5fe3c90759b4ddcb))
+* replace hardcoded permission messages with `MISSING_PERMISSION` constant in commands ([f1118c0](https://github.com/kuraiwtf/uhc/commit/f1118c08b3b58afa3f9b49d805b5b242954d5283))
+* simplify `WinCelebration` interface by removing generics and update related implementations ([99e6075](https://github.com/kuraiwtf/uhc/commit/99e6075003b0fc12adf6e99b0dc3286ab7ffb599))
+
 ## [1.4.2](https://github.com/kuraiwtf/uhc/compare/v1.4.1...v1.4.2) (2026-09-02)
 
 
