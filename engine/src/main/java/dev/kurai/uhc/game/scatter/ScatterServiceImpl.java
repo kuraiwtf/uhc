@@ -2,6 +2,12 @@ package dev.kurai.uhc.game.scatter;
 
 import com.google.common.collect.Lists;
 import dev.kurai.uhc.UltraHardcoreAPI;
+import dev.kurai.uhc.game.configuration.border.BorderConfiguration;
+import dev.kurai.uhc.game.configuration.inventory.InventoryConfiguration;
+import dev.kurai.uhc.profile.Profile;
+import dev.kurai.uhc.profile.component.DisconnectComponent;
+import dev.kurai.uhc.profile.state.PlayingProfileState;
+import java.time.Instant;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -52,5 +58,24 @@ public final class ScatterServiceImpl implements ScatterService {
   }
 
   @Override
-  public void handlePlayerLateScatter(final Player player) {}
+  public void handlePlayerLateScatter(final Player player) {
+    final Location location =
+        this.positionProvider
+            .provideLocations(BorderConfiguration.INITIAL_SIZE_OPTION.getValue() - 50, 1)
+            .iterator()
+            .next();
+
+    location.getChunk().load(true);
+    player.teleport(location);
+
+    final Profile profile = this.ultraHardcore.profileService().getOrCreateProfile(player);
+    profile.setState(new PlayingProfileState());
+    profile.addComponent(
+        new DisconnectComponent(
+            this.ultraHardcore.gameService().disconnectService().disconnectTime(), Instant.now()));
+
+    final var inventory = player.getInventory();
+    inventory.setContents(InventoryConfiguration.INVENTORY_CONTENT_OPTION.getValue());
+    inventory.setArmorContents(InventoryConfiguration.INVENTORY_ARMOR_OPTION.getValue());
+  }
 }

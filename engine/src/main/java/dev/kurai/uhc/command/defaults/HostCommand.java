@@ -219,6 +219,40 @@ public final class HostCommand {
 
   @SubCommand(
       @CommandMeta(
+          name = "latescatter",
+          aliases = "late",
+          description = "Ajouter un joueur en retard",
+          permission = "uhc.command.host.latescatter"))
+  @Command(
+      @CommandMeta(
+          name = "latescatter",
+          aliases = "late",
+          description = "Ajouter un joueur en retard",
+          permission = "uhc.command.host.latescatter"))
+  public void lateScatter(final Player player, final @Argument(name = "joueur") Player target) {
+    final GameService gameService = this.ultraHardcore.gameService();
+    if (gameService.startTime() == 0L) {
+      player.sendMessage(CC.prefix("La partie n'est pas en cours de jeu."));
+      return;
+    }
+
+    final Profile profile =
+        this.ultraHardcore.profileService().getOrCreateProfile(target.getUniqueId());
+    final DeadComponent component = profile.getComponent(DeadComponent.class);
+    if (component == null) {
+      player.sendMessage(CC.prefix("Le joueur&6 %s&r est en vie.".formatted(target.getName())));
+      return;
+    }
+
+    this.ultraHardcore.gameService().scatterService().handlePlayerLateScatter(target);
+
+    player.sendMessage(
+        CC.prefix(
+            "Vous venez d'ajouter le joueur&6 %s&r à la partie.".formatted(target.getName())));
+  }
+
+  @SubCommand(
+      @CommandMeta(
           name = "revive",
           description = "Ressusciter un joueur",
           permission = "uhc.command.host.revive"))
