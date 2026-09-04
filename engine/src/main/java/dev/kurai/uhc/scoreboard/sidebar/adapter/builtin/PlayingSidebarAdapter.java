@@ -150,7 +150,7 @@ public final class PlayingSidebarAdapter implements SidebarAdapter {
             .append(text('m', LIGHT_PURPLE))
             .build());
     lines.add(empty());
-    lines.add(text().append(text('@', DARK_AQUA)).append(text("kuraiwtf", AQUA)).build());
+    lines.add(this.ultraHardcore.moduleService().getCurrentModule().sidebarCredit());
     return lines;
   }
 }

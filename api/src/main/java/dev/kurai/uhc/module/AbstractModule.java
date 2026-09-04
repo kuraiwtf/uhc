@@ -14,6 +14,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 import net.j4c0b3y.api.menu.Menu;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jspecify.annotations.NullMarked;
@@ -40,6 +41,10 @@ public abstract class AbstractModule
     this.commandName = commandName;
 
     this.ultraHardcore = ultraHardcore;
+  }
+
+  public net.kyori.adventure.text.Component sidebarCredit() {
+    return MiniMessage.miniMessage().deserialize("<dark_aqua>@</dark_aqua><aqua>kuraiwtf</aqua>");
   }
 
   @Override
