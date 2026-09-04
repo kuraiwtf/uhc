@@ -47,7 +47,7 @@ public final class ScenarioButton extends Button {
     lore.add("");
     lore.add("§a" + BAR_2 + "&f &lDescription");
     for (final String line : this.scenario.provideLore()) {
-      lore.add("§8 " + SQUARE + "§r " + line);
+      lore.add("§a " + SQUARE + "§r " + line);
     }
     lore.add("");
 
