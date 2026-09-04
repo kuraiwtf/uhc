@@ -21,8 +21,6 @@ import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.sound.Sound;
 import org.bukkit.*;
-import org.bukkit.entity.Player;
-import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
@@ -41,35 +39,7 @@ public final class DeathServiceImpl implements DeathService {
     this.ultraHardcore = ultraHardcore;
 
     this.deathAnnounce = new BuiltinDeathAnnounce();
-    this.deathProcessor =
-        context -> {
-          final GameService gameService = ultraHardcore.gameService();
-          gameService.playSound(
-              Sound.sound()
-                  .source(Sound.Source.HOSTILE)
-                  .type(key("mob.wither.death"))
-                  .volume(1f)
-                  .pitch(1f)
-                  .build());
-
-          final PlayerDeathEvent event = context.event();
-
-          final Player player = event.getEntity();
-          final Player killer = player.getKiller();
-          if (killer != null) {
-            killer.getInventory().addItem(new ItemStack(Material.GOLDEN_APPLE));
-            killer.giveExpLevels(3);
-          }
-
-          final Profile profile =
-              ultraHardcore.profileService().getOrCreateProfile(player.getUniqueId());
-          this.eliminate(
-              profile,
-              killer == null
-                  ? null
-                  : this.ultraHardcore.profileService().getOrCreateProfile(killer),
-              false);
-        };
+    this.deathProcessor = new BuiltinDeathProcessor(ultraHardcore, this);
   }
 
   @Override
@@ -153,6 +123,15 @@ public final class DeathServiceImpl implements DeathService {
 
     gameService.sendMessage(this.deathAnnounce.provideDeathMessage(profile, killer, offline));
 
+    this.processVictimDeath(profile, killer, component, droppedItems);
+    this.processWin();
+  }
+
+  private void processVictimDeath(
+      final Profile profile,
+      final @Nullable Profile killer,
+      final PlayerInformationComponent informationComponent,
+      final List<UUID> droppedItems) {
     profile.removeComponent(DisconnectComponent.class);
     profile.removeComponent(PlayerInformationComponent.class);
     profile.removeComponent(ProcessingDeathComponent.class);
@@ -160,10 +139,10 @@ public final class DeathServiceImpl implements DeathService {
     profile.addComponent(
         new DeadComponent(
             killer == null ? null : killer.getId(),
-            System.currentTimeMillis() - gameService.startTime(),
-            component.lastLocation().clone(),
-            component.inventory().clone(),
-            component.armor().clone(),
+            System.currentTimeMillis() - this.ultraHardcore.gameService().startTime(),
+            informationComponent.lastLocation().clone(),
+            informationComponent.inventory().clone(),
+            informationComponent.armor().clone(),
             droppedItems));
 
     profile.setState(new DeadProfileState());
@@ -177,6 +156,8 @@ public final class DeathServiceImpl implements DeathService {
     profile.sendMessage(center("pour accéder à l'interface&d spectateur&r."));
     profile.sendMessage("");
   }
+
+  private void processWin() {}
 
   private void dropAt(
       final Location location, final @Nullable ItemStack item, final List<UUID> droppedItems) {
