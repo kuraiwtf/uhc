@@ -72,6 +72,9 @@ public final class CC {
   public static final String NINE_CIRCLE_FILL = "❾";
   public static final String TEN_CIRCLE_FILL = "❿";
 
+  public static final String MISSING_PERMISSION =
+      prefix("&cVous n'avez pas la permission d'effectuer cette action.");
+
   /** The default center padding */
   public static final int CENTER_PX = 152;
 
