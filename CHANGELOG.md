@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.6.0](https://github.com/kuraiwtf/uhc/compare/v1.5.0...v1.6.0) (2026-09-04)
+
+
+### Features
+
+* broadcast message when player is added to the game via late scatter ([df4ecbd](https://github.com/kuraiwtf/uhc/commit/df4ecbd44c84b5a26a4f405cf517f0a871d978f7))
+* implement late scatter functionality for handling late-joining players ([f7189a0](https://github.com/kuraiwtf/uhc/commit/f7189a027375e0b7a8f1f415fa96570135e581ec))
+
 ## [1.5.0](https://github.com/kuraiwtf/uhc/compare/v1.4.2...v1.5.0) (2026-09-04)
 
 
