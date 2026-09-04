@@ -8,6 +8,8 @@ import dev.kurai.uhc.profile.Profile;
 import dev.kurai.uhc.profile.component.DisconnectComponent;
 import dev.kurai.uhc.profile.state.PlayingProfileState;
 import java.time.Instant;
+
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -67,6 +69,8 @@ public final class ScatterServiceImpl implements ScatterService {
 
     location.getChunk().load(true);
     player.teleport(location);
+
+    player.setGameMode(GameMode.SURVIVAL);
 
     final Profile profile = this.ultraHardcore.profileService().getOrCreateProfile(player);
     profile.setState(new PlayingProfileState());
