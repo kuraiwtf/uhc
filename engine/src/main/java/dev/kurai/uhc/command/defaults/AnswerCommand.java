@@ -27,7 +27,11 @@ public final class AnswerCommand {
 
   private final UltraHardcoreAPI ultraHardcore;
 
-  @SubCommand(@CommandMeta(name = "tp", permission = "uhc.command.answer.tp"))
+  @SubCommand(
+      @CommandMeta(
+          name = "tp",
+          description = "Se téléporter à un joueur",
+          permission = "uhc.command.answer.tp"))
   public void tp(final Player player, final @Argument(name = "id") int id) {
     if (!this.hasAccess(player)) {
       return;
@@ -49,7 +53,11 @@ public final class AnswerCommand {
         prefix("Vous avez été téléporté au joueur du help-op&6 #%s&r.".formatted(id)));
   }
 
-  @SubCommand(@CommandMeta(name = "inv", permission = "uhc.command.answer.inv"))
+  @SubCommand(
+      @CommandMeta(
+          name = "inv",
+          description = "Voir l'inventaire d'un joueur",
+          permission = "uhc.command.answer.inv"))
   public void inventory(final Player player, final @Argument(name = "id") int id) {
     if (!this.hasAccess(player)) {
       return;
@@ -70,7 +78,11 @@ public final class AnswerCommand {
     new InventoryViewMenu(player, target, profile).open();
   }
 
-  @SubCommand(@CommandMeta(name = "msg", permission = "uhc.command.answer.reply"))
+  @SubCommand(
+      @CommandMeta(
+          name = "msg",
+          description = "Répondre à un joueur",
+          permission = "uhc.command.answer.reply"))
   public void reply(
       final Player player,
       final @Argument(name = "id") int id,
@@ -95,7 +107,11 @@ public final class AnswerCommand {
     player.sendMessage(prefix("Votre réponse a été envoyée au help-op&6 #%s&r.".formatted(id)));
   }
 
-  @SubCommand(@CommandMeta(name = "whois", permission = "uhc.command.answer.whois"))
+  @SubCommand(
+      @CommandMeta(
+          name = "whois",
+          description = "Voir le pseudo à l'origine d'un helpop",
+          permission = "uhc.command.answer.whois"))
   public void who(final Player player, final @Argument(name = "id") int id) {
     if (!this.hasAccess(player)) {
       return;
@@ -112,7 +128,11 @@ public final class AnswerCommand {
                 .formatted(ticketOptional.get().askerName(), id)));
   }
 
-  @SubCommand(@CommandMeta(name = "list", permission = "uhc.command.answer.list"))
+  @SubCommand(
+      @CommandMeta(
+          name = "list",
+          description = "Voir la liste des help-ops en attente",
+          permission = "uhc.command.answer.list"))
   public void list(final Player player) {
     if (!this.hasAccess(player)) {
       return;

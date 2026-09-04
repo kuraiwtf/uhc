@@ -30,7 +30,11 @@ public final class GroupCommand {
     this.profileService = profileService;
   }
 
-  @SubCommand(@CommandMeta(name = "set", permission = "uhc.command.group.set"))
+  @SubCommand(
+      @CommandMeta(
+          name = "set",
+          description = "Définir la limite de groupes",
+          permission = "uhc.command.group.set"))
   public void set(final Player player, final @Argument(name = "groupes") int groups) {
     if (!this.groupService.enabled()) {
       return;
@@ -43,7 +47,11 @@ public final class GroupCommand {
             "Vous venez de définir les&d groupes&r de la partie à&d %d&r.".formatted(groups)));
   }
 
-  @SubCommand(@CommandMeta(name = "alert", permission = "uhc.command.group.alert"))
+  @SubCommand(
+      @CommandMeta(
+          name = "alert",
+          description = "Alerter de la limite des groupes",
+          permission = "uhc.command.group.alert"))
   public void alert(final Player player) {
     for (final Profile profile :
         this.profileService.getProfiles(profile -> profile.findPlayer().isPresent())) {
