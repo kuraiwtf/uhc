@@ -21,7 +21,7 @@ public final class ModerationCommands {
     this.ultraHardcore = ultraHardcore;
   }
 
-  @Command(@CommandMeta(name = "list"))
+  @Command(@CommandMeta(name = "list", permission = "uhc.command.list"))
   public void list(final Player player) {
     if (!this.ultraHardcore.gameService().hostService().isHost(player)) {
       player.sendMessage(CC.prefix("Vous n'avez pas la permission d'effectuer cette action."));
@@ -31,7 +31,7 @@ public final class ModerationCommands {
     new PlayerListMenu(player, this.ultraHardcore.profileService()).open();
   }
 
-  @Command(@CommandMeta(name = "resetcd"))
+  @Command(@CommandMeta(name = "resetcd", permission = "uhc.command.dev.resetcd"))
   public void resetCooldown(
       final Player player, final @Argument(name = "joueur", defaultValue = "self") Player target) {
     if (!this.ultraHardcore.gameService().hostService().isHost(player)) {

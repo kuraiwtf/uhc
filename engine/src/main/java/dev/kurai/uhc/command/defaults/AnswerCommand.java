@@ -21,12 +21,13 @@ import org.bukkit.entity.Player;
 @Command(
     @CommandMeta(
         name = "helpopanswer",
-        aliases = {"hopa", "ha"}))
+        aliases = {"hopa", "ha"},
+        permission = "uhc.command.answer"))
 public final class AnswerCommand {
 
   private final UltraHardcoreAPI ultraHardcore;
 
-  @SubCommand(@CommandMeta(name = "tp"))
+  @SubCommand(@CommandMeta(name = "tp", permission = "uhc.command.answer.tp"))
   public void tp(final Player player, final @Argument(name = "id") int id) {
     if (!this.hasAccess(player)) {
       return;
@@ -48,7 +49,7 @@ public final class AnswerCommand {
         prefix("Vous avez été téléporté au joueur du help-op&6 #%s&r.".formatted(id)));
   }
 
-  @SubCommand(@CommandMeta(name = "inv"))
+  @SubCommand(@CommandMeta(name = "inv", permission = "uhc.command.answer.inv"))
   public void inventory(final Player player, final @Argument(name = "id") int id) {
     if (!this.hasAccess(player)) {
       return;
@@ -69,7 +70,7 @@ public final class AnswerCommand {
     new InventoryViewMenu(player, target, profile).open();
   }
 
-  @SubCommand(@CommandMeta(name = "msg"))
+  @SubCommand(@CommandMeta(name = "msg", permission = "uhc.command.answer.reply"))
   public void reply(
       final Player player,
       final @Argument(name = "id") int id,
@@ -94,7 +95,7 @@ public final class AnswerCommand {
     player.sendMessage(prefix("Votre réponse a été envoyée au help-op&6 #%s&r.".formatted(id)));
   }
 
-  @SubCommand(@CommandMeta(name = "whois"))
+  @SubCommand(@CommandMeta(name = "whois", permission = "uhc.command.answer.whois"))
   public void who(final Player player, final @Argument(name = "id") int id) {
     if (!this.hasAccess(player)) {
       return;
@@ -111,7 +112,7 @@ public final class AnswerCommand {
                 .formatted(ticketOptional.get().askerName(), id)));
   }
 
-  @SubCommand(@CommandMeta(name = "liste"))
+  @SubCommand(@CommandMeta(name = "list", permission = "uhc.command.answer.list"))
   public void list(final Player player) {
     if (!this.hasAccess(player)) {
       return;

@@ -13,14 +13,14 @@ import lombok.RequiredArgsConstructor;
 import org.bukkit.entity.Player;
 
 @RequiredArgsConstructor
-@Command(@CommandMeta(name = "spectator", aliases = "spec"))
+@Command(@CommandMeta(name = "spectator", aliases = "spec", permission = "uhc.command.spectator"))
 public final class SpectatorCommand {
 
   private static final Class<? extends Component> SPECTATOR_COMPONENT = SpectatorComponent.class;
 
   private final UltraHardcoreAPI ultraHardcore;
 
-  @SubCommand(@CommandMeta(name = "list"))
+  @SubCommand(@CommandMeta(name = "list", permission = "uhc.command.spectator.list"))
   public void list(final Player player) {
     final var spectators =
         this.ultraHardcore
@@ -38,7 +38,7 @@ public final class SpectatorCommand {
     }
   }
 
-  @SubCommand(@CommandMeta(name = "add"))
+  @SubCommand(@CommandMeta(name = "add", permission = "uhc.command.spectator.add"))
   public void add(final Player player, final @Argument(name = "joueur") Player target) {
     final Profile profile = this.ultraHardcore.profileService().getOrCreateProfile(target);
     if (profile.hasComponent(SPECTATOR_COMPONENT)) {
@@ -54,7 +54,7 @@ public final class SpectatorCommand {
                 .formatted(target.getName())));
   }
 
-  @SubCommand(@CommandMeta(name = "remove"))
+  @SubCommand(@CommandMeta(name = "remove", permission = "uhc.command.spectator.remove"))
   public void remove(final Player player, final @Argument(name = "joueur") Player target) {
     final Profile profile = this.ultraHardcore.profileService().getOrCreateProfile(target);
     if (!profile.hasComponent(SPECTATOR_COMPONENT)) {

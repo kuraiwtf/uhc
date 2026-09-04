@@ -36,13 +36,21 @@ import org.bukkit.inventory.PlayerInventory;
 
 @RequiredArgsConstructor
 @Command(
-    @CommandMeta(name = "host", aliases = "h", description = "Commande de gestion de la partie"))
+    @CommandMeta(
+        name = "host",
+        aliases = "h",
+        description = "Commande de gestion de la partie",
+        permission = "uhc.command.host"))
 public final class HostCommand {
 
   private final BukkitAudiences bukkitAudiences;
   private final UltraHardcoreAPI ultraHardcore;
 
-  @SubCommand(@CommandMeta(name = "add", description = "Ajouter un co-hôte"))
+  @SubCommand(
+      @CommandMeta(
+          name = "add",
+          description = "Ajouter un co-hôte",
+          permission = "uhc.command.host.add"))
   public void add(final Player player, final @Argument(name = "joueur") Player target) {
     final HostService hostService = this.ultraHardcore.gameService().hostService();
     if (hostService.coHost(target)) {
@@ -56,7 +64,11 @@ public final class HostCommand {
             "Vous avez ajouté&6 %s&f comme co-hôte de la partie.".formatted(target.getName())));
   }
 
-  @SubCommand(@CommandMeta(name = "remove", description = "Retirer un co-hôte"))
+  @SubCommand(
+      @CommandMeta(
+          name = "remove",
+          description = "Retirer un co-hôte",
+          permission = "uhc.command.host.remove"))
   public void remove(final Player player, final @Argument(name = "joueur") Player target) {
     final HostService hostService = this.ultraHardcore.gameService().hostService();
     if (!hostService.coHost(target)) {
@@ -70,12 +82,20 @@ public final class HostCommand {
             "Vous avez retiré&6 %s&f des co-hôtes de la partie.".formatted(target.getName())));
   }
 
-  @SubCommand(@CommandMeta(name = "config", description = "Configurer la partie"))
+  @SubCommand(
+      @CommandMeta(
+          name = "config",
+          description = "Configurer la partie",
+          permission = "uhc.command.host.config"))
   public void config(final Player player) {
     new ConfigurationMenu(player, this.ultraHardcore).open();
   }
 
-  @SubCommand(@CommandMeta(name = "force", description = "Forcer un timer"))
+  @SubCommand(
+      @CommandMeta(
+          name = "force",
+          description = "Forcer un timer",
+          permission = "uhc.command.host.force"))
   public void force(final Player player, final @Argument(name = "timer") AbstractTimer timer) {
     timer.setTimeLeft(5);
     this.bukkitAudiences
@@ -121,7 +141,10 @@ public final class HostCommand {
   }
 
   @SubCommand(
-      @CommandMeta(name = "refill", description = "Redonner les objets de pouvoir à un joueur"))
+      @CommandMeta(
+          name = "refill",
+          description = "Redonner les objets de pouvoir à un joueur",
+          permission = "uhc.command.host.refill"))
   public void refill(
       final Player player, final @Argument(name = "joueur", defaultValue = "self") Player target) {
     final Profile profile = this.ultraHardcore.profileService().getOrCreateProfile(target);
@@ -147,7 +170,8 @@ public final class HostCommand {
       @CommandMeta(
           name = "killoffline",
           aliases = "ko",
-          description = "Éliminer un joueur hors-ligne"))
+          description = "Éliminer un joueur hors-ligne",
+          permission = "uhc.command.host.killoffline"))
   public void killOffline(
       final Player player, final @Argument(name = "joueur") OfflinePlayer target) {
     final GameService gameService = this.ultraHardcore.gameService();
@@ -173,7 +197,11 @@ public final class HostCommand {
         CC.prefix("Vous venez d'&céliminer&f le joueur&6 %s&r.".formatted(target.getName())));
   }
 
-  @SubCommand(@CommandMeta(name = "set", description = "Définir le joueur hôte de la partie"))
+  @SubCommand(
+      @CommandMeta(
+          name = "set",
+          description = "Définir le joueur hôte de la partie",
+          permission = "uhc.command.host.set"))
   public void set(final Player player, final @Argument(name = "joueur") Player target) {
     final HostService hostService = this.ultraHardcore.gameService().hostService();
     final UUID host = hostService.host();
@@ -189,7 +217,11 @@ public final class HostCommand {
                 .formatted(target.getName())));
   }
 
-  @SubCommand(@CommandMeta(name = "revive", description = "Ressusciter un joueur"))
+  @SubCommand(
+      @CommandMeta(
+          name = "revive",
+          description = "Ressusciter un joueur",
+          permission = "uhc.command.host.revive"))
   public void revive(final Player player, final @Argument(name = "joueur") Player target) {
     final GameService gameService = this.ultraHardcore.gameService();
     if (gameService.startTime() == 0L) {
@@ -239,7 +271,11 @@ public final class HostCommand {
         CC.prefix("Vous venez de&d ressusciter&f le joueur&6 %s&r.".formatted(target.getName())));
   }
 
-  @Command(@CommandMeta(name = "save", description = "Sauvegarder l'inventaire de départ"))
+  @Command(
+      @CommandMeta(
+          name = "save",
+          description = "Sauvegarder l'inventaire de départ",
+          permission = "uhc.command.host.save"))
   public void saveInventory(final Player player) {
     final var profile =
         this.ultraHardcore.profileService().getOrCreateProfile(player.getUniqueId());
