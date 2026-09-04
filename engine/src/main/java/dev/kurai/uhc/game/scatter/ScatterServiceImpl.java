@@ -2,6 +2,7 @@ package dev.kurai.uhc.game.scatter;
 
 import com.google.common.collect.Lists;
 import dev.kurai.uhc.UltraHardcoreAPI;
+import dev.kurai.uhc.ecs.component.defaults.NameComponent;
 import dev.kurai.uhc.game.configuration.border.BorderConfiguration;
 import dev.kurai.uhc.game.configuration.inventory.InventoryConfiguration;
 import dev.kurai.uhc.profile.Profile;
@@ -76,9 +77,12 @@ public final class ScatterServiceImpl implements ScatterService {
     final Profile profile = this.ultraHardcore.profileService().getOrCreateProfile(player);
     profile.setState(new PlayingProfileState());
     profile.removeComponent(SpectatorComponent.class);
+
     profile.addComponent(
         new DisconnectComponent(
             this.ultraHardcore.gameService().disconnectService().disconnectTime(), Instant.now()));
+    profile.addComponent(new NameComponent(player.getName()));
+
     profile.addDamageImmunityUntilNext(EntityDamageEvent.DamageCause.FALL);
 
     final var inventory = player.getInventory();
