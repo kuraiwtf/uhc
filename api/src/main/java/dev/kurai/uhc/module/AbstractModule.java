@@ -43,6 +43,8 @@ public abstract class AbstractModule
     this.ultraHardcore = ultraHardcore;
   }
 
+  public abstract String developer();
+
   public net.kyori.adventure.text.Component sidebarCredit() {
     return MiniMessage.miniMessage().deserialize("<dark_aqua>@</dark_aqua><aqua>kuraiwtf</aqua>");
   }

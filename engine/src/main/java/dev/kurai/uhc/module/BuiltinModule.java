@@ -28,6 +28,11 @@ public final class BuiltinModule extends AbstractModule implements TeamModule {
   }
 
   @Override
+  public String developer() {
+    return "kurai";
+  }
+
+  @Override
   public ItemStack provideModuleIcon(final Player player) {
     return new ItemStack(Material.GOLDEN_APPLE);
   }
