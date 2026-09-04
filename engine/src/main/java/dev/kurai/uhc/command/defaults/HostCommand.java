@@ -238,9 +238,8 @@ public final class HostCommand {
 
     final Profile profile =
         this.ultraHardcore.profileService().getOrCreateProfile(target.getUniqueId());
-    final DeadComponent component = profile.getComponent(DeadComponent.class);
-    if (component == null) {
-      player.sendMessage(CC.prefix("Le joueur&6 %s&r est en vie.".formatted(target.getName())));
+    if (profile.getState() instanceof PlayingProfileState || profile.hasComponent(DeadComponent.class)) {
+      player.sendMessage(CC.prefix("Le joueur&6 %s&r ne peut pas être ajouté à la partie.".formatted(target.getName())));
       return;
     }
 
