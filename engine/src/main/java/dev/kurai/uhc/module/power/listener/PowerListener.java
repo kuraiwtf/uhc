@@ -31,6 +31,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.plugin.Plugin;
 import org.jspecify.annotations.NullMarked;
@@ -95,6 +96,18 @@ public final class PowerListener extends PacketListenerAbstract implements Liste
 
     packet.setEquipment(packet.getEquipment());
     event.markForReEncode(true);
+  }
+
+  @EventHandler
+  public void onPlayerDropItem(final PlayerDropItemEvent event) {
+    final Player player = event.getPlayer();
+    final Profile profile = this.profileService.getOrCreateProfile(player);
+    profile.getPowers().stream()
+        .filter(AbstractItemPower.class::isInstance)
+        .map(AbstractItemPower.class::cast)
+        .filter(power -> power.getIcon(player).isSimilar(event.getItemDrop().getItemStack()))
+        .findFirst()
+        .ifPresent(_ -> event.setCancelled(true));
   }
 
   @EventHandler
