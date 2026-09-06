@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.8.0](https://github.com/kuraiwtf/uhc/compare/v1.7.0...v1.8.0) (2026-09-06)
+
+
+### Features
+
+* cancel item drop events for items matching `AbstractItemPower` icons ([b597377](https://github.com/kuraiwtf/uhc/commit/b597377821622402033ea6ea4f5f60e8ed944e31))
+
 ## [1.7.0](https://github.com/kuraiwtf/uhc/compare/v1.6.1...v1.7.0) (2026-09-04)
 
 
