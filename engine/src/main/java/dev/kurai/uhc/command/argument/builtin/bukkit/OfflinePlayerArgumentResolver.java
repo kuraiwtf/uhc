@@ -26,10 +26,6 @@ public final class OfflinePlayerArgumentResolver
       return player;
     }
 
-    if (found == null) {
-      return null;
-    }
-
     return found;
   }
 

@@ -12,7 +12,6 @@ import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
-import org.jetbrains.annotations.NotNull;
 
 public final class HelpCommand {
 
@@ -22,13 +21,13 @@ public final class HelpCommand {
   private final UltraHardcoreParentCommand parentCommand;
   private final int totalPages;
 
-  public HelpCommand(final  UltraHardcoreParentCommand parentCommand) {
+  public HelpCommand(final UltraHardcoreParentCommand parentCommand) {
     this.parentCommand = parentCommand;
     this.totalPages =
         (int) Math.ceil((double) parentCommand.getSubCommands().size() / COMMANDS_PER_PAGE);
   }
 
-  public void display(final  Audience audience, final int page) {
+  public void display(final Audience audience, final int page) {
     if (page < 1 || page > this.totalPages) {
       audience.sendMessage(
           text()

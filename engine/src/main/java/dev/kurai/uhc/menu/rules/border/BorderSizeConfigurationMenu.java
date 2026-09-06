@@ -49,6 +49,11 @@ public final class BorderSizeConfigurationMenu extends Menu {
     front.set(16, new ValueModifierButton(this.type, DyeColor.GREEN, 100));
   }
 
+  public enum BorderSizeType {
+    INITIAL,
+    FINAL
+  }
+
   private static final class ValueModifierButton extends Button {
 
     private final BorderSizeType type;
@@ -98,12 +103,14 @@ public final class BorderSizeConfigurationMenu extends Menu {
           this.type == BorderSizeType.INITIAL ? INITIAL_SIZE_OPTION : FINAL_SIZE_OPTION;
       final var size = option.getValue();
       final var color = this.type == BorderSizeType.INITIAL ? "&a" : "&c";
-      final var dyeColor =
-          this.type == BorderSizeType.INITIAL ? DyeColor.GREEN : DyeColor.RED;
+      final var dyeColor = this.type == BorderSizeType.INITIAL ? DyeColor.GREEN : DyeColor.RED;
 
       return new ItemBuilder(Material.STAINED_GLASS)
           .data(dyeColor.getData())
-          .name(color + "&l" + (this.type == BorderSizeType.INITIAL ? "Taille initiale" : "Taille finale"))
+          .name(
+              color
+                  + "&l"
+                  + (this.type == BorderSizeType.INITIAL ? "Taille initiale" : "Taille finale"))
           .lore(
               "",
               color + " " + SQUARE + "&f Taille: " + color + size,
@@ -114,17 +121,14 @@ public final class BorderSizeConfigurationMenu extends Menu {
                   + (this.type == BorderSizeType.INITIAL ? "initiale" : "finale")
                   + " de la",
               "  bordure"
-                  + (this.type == BorderSizeType.INITIAL ? " au &adébut&f de la partie." : " après &créduction&f."),
+                  + (this.type == BorderSizeType.INITIAL
+                      ? " au &adébut&f de la partie."
+                      : " après &créduction&f."),
               "")
           .amount(Math.min(size / 10, 64))
           .lunarTag("unclickable", true)
           .lunarTag("hideSlotHighlight", true)
           .asItemStack();
     }
-  }
-
-  public enum BorderSizeType {
-    INITIAL,
-    FINAL
   }
 }

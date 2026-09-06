@@ -46,6 +46,15 @@ public final class ComponentDetailsMenu extends PaginatedMenu {
     foreground.center(new PaginationSlot(this));
   }
 
+  private List<Field> getAllFields(Class<?> clazz) {
+    final List<Field> fields = new ArrayList<>();
+    while (clazz != null && clazz != Object.class) {
+      fields.addAll(Arrays.asList(clazz.getDeclaredFields()));
+      clazz = clazz.getSuperclass();
+    }
+    return fields;
+  }
+
   private static final class FieldButton extends Button {
 
     private final Component component;
@@ -68,14 +77,5 @@ public final class ComponentDetailsMenu extends PaginatedMenu {
         throw new RuntimeException(e);
       }
     }
-  }
-
-  private List<Field> getAllFields(Class<?> clazz) {
-    final List<Field> fields = new ArrayList<>();
-    while (clazz != null && clazz != Object.class) {
-      fields.addAll(Arrays.asList(clazz.getDeclaredFields()));
-      clazz = clazz.getSuperclass();
-    }
-    return fields;
   }
 }

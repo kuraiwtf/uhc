@@ -42,6 +42,16 @@ public final class CutCleanScenario extends AbstractScenario implements Listener
   private static final Collection<EntityType> ALLOWED_ENTITIES =
       Set.of(
           EntityType.COW, EntityType.PIG, EntityType.CHICKEN, EntityType.SHEEP, EntityType.RABBIT);
+  private static final Map<Material, Component> ORE_NAMES =
+      Map.of(
+          IRON_ORE, text("fer", NamedTextColor.GRAY),
+          GOLD_ORE, text("or", NamedTextColor.YELLOW),
+          DIAMOND_ORE, text("diamant", NamedTextColor.AQUA));
+  private static final Map<Material, String> ARTICLES =
+      Map.of(
+          IRON_ORE, "du ",
+          GOLD_ORE, "de l'",
+          DIAMOND_ORE, "du ");
 
   public CutCleanScenario(final UltraHardcoreAPI ultraHardcore) {
     super("cut_clean", "Cut Clean", ultraHardcore, ScenarioCategory.MINING);
@@ -102,18 +112,6 @@ public final class CutCleanScenario extends AbstractScenario implements Listener
       block.getWorld().dropItemNaturally(player.getLocation(), stack);
     }
   }
-
-  private static final Map<Material, Component> ORE_NAMES =
-      Map.of(
-          IRON_ORE, text("fer", NamedTextColor.GRAY),
-          GOLD_ORE, text("or", NamedTextColor.YELLOW),
-          DIAMOND_ORE, text("diamant", NamedTextColor.AQUA));
-
-  private static final Map<Material, String> ARTICLES =
-      Map.of(
-          IRON_ORE, "du ",
-          GOLD_ORE, "de l'",
-          DIAMOND_ORE, "du ");
 
   private void sendLimitActionbar(
       final Profile profile,

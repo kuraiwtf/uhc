@@ -69,7 +69,9 @@ public final class UltraHardcoreOrphanCommand extends Command {
     if (arrayParamIndex < 0) {
       int required = 0;
       for (final var argument : this.arguments) {
-        if (argument.defaultValue().isEmpty()) required++;
+        if (argument.defaultValue().isEmpty()) {
+          required++;
+        }
       }
       minArgs = required;
     } else {

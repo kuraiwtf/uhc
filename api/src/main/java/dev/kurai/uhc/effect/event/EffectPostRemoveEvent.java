@@ -9,19 +9,17 @@ import org.bukkit.event.HandlerList;
 public final class EffectPostRemoveEvent extends Event implements Cancellable {
 
   private static final HandlerList HANDLER_LIST = new HandlerList();
-
-  public static HandlerList getHandlerList() {
-    return HANDLER_LIST;
-  }
-
   private final UUID uniqueId;
   private final Effect effect;
-
   private boolean cancelled = false;
 
   public EffectPostRemoveEvent(final UUID uniqueId, final Effect effect) {
     this.uniqueId = uniqueId;
     this.effect = effect;
+  }
+
+  public static HandlerList getHandlerList() {
+    return HANDLER_LIST;
   }
 
   public UUID uniqueId() {

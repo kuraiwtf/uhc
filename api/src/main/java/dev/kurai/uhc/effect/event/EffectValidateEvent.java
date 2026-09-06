@@ -7,15 +7,14 @@ import org.bukkit.event.HandlerList;
 public final class EffectValidateEvent extends Event {
 
   private static final HandlerList HANDLER_LIST = new HandlerList();
-
-  public static HandlerList getHandlerList() {
-    return HANDLER_LIST;
-  }
-
   private final UUID uniqueId;
 
   public EffectValidateEvent(final UUID uniqueId) {
     this.uniqueId = uniqueId;
+  }
+
+  public static HandlerList getHandlerList() {
+    return HANDLER_LIST;
   }
 
   public UUID uniqueId() {

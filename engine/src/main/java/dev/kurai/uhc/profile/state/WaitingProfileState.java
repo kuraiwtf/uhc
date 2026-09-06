@@ -9,12 +9,8 @@ public final class WaitingProfileState extends ProfileState {
   }
 
   @Override
-  public void onEntry(final Profile profile) {
-
-  }
+  public void onEntry(final Profile profile) {}
 
   @Override
-  public void onExit(final Profile profile) {
-
-  }
+  public void onExit(final Profile profile) {}
 }

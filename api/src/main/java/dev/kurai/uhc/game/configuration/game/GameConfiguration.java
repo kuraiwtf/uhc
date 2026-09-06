@@ -7,9 +7,9 @@ import dev.kurai.uhc.util.api.option.Option;
 
 public final class GameConfiguration {
 
+  public static final Option<Boolean> SPECTATOR_OPTION = option(key("spectator"), true);
+
   private GameConfiguration() {
     /* This utility class should not be instantiated */
   }
-
-  public static final Option<Boolean> SPECTATOR_OPTION = option(key("spectator"), true);
 }

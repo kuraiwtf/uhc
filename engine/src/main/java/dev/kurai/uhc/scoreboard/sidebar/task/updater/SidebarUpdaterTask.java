@@ -3,13 +3,12 @@ package dev.kurai.uhc.scoreboard.sidebar.task.updater;
 import com.google.common.collect.Sets;
 import dev.kurai.uhc.scoreboard.sidebar.SidebarService;
 import org.bukkit.Bukkit;
-import org.jetbrains.annotations.NotNull;
 
 public final class SidebarUpdaterTask implements Runnable {
 
   private final SidebarService sidebarService;
 
-  public SidebarUpdaterTask(final  SidebarService sidebarService) {
+  public SidebarUpdaterTask(final SidebarService sidebarService) {
     this.sidebarService = sidebarService;
   }
 

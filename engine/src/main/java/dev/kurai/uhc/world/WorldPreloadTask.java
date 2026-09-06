@@ -25,12 +25,10 @@ public final class WorldPreloadTask extends BukkitRunnable {
   private final int borderSize;
 
   private final int totalChunks;
+  private final Instant start;
   private int loadedChunks;
-
   private int currentX;
   private int currentZ;
-
-  private final Instant start;
 
   public WorldPreloadTask(
       final ProfileService profileService, final World world, final int borderSize) {

@@ -12,8 +12,8 @@ import org.jetbrains.annotations.Nullable;
 final class NicknameImpl implements Nickname {
 
   private final List<NicknameValue> values;
-  private Color color;
   private final Set<NicknameStyle> decorations;
+  private Color color;
   private @Nullable String group;
 
   NicknameImpl(final Color color) {

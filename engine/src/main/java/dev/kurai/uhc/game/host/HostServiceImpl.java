@@ -20,10 +20,10 @@ import org.jspecify.annotations.Nullable;
 @NullMarked
 public final class HostServiceImpl implements HostService {
 
-  private @Nullable UUID host;
   private final Set<UUID> coHosts = Sets.newHashSet();
   private final Collection<TickableHostResolver> tickableHostResolvers = Sets.newHashSet();
   private final UltraHardcoreAPI ultraHardcore;
+  private @Nullable UUID host;
 
   public HostServiceImpl(final UltraHardcoreAPI ultraHardcore) {
     this.ultraHardcore = ultraHardcore;

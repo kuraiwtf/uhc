@@ -17,11 +17,10 @@ import org.bukkit.scheduler.BukkitTask;
 @Setter
 public final class CycleServiceImpl implements CycleService {
 
-  private boolean enabled;
-  private int totalCycleDuration = 10 * 60;
   private final LinkedList<AbstractCycle> phases = new LinkedList<>();
   private final UltraHardcoreAPI ultraHardcore;
-
+  private boolean enabled;
+  private int totalCycleDuration = 10 * 60;
   private int currentIndex = 0;
   private int currentCycleDuration = 0;
   private BukkitTask currentTask = null;

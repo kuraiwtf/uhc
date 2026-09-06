@@ -8,21 +8,19 @@ import org.bukkit.event.HandlerList;
 public final class StrengthApplyEvent extends Event implements Cancellable {
 
   private static final HandlerList HANDLER_LIST = new HandlerList();
-
-  public static HandlerList getHandlerList() {
-    return HANDLER_LIST;
-  }
-
   private final Player damager;
   private final Player victim;
-
   private double strengthValue;
   private boolean cancelled = false;
 
-  public StrengthApplyEvent(Player damager, Player victim, double strengthValue) {
+  public StrengthApplyEvent(final Player damager, final Player victim, final double strengthValue) {
     this.damager = damager;
     this.victim = victim;
     this.strengthValue = strengthValue;
+  }
+
+  public static HandlerList getHandlerList() {
+    return HANDLER_LIST;
   }
 
   public Player damager() {

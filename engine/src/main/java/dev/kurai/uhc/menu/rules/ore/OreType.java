@@ -18,7 +18,10 @@ public enum OreType {
   private final Option<Integer> option;
 
   OreType(
-      final String name, final Material material, final String color, final Option<Integer> option) {
+      final String name,
+      final Material material,
+      final String color,
+      final Option<Integer> option) {
     this.name = name;
     this.material = material;
     this.color = color;

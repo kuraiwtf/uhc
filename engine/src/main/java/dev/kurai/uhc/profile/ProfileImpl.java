@@ -253,11 +253,6 @@ public final class ProfileImpl implements Profile {
     this.setHealth(this.getHealth() - health);
   }
 
-  @Override
-  public void setHealth(final double health) {
-    this.executeAction(player -> this.setHealthInternal(player, health));
-  }
-
   private void setHealthInternal(final Player player, final double health) {
     player.setHealth(Math.min(health, player.getMaxHealth()));
   }
@@ -265,6 +260,11 @@ public final class ProfileImpl implements Profile {
   @Override
   public double getHealth() {
     return this.findPlayer().map(Player::getHealth).orElse(0.0);
+  }
+
+  @Override
+  public void setHealth(final double health) {
+    this.executeAction(player -> this.setHealthInternal(player, health));
   }
 
   @Override
@@ -277,11 +277,6 @@ public final class ProfileImpl implements Profile {
     this.setMaxHealth(this.getMaxHealth() - maxHealth);
   }
 
-  @Override
-  public void setMaxHealth(final double maxHealth) {
-    this.executeAction(player -> this.setMaxHealthInternal(player, maxHealth));
-  }
-
   private void setMaxHealthInternal(final Player player, final double maxHealth) {
     player.setMaxHealth(Math.max(maxHealth, player.getHealth()));
   }
@@ -289,6 +284,11 @@ public final class ProfileImpl implements Profile {
   @Override
   public double getMaxHealth() {
     return this.findPlayer().map(Player::getMaxHealth).orElse(20.0);
+  }
+
+  @Override
+  public void setMaxHealth(final double maxHealth) {
+    this.executeAction(player -> this.setMaxHealthInternal(player, maxHealth));
   }
 
   @Override

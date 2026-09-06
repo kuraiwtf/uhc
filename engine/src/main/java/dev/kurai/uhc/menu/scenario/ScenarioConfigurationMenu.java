@@ -73,6 +73,27 @@ public final class ScenarioConfigurationMenu extends PaginatedMenu {
     }
   }
 
+  private static final class NoActiveScenarioButton extends Button {
+
+    @Override
+    public ItemStack getIcon() {
+      return new ItemBuilder(Material.INK_SACK)
+          .data(DyeColor.RED.getDyeData())
+          .name("&c&lAucun scénario actif")
+          .lore(
+              "",
+              "&7" + BAR + "&f Aucun scénario n'est",
+              "  actuellement &cactif&f.",
+              "",
+              "&7" + BAR + "&f Désactivez le filtre pour",
+              "  voir tous les scénarios.",
+              "")
+          .lunarTag("unclickable", true)
+          .lunarTag("hideSlotHighlight", true)
+          .asItemStack();
+    }
+  }
+
   private final class FilterButton extends Button {
 
     @Override
@@ -100,27 +121,6 @@ public final class ScenarioConfigurationMenu extends PaginatedMenu {
       ScenarioConfigurationMenu.this.filterActiveOnly =
           !ScenarioConfigurationMenu.this.filterActiveOnly;
       click.getMenu().update();
-    }
-  }
-
-  private static final class NoActiveScenarioButton extends Button {
-
-    @Override
-    public ItemStack getIcon() {
-      return new ItemBuilder(Material.INK_SACK)
-          .data(DyeColor.RED.getDyeData())
-          .name("&c&lAucun scénario actif")
-          .lore(
-              "",
-              "&7" + BAR + "&f Aucun scénario n'est",
-              "  actuellement &cactif&f.",
-              "",
-              "&7" + BAR + "&f Désactivez le filtre pour",
-              "  voir tous les scénarios.",
-              "")
-          .lunarTag("unclickable", true)
-          .lunarTag("hideSlotHighlight", true)
-          .asItemStack();
     }
   }
 }

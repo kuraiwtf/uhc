@@ -19,13 +19,12 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
 import org.jspecify.annotations.NullMarked;
 
 @NullMarked
 public final class BorderConfigurationMenu extends Menu {
 
-  public BorderConfigurationMenu(final  Player player) {
+  public BorderConfigurationMenu(final Player player) {
     super("Configuration de la bordure", MenuSize.THREE, player);
   }
 

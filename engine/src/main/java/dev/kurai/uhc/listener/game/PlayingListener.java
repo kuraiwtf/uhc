@@ -47,6 +47,35 @@ import org.bukkit.inventory.PlayerInventory;
 
 public final class PlayingListener implements Listener {
 
+  private static final Map<Material, Consumer<ProfileMiningComponent>> MINING_STATISTICS =
+      Maps.newHashMap();
+  private static final Map<Material, OreType> ORE_TYPES =
+      Map.of(
+          IRON_ORE, OreType.IRON,
+          GOLD_ORE, OreType.GOLD,
+          DIAMOND_ORE, OreType.DIAMOND);
+  private static final Map<Material, Component> ORE_NAMES =
+      Map.of(
+          IRON_ORE, text("fer", NamedTextColor.GRAY),
+          GOLD_ORE, text("or", NamedTextColor.YELLOW),
+          DIAMOND_ORE, text("diamant", NamedTextColor.AQUA));
+  private static final Map<Material, String> ARTICLES =
+      Map.of(
+          IRON_ORE, "du ",
+          GOLD_ORE, "de l'",
+          DIAMOND_ORE, "du ");
+
+  static {
+    MINING_STATISTICS.put(
+        STONE, component -> component.setStoneMined(component.getStoneMined() + 1));
+    MINING_STATISTICS.put(
+        IRON_ORE, component -> component.setIronMined(component.getIronMined() + 1));
+    MINING_STATISTICS.put(
+        GOLD_ORE, component -> component.setGoldMined(component.getGoldMined() + 1));
+    MINING_STATISTICS.put(
+        DIAMOND_ORE, component -> component.setDiamondMined(component.getDiamondMined() + 1));
+  }
+
   private final UltraHardcoreAPI ultraHardcore;
 
   public PlayingListener(final UltraHardcoreAPI ultraHardcore) {
@@ -333,20 +362,6 @@ public final class PlayingListener implements Listener {
     }
   }
 
-  private static final Map<Material, Consumer<ProfileMiningComponent>> MINING_STATISTICS =
-      Maps.newHashMap();
-
-  static {
-    MINING_STATISTICS.put(
-        STONE, component -> component.setStoneMined(component.getStoneMined() + 1));
-    MINING_STATISTICS.put(
-        IRON_ORE, component -> component.setIronMined(component.getIronMined() + 1));
-    MINING_STATISTICS.put(
-        GOLD_ORE, component -> component.setGoldMined(component.getGoldMined() + 1));
-    MINING_STATISTICS.put(
-        DIAMOND_ORE, component -> component.setDiamondMined(component.getDiamondMined() + 1));
-  }
-
   @EventHandler
   public void onBlockBreak(final BlockBreakEvent event) {
     final var block = event.getBlock();
@@ -415,24 +430,6 @@ public final class PlayingListener implements Listener {
       }
     }
   }
-
-  private static final Map<Material, OreType> ORE_TYPES =
-      Map.of(
-          IRON_ORE, OreType.IRON,
-          GOLD_ORE, OreType.GOLD,
-          DIAMOND_ORE, OreType.DIAMOND);
-
-  private static final Map<Material, Component> ORE_NAMES =
-      Map.of(
-          IRON_ORE, text("fer", NamedTextColor.GRAY),
-          GOLD_ORE, text("or", NamedTextColor.YELLOW),
-          DIAMOND_ORE, text("diamant", NamedTextColor.AQUA));
-
-  private static final Map<Material, String> ARTICLES =
-      Map.of(
-          IRON_ORE, "du ",
-          GOLD_ORE, "de l'",
-          DIAMOND_ORE, "du ");
 
   private int getMinedAmount(final ProfileMiningComponent component, final Material blockType) {
     if (blockType == IRON_ORE) {
