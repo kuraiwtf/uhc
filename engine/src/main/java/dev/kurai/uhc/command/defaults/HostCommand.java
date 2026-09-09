@@ -53,6 +53,11 @@ public final class HostCommand {
           permission = "uhc.command.host.add"))
   public void add(final Player player, final @Argument(name = "joueur") Player target) {
     final HostService hostService = this.ultraHardcore.gameService().hostService();
+    if (!hostService.isHost(player)) {
+      player.sendMessage(CC.prefix("Vous n'avez pas la permission d'effectuer cette action."));
+      return;
+    }
+
     if (hostService.coHost(target)) {
       player.sendMessage(CC.prefix("Ce joueur est déjà un co-hôte de la partie."));
       return;
@@ -71,6 +76,11 @@ public final class HostCommand {
           permission = "uhc.command.host.remove"))
   public void remove(final Player player, final @Argument(name = "joueur") Player target) {
     final HostService hostService = this.ultraHardcore.gameService().hostService();
+    if (!hostService.isHost(player)) {
+      player.sendMessage(CC.prefix("Vous n'avez pas la permission d'effectuer cette action."));
+      return;
+    }
+
     if (!hostService.coHost(target)) {
       player.sendMessage(CC.prefix("Ce joueur n'est pas un co-hôte de la partie."));
       return;
@@ -97,6 +107,11 @@ public final class HostCommand {
           description = "Forcer un timer",
           permission = "uhc.command.host.force"))
   public void force(final Player player, final @Argument(name = "timer") AbstractTimer timer) {
+    if (!this.ultraHardcore.gameService().hostService().hasHostAccess(player)) {
+      player.sendMessage(CC.prefix("Vous n'avez pas la permission d'effectuer cette action."));
+      return;
+    }
+
     timer.setTimeLeft(5);
     this.bukkitAudiences
         .player(player)
@@ -180,6 +195,11 @@ public final class HostCommand {
       return;
     }
 
+    if (!this.ultraHardcore.gameService().hostService().hasHostAccess(player)) {
+      player.sendMessage(CC.prefix("Vous n'avez pas la permission d'effectuer cette action."));
+      return;
+    }
+
     final Profile profile =
         this.ultraHardcore.profileService().getOrCreateProfile(target.getUniqueId());
     if (target.isOnline()
@@ -197,6 +217,16 @@ public final class HostCommand {
         CC.prefix("Vous venez d'&céliminer&f le joueur&6 %s&r.".formatted(target.getName())));
   }
 
+  @SubCommand(@CommandMeta(name = "stop", description = "Fermer la partie"))
+  public void stop(final Player player) {
+    if (!this.ultraHardcore.gameService().hostService().isHost(player)) {
+      player.sendMessage(CC.prefix("Vous n'avez pas la permission d'effectuer cette action."));
+      return;
+    }
+
+    Bukkit.shutdown();
+  }
+
   @SubCommand(
       @CommandMeta(
           name = "set",
@@ -204,6 +234,11 @@ public final class HostCommand {
           permission = "uhc.command.host.set"))
   public void set(final Player player, final @Argument(name = "joueur") Player target) {
     final HostService hostService = this.ultraHardcore.gameService().hostService();
+    if (!hostService.isHost(player)) {
+      player.sendMessage(CC.prefix("Vous n'avez pas la permission d'effectuer cette action."));
+      return;
+    }
+
     final UUID host = hostService.host();
     if (host != null && host.equals(target.getUniqueId())) {
       player.sendMessage(CC.prefix("Ce joueur est déjà l'hôte principal de la partie."));
@@ -236,6 +271,11 @@ public final class HostCommand {
       return;
     }
 
+    if (!this.ultraHardcore.gameService().hostService().hasHostAccess(player)) {
+      player.sendMessage(CC.prefix("Vous n'avez pas la permission d'effectuer cette action."));
+      return;
+    }
+
     final Profile profile =
         this.ultraHardcore.profileService().getOrCreateProfile(target.getUniqueId());
     if (profile.getState() instanceof PlayingProfileState
@@ -265,10 +305,20 @@ public final class HostCommand {
           name = "revive",
           description = "Ressusciter un joueur",
           permission = "uhc.command.host.revive"))
+  @Command(
+      @CommandMeta(
+          name = "revive",
+          description = "Ressusciter un joueur",
+          permission = "uhc.command.host.revive"))
   public void revive(final Player player, final @Argument(name = "joueur") Player target) {
     final GameService gameService = this.ultraHardcore.gameService();
     if (gameService.startTime() == 0L) {
       player.sendMessage(CC.prefix("La partie n'est pas en cours de jeu."));
+      return;
+    }
+
+    if (!this.ultraHardcore.gameService().hostService().hasHostAccess(player)) {
+      player.sendMessage(CC.prefix("Vous n'avez pas la permission d'effectuer cette action."));
       return;
     }
 
@@ -320,6 +370,11 @@ public final class HostCommand {
           description = "Sauvegarder l'inventaire de départ",
           permission = "uhc.command.host.save"))
   public void saveInventory(final Player player) {
+    if (!this.ultraHardcore.gameService().hostService().hasHostAccess(player)) {
+      player.sendMessage(CC.prefix("Vous n'avez pas la permission d'effectuer cette action."));
+      return;
+    }
+
     final var profile =
         this.ultraHardcore.profileService().getOrCreateProfile(player.getUniqueId());
     final var editorComponent = profile.getComponent(InventoryEditorComponent.class);
