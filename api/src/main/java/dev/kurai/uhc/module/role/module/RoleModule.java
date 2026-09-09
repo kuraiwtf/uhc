@@ -10,4 +10,8 @@ public interface RoleModule<
     R extends AbstractRoleRegistrar<C, D>> {
 
   R getRoleRegistrar();
+
+  boolean hiddenComposition();
+
+  void hiddenComposition(final boolean hiddenComposition);
 }
