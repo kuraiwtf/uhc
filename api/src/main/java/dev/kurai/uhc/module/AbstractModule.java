@@ -7,22 +7,24 @@ import dev.kurai.uhc.ecs.component.defaults.IdentifierComponent;
 import dev.kurai.uhc.ecs.component.defaults.NameComponent;
 import dev.kurai.uhc.ecs.entity.Entity;
 import dev.kurai.uhc.module.component.ModuleShortNameComponent;
+import dev.kurai.uhc.module.event.ModuleEvent;
+import dev.kurai.uhc.module.event.ModuleEventHolder;
 import dev.kurai.uhc.profile.component.*;
+import dev.kurai.uhc.util.Color;
 import dev.kurai.uhc.util.api.Identifiable;
 import dev.kurai.uhc.util.api.name.Nameable;
-import java.util.Collection;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import net.j4c0b3y.api.menu.Menu;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 import org.bukkit.inventory.ItemStack;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 @NullMarked
 public abstract class AbstractModule
-    implements Entity<String>, Identifiable<String>, Nameable<String> {
+    implements Entity<String>, Identifiable<String>, Nameable<String>, ModuleEventHolder {
 
   protected final Map<Class<? extends Component>, Component> components;
 
@@ -30,17 +32,39 @@ public abstract class AbstractModule
 
   protected final UltraHardcoreAPI ultraHardcore;
 
+  protected final Color color;
+
+  protected final Map<String, ModuleEvent<?>> events;
+  protected final Collection<ModuleEvent<?>> eventsView;
+
   protected AbstractModule(
       final String id,
       final String name,
       final @Nullable String commandName,
       final UltraHardcoreAPI ultraHardcore) {
+    this(id, name, commandName, ultraHardcore, Color.GOLD);
+  }
+
+  protected AbstractModule(
+      final String id,
+      final String name,
+      final @Nullable String commandName,
+      final UltraHardcoreAPI ultraHardcore,
+      final Color color) {
+    this.color = color;
     this.components = Maps.newHashMap();
     this.addComponents(new IdentifierComponent<>(id), new NameComponent(name));
 
     this.commandName = commandName;
 
     this.ultraHardcore = ultraHardcore;
+
+    this.events = Maps.newHashMap();
+    this.eventsView = Collections.unmodifiableCollection(this.events.values());
+  }
+
+  public Color color() {
+    return this.color;
   }
 
   public abstract String developer();
@@ -112,6 +136,26 @@ public abstract class AbstractModule
 
   public final UltraHardcoreAPI getUltraHardcore() {
     return this.ultraHardcore;
+  }
+
+  @Override
+  public Collection<ModuleEvent<?>> events() {
+    return this.eventsView;
+  }
+
+  @Override
+  public void registerEvent(final ModuleEvent<?> event) {
+    this.events.put(event.identifier(), event);
+  }
+
+  @Override
+  public void unregisterEvent(final String identifier) {
+    this.events.remove(identifier);
+  }
+
+  @Override
+  public @Nullable <E extends Event> ModuleEvent<E> event(final String identifier) {
+    return (ModuleEvent<E>) this.events.get(identifier);
   }
 
   public @Nullable Menu provideModuleMenu(final Player player) {
