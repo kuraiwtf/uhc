@@ -10,14 +10,12 @@ import dev.kurai.uhc.menu.module.ModuleMenu;
 import dev.kurai.uhc.module.component.ModuleShortNameComponent;
 import dev.kurai.uhc.module.event.ModuleEvent;
 import dev.kurai.uhc.module.event.ModuleEventHolder;
-import dev.kurai.uhc.profile.component.*;
 import dev.kurai.uhc.util.Color;
 import dev.kurai.uhc.util.api.Identifiable;
 import dev.kurai.uhc.util.api.name.Nameable;
 import java.util.*;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
 import org.bukkit.inventory.ItemStack;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
@@ -34,8 +32,8 @@ public abstract class AbstractModule
 
   protected final Color color;
 
-  protected final Map<String, ModuleEvent<?>> events;
-  protected final Collection<ModuleEvent<?>> eventsView;
+  protected final Map<String, ModuleEvent> events;
+  protected final Collection<ModuleEvent> eventsView;
 
   protected AbstractModule(
       final String id,
@@ -139,12 +137,12 @@ public abstract class AbstractModule
   }
 
   @Override
-  public Collection<ModuleEvent<?>> events() {
+  public Collection<ModuleEvent> events() {
     return this.eventsView;
   }
 
   @Override
-  public void registerEvent(final ModuleEvent<?> event) {
+  public void registerEvent(final ModuleEvent event) {
     this.events.put(event.identifier(), event);
   }
 
@@ -154,8 +152,8 @@ public abstract class AbstractModule
   }
 
   @Override
-  public @Nullable <E extends Event> ModuleEvent<E> event(final String identifier) {
-    return (ModuleEvent<E>) this.events.get(identifier);
+  public @Nullable ModuleEvent event(final String identifier) {
+    return this.events.get(identifier);
   }
 
   public @Nullable ModuleMenu provideModuleMenu(final Player player) {

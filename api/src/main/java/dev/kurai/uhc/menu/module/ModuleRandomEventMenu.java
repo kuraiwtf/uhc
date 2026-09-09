@@ -47,9 +47,9 @@ public final class ModuleRandomEventMenu extends PaginatedMenu {
 
   private static final class EventButton extends Button {
 
-    private final ModuleEvent<?> event;
+    private final ModuleEvent event;
 
-    private EventButton(final ModuleEvent<?> event) {
+    private EventButton(final ModuleEvent event) {
       this.event = event;
     }
 
