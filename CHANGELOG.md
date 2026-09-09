@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.11.0](https://github.com/kuraiwtf/uhc/compare/v1.10.0...v1.11.0) (2026-09-09)
+
+
+### Features
+
+* add builtin menus and buttons for modules ([a81cc9e](https://github.com/kuraiwtf/uhc/commit/a81cc9ed08643f278dfbe83d9121e743e670ea90))
+* add Describable interface ([00e6bb3](https://github.com/kuraiwtf/uhc/commit/00e6bb3bcc0941555abf1d6d0daa0727affd7a89))
+* add hidden composition in RoleModule ([5f96d97](https://github.com/kuraiwtf/uhc/commit/5f96d97a1f38c2545a6f17ef7465434cf8266986))
+* add module random events ([8d58438](https://github.com/kuraiwtf/uhc/commit/8d58438094283c84df3ab4ced833212414fc8e5a))
+* add module random events ([3c99c90](https://github.com/kuraiwtf/uhc/commit/3c99c902644908d30c4168d5eeff2415808b4647))
+
+
+### Bug Fixes
+
+* make random events unrelated to bukkit events ([03bce96](https://github.com/kuraiwtf/uhc/commit/03bce96614bd4110f5ffcb434f36fefb098ebd8b))
+* Module must return a ModuleMenu ([a64ce3c](https://github.com/kuraiwtf/uhc/commit/a64ce3c60b17a4a352400b29d0032fd0f093cb6b))
+
 ## [1.10.0](https://github.com/kuraiwtf/uhc/compare/v1.9.0...v1.10.0) (2026-09-09)
 
 
