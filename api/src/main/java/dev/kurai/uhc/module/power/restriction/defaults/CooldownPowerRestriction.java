@@ -4,6 +4,7 @@ import static dev.kurai.uhc.util.CC.prefix;
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.format.NamedTextColor.*;
 
+import dev.kurai.uhc.event.defaults.power.cooldown.PowerCooldownStartEvent;
 import dev.kurai.uhc.module.power.AbstractPower;
 import dev.kurai.uhc.module.power.restriction.PowerRestriction;
 import dev.kurai.uhc.module.power.restriction.RestrictionStrategy;
@@ -11,6 +12,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.text.Component;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -53,11 +55,11 @@ public final class CooldownPowerRestriction implements PowerRestriction {
   public void onUse(final AbstractPower power, final Player player) {
     this.timeLeft = this.initialCooldownTime;
 
-    if (this.task != null) {
-      return;
-    }
+    Bukkit.getPluginManager().callEvent(new PowerCooldownStartEvent(player, this));
 
-    this.task = new CooldownDecrementTask(this).runTaskTimer(this.plugin, 0, 20L);
+    if (this.task == null) {
+      this.task = new CooldownDecrementTask(this).runTaskTimer(this.plugin, 0, 20L);
+    }
   }
 
   @Override
