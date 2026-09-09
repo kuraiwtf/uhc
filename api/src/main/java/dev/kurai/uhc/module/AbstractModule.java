@@ -6,6 +6,7 @@ import dev.kurai.uhc.ecs.component.Component;
 import dev.kurai.uhc.ecs.component.defaults.IdentifierComponent;
 import dev.kurai.uhc.ecs.component.defaults.NameComponent;
 import dev.kurai.uhc.ecs.entity.Entity;
+import dev.kurai.uhc.menu.module.ModuleMenu;
 import dev.kurai.uhc.module.component.ModuleShortNameComponent;
 import dev.kurai.uhc.module.event.ModuleEvent;
 import dev.kurai.uhc.module.event.ModuleEventHolder;
@@ -14,7 +15,6 @@ import dev.kurai.uhc.util.Color;
 import dev.kurai.uhc.util.api.Identifiable;
 import dev.kurai.uhc.util.api.name.Nameable;
 import java.util.*;
-import net.j4c0b3y.api.menu.Menu;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -158,7 +158,7 @@ public abstract class AbstractModule
     return (ModuleEvent<E>) this.events.get(identifier);
   }
 
-  public @Nullable Menu provideModuleMenu(final Player player) {
+  public @Nullable ModuleMenu provideModuleMenu(final Player player) {
     return null;
   }
 
