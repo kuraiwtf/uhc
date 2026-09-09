@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.9.0](https://github.com/kuraiwtf/uhc/compare/v1.8.0...v1.9.0) (2026-09-09)
+
+
+### Features
+
+* add recipe configuration menu and spectator rule handling ([86bd629](https://github.com/kuraiwtf/uhc/commit/86bd6295c4ee6d02a3606fe2f93ca78759548cc6))
+* add recipe Menu and listener to prevent recipes from being crafted ([c3fcf31](https://github.com/kuraiwtf/uhc/commit/c3fcf31a3aa83acc061f6e8718ae1e693f0975e3))
+* add recipe service ([4e717d1](https://github.com/kuraiwtf/uhc/commit/4e717d1f8c70225392c5d883c02bfb247e7a2102))
+* enforce host permission checks across all host commands ([be3be08](https://github.com/kuraiwtf/uhc/commit/be3be082273e0b9af477132d22a4b18f005a0238))
+* implement `RecipeService` API and `RecipeServiceImpl` to manage custom recipes ([442eec8](https://github.com/kuraiwtf/uhc/commit/442eec82447606bdfcf9402bba3b88fa7547f629))
+* introduce `GameRecipe` API and implementation to manage custom recipes ([bca31e5](https://github.com/kuraiwtf/uhc/commit/bca31e55abcee3a1a80bf3d7c3601c13e48b995c))
+
+
+### Code Refactoring
+
+* remove unused `GameConfiguration` class ([a77cff3](https://github.com/kuraiwtf/uhc/commit/a77cff35b68c2d73ecbff1ca48c5f66dd87df4f4))
+
 ## [1.8.0](https://github.com/kuraiwtf/uhc/compare/v1.7.0...v1.8.0) (2026-09-06)
 
 
