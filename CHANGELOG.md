@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.10.0](https://github.com/kuraiwtf/uhc/compare/v1.9.0...v1.10.0) (2026-09-09)
+
+
+### Features
+
+* add PowerCooldownStartEvent ([ba3d7fb](https://github.com/kuraiwtf/uhc/commit/ba3d7fbe7019372dc0aef552349b222623c68f8f))
+
 ## [1.9.0](https://github.com/kuraiwtf/uhc/compare/v1.8.0...v1.9.0) (2026-09-09)
 
 
