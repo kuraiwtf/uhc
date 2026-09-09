@@ -17,6 +17,8 @@ import dev.kurai.uhc.game.group.GroupService;
 import dev.kurai.uhc.game.group.GroupServiceImpl;
 import dev.kurai.uhc.game.host.HostService;
 import dev.kurai.uhc.game.host.HostServiceImpl;
+import dev.kurai.uhc.game.recipe.RecipeService;
+import dev.kurai.uhc.game.recipe.RecipeServiceImpl;
 import dev.kurai.uhc.game.rule.GameRuleService;
 import dev.kurai.uhc.game.rule.GameRuleServiceImpl;
 import dev.kurai.uhc.game.scatter.ScatterService;
@@ -48,6 +50,7 @@ public final class GameServiceImpl implements GameService {
   private final EpisodeService episodeService;
   private final GroupService groupService;
   private final HostService hostService;
+  private final RecipeService recipeService;
   private final GameRuleService ruleService;
   private final ScatterService scatterService;
   private final ScenarioService scenarioService;
@@ -68,6 +71,7 @@ public final class GameServiceImpl implements GameService {
     this.episodeService = new EpisodeServiceImpl(ultraHardcore);
     this.groupService = new GroupServiceImpl();
     this.hostService = new HostServiceImpl(ultraHardcore);
+    this.recipeService = new RecipeServiceImpl();
     this.ruleService = new GameRuleServiceImpl();
     this.scatterService = new ScatterServiceImpl(ultraHardcore);
     this.scenarioService = new ScenarioServiceImpl(ultraHardcore);
