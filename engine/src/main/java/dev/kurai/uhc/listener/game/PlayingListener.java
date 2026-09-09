@@ -11,7 +11,6 @@ import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.adventure.UltraHardcoreKey;
 import dev.kurai.uhc.event.defaults.game.GameTickEvent;
 import dev.kurai.uhc.event.defaults.player.PlayerDamageByPlayerEvent;
-import dev.kurai.uhc.game.configuration.game.GameConfiguration;
 import dev.kurai.uhc.game.configuration.ore.OreConfiguration;
 import dev.kurai.uhc.game.death.DeathContext;
 import dev.kurai.uhc.game.rule.GameRuleService;
@@ -90,7 +89,7 @@ public final class PlayingListener implements Listener {
     if (!(profile.getState() instanceof PlayingProfileState)
         && !offlinePlayer.isOp()
         && !offlinePlayer.isWhitelisted()
-        && !GameConfiguration.SPECTATOR_OPTION.getValue()) {
+        && !this.ultraHardcore.gameService().ruleService().isRuleEnabled("spectator")) {
       event.disallow(
           AsyncPlayerPreLoginEvent.Result.KICK_OTHER,
           "Les spectateurs sont interdits dans la partie.");

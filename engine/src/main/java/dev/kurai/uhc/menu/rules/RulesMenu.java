@@ -1,12 +1,12 @@
 package dev.kurai.uhc.menu.rules;
 
 import static dev.kurai.uhc.game.configuration.border.BorderConfiguration.*;
-import static dev.kurai.uhc.game.configuration.game.GameConfiguration.*;
 import static dev.kurai.uhc.game.configuration.ore.OreConfiguration.*;
 import static dev.kurai.uhc.util.CC.*;
 
 import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.game.drop.DropRateService;
+import dev.kurai.uhc.game.recipe.RecipeService;
 import dev.kurai.uhc.game.rule.GameRuleService;
 import dev.kurai.uhc.menu.button.ItemButton;
 import dev.kurai.uhc.menu.rules.border.BorderConfigurationMenu;
@@ -15,6 +15,7 @@ import dev.kurai.uhc.menu.rules.drop.DropRateMenu;
 import dev.kurai.uhc.menu.rules.game.GameRulesMenu;
 import dev.kurai.uhc.menu.rules.inventory.StartInventoryMenu;
 import dev.kurai.uhc.menu.rules.ore.OreLimitMenu;
+import dev.kurai.uhc.menu.rules.recipe.RecipeMenu;
 import dev.kurai.uhc.menu.rules.timer.TimerDurationMenu;
 import dev.kurai.uhc.menu.template.BackTemplate;
 import dev.kurai.uhc.menu.template.ModernBorderTemplate;
@@ -82,8 +83,8 @@ public final class RulesMenu extends Menu {
                   .asItemStack()));
     }
 
-    front.set(11, new GameRulesButton(this.ultraHardcore.gameService().ruleService()));
-    front.set(12, new SpectatorButton());
+    front.set(11, new GameRulesButton(gameService.ruleService()));
+    front.set(12, new RecipeButton(gameService.recipeService()));
     front.set(14, new BorderTimerButton(this.ultraHardcore));
     front.set(15, new BorderButton());
 
@@ -134,28 +135,29 @@ public final class RulesMenu extends Menu {
     }
   }
 
-  private static final class SpectatorButton extends Button {
+  private static final class RecipeButton extends Button {
+
+    private final RecipeService recipeService;
+
+    private RecipeButton(final RecipeService recipeService) {
+      this.recipeService = recipeService;
+    }
 
     @Override
     public ItemStack getIcon() {
-      return new ItemBuilder(Material.EYE_OF_ENDER)
-          .name("&6&lSpectateurs")
+      return new ItemBuilder(Material.WORKBENCH)
+          .name("&6&lRecettes personnalisées")
           .lore(
-              "",
-              "&6 "
-                  + SQUARE
-                  + "&f Statut: "
-                  + (SPECTATOR_OPTION.getValue() ? "&a&lOui" : "&c&lNon"),
-              "")
-          .amount(SPECTATOR_OPTION.getValue() ? 1 : 0)
-          .glowing(SPECTATOR_OPTION.getValue())
+              "", "&7" + BAR + "&r Permet de modifier", "  les&6 recettes&r de la&d partie&r.", "")
           .asItemStack();
     }
 
     @Override
     public void onClick(final ButtonClick click) {
-      SPECTATOR_OPTION.setValue(!SPECTATOR_OPTION.getValue());
-      click.getMenu().update();
+      final Menu previousMenu = click.getMenu();
+      final RecipeMenu menu = new RecipeMenu(previousMenu.getPlayer(), this.recipeService);
+      menu.setPreviousMenu(previousMenu);
+      menu.open();
     }
   }
 

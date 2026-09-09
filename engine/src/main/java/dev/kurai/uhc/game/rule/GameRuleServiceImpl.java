@@ -25,6 +25,9 @@ public final class GameRuleServiceImpl implements GameRuleService {
             ChatColor.LIGHT_PURPLE,
             new ItemStack(Material.OBSIDIAN)));
     this.addRule(new GameRule("lava", "Lave", ChatColor.GOLD, new ItemStack(Material.LAVA_BUCKET)));
+    this.addRule(
+        new GameRule(
+            "spectator", "Spectateurs", ChatColor.GREEN, new ItemStack(Material.EYE_OF_ENDER)));
   }
 
   @Override
