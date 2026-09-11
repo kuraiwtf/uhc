@@ -3,6 +3,7 @@ package dev.kurai.uhc.listener.game;
 import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.ecs.component.Component;
 import dev.kurai.uhc.event.defaults.power.PowerUseEvent;
+import dev.kurai.uhc.logger.LogCategories;
 import dev.kurai.uhc.module.power.AbstractPower;
 import dev.kurai.uhc.module.power.defaults.item.impl.parent.AbstractParentItemPower;
 import dev.kurai.uhc.profile.Profile;
@@ -10,12 +11,14 @@ import dev.kurai.uhc.profile.component.SpectatorComponent;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.jspecify.annotations.NullMarked;
 
@@ -82,19 +85,35 @@ public final class SpectatorListener implements Listener {
   }
 
   @EventHandler
+  public void onCommand(final PlayerCommandPreprocessEvent event) {
+    final String content = event.getMessage();
+    if (content.startsWith("/")) {
+      final Player player = event.getPlayer();
+      this.ultraHardcore
+          .loggerService()
+          .broadcastSpectator(
+              LogCategories.COMMAND,
+              "§7§o" + player.getName() + ": " + content,
+              player.getLocation());
+    }
+  }
+
+  @EventHandler
   public void onPowerUse(final PowerUseEvent event) {
     final AbstractPower power = event.getPower();
     if (power instanceof AbstractParentItemPower) {
       return;
     }
 
-    for (final Profile profile :
-        this.ultraHardcore
-            .profileService()
-            .getProfiles(profile -> profile.hasComponent(SPECTATOR_COMPONENT))) {
-      profile.sendPrefixedMessage(
-          "&6%s&r vient d'utiliser%s &l%s&r."
-              .formatted(profile.getName(), power.getColor().asBukkitColor(), power.getName()));
-    }
+    this.ultraHardcore
+        .loggerService()
+        .broadcastSpectator(
+            LogCategories.POWER,
+            "§6"
+                + event.getProfile().getName()
+                + "§f vient d'utiliser§6 "
+                + power.getName()
+                + "§f.",
+            event.getProfile().getPlayer().getLocation());
   }
 }
