@@ -16,7 +16,6 @@ import dev.kurai.uhc.profile.ProfileService;
 import dev.kurai.uhc.util.CC;
 import java.time.Duration;
 import net.kyori.adventure.title.Title;
-import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
 @Command(@CommandMeta(name = "group", aliases = "g", permission = "uhc.command.group"))
@@ -66,11 +65,6 @@ public final class GroupCommand {
                   .build(),
               empty(),
               times(Duration.ZERO, Duration.ofSeconds(3), Duration.ZERO)));
-
-      profile
-          .findPlayer()
-          .ifPresent(
-              receiver -> receiver.playSound(receiver.getLocation(), Sound.ANVIL_LAND, 1, 1));
     }
   }
 }
