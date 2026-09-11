@@ -12,7 +12,6 @@ import dev.kurai.uhc.item.builtin.*;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -33,20 +32,15 @@ public final class WaitingListener implements Listener {
 
   private final UltraHardcoreAPI ultraHardcore;
 
-  private final Location spawnLocation;
-
   public WaitingListener(final UltraHardcoreAPI ultraHardcore) {
     this.ultraHardcore = ultraHardcore;
-    this.spawnLocation =
-        Location.deserialize(
-            ultraHardcore.plugin().getConfig().getConfigurationSection("spawn").getValues(false));
   }
 
   @EventHandler
   public void onJoin(final PlayerJoinEvent event) {
     event.setJoinMessage(null);
     final var player = event.getPlayer();
-    player.teleport(this.spawnLocation);
+    player.teleport(this.ultraHardcore.spawnLocation());
     player.setGameMode(GameMode.SURVIVAL);
     player.setFallDistance(0.0f);
     player.setExp(0.0F);

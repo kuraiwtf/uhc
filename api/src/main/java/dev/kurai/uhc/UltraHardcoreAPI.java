@@ -18,6 +18,7 @@ import dev.kurai.uhc.whitelist.WhitelistService;
 import dev.kurai.uhc.win.WinService;
 import dev.kurai.uhc.world.WorldService;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
+import org.bukkit.Location;
 import org.bukkit.plugin.Plugin;
 import org.jspecify.annotations.NullUnmarked;
 import pt.supercrafting.entity.EntityLib;
@@ -87,4 +88,6 @@ public abstract class UltraHardcoreAPI {
   public abstract WinService winService();
 
   public abstract WorldService worldService();
+
+  public abstract Location spawnLocation();
 }

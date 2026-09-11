@@ -61,6 +61,7 @@ import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.JoinConfiguration;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -88,6 +89,8 @@ public final class UltraHardcoreEngine extends UltraHardcoreAPI {
   private WinService winService;
   private WorldService worldService;
 
+  private Location spawnLocation;
+
   public UltraHardcoreEngine(final Plugin plugin) {
     super(plugin);
   }
@@ -99,6 +102,10 @@ public final class UltraHardcoreEngine extends UltraHardcoreAPI {
 
   @Override
   public void onEnable() {
+    this.spawnLocation =
+        Location.deserialize(
+            this.plugin.getConfig().getConfigurationSection("spawn").getValues(false));
+
     this.bukkitAudiences = BukkitAudiences.create(this.plugin);
     new MenuHandler((JavaPlugin) this.plugin);
     this.commandRegistrar = new CommandRegistrarImpl(this);
