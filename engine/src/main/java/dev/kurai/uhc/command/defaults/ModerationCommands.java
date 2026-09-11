@@ -64,8 +64,7 @@ public final class ModerationCommands {
       return;
     }
 
-    new TopLuckMenu(player, this.ultraHardcore.profileService(), TopLuckMenu.Sorting.DIAMOND)
-        .open();
+    new TopLuckMenu(player, profileService, TopLuckMenu.Sorting.DIAMOND).open();
   }
 
   @Command(@CommandMeta(name = "list", permission = "uhc.command.list"))
