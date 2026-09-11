@@ -12,12 +12,15 @@ import dev.kurai.uhc.game.GameService;
 import dev.kurai.uhc.game.configuration.inventory.InventoryConfiguration;
 import dev.kurai.uhc.game.host.HostService;
 import dev.kurai.uhc.menu.ConfigurationMenu;
+import dev.kurai.uhc.menu.spectator.InventoryViewMenu;
 import dev.kurai.uhc.module.power.AbstractPower;
 import dev.kurai.uhc.module.power.defaults.item.AbstractItemPower;
 import dev.kurai.uhc.profile.Profile;
+import dev.kurai.uhc.profile.ProfileService;
 import dev.kurai.uhc.profile.component.DeadComponent;
 import dev.kurai.uhc.profile.component.DisconnectComponent;
 import dev.kurai.uhc.profile.component.InventoryEditorComponent;
+import dev.kurai.uhc.profile.component.SpectatorComponent;
 import dev.kurai.uhc.profile.state.DeadProfileState;
 import dev.kurai.uhc.profile.state.PlayingProfileState;
 import dev.kurai.uhc.timer.AbstractTimer;
@@ -45,6 +48,23 @@ public final class HostCommand {
 
   private final BukkitAudiences bukkitAudiences;
   private final UltraHardcoreAPI ultraHardcore;
+
+  @Command(
+      @CommandMeta(
+          name = "invsee",
+          description = "Voir l'inventaire d'un joueur",
+          permission = "uhc.command.invsee"))
+  public void inventorySee(final Player player, final @Argument(name = "joueur") Player target) {
+    final HostService hostService = this.ultraHardcore.gameService().hostService();
+    final ProfileService profileService = this.ultraHardcore.profileService();
+    final Profile profile = profileService.getOrCreateProfile(player);
+    if (!hostService.hasHostAccess(player) && !profile.hasComponent(SpectatorComponent.class)) {
+      player.sendMessage(CC.prefix("Vous n'avez pas la permission d'effectuer cette action."));
+      return;
+    }
+
+    new InventoryViewMenu(player, target, profileService.getOrCreateProfile(target)).open();
+  }
 
   @SubCommand(
       @CommandMeta(
