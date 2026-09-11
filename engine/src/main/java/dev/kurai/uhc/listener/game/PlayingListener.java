@@ -15,6 +15,7 @@ import dev.kurai.uhc.game.configuration.ore.OreConfiguration;
 import dev.kurai.uhc.game.death.DeathContext;
 import dev.kurai.uhc.game.rule.GameRuleService;
 import dev.kurai.uhc.menu.rules.ore.OreType;
+import dev.kurai.uhc.menu.spectator.InventoryViewMenu;
 import dev.kurai.uhc.profile.Profile;
 import dev.kurai.uhc.profile.ProfileService;
 import dev.kurai.uhc.profile.component.*;
@@ -310,6 +311,20 @@ public final class PlayingListener implements Listener {
 
     profile.removeDamageImmunity(cause);
     event.setCancelled(true);
+  }
+
+  @EventHandler
+  public void onSpectatorPlayerInteraction(final PlayerInteractAtEntityEvent event) {
+    final Player player = event.getPlayer();
+    final ProfileService profileService = this.ultraHardcore.profileService();
+    final Profile profile = profileService.getOrCreateProfile(player.getUniqueId());
+
+    if (!profile.hasComponent(SpectatorComponent.class)
+        || !(event.getRightClicked() instanceof final Player target)) {
+      return;
+    }
+
+    new InventoryViewMenu(player, target, profileService.getOrCreateProfile(target)).open();
   }
 
   @EventHandler
