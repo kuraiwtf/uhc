@@ -6,6 +6,7 @@ import dev.kurai.uhc.command.annotation.CommandMeta;
 import dev.kurai.uhc.command.annotation.SubCommand;
 import dev.kurai.uhc.command.argument.annotation.Argument;
 import dev.kurai.uhc.ecs.component.Component;
+import dev.kurai.uhc.game.GameService;
 import dev.kurai.uhc.profile.Profile;
 import dev.kurai.uhc.profile.component.SpectatorComponent;
 import dev.kurai.uhc.util.CC;
@@ -41,6 +42,13 @@ public final class SpectatorCommand {
 
   @SubCommand(@CommandMeta(name = "add", permission = "uhc.command.spectator.add"))
   public void add(final Player player, final @Argument(name = "joueur") Player target) {
+    final GameService gameService = this.ultraHardcore.gameService();
+    if (gameService.startTime() > 0L) {
+      player.sendMessage(
+          CC.prefix("&cVous ne pouvez pas ajouter de spectateur pendant la partie."));
+      return;
+    }
+
     final Profile profile = this.ultraHardcore.profileService().getOrCreateProfile(target);
     if (profile.hasComponent(SPECTATOR_COMPONENT)) {
       player.sendMessage(
@@ -58,6 +66,13 @@ public final class SpectatorCommand {
 
   @SubCommand(@CommandMeta(name = "remove", permission = "uhc.command.spectator.remove"))
   public void remove(final Player player, final @Argument(name = "joueur") Player target) {
+    final GameService gameService = this.ultraHardcore.gameService();
+    if (gameService.startTime() > 0L) {
+      player.sendMessage(
+          CC.prefix("&cVous ne pouvez pas retirer de spectateur pendant la partie."));
+      return;
+    }
+
     final Profile profile = this.ultraHardcore.profileService().getOrCreateProfile(target);
     if (!profile.hasComponent(SPECTATOR_COMPONENT)) {
       player.sendMessage(
