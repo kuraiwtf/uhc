@@ -4,9 +4,11 @@ import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.command.annotation.Command;
 import dev.kurai.uhc.command.annotation.CommandMeta;
 import dev.kurai.uhc.command.argument.annotation.Argument;
+import dev.kurai.uhc.game.GameService;
 import dev.kurai.uhc.game.host.HostService;
 import dev.kurai.uhc.menu.list.PlayerListMenu;
 import dev.kurai.uhc.menu.spectator.InventoryViewMenu;
+import dev.kurai.uhc.menu.spectator.TopLuckMenu;
 import dev.kurai.uhc.module.power.AbstractPower;
 import dev.kurai.uhc.module.power.restriction.defaults.CooldownPowerRestriction;
 import dev.kurai.uhc.profile.Profile;
@@ -55,6 +57,15 @@ public final class ModerationCommands {
       player.sendMessage(CC.prefix(CC.MISSING_PERMISSION));
       return;
     }
+
+    final GameService gameService = this.ultraHardcore.gameService();
+    if (gameService.startTime() == 0L) {
+      player.sendMessage(CC.prefix("La partie n'est pas en cours de jeu."));
+      return;
+    }
+
+    new TopLuckMenu(player, this.ultraHardcore.profileService(), TopLuckMenu.Sorting.DIAMOND)
+        .open();
   }
 
   @Command(@CommandMeta(name = "list", permission = "uhc.command.list"))
