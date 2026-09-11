@@ -8,6 +8,7 @@ import dev.kurai.uhc.event.EventService;
 import dev.kurai.uhc.game.GameService;
 import dev.kurai.uhc.helpop.HelpOpService;
 import dev.kurai.uhc.item.ItemService;
+import dev.kurai.uhc.logger.LoggerService;
 import dev.kurai.uhc.module.service.ModuleService;
 import dev.kurai.uhc.nickname.NicknameService;
 import dev.kurai.uhc.profile.ProfileService;
@@ -70,6 +71,8 @@ public abstract class UltraHardcoreAPI {
   public abstract HelpOpService helpOpService();
 
   public abstract ItemService itemService();
+
+  public abstract LoggerService loggerService();
 
   public abstract ModuleService moduleService();
 

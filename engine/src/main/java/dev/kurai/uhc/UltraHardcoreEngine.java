@@ -31,6 +31,8 @@ import dev.kurai.uhc.listener.FixListener;
 import dev.kurai.uhc.listener.ItemListener;
 import dev.kurai.uhc.listener.game.ResourcePackListener;
 import dev.kurai.uhc.listener.game.WaitingListener;
+import dev.kurai.uhc.logger.LoggerService;
+import dev.kurai.uhc.logger.LoggerServiceImpl;
 import dev.kurai.uhc.module.ModuleServiceImpl;
 import dev.kurai.uhc.module.service.ModuleService;
 import dev.kurai.uhc.nickname.NicknameService;
@@ -79,6 +81,7 @@ public final class UltraHardcoreEngine extends UltraHardcoreAPI {
   private GameService gameService;
   private HelpOpService helpOpService;
   private ItemService itemService;
+  private LoggerService loggerService;
   private ModuleService moduleService;
   private NicknameService nicknameService;
   private ProfileService profileService;
@@ -132,6 +135,7 @@ public final class UltraHardcoreEngine extends UltraHardcoreAPI {
     this.moduleService = new ModuleServiceImpl(this);
     this.nicknameService = new NicknameServiceImpl(this.plugin);
     this.profileService = new ProfileServiceImpl(this);
+    this.loggerService = new LoggerServiceImpl(this.profileService);
     this.skinService = new SkinServiceImpl(this.plugin, this.profileService);
     this.tabListService = new TabListServiceImpl(this);
     this.whitelistService = new WhitelistServiceImpl();
