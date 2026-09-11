@@ -134,7 +134,7 @@ public final class WaitingListener implements Listener {
       return;
     }
 
-    player.teleport(this.spawnLocation);
+    player.teleport(this.ultraHardcore.spawnLocation());
   }
 
   @EventHandler
