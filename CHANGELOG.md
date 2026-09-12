@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.13.0](https://github.com/kuraiwtf/uhc/compare/v1.12.0...v1.13.0) (2026-09-12)
+
+
+### Features
+
+* use NBTs for power detection ([4dd8fdc](https://github.com/kuraiwtf/uhc/commit/4dd8fdcb942157a5330bdc58a2b77499ed96e59e))
+
 ## [1.12.0](https://github.com/kuraiwtf/uhc/compare/v1.11.0...v1.12.0) (2026-09-12)
 
 
