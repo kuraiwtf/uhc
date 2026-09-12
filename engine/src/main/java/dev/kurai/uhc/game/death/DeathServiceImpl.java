@@ -15,6 +15,7 @@ import dev.kurai.uhc.profile.component.DisconnectComponent;
 import dev.kurai.uhc.profile.component.PlayerInformationComponent;
 import dev.kurai.uhc.profile.component.ProcessingDeathComponent;
 import dev.kurai.uhc.profile.state.DeadProfileState;
+import dev.kurai.uhc.profile.state.PlayingProfileState;
 import dev.kurai.uhc.win.BuiltinWinInformation;
 import dev.kurai.uhc.win.WinCelebration;
 import dev.kurai.uhc.win.WinService;
@@ -60,13 +61,39 @@ public final class DeathServiceImpl implements DeathService {
     this.deathProcessor.processDeath(context);
   }
 
-  private void revive(final Profile profile, final @Nullable Location location) {
+  @Override
+  public void revive(final Profile profile, final @Nullable Location location) {
     profile.executeAction(
         player -> {
           final Location target = location != null ? location : this.randomLocation();
           player.spigot().respawn();
           player.teleport(target);
+
+          player.setGameMode(GameMode.SURVIVAL);
+          player.setHealth(player.getMaxHealth());
+
+          player.setFoodLevel(20);
+          player.setSaturation(20.0f);
+          player.setExhaustion(0.0f);
+
+          player.setFireTicks(0);
+
+          final DeadComponent component = profile.getComponent(DeadComponent.class);
+          if (component != null) {
+            final var droppedItems = component.droppedItems();
+            for (final var entity : component.location().getWorld().getEntities()) {
+              if (droppedItems.contains(entity.getUniqueId())) {
+                entity.remove();
+              }
+            }
+
+            player.getInventory().setContents(component.inventory());
+            player.getInventory().setArmorContents(component.armor());
+          }
         });
+
+    profile.setState(new PlayingProfileState());
+    profile.removeComponent(DeadComponent.class);
 
     profile.removeComponent(ProcessingDeathComponent.class);
     profile.removeComponent(PlayerInformationComponent.class);
