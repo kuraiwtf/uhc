@@ -1,5 +1,32 @@
 # Changelog
 
+## [1.12.0](https://github.com/kuraiwtf/uhc/compare/v1.11.0...v1.12.0) (2026-09-12)
+
+
+### Features
+
+* add inv see command ([0f53a0b](https://github.com/kuraiwtf/uhc/commit/0f53a0bcd69504c891d9ec0f5759a74896fae958))
+* add log categories ([627994c](https://github.com/kuraiwtf/uhc/commit/627994c23c1df2ca80bcb1f2a05945a878c11117))
+* add logger service ([75b2dd4](https://github.com/kuraiwtf/uhc/commit/75b2dd4fa2a22002cfa6500034e2cde0b6068172))
+* add top luck menu ([df0c02d](https://github.com/kuraiwtf/uhc/commit/df0c02db6137c460395c7255d1c2bb259d425e1d))
+* implement kill logs ([64b9270](https://github.com/kuraiwtf/uhc/commit/64b92702d6bbb8656be74f73adbd295f59febb96))
+* implement power use and command logs ([2923130](https://github.com/kuraiwtf/uhc/commit/292313025ae2be56cef386d973ba59ae9a61067b))
+* open inventory menu on right click at player ([e65dccc](https://github.com/kuraiwtf/uhc/commit/e65dccca188a10af83452e99c5d7c60b726aa672))
+
+
+### Bug Fixes
+
+* prevent spectator management during game ([08ed97c](https://github.com/kuraiwtf/uhc/commit/08ed97cc8ad150000e73c76330b113c24171edf1))
+* update spawn location method ([ef3a43b](https://github.com/kuraiwtf/uhc/commit/ef3a43b231bc77ef5e388683b76c98b9bd912ec0))
+
+
+### Code Refactoring
+
+* improve spectator-related commands ([059253c](https://github.com/kuraiwtf/uhc/commit/059253cfbac984b211c1e898701e4493340f3db4))
+* make revive method public ([a72cfbb](https://github.com/kuraiwtf/uhc/commit/a72cfbb1e576d4598af856443e1c1e49ff07ff5c))
+* remove sound on group alert ([06f01d7](https://github.com/kuraiwtf/uhc/commit/06f01d7abca74767432db5f0f21bff47c01fa02b))
+* use profileService variable ([f771367](https://github.com/kuraiwtf/uhc/commit/f771367267f5d96cbc2d8dfc1a3c75991f4a9629))
+
 ## [1.11.0](https://github.com/kuraiwtf/uhc/compare/v1.10.0...v1.11.0) (2026-09-09)
 
 
