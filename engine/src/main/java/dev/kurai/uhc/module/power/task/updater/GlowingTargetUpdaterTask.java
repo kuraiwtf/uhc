@@ -45,7 +45,9 @@ public final class GlowingTargetUpdaterTask implements Runnable {
 
   private void processPower(final Player player, final PlayerTargetItemPower power) {
     final Player target = GlobalUtil.getTargetPlayer(player);
-    if (target == null || player.getLocation().distance(target.getLocation()) > power.getRange()) {
+    if (!power.hasPowerInHand(player)
+        || target == null
+        || player.getLocation().distance(target.getLocation()) > power.getRange()) {
       return;
     }
 
@@ -58,14 +60,17 @@ public final class GlowingTargetUpdaterTask implements Runnable {
               Bukkit.getScheduler()
                   .runTaskLaterAsynchronously(
                       UltraHardcoreAPI.getInstance().plugin(),
-                      () -> this.validate(player, target),
+                      () -> this.validate(power, player, target),
                       1L);
             });
   }
 
-  private void validate(final Player player, final Player target) {
+  private void validate(
+      final PlayerTargetItemPower power, final Player player, final Player target) {
     final Player potentialTarget = GlobalUtil.getTargetPlayer(player);
-    if (potentialTarget == null || target.getUniqueId().equals(potentialTarget.getUniqueId())) {
+    if (power.hasPowerInHand(player)
+        || potentialTarget == null
+        || target.getUniqueId().equals(potentialTarget.getUniqueId())) {
       return;
     }
 

@@ -130,7 +130,7 @@ public final class PowerListener extends PacketListenerAbstract implements Liste
         profile.getPowers().stream()
             .filter(simplePowerClass::isInstance)
             .map(simplePowerClass::cast)
-            .filter(power -> power.getIcon(player).isSimilar(event.getItem()))
+            .filter(power -> power.hasPowerInHand(player))
             .findFirst()
             .orElse(null);
 
@@ -140,7 +140,7 @@ public final class PowerListener extends PacketListenerAbstract implements Liste
       profile.getPowers().stream()
           .filter(targetPowerClass::isInstance)
           .map(targetPowerClass::cast)
-          .filter(power -> power.getIcon(player).isSimilar(event.getItem()))
+          .filter(power -> power.hasPowerInHand(player))
           .findFirst()
           .ifPresent(
               foundTargetPower -> this.handleTargetItemPower(player, foundTargetPower, event));
@@ -208,7 +208,7 @@ public final class PowerListener extends PacketListenerAbstract implements Liste
         profile.getPowers().stream()
             .filter(AbstractItemPower.class::isInstance)
             .map(AbstractItemPower.class::cast)
-            .filter(power -> power.getIcon(player).isSimilar(event.getItemInHand()))
+            .filter(power -> power.hasPowerInHand(player))
             .findFirst()
             .orElse(null);
 
