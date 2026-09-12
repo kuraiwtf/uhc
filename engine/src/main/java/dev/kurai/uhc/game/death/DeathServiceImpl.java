@@ -9,6 +9,7 @@ import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.event.defaults.game.death.GameDeathEvent;
 import dev.kurai.uhc.event.defaults.game.death.GamePreDeathEvent;
 import dev.kurai.uhc.game.GameService;
+import dev.kurai.uhc.logger.LogCategories;
 import dev.kurai.uhc.profile.Profile;
 import dev.kurai.uhc.profile.component.DeadComponent;
 import dev.kurai.uhc.profile.component.DisconnectComponent;
@@ -141,6 +142,16 @@ public final class DeathServiceImpl implements DeathService {
 
     if (killer != null) {
       killer.kills(killer.kills() + 1);
+      this.ultraHardcore
+          .loggerService()
+          .broadcastSpectator(
+              LogCategories.KILL,
+              "§c" + killer.getName() + " §8» §c" + profile.getName(),
+              location);
+    } else {
+      this.ultraHardcore
+          .loggerService()
+          .broadcastSpectator(LogCategories.KILL, "§c? §8» §c" + profile.getName(), location);
     }
 
     final GameService gameService = this.ultraHardcore.gameService();
