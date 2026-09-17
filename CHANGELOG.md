@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.14.1](https://github.com/kuraiwtf/uhc/compare/v1.14.0...v1.14.1) (2026-09-17)
+
+
+### Bug Fixes
+
+* power icon detection ([a9b31fd](https://github.com/kuraiwtf/uhc/commit/a9b31fd0d030718840a7b1df52ebfab54b849f4c))
+
 ## [1.14.0](https://github.com/kuraiwtf/uhc/compare/v1.13.0...v1.14.0) (2026-09-17)
 
 
