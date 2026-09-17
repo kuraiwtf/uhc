@@ -1,7 +1,5 @@
 package dev.kurai.uhc.module.power.listener;
 
-import static dev.kurai.uhc.util.PlayerUtil.updateHeldItem;
-
 import com.github.retrooper.packetevents.event.PacketListenerAbstract;
 import com.github.retrooper.packetevents.event.PacketSendEvent;
 import com.github.retrooper.packetevents.protocol.item.type.ItemTypes;
@@ -10,6 +8,8 @@ import com.github.retrooper.packetevents.protocol.player.Equipment;
 import com.github.retrooper.packetevents.protocol.player.EquipmentSlot;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityEquipment;
 import com.google.common.collect.Lists;
+import dev.kurai.uhc.event.defaults.power.cooldown.PowerCooldownEndEvent;
+import dev.kurai.uhc.event.defaults.power.cooldown.PowerCooldownStartEvent;
 import dev.kurai.uhc.module.power.defaults.command.AbstractCommandPower;
 import dev.kurai.uhc.module.power.defaults.command.argument.PowerArgument;
 import dev.kurai.uhc.module.power.defaults.item.AbstractItemPower;
@@ -19,6 +19,7 @@ import dev.kurai.uhc.module.power.defaults.item.impl.block.BlockPlacePower;
 import dev.kurai.uhc.module.power.defaults.item.impl.player.PlayerTargetItemPower;
 import dev.kurai.uhc.module.power.defaults.item.impl.player.impl.LeftClickPlayerTargetItemPower;
 import dev.kurai.uhc.module.power.defaults.item.impl.player.impl.RightClickPlayerTargetItemPower;
+import dev.kurai.uhc.module.power.restriction.defaults.CooldownPowerRestriction;
 import dev.kurai.uhc.module.service.ModuleService;
 import dev.kurai.uhc.profile.Profile;
 import dev.kurai.uhc.profile.ProfileService;
@@ -33,8 +34,11 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.plugin.Plugin;
 import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 @NullMarked
 public final class PowerListener extends PacketListenerAbstract implements Listener {
@@ -48,6 +52,37 @@ public final class PowerListener extends PacketListenerAbstract implements Liste
     this.profileService = profileService;
     this.moduleService = moduleService;
     this.plugin = plugin;
+  }
+
+  @EventHandler
+  public void onCooldownStart(final PowerCooldownStartEvent event) {
+    this.updatePower(event.player(), event.restriction());
+  }
+
+  @EventHandler
+  public void onCooldownEnd(final PowerCooldownEndEvent event) {
+    this.updatePower(event.player(), event.restriction());
+  }
+
+  private void updatePower(
+      final @Nullable Player player, final CooldownPowerRestriction restriction) {
+    if (player == null) {
+      return;
+    }
+
+    final Profile profile = this.profileService.getOrCreateProfile(player);
+    if (!(profile.getPower(restriction.getId()) instanceof final AbstractItemPower power)) {
+      return;
+    }
+
+    final PlayerInventory inventory = player.getInventory();
+    for (final ItemStack content : inventory.getContents()) {
+      if (!power.isSimilar(content)) {
+        continue;
+      }
+
+      inventory.setItem(inventory.first(content), power.getIcon(player));
+    }
   }
 
   @Override
@@ -149,6 +184,7 @@ public final class PowerListener extends PacketListenerAbstract implements Liste
 
     foundPower.use(player);
     event.setCancelled(true);
+    player.setItemInHand(foundPower.getIcon(player));
   }
 
   /*@EventHandler
@@ -184,19 +220,20 @@ public final class PowerListener extends PacketListenerAbstract implements Liste
   }*/
 
   private void handleTargetItemPower(
-      final Player player, final PlayerTargetItemPower power, final Cancellable cancellable) {
+      final Player player, final PlayerTargetItemPower foundPower, final Cancellable cancellable) {
     final var target = GlobalUtil.getTargetPlayer(player);
     if (target == null
         || target.getLocation().distanceSquared(player.getLocation())
-            > power.getRange() * power.getRange()) {
+            > foundPower.getRange() * foundPower.getRange()) {
       player.sendMessage(CC.prefix("&cVous devez cibler un joueur pour utiliser ce pouvoir."));
       return;
     }
 
-    power.setTarget(target);
-    power.use(player);
-    power.setTarget(null);
+    foundPower.setTarget(target);
+    foundPower.use(player);
+    foundPower.setTarget(null);
     cancellable.setCancelled(true);
+    player.setItemInHand(foundPower.getIcon(player));
   }
 
   @EventHandler
@@ -221,7 +258,7 @@ public final class PowerListener extends PacketListenerAbstract implements Liste
     }
 
     foundPower.use(player);
-    updateHeldItem(player);
+    player.setItemInHand(foundPower.getIcon(player));
   }
 
   @EventHandler
