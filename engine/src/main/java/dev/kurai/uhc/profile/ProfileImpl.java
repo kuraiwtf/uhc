@@ -41,7 +41,7 @@ import org.jspecify.annotations.Nullable;
 @NullMarked
 @Getter
 @Setter
-public final class ProfileImpl implements Profile {
+final class ProfileImpl implements Profile {
 
   private final Map<Class<? extends Component>, Component> components;
 
@@ -51,7 +51,7 @@ public final class ProfileImpl implements Profile {
   private int kills;
   private int assists;
 
-  public ProfileImpl(final UUID id, final UltraHardcoreAPI ultraHardcore) {
+  ProfileImpl(final UUID id, final UltraHardcoreAPI ultraHardcore) {
     this.components = Maps.newHashMap();
     this.addComponent(new ProfileIdentifierComponent(id));
     this.addComponents(
@@ -381,6 +381,11 @@ public final class ProfileImpl implements Profile {
   @Override
   public Collection<AbstractPower> getPowers() {
     return List.copyOf(this.powers.values());
+  }
+
+  @Override
+  public @Nullable AbstractPower getPower(final String id) {
+    return this.powers.get(id);
   }
 
   @Override

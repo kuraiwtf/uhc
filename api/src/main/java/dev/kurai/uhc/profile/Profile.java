@@ -145,6 +145,8 @@ public interface Profile
   @Override
   Collection<AbstractPower> getPowers();
 
+  @Nullable AbstractPower getPower(final String id);
+
   @Override
   <T extends AbstractPower> @Nullable T getPower(final Class<T> clazz);
 
