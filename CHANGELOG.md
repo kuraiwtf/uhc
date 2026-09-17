@@ -1,5 +1,21 @@
 # Changelog
 
+## [1.14.0](https://github.com/kuraiwtf/uhc/compare/v1.13.0...v1.14.0) (2026-09-17)
+
+
+### Features
+
+* add getPower via identifier method ([c1e40c7](https://github.com/kuraiwtf/uhc/commit/c1e40c753972cb5f2c74cdd041defd8cdbad7fda))
+
+
+### Bug Fixes
+
+* improve power detection ([c32cfb4](https://github.com/kuraiwtf/uhc/commit/c32cfb43a98b593326d715f9284c4b0d07be0cd6))
+* improve power icon detection ([5e90180](https://github.com/kuraiwtf/uhc/commit/5e901803e120a9679c62fdc3f0fc937d3e2190ad))
+* improve power item icon update ([479992b](https://github.com/kuraiwtf/uhc/commit/479992bc8e2324f8676de8aa1da4ba5dc6b729ad))
+* improve power item icon update ([64d6898](https://github.com/kuraiwtf/uhc/commit/64d6898b1ad2131a6e801624664ff2abfa761e65))
+* pass player unique id in cooldown decrementation task to call PowerCooldownEndEvent ([2808af4](https://github.com/kuraiwtf/uhc/commit/2808af4e19daccbf6a681d7168d7036f302a5247))
+
 ## [1.13.0](https://github.com/kuraiwtf/uhc/compare/v1.12.0...v1.13.0) (2026-09-12)
 
 
