@@ -1,11 +1,9 @@
 package dev.kurai.uhc.event.defaults.power.cooldown;
 
 import dev.kurai.uhc.module.power.restriction.defaults.CooldownPowerRestriction;
-import lombok.Getter;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 
-@Getter
 public final class PowerCooldownStartEvent extends PowerCooldownEvent {
 
   private static final HandlerList HANDLERS = new HandlerList();
