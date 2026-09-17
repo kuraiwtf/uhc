@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
+import org.jspecify.annotations.Nullable;
 
 @Getter
 @RequiredArgsConstructor
@@ -17,7 +18,7 @@ public class PowerCooldownEvent extends Event {
     return HANDLERS;
   }
 
-  private final Player player;
+  private final @Nullable Player player;
   private final CooldownPowerRestriction restriction;
 
   @Override

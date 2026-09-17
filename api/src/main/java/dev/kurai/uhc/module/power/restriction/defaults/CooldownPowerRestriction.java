@@ -4,12 +4,15 @@ import static dev.kurai.uhc.util.CC.prefix;
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.format.NamedTextColor.*;
 
+import dev.kurai.uhc.event.defaults.power.cooldown.PowerCooldownEndEvent;
 import dev.kurai.uhc.event.defaults.power.cooldown.PowerCooldownStartEvent;
 import dev.kurai.uhc.module.power.AbstractPower;
 import dev.kurai.uhc.module.power.restriction.PowerRestriction;
 import dev.kurai.uhc.module.power.restriction.RestrictionStrategy;
+import java.util.UUID;
 import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
@@ -58,7 +61,8 @@ public final class CooldownPowerRestriction implements PowerRestriction {
     Bukkit.getPluginManager().callEvent(new PowerCooldownStartEvent(player, this));
 
     if (this.task == null) {
-      this.task = new CooldownDecrementTask(this).runTaskTimer(this.plugin, 0, 20L);
+      this.task =
+          new CooldownDecrementTask(this, player.getUniqueId()).runTaskTimer(this.plugin, 0, 20L);
     }
   }
 
@@ -78,19 +82,19 @@ public final class CooldownPowerRestriction implements PowerRestriction {
     return this.timeLeft > 0;
   }
 
+  @RequiredArgsConstructor
   private static final class CooldownDecrementTask extends BukkitRunnable {
 
     private final CooldownPowerRestriction restriction;
-
-    private CooldownDecrementTask(final CooldownPowerRestriction restriction) {
-      this.restriction = restriction;
-    }
+    private final UUID owner;
 
     @Override
     public void run() {
       if (this.restriction.timeLeft <= 0) {
         this.restriction.task = null;
         this.cancel();
+        Bukkit.getPluginManager()
+            .callEvent(new PowerCooldownEndEvent(Bukkit.getPlayer(this.owner), this.restriction));
         return;
       }
 
