@@ -6,6 +6,7 @@ import dev.kurai.uhc.module.power.AbstractPower;
 import dev.kurai.uhc.module.power.restriction.defaults.CooldownPowerRestriction;
 import dev.kurai.uhc.util.ItemBuilder;
 import java.util.UUID;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -57,6 +58,7 @@ public abstract class AbstractItemPower extends AbstractPower {
 
   public boolean isSimilar(final ItemStack itemStack) {
     return itemStack != null
+        && itemStack.getType() != Material.AIR
         && ItemBuilder.hasTag(itemStack, NBT_TAG)
         && ItemBuilder.getTag(itemStack, NBT_TAG).equals(this.getId());
   }
