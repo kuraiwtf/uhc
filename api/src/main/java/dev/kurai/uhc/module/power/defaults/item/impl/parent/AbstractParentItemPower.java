@@ -10,7 +10,6 @@ import java.util.UUID;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 public abstract class AbstractParentItemPower extends LeftClickItemPower {
@@ -80,11 +79,11 @@ public abstract class AbstractParentItemPower extends LeftClickItemPower {
   }
 
   @Override
-  public boolean hasPowerInHand(final @NonNull Player player) {
+  public boolean isSimilar(final ItemStack itemStack) {
     if (this.currentPower == null) {
-      return super.hasPowerInHand(player);
+      return super.isSimilar(itemStack);
     }
 
-    return this.currentPower.hasPowerInHand(player);
+    return this.currentPower.isSimilar(itemStack);
   }
 }

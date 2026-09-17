@@ -6,10 +6,8 @@ import dev.kurai.uhc.module.power.AbstractPower;
 import dev.kurai.uhc.module.power.restriction.defaults.CooldownPowerRestriction;
 import dev.kurai.uhc.util.ItemBuilder;
 import java.util.UUID;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.jspecify.annotations.NonNull;
 
 public abstract class AbstractItemPower extends AbstractPower {
 
@@ -63,13 +61,7 @@ public abstract class AbstractItemPower extends AbstractPower {
         && ItemBuilder.getTag(itemStack, NBT_TAG).equals(this.getId());
   }
 
-  public boolean hasPowerInHand(final @NonNull Player player) {
-    final ItemStack hand = player.getItemInHand();
-    if (hand == null || hand.getType() == Material.AIR) {
-      return false;
-    }
-
-    return ItemBuilder.hasTag(hand, NBT_TAG)
-        && ItemBuilder.getTag(hand, NBT_TAG).equals(this.getId());
+  public final boolean hasPowerInHand(final Player player) {
+    return this.isSimilar(player.getItemInHand());
   }
 }
