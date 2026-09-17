@@ -184,7 +184,6 @@ public final class PowerListener extends PacketListenerAbstract implements Liste
 
     foundPower.use(player);
     event.setCancelled(true);
-    player.setItemInHand(foundPower.getIcon(player));
   }
 
   /*@EventHandler
@@ -233,7 +232,6 @@ public final class PowerListener extends PacketListenerAbstract implements Liste
     foundPower.use(player);
     foundPower.setTarget(null);
     cancellable.setCancelled(true);
-    player.setItemInHand(foundPower.getIcon(player));
   }
 
   @EventHandler
@@ -258,7 +256,6 @@ public final class PowerListener extends PacketListenerAbstract implements Liste
     }
 
     foundPower.use(player);
-    player.setItemInHand(foundPower.getIcon(player));
   }
 
   @EventHandler
