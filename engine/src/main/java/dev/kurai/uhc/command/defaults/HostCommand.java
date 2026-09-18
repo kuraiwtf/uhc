@@ -14,6 +14,7 @@ import dev.kurai.uhc.game.host.HostService;
 import dev.kurai.uhc.menu.ConfigurationMenu;
 import dev.kurai.uhc.module.power.AbstractPower;
 import dev.kurai.uhc.module.power.defaults.item.AbstractItemPower;
+import dev.kurai.uhc.module.power.defaults.item.impl.parent.AbstractParentItemPower;
 import dev.kurai.uhc.profile.Profile;
 import dev.kurai.uhc.profile.component.DeadComponent;
 import dev.kurai.uhc.profile.component.DisconnectComponent;
@@ -23,6 +24,7 @@ import dev.kurai.uhc.profile.state.PlayingProfileState;
 import dev.kurai.uhc.timer.AbstractTimer;
 import dev.kurai.uhc.util.CC;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -169,8 +171,15 @@ public final class HostCommand {
       return;
     }
 
+    final var childPowers =
+        profile.getPowers().stream()
+            .filter(AbstractParentItemPower.class::isInstance)
+            .map(AbstractParentItemPower.class::cast)
+            .flatMap(parent -> parent.getChildren().stream())
+            .collect(Collectors.toSet());
+
     for (final AbstractPower power : profile.getPowers()) {
-      if (!(power instanceof final AbstractItemPower itemPower)) {
+      if (!(power instanceof final AbstractItemPower itemPower) || childPowers.contains(power)) {
         continue;
       }
 
