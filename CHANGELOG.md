@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.15.0](https://github.com/kuraiwtf/uhc/compare/v1.14.1...v1.15.0) (2026-09-18)
+
+
+### Features
+
+* add PowerTargetSelectionEvent and handle it in PowerListener ([118f800](https://github.com/kuraiwtf/uhc/commit/118f80056b3bbd24be2bb81908f19ee42476c7ab))
+
+
+### Bug Fixes
+
+* ignore children powers in host refill command ([e07febe](https://github.com/kuraiwtf/uhc/commit/e07febe209063842d9204309e055de3808523e1b))
+* spectator management using hostmc whitelist system ([671ffe2](https://github.com/kuraiwtf/uhc/commit/671ffe2902f4317af85f56a7577d2978e5c297c8))
+
 ## [1.14.1](https://github.com/kuraiwtf/uhc/compare/v1.14.0...v1.14.1) (2026-09-17)
 
 
