@@ -8,6 +8,7 @@ import com.github.retrooper.packetevents.protocol.player.Equipment;
 import com.github.retrooper.packetevents.protocol.player.EquipmentSlot;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityEquipment;
 import com.google.common.collect.Lists;
+import dev.kurai.uhc.event.defaults.power.PowerTargetSelectionEvent;
 import dev.kurai.uhc.event.defaults.power.cooldown.PowerCooldownEndEvent;
 import dev.kurai.uhc.event.defaults.power.cooldown.PowerCooldownStartEvent;
 import dev.kurai.uhc.module.power.defaults.command.AbstractCommandPower;
@@ -26,6 +27,7 @@ import dev.kurai.uhc.profile.ProfileService;
 import dev.kurai.uhc.util.CC;
 import dev.kurai.uhc.util.GlobalUtil;
 import io.github.retrooper.packetevents.util.SpigotConversionUtil;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.EventHandler;
@@ -225,6 +227,18 @@ public final class PowerListener extends PacketListenerAbstract implements Liste
         || target.getLocation().distanceSquared(player.getLocation())
             > foundPower.getRange() * foundPower.getRange()) {
       player.sendMessage(CC.prefix("&cVous devez cibler un joueur pour utiliser ce pouvoir."));
+      return;
+    }
+
+    final PowerTargetSelectionEvent event =
+        new PowerTargetSelectionEvent(
+            this.profileService.getOrCreateProfile(player),
+            this.profileService.getOrCreateProfile(target),
+            foundPower);
+    Bukkit.getPluginManager().callEvent(event);
+
+    if (event.isCancelled()) {
+      player.sendMessage(CC.prefix("§cVous ne pouvez pas cibler ce joueur."));
       return;
     }
 
