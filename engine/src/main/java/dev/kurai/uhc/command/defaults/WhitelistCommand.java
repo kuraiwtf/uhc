@@ -103,6 +103,7 @@ public final class WhitelistCommand {
 
     final Plugin plugin = this.ultraHardcore.plugin();
     new HostMCWhitelistProviderTask(
+            this.ultraHardcore,
             this.ultraHardcore.whitelistService(),
             plugin.getConfig().getString("authorization"),
             code)

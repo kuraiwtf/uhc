@@ -1,6 +1,9 @@
 package dev.kurai.uhc.whitelist.hostmc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import dev.kurai.uhc.UltraHardcoreAPI;
+import dev.kurai.uhc.profile.Profile;
+import dev.kurai.uhc.profile.component.SpectatorComponent;
 import dev.kurai.uhc.util.CC;
 import dev.kurai.uhc.whitelist.WhitelistService;
 import java.io.BufferedReader;
@@ -11,6 +14,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jspecify.annotations.NullMarked;
@@ -24,6 +28,7 @@ public final class HostMCWhitelistProviderTask extends BukkitRunnable {
   private static final String BASE_URL =
       "https://api.bot-mc.fr/v1/games/%s/autowhitelist?players=%s";
 
+  private final UltraHardcoreAPI ultraHardcore;
   private final WhitelistService whitelistService;
 
   private final String authorization;
@@ -74,11 +79,19 @@ public final class HostMCWhitelistProviderTask extends BukkitRunnable {
         final GameDataHostMC gameData = MAPPER.readValue(content.toString(), GameDataHostMC.class);
         for (final PlayerDataHostMC player : gameData.players()) {
           final UUID uniqueId = this.formatUniqueId(player.uniqueId());
-          if (this.whitelistService.isWhitelisted(uniqueId)) {
-            continue;
+          if (!this.whitelistService.isWhitelisted(uniqueId)) {
+            this.whitelistService.whitelist(new UUID(0, 0), uniqueId, "Bot discord d'HostMC");
           }
 
-          this.whitelistService.whitelist(new UUID(0, 0), uniqueId, "Bot discord d'HostMC");
+          final Profile profile = this.ultraHardcore.profileService().getOrCreateProfile(uniqueId);
+          if (player.moderator() && !profile.hasComponent(SpectatorComponent.class)) {
+            profile.addComponent(new SpectatorComponent());
+            profile
+                .findPlayer()
+                .ifPresent(spectatorPlayer -> spectatorPlayer.setGameMode(GameMode.SPECTATOR));
+          } else {
+            profile.removeComponent(SpectatorComponent.class);
+          }
         }
       }
       connection.disconnect();
