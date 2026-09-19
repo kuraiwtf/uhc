@@ -265,11 +265,11 @@ public final class PowerListener extends PacketListenerAbstract implements Liste
       return;
     }
 
-    if (!(foundPower instanceof BlockPlacePower)) {
-      return;
-    }
+    event.setCancelled(true);
 
-    foundPower.use(player);
+    if (foundPower instanceof BlockPlacePower) {
+      foundPower.use(player);
+    }
   }
 
   @EventHandler
