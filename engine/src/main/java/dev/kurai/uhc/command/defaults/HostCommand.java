@@ -158,10 +158,7 @@ public final class HostCommand {
   }
 
   @SubCommand(
-      @CommandMeta(
-          name = "refill",
-          description = "Redonner les objets de pouvoir à un joueur",
-          permission = "uhc.command.host.refill"))
+      @CommandMeta(name = "refill", description = "Redonner les objets de pouvoir à un joueur"))
   public void refill(
       final Player player, final @Argument(name = "joueur", defaultValue = "self") Player target) {
     final Profile profile = this.ultraHardcore.profileService().getOrCreateProfile(target);
