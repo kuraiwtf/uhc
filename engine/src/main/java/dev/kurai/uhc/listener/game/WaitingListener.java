@@ -4,6 +4,7 @@ import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.format.NamedTextColor.*;
 
 import dev.kurai.uhc.UltraHardcoreAPI;
+import dev.kurai.uhc.ecs.component.defaults.NameComponent;
 import dev.kurai.uhc.event.defaults.game.GameStartEvent;
 import dev.kurai.uhc.event.defaults.host.HostAccessUpdateEvent;
 import dev.kurai.uhc.item.CustomItem;
@@ -64,6 +65,7 @@ public final class WaitingListener implements Listener {
         .info(
             "Created profile for %s (%s)."
                 .formatted(profile.getName(), profile.getId().toString()));
+    profile.addComponent(new NameComponent(player.getName()));
 
     this.ultraHardcore
         .bukkitAudiences()

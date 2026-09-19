@@ -9,6 +9,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.adventure.UltraHardcoreKey;
+import dev.kurai.uhc.ecs.component.defaults.NameComponent;
 import dev.kurai.uhc.event.defaults.game.GameTickEvent;
 import dev.kurai.uhc.event.defaults.player.PlayerDamageByPlayerEvent;
 import dev.kurai.uhc.game.configuration.ore.OreConfiguration;
@@ -104,6 +105,8 @@ public final class PlayingListener implements Listener {
     final Player player = event.getPlayer();
 
     final Profile profile = this.ultraHardcore.profileService().getOrCreateProfile(player);
+    profile.addComponent(new NameComponent(player.getName()));
+
     if (!(profile.getState() instanceof PlayingProfileState)) {
       player.teleport(this.ultraHardcore.worldService().getWorld().getSpawnLocation());
       player.setGameMode(GameMode.SPECTATOR);
