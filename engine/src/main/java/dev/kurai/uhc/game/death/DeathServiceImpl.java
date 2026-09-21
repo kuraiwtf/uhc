@@ -9,6 +9,7 @@ import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.event.defaults.game.death.GameDeathEvent;
 import dev.kurai.uhc.event.defaults.game.death.GamePreDeathEvent;
 import dev.kurai.uhc.game.GameService;
+import dev.kurai.uhc.item.CustomItem;
 import dev.kurai.uhc.logger.LogCategories;
 import dev.kurai.uhc.profile.Profile;
 import dev.kurai.uhc.profile.component.DeadComponent;
@@ -28,6 +29,7 @@ import lombok.Setter;
 import net.kyori.adventure.sound.Sound;
 import org.bukkit.*;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
@@ -120,6 +122,13 @@ public final class DeathServiceImpl implements DeathService {
           player.spigot().respawn();
           player.setGameMode(GameMode.SPECTATOR);
           player.teleport(this.ultraHardcore.worldService().getWorld().getSpawnLocation());
+          final PlayerInventory inventory = player.getInventory();
+          inventory.setContents(new ItemStack[36]);
+          inventory.setArmorContents(new ItemStack[4]);
+
+          for (final CustomItem item : this.ultraHardcore.itemService().findAllBySpectatorOnly()) {
+            inventory.setItem(item.getSlot(), item.provideIcon(player));
+          }
         });
 
     Bukkit.getPluginManager().callEvent(new GameDeathEvent(killer, profile));
