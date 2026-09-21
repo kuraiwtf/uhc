@@ -30,12 +30,6 @@ public interface ItemService {
     return this.findAllBy(CustomItem::isSpectatorOnly);
   }
 
-  Collection<WaitingItem> findWaitingItems();
-
-  void registerWaitingItem(final int slot, final CustomItem item);
-
-  WaitingItem findWaitingItem(final int slot);
-
   void registerItem(final CustomItem item);
 
   default void registerItems(final CustomItem... items) {
