@@ -193,7 +193,7 @@ public final class UltraHardcoreEngine extends UltraHardcoreAPI {
 
     timerService.registerTimers(
         new InvincibilityTimer(this),
-        new PvPTimer(this.worldService),
+        new PvPTimer(this),
         new BorderTimer(this.worldService, this.bukkitAudiences));
 
     Bukkit.getScheduler()
