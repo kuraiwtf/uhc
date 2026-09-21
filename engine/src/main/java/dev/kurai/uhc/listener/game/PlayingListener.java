@@ -346,27 +346,33 @@ public final class PlayingListener implements Listener {
       return;
     }
 
-    final PlayerInventory inventory = player.getInventory();
-    profile.addComponent(
-        new PlayerInformationComponent(
-            player.getLocation(),
-            inventory.getContents(),
-            inventory.getArmorContents(),
-            Lists.newArrayList(player.getActivePotionEffects()),
-            player.getFireTicks(),
-            player.getFallDistance()));
+    Bukkit.getScheduler()
+        .runTaskLater(
+            this.ultraHardcore.plugin(),
+            () -> {
+              final PlayerInventory inventory = player.getInventory();
+              profile.addComponent(
+                  new PlayerInformationComponent(
+                      player.getLocation(),
+                      inventory.getContents(),
+                      inventory.getArmorContents(),
+                      Lists.newArrayList(player.getActivePotionEffects()),
+                      player.getFireTicks(),
+                      player.getFallDistance()));
 
-    final Player killer = player.getKiller();
-    profile.addComponent(new ProcessingDeathComponent());
-    this.ultraHardcore
-        .gameService()
-        .deathService()
-        .processDeath(
-            new DeathContext(
-                profile,
-                (killer == null ? null : profileService.getOrCreateProfile(killer)),
-                event,
-                false));
+              final Player killer = player.getKiller();
+              profile.addComponent(new ProcessingDeathComponent());
+              this.ultraHardcore
+                  .gameService()
+                  .deathService()
+                  .processDeath(
+                      new DeathContext(
+                          profile,
+                          (killer == null ? null : profileService.getOrCreateProfile(killer)),
+                          event,
+                          false));
+            },
+            20L);
   }
 
   @EventHandler
