@@ -8,8 +8,6 @@ import dev.kurai.uhc.ecs.component.defaults.NameComponent;
 import dev.kurai.uhc.event.defaults.game.GameStartEvent;
 import dev.kurai.uhc.event.defaults.host.HostAccessUpdateEvent;
 import dev.kurai.uhc.item.CustomItem;
-import dev.kurai.uhc.item.WaitingItem;
-import dev.kurai.uhc.item.builtin.*;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -82,10 +80,11 @@ public final class WaitingListener implements Listener {
                 .append(text(')', DARK_GRAY))
                 .build());
 
-    for (final WaitingItem item : this.ultraHardcore.itemService().findWaitingItems()) {
-      if (!item.item().isHostOnly()
+    for (final CustomItem item :
+        this.ultraHardcore.itemService().findAllBy(customItem -> !customItem.isSpectatorOnly())) {
+      if (!item.isHostOnly()
           || this.ultraHardcore.gameService().hostService().hasHostAccess(player)) {
-        this.setItem(player, item.slot(), item.item().getClass());
+        this.setItem(player, item.getSlot(), item.getClass());
       }
     }
   }
@@ -97,14 +96,15 @@ public final class WaitingListener implements Listener {
       return;
     }
 
-    for (final WaitingItem item : this.ultraHardcore.itemService().findWaitingItems()) {
-      if (!item.item().isHostOnly()) {
+    for (final CustomItem item :
+        this.ultraHardcore.itemService().findAllBy(customItem -> !customItem.isSpectatorOnly())) {
+      if (!item.isHostOnly()) {
         continue;
       }
 
-      final int slot = item.slot();
+      final int slot = item.getSlot();
       if (event.getStatus() == HostAccessUpdateEvent.Status.ALLOWED) {
-        this.setItem(player, slot, item.item().getClass());
+        this.setItem(player, slot, item.getClass());
       } else {
         player.getInventory().setItem(slot, new ItemStack(Material.AIR));
       }
