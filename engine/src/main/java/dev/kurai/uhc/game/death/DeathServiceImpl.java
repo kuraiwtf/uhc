@@ -1,8 +1,10 @@
 package dev.kurai.uhc.game.death;
 
-import static dev.kurai.uhc.util.CC.center;
+import static dev.kurai.uhc.util.CC.*;
 import static net.kyori.adventure.key.Key.key;
 import static net.kyori.adventure.text.format.NamedTextColor.*;
+import static org.bukkit.ChatColor.DARK_PURPLE;
+import static org.bukkit.ChatColor.LIGHT_PURPLE;
 
 import com.google.common.collect.Lists;
 import dev.kurai.uhc.UltraHardcoreAPI;
@@ -199,6 +201,7 @@ public final class DeathServiceImpl implements DeathService {
 
     profile.setState(new DeadProfileState());
 
+    profile.sendMessage(emptyLine(DARK_PURPLE, LIGHT_PURPLE));
     profile.sendMessage("");
     profile.sendMessage(center("&d&l»&r &lSPECTATEUR&d &l«"));
     profile.sendMessage(center("Suite à votre&c mort&r, vous êtes devenu"));
@@ -207,6 +210,7 @@ public final class DeathServiceImpl implements DeathService {
     profile.sendMessage(center("Utilisez la&c boussole&r dans votre&a inventaire"));
     profile.sendMessage(center("pour accéder à l'interface&d spectateur&r."));
     profile.sendMessage("");
+    profile.sendMessage(emptyLine(DARK_PURPLE, LIGHT_PURPLE));
   }
 
   private void processWin(final Location location) {
