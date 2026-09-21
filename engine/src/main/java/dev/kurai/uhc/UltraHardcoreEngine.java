@@ -37,6 +37,8 @@ import dev.kurai.uhc.module.ModuleServiceImpl;
 import dev.kurai.uhc.module.service.ModuleService;
 import dev.kurai.uhc.nickname.NicknameService;
 import dev.kurai.uhc.nickname.NicknameServiceImpl;
+import dev.kurai.uhc.power.PowerService;
+import dev.kurai.uhc.power.PowerServiceImpl;
 import dev.kurai.uhc.profile.ProfileService;
 import dev.kurai.uhc.profile.ProfileServiceImpl;
 import dev.kurai.uhc.scoreboard.sidebar.SidebarService;
@@ -84,6 +86,7 @@ public final class UltraHardcoreEngine extends UltraHardcoreAPI {
   private LoggerService loggerService;
   private ModuleService moduleService;
   private NicknameService nicknameService;
+  private PowerService powerService;
   private ProfileService profileService;
   private SidebarService sidebarService;
   private SkinService skinService;
@@ -134,6 +137,7 @@ public final class UltraHardcoreEngine extends UltraHardcoreAPI {
     this.itemService = new ItemServiceImpl(this);
     this.moduleService = new ModuleServiceImpl(this);
     this.nicknameService = new NicknameServiceImpl(this.plugin);
+    this.powerService = new PowerServiceImpl();
     this.profileService = new ProfileServiceImpl(this);
     this.loggerService = new LoggerServiceImpl(this.profileService);
     this.skinService = new SkinServiceImpl(this.plugin, this.profileService);

@@ -11,6 +11,7 @@ import dev.kurai.uhc.item.ItemService;
 import dev.kurai.uhc.logger.LoggerService;
 import dev.kurai.uhc.module.service.ModuleService;
 import dev.kurai.uhc.nickname.NicknameService;
+import dev.kurai.uhc.power.PowerService;
 import dev.kurai.uhc.profile.ProfileService;
 import dev.kurai.uhc.scoreboard.sidebar.SidebarService;
 import dev.kurai.uhc.skin.SkinService;
@@ -77,6 +78,8 @@ public abstract class UltraHardcoreAPI {
   public abstract ModuleService moduleService();
 
   public abstract NicknameService nicknameService();
+
+  public abstract PowerService powerService();
 
   public abstract ProfileService profileService();
 
