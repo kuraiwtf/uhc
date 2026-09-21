@@ -79,11 +79,9 @@ public final class PowerListener extends PacketListenerAbstract implements Liste
 
     final PlayerInventory inventory = player.getInventory();
     for (final ItemStack content : inventory.getContents()) {
-      if (!power.isSimilar(content)) {
-        continue;
+      if (power.isSimilar(content)) {
+        inventory.setItem(inventory.first(content), power.getIcon(player));
       }
-
-      inventory.setItem(inventory.first(content), power.getIcon(player));
     }
   }
 
