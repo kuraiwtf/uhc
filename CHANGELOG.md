@@ -1,5 +1,23 @@
 # Changelog
 
+## [1.16.0](https://github.com/kuraiwtf/uhc/compare/v1.15.0...v1.16.0) (2026-09-21)
+
+
+### Features
+
+* annotate power packages with @NullMarked in API and engine modules ([148bf31](https://github.com/kuraiwtf/uhc/commit/148bf311b8010ed8240c88da78e1859793f8b4a1))
+* implement PowerService and PowerServiceImpl for managing and decorating power item icons ([4ef0a1f](https://github.com/kuraiwtf/uhc/commit/4ef0a1faa49b763378f59d4937d4a50224124d12))
+* integrate PowerService into UltraHardcoreAPI and UltraHardcoreEngine ([acd601e](https://github.com/kuraiwtf/uhc/commit/acd601e184a86a17e12119e3e5fad205da5a9411))
+* introduce PowerDecorator interface to support item decoration functionality ([de1864a](https://github.com/kuraiwtf/uhc/commit/de1864a458e878c5b05effea36443683cfd8a5f1))
+
+
+### Bug Fixes
+
+* prevent from placing any power ([a73f032](https://github.com/kuraiwtf/uhc/commit/a73f032d1839f9801a64cbf2926f772f347503cf))
+* remove permission for /h refill ([2d69f07](https://github.com/kuraiwtf/uhc/commit/2d69f07abd1a5851e514ae59d3b1f8b2838951ad))
+* replace profile name on join ([b20a21f](https://github.com/kuraiwtf/uhc/commit/b20a21f3b408a4946049c70717404e696e06993c))
+* streamline power handling logic and improve glow validation in PowerListener and GlowingTargetUpdaterTask ([b6ad41a](https://github.com/kuraiwtf/uhc/commit/b6ad41ae678ae7ae2c6e9812c3046d3802f52f77))
+
 ## [1.15.0](https://github.com/kuraiwtf/uhc/compare/v1.14.1...v1.15.0) (2026-09-18)
 
 
