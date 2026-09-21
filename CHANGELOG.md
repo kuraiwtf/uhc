@@ -1,5 +1,31 @@
 # Changelog
 
+## [1.17.0](https://github.com/kuraiwtf/uhc/compare/v1.16.0...v1.17.0) (2026-09-21)
+
+
+### Features
+
+* add PlayerSpectatorItem for player visibility and register it in ItemServiceImpl ([30e8346](https://github.com/kuraiwtf/uhc/commit/30e8346797e40dcc92d97624ab5615846097e299))
+* add PvPTimer event listener and auto-resurrection logic during PvP phase ([5b2c55c](https://github.com/kuraiwtf/uhc/commit/5b2c55c7e4c235083d2cbb2abe8337c0f008109b))
+* add random XP drop for diamond ore mining under CutClean scenario ([040ef22](https://github.com/kuraiwtf/uhc/commit/040ef223894df480cedb9ad3fcdc9bbbd7b2f015))
+* add slot assignment to CustomItem and update built-in items accordingly ([7fca3b7](https://github.com/kuraiwtf/uhc/commit/7fca3b73c218ef16a6745f81f379905d218a543d))
+* add slot parameter to ConfigurationItem constructor for enhanced configurability ([cc8c94d](https://github.com/kuraiwtf/uhc/commit/cc8c94dc430e180d233fe15232ba1d4cf52b8fc8))
+* clear player inventory and equip spectator-only items on death ([f72e796](https://github.com/kuraiwtf/uhc/commit/f72e796a1c38eaaef9f97277df39df2a14c8308b))
+* enhance death messaging with styled empty lines for improved visual clarity ([986c487](https://github.com/kuraiwtf/uhc/commit/986c487515a1b97e2e31e67f3f05c14a529521ad))
+
+
+### Bug Fixes
+
+* adjust PvPTimer instantiation to remove redundant worldService parameter ([9704bdb](https://github.com/kuraiwtf/uhc/commit/9704bdbcb223c4c553640b86e1ddf03c55f9eb22))
+* delay death processing to ensure inventory state updates ([d1e83bd](https://github.com/kuraiwtf/uhc/commit/d1e83bd64310d86f1e2a2388d2a00827453799ad))
+
+
+### Code Refactoring
+
+* remove WaitingItem and related logic for streamlined item registration in ItemServiceImpl ([af5aba3](https://github.com/kuraiwtf/uhc/commit/af5aba39b7d2f413143b49df089636b89670831a))
+* simplify item handling in WaitingListener by replacing WaitingItem with CustomItem and updating logic accordingly ([457641c](https://github.com/kuraiwtf/uhc/commit/457641cddff05efc88d7ac326a89d7fe91735ef3))
+* use player's lastLocation for teleportation on death and streamline component handling ([4e1ca34](https://github.com/kuraiwtf/uhc/commit/4e1ca34982ada30c4bb9b5f442a58a5d38c232ad))
+
 ## [1.16.0](https://github.com/kuraiwtf/uhc/compare/v1.15.0...v1.16.0) (2026-09-21)
 
 
