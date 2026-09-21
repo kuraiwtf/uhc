@@ -16,7 +16,7 @@ public final class LogoutItem extends CustomItem {
   private static final String IDENTIFIER = "logout";
 
   public LogoutItem() {
-    super(IDENTIFIER, false, false);
+    super(IDENTIFIER, 8, false, false);
   }
 
   @Override

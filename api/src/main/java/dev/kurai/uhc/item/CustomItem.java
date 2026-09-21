@@ -9,11 +9,19 @@ import org.bukkit.inventory.ItemStack;
 public abstract class CustomItem {
 
   private final String identifier;
+
+  private final int slot;
+
   private final boolean hostOnly;
   private final boolean spectatorOnly;
 
-  public CustomItem(final String identifier, final boolean hostOnly, final boolean spectatorOnly) {
+  public CustomItem(
+      final String identifier,
+      final int slot,
+      final boolean hostOnly,
+      final boolean spectatorOnly) {
     this.identifier = identifier;
+    this.slot = slot;
     this.hostOnly = hostOnly;
     this.spectatorOnly = spectatorOnly;
   }
@@ -28,6 +36,10 @@ public abstract class CustomItem {
 
   public final String getIdentifier() {
     return this.identifier;
+  }
+
+  public final int getSlot() {
+    return this.slot;
   }
 
   public final boolean isHostOnly() {

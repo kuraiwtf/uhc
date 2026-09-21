@@ -18,7 +18,7 @@ public final class JumpItem extends CustomItem {
   private static final String IDENTIFIER = "jump";
 
   public JumpItem() {
-    super(IDENTIFIER, false, false);
+    super(IDENTIFIER, 7, false, false);
   }
 
   @Override

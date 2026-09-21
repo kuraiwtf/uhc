@@ -21,7 +21,7 @@ public final class ScenarioItem extends CustomItem {
   private final UltraHardcoreAPI ultraHardcore;
 
   public ScenarioItem(final UltraHardcoreAPI ultraHardcore) {
-    super(IDENTIFIER, false, false);
+    super(IDENTIFIER, 0, false, false);
     this.ultraHardcore = ultraHardcore;
   }
 
