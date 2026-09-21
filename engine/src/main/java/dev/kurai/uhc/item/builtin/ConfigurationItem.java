@@ -21,7 +21,7 @@ public final class ConfigurationItem extends CustomItem {
   private final UltraHardcoreAPI ultraHardcore;
 
   public ConfigurationItem(final UltraHardcoreAPI ultraHardcore) {
-    super(IDENTIFIER, true, false);
+    super(IDENTIFIER, 4, true, false);
     this.ultraHardcore = ultraHardcore;
   }
 
