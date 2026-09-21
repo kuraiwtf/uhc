@@ -117,11 +117,18 @@ public final class DeathServiceImpl implements DeathService {
   @Override
   public void eliminate(
       final Profile profile, final @Nullable Profile killer, final boolean offline) {
+    final PlayerInformationComponent component =
+        profile.getComponent(PlayerInformationComponent.class);
+    if (component == null) {
+      return;
+    }
+
     profile.executeAction(
         player -> {
           player.spigot().respawn();
           player.setGameMode(GameMode.SPECTATOR);
-          player.teleport(this.ultraHardcore.worldService().getWorld().getSpawnLocation());
+          player.teleport(component.lastLocation());
+
           final PlayerInventory inventory = player.getInventory();
           inventory.setContents(new ItemStack[36]);
           inventory.setArmorContents(new ItemStack[4]);
@@ -132,12 +139,6 @@ public final class DeathServiceImpl implements DeathService {
         });
 
     Bukkit.getPluginManager().callEvent(new GameDeathEvent(killer, profile));
-
-    final PlayerInformationComponent component =
-        profile.getComponent(PlayerInformationComponent.class);
-    if (component == null) {
-      return;
-    }
 
     final Location location = component.lastLocation();
     final List<UUID> droppedItems = Lists.newArrayList();
