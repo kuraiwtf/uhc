@@ -86,6 +86,8 @@ public final class CutCleanScenario extends AbstractScenario implements Listener
     if (miningComponent != null && this.isOreLimitReached(blockType, miningComponent)) {
       if (blockType == DIAMOND_ORE) {
         player.getInventory().addItem(new ItemStack(GOLD_INGOT, 2));
+        event.setExpToDrop(0);
+        player.giveExp(ThreadLocalRandom.current().nextInt(2, 6));
       }
 
       event.getBlock().setType(AIR);

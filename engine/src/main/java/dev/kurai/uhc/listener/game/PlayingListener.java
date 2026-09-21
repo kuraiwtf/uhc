@@ -27,6 +27,7 @@ import dev.kurai.uhc.util.TimeUtil;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Map;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Consumer;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -392,8 +393,9 @@ public final class PlayingListener implements Listener {
       return;
     }
 
+    final Player player = event.getPlayer();
     final var profile =
-        this.ultraHardcore.profileService().getOrCreateProfile(event.getPlayer().getUniqueId());
+        this.ultraHardcore.profileService().getOrCreateProfile(player.getUniqueId());
     if (profile == null) {
       return;
     }
@@ -421,7 +423,9 @@ public final class PlayingListener implements Listener {
 
     if (limitReached) {
       if (blockType == DIAMOND_ORE) {
-        event.getPlayer().getInventory().addItem(new ItemStack(Material.GOLD_INGOT, 2));
+        player.getInventory().addItem(new ItemStack(Material.GOLD_INGOT, 2));
+        event.setExpToDrop(0);
+        player.giveExp(ThreadLocalRandom.current().nextInt(2, 6));
       }
 
       event.getBlock().setType(AIR);
