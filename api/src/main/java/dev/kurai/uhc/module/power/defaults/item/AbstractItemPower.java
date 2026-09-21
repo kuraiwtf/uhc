@@ -1,6 +1,5 @@
 package dev.kurai.uhc.module.power.defaults.item;
 
-import com.google.common.collect.Lists;
 import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.module.power.AbstractPower;
 import dev.kurai.uhc.module.power.restriction.defaults.CooldownPowerRestriction;
@@ -25,20 +24,12 @@ public abstract class AbstractItemPower extends AbstractPower {
   public abstract ItemStack provideIcon(final Player player);
 
   public ItemStack getIcon(final Player player) {
-    final var lore = Lists.<String>newArrayList();
-    lore.add("");
-    lore.addAll(this.lore());
-    lore.add("");
-
-    return new ItemBuilder(this.provideIcon(player))
-        .name("&8&l»%s &l%s&8 &l«".formatted(this.getColor().asBukkitColor(), this.name))
-        .lore(lore)
-        .tag(NBT_TAG, this.identifier)
-        .lunarTag("glint", this.provideGlint(player))
+    return new ItemBuilder(this.ultraHardcore.powerService().provideIcon(this, player))
+        .tag(NBT_TAG, this.getId())
         .asItemStack();
   }
 
-  private Object provideGlint(final Player player) {
+  public Object provideGlint(final Player player) {
     final CooldownPowerRestriction cooldown =
         this.findRestriction(CooldownPowerRestriction.class, "cooldown");
     if (cooldown != null && cooldown.restrictsPower(this, player)) {
