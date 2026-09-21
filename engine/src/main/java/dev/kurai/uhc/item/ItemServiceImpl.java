@@ -22,6 +22,8 @@ public final class ItemServiceImpl implements ItemService {
     this.registerItem(new ConfigurationItem(ultraHardcore));
     this.registerItem(new JumpItem());
     this.registerItem(new LogoutItem());
+
+    this.registerItem(new PlayerSpectatorItem());
   }
 
   @Override
