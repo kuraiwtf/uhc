@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.17.1](https://github.com/kuraiwtf/uhc/compare/v1.17.0...v1.17.1) (2026-09-22)
+
+
+### Code Refactoring
+
+* replace WaitingItem registration with standard item registration and update MumbleItem constructor with slot parameter ([7a35be2](https://github.com/kuraiwtf/uhc/commit/7a35be2369c44b3b8362ac5f65735e5b1407e131))
+
 ## [1.17.0](https://github.com/kuraiwtf/uhc/compare/v1.16.0...v1.17.0) (2026-09-21)
 
 
