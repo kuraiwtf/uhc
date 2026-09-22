@@ -33,8 +33,7 @@ public final class MumbleExtension {
       final EventService eventService = this.ultraHardcore.eventService();
       eventService.registerListeners(new PlayerJoinListener(this), new GameListener(this));
 
-      this.ultraHardcore.itemService().registerWaitingItem(1, new MumbleItem(this));
-
+      this.ultraHardcore.itemService().registerItem(new MumbleItem(this));
       this.initialized = true;
     }
   }

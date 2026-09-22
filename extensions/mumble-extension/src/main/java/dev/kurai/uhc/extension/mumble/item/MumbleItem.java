@@ -19,7 +19,7 @@ public final class MumbleItem extends CustomItem {
   private final MumbleExtension extension;
 
   public MumbleItem(final MumbleExtension extension) {
-    super("mumble", false, false);
+    super("mumble", 2, false, false);
     this.extension = extension;
   }
 
