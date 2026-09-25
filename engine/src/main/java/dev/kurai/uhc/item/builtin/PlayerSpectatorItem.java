@@ -5,6 +5,7 @@ import dev.kurai.uhc.util.CC;
 import dev.kurai.uhc.util.ItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
 public final class PlayerSpectatorItem extends CustomItem {
@@ -20,5 +21,11 @@ public final class PlayerSpectatorItem extends CustomItem {
         .lore("", "&7" + CC.BAR + "&f Permet de voir les joueurs de la partie.", "")
         .glowing(true)
         .asItemStack();
+  }
+
+  @Override
+  public void onInventoryClick(final Player player, final InventoryClickEvent event) {
+    event.setCancelled(true);
+    // todo: spectator list menu, maybe module-specific?
   }
 }

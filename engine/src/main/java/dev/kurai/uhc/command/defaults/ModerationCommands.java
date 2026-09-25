@@ -27,11 +27,7 @@ public final class ModerationCommands {
     this.ultraHardcore = ultraHardcore;
   }
 
-  @Command(
-      @CommandMeta(
-          name = "invsee",
-          description = "Voir l'inventaire d'un joueur",
-          permission = "uhc.command.invsee"))
+  @Command(@CommandMeta(name = "invsee", description = "Voir l'inventaire d'un joueur"))
   public void inventorySee(final Player player, final @Argument(name = "joueur") Player target) {
     final HostService hostService = this.ultraHardcore.gameService().hostService();
     final ProfileService profileService = this.ultraHardcore.profileService();
@@ -44,11 +40,7 @@ public final class ModerationCommands {
     new InventoryViewMenu(player, target, profileService.getOrCreateProfile(target)).open();
   }
 
-  @Command(
-      @CommandMeta(
-          name = "topluck",
-          description = "Voir le classement des minerais",
-          permission = "uhc.command.topluck"))
+  @Command(@CommandMeta(name = "topluck", description = "Voir le classement des minerais"))
   public void topLuck(final Player player) {
     final HostService hostService = this.ultraHardcore.gameService().hostService();
     final ProfileService profileService = this.ultraHardcore.profileService();
@@ -67,9 +59,9 @@ public final class ModerationCommands {
     new TopLuckMenu(player, profileService, TopLuckMenu.Sorting.DIAMOND).open();
   }
 
-  @Command(@CommandMeta(name = "list", permission = "uhc.command.list"))
+  @Command(@CommandMeta(name = "list"))
   public void list(final Player player) {
-    if (!this.ultraHardcore.gameService().hostService().isHost(player)) {
+    if (!player.isOp()) {
       player.sendMessage(CC.MISSING_PERMISSION);
       return;
     }
@@ -77,10 +69,10 @@ public final class ModerationCommands {
     new PlayerListMenu(player, this.ultraHardcore.profileService()).open();
   }
 
-  @Command(@CommandMeta(name = "resetcd", permission = "uhc.command.dev.resetcd"))
+  @Command(@CommandMeta(name = "resetcd"))
   public void resetCooldown(
       final Player player, final @Argument(name = "joueur", defaultValue = "self") Player target) {
-    if (!this.ultraHardcore.gameService().hostService().isHost(player)) {
+    if (!this.ultraHardcore.gameService().hostService().isHost(player) || !player.isOp()) {
       player.sendMessage(CC.MISSING_PERMISSION);
       return;
     }

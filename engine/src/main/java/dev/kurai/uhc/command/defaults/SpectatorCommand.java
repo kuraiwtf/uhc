@@ -1,5 +1,7 @@
 package dev.kurai.uhc.command.defaults;
 
+import static dev.kurai.uhc.util.CC.MISSING_PERMISSION;
+
 import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.command.annotation.Command;
 import dev.kurai.uhc.command.annotation.CommandMeta;
@@ -15,14 +17,14 @@ import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 
 @RequiredArgsConstructor
-@Command(@CommandMeta(name = "spectator", aliases = "spec", permission = "uhc.command.spectator"))
+@Command(@CommandMeta(name = "spectator", aliases = "spec"))
 public final class SpectatorCommand {
 
   private static final Class<? extends Component> SPECTATOR_COMPONENT = SpectatorComponent.class;
 
   private final UltraHardcoreAPI ultraHardcore;
 
-  @SubCommand(@CommandMeta(name = "list", permission = "uhc.command.spectator.list"))
+  @SubCommand(@CommandMeta(name = "list"))
   public void list(final Player player) {
     final var spectators =
         this.ultraHardcore
@@ -43,6 +45,11 @@ public final class SpectatorCommand {
   @SubCommand(@CommandMeta(name = "add", permission = "uhc.command.spectator.add"))
   public void add(final Player player, final @Argument(name = "joueur") Player target) {
     final GameService gameService = this.ultraHardcore.gameService();
+    if (!gameService.hostService().hasHostAccess(player)) {
+      player.sendMessage(MISSING_PERMISSION);
+      return;
+    }
+
     if (gameService.startTime() > 0L) {
       player.sendMessage(
           CC.prefix("&cVous ne pouvez pas ajouter de spectateur pendant la partie."));
@@ -67,6 +74,11 @@ public final class SpectatorCommand {
   @SubCommand(@CommandMeta(name = "remove", permission = "uhc.command.spectator.remove"))
   public void remove(final Player player, final @Argument(name = "joueur") Player target) {
     final GameService gameService = this.ultraHardcore.gameService();
+    if (!gameService.hostService().hasHostAccess(player)) {
+      player.sendMessage(MISSING_PERMISSION);
+      return;
+    }
+
     if (gameService.startTime() > 0L) {
       player.sendMessage(
           CC.prefix("&cVous ne pouvez pas retirer de spectateur pendant la partie."));

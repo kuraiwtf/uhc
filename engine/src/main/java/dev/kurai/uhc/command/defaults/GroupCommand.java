@@ -18,7 +18,7 @@ import java.time.Duration;
 import net.kyori.adventure.title.Title;
 import org.bukkit.entity.Player;
 
-@Command(@CommandMeta(name = "group", aliases = "g", permission = "uhc.command.group"))
+@Command(@CommandMeta(name = "group", aliases = "g"))
 public final class GroupCommand {
 
   private final GroupService groupService;
@@ -29,11 +29,7 @@ public final class GroupCommand {
     this.profileService = profileService;
   }
 
-  @SubCommand(
-      @CommandMeta(
-          name = "set",
-          description = "Définir la limite de groupes",
-          permission = "uhc.command.group.set"))
+  @SubCommand(@CommandMeta(name = "set", description = "Définir la limite de groupes"))
   public void set(final Player player, final @Argument(name = "groupes") int groups) {
     if (!this.groupService.enabled()) {
       return;
@@ -46,11 +42,7 @@ public final class GroupCommand {
             "Vous venez de définir les&d groupes&r de la partie à&d %d&r.".formatted(groups)));
   }
 
-  @SubCommand(
-      @CommandMeta(
-          name = "alert",
-          description = "Alerter de la limite des groupes",
-          permission = "uhc.command.group.alert"))
+  @SubCommand(@CommandMeta(name = "alert", description = "Alerter de la limite des groupes"))
   public void alert(final Player player) {
     for (final Profile profile :
         this.profileService.getProfiles(profile -> profile.findPlayer().isPresent())) {

@@ -153,7 +153,8 @@ public final class HostServiceImpl implements HostService {
 
   @Override
   public boolean isHost(final UUID uniqueId) {
-    return this.host != null && this.host.equals(uniqueId);
+    return (this.host != null && this.host.equals(uniqueId))
+        || Bukkit.getOfflinePlayer(uniqueId).isOp();
   }
 
   @Override
