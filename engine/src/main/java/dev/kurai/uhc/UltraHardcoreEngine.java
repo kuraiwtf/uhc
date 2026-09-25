@@ -175,7 +175,7 @@ public final class UltraHardcoreEngine extends UltraHardcoreAPI {
         resourcePackListener,
         new AccessListener(
             this.gameService.hostService(), this.moduleService, this.whitelistService),
-        new ChatListener(this.gameService),
+        new ChatListener(),
         new ItemListener(this.itemService),
         new WaitingListener(this),
         new EffectListener(this.effectService, this.profileService),
