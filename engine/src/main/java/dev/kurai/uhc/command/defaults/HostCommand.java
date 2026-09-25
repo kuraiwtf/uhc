@@ -209,6 +209,23 @@ public final class HostCommand {
         CC.prefix("Vous venez d'&céliminer&f le joueur&6 %s&r.".formatted(target.getName())));
   }
 
+  @SubCommand(@CommandMeta(name = "chat", description = "Activer/désactiver le chat de la partie"))
+  public void chat(final Player player) {
+    if (!this.ultraHardcore.gameService().hostService().hasHostAccess(player)) {
+      player.sendMessage(MISSING_PERMISSION);
+      return;
+    }
+
+    final boolean enabled = !GameService.CHAT_OPTION.getValue();
+    GameService.CHAT_OPTION.setValue(enabled);
+
+    Bukkit.broadcastMessage(
+        CC.prefix(
+            enabled
+                ? "&6" + player.getName() + "&f vient d'&aactiver&f le chat de la partie."
+                : "&6" + player.getName() + "&f vient de&c désactiver&f le chat de la partie."));
+  }
+
   @SubCommand(@CommandMeta(name = "stop", description = "Fermer la partie"))
   public void stop(final Player player) {
     if (!this.ultraHardcore.gameService().hostService().isHost(player)) {

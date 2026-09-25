@@ -30,7 +30,7 @@ public final class LoggerServiceImpl implements LoggerService {
                 text(content)
                     .clickEvent(
                         ClickEvent.runCommand(
-                            "tp "
+                            "/tp "
                                 + location.getX()
                                 + " "
                                 + location.getY()

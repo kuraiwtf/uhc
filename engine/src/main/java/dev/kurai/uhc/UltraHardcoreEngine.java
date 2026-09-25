@@ -27,6 +27,7 @@ import dev.kurai.uhc.helpop.HelpOpServiceImpl;
 import dev.kurai.uhc.item.ItemService;
 import dev.kurai.uhc.item.ItemServiceImpl;
 import dev.kurai.uhc.listener.AccessListener;
+import dev.kurai.uhc.listener.ChatListener;
 import dev.kurai.uhc.listener.FixListener;
 import dev.kurai.uhc.listener.ItemListener;
 import dev.kurai.uhc.listener.game.ResourcePackListener;
@@ -174,6 +175,7 @@ public final class UltraHardcoreEngine extends UltraHardcoreAPI {
         resourcePackListener,
         new AccessListener(
             this.gameService.hostService(), this.moduleService, this.whitelistService),
+        new ChatListener(this.gameService),
         new ItemListener(this.itemService),
         new WaitingListener(this),
         new EffectListener(this.effectService, this.profileService),

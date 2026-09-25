@@ -27,6 +27,8 @@ public interface GameService extends ForwardingAudience {
 
   Option<Boolean> WHITELIST_OPTION = option(key("whitelist"), true);
 
+  Option<Boolean> CHAT_OPTION = option(key("chat"), true);
+
   long startTime();
 
   void startTime(final @Range(from = 0L, to = Long.MAX_VALUE) long startTime);
