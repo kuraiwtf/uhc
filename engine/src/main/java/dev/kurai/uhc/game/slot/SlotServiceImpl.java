@@ -1,6 +1,6 @@
 package dev.kurai.uhc.game.slot;
 
-import static dev.kurai.uhc.util.api.option.Option.positiveNumberOption;
+import static dev.kurai.uhc.util.api.option.Option.rangedOption;
 import static net.kyori.adventure.key.Key.key;
 
 import dev.kurai.uhc.game.slot.impl.MutableSlotProvider;
@@ -12,7 +12,7 @@ import lombok.Setter;
 @Setter
 public final class SlotServiceImpl implements SlotService {
 
-  private static final Option<Integer> SLOTS_OPTION = positiveNumberOption(key("slots"), 20);
+  private static final Option<Integer> SLOTS_OPTION = rangedOption(key("slots"), 1, 500, 20);
 
   private SlotProvider slotProvider;
 
