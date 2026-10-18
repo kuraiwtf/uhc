@@ -133,7 +133,7 @@ public final class ItemBuilder {
   }
 
   public ItemBuilder amount(final int amount) {
-    this.itemStack.setAmount(amount);
+    this.itemStack.setAmount(Math.min(amount, 64));
     return this;
   }
 
