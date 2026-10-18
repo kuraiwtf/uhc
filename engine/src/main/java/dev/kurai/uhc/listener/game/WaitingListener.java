@@ -8,6 +8,7 @@ import dev.kurai.uhc.ecs.component.defaults.NameComponent;
 import dev.kurai.uhc.event.defaults.game.GameStartEvent;
 import dev.kurai.uhc.event.defaults.host.HostAccessUpdateEvent;
 import dev.kurai.uhc.item.CustomItem;
+import dev.kurai.uhc.util.SpectatorVisibility;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -87,6 +88,8 @@ public final class WaitingListener implements Listener {
         this.setItem(player, item.getSlot(), item.getClass());
       }
     }
+
+    SpectatorVisibility.refresh(this.ultraHardcore);
   }
 
   @EventHandler
@@ -132,7 +135,7 @@ public final class WaitingListener implements Listener {
   @EventHandler
   public void onPlayerMove(final PlayerMoveEvent event) {
     final var player = event.getPlayer();
-    if (player.getLocation().getBlockY() > 160) {
+    if (player.getLocation().getBlockY() > 0) {
       return;
     }
 

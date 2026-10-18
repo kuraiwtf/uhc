@@ -12,6 +12,7 @@ import dev.kurai.uhc.game.GameService;
 import dev.kurai.uhc.profile.Profile;
 import dev.kurai.uhc.profile.component.SpectatorComponent;
 import dev.kurai.uhc.util.CC;
+import dev.kurai.uhc.util.SpectatorVisibility;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
@@ -65,6 +66,7 @@ public final class SpectatorCommand {
 
     profile.addComponent(new SpectatorComponent());
     target.setGameMode(GameMode.SPECTATOR);
+    SpectatorVisibility.refresh(this.ultraHardcore);
     player.sendMessage(
         CC.prefix(
             "Vous venez d'&aajouter&f le joueur&6 %s&r en tant que&d spectateur&r."
@@ -95,6 +97,7 @@ public final class SpectatorCommand {
     profile.removeComponent(SPECTATOR_COMPONENT);
     target.setGameMode(GameMode.SURVIVAL);
     target.teleport(this.ultraHardcore.spawnLocation());
+    SpectatorVisibility.refresh(this.ultraHardcore);
     player.sendMessage(
         CC.prefix(
             "Vous venez de&c retirer&f le joueur&6 %s&r de la liste des&d spectateurs&r."

@@ -5,6 +5,7 @@ import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.profile.Profile;
 import dev.kurai.uhc.profile.component.SpectatorComponent;
 import dev.kurai.uhc.util.CC;
+import dev.kurai.uhc.util.SpectatorVisibility;
 import dev.kurai.uhc.whitelist.WhitelistService;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -93,6 +94,8 @@ public final class HostMCWhitelistProviderTask extends BukkitRunnable {
             profile.removeComponent(SpectatorComponent.class);
           }
         }
+
+        SpectatorVisibility.refresh(this.ultraHardcore);
       }
       connection.disconnect();
     } catch (final Exception e) {

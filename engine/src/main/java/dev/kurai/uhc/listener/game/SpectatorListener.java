@@ -86,9 +86,15 @@ public final class SpectatorListener implements Listener {
 
   @EventHandler
   public void onCommand(final PlayerCommandPreprocessEvent event) {
+    final Player player = event.getPlayer();
+    final Profile profile =
+        this.ultraHardcore.profileService().getOrCreateProfile(player.getUniqueId());
+    if (profile.hasComponent(SPECTATOR_COMPONENT)) {
+      return;
+    }
+
     final String content = event.getMessage();
     if (content.startsWith("/")) {
-      final Player player = event.getPlayer();
       this.ultraHardcore
           .loggerService()
           .broadcastSpectator(

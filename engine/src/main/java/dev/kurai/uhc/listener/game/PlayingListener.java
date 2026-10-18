@@ -14,6 +14,7 @@ import dev.kurai.uhc.event.defaults.game.GameTickEvent;
 import dev.kurai.uhc.event.defaults.player.PlayerDamageByPlayerEvent;
 import dev.kurai.uhc.game.configuration.ore.OreConfiguration;
 import dev.kurai.uhc.game.death.DeathContext;
+import dev.kurai.uhc.logger.LogCategories;
 import dev.kurai.uhc.game.rule.GameRuleService;
 import dev.kurai.uhc.menu.rules.ore.OreType;
 import dev.kurai.uhc.menu.spectator.InventoryViewMenu;
@@ -23,6 +24,7 @@ import dev.kurai.uhc.profile.component.*;
 import dev.kurai.uhc.profile.state.PlayingProfileState;
 import dev.kurai.uhc.util.CC;
 import dev.kurai.uhc.util.SitUtil;
+import dev.kurai.uhc.util.SpectatorVisibility;
 import dev.kurai.uhc.util.TimeUtil;
 import java.time.Duration;
 import java.time.Instant;
@@ -111,8 +113,11 @@ public final class PlayingListener implements Listener {
     if (!(profile.getState() instanceof PlayingProfileState)) {
       player.teleport(this.ultraHardcore.worldService().getWorld().getSpawnLocation());
       player.setGameMode(GameMode.SPECTATOR);
+      SpectatorVisibility.refresh(this.ultraHardcore);
       return;
     }
+
+    SpectatorVisibility.refresh(this.ultraHardcore);
 
     this.ultraHardcore
         .gameService()
@@ -433,6 +438,21 @@ public final class PlayingListener implements Listener {
     }
 
     MINING_STATISTICS.get(blockType).accept(miningComponent);
+
+    if (blockType == GOLD_ORE || blockType == DIAMOND_ORE) {
+      this.ultraHardcore
+          .loggerService()
+          .broadcastSpectator(
+              LogCategories.ORE_MINING,
+              "§6"
+                  + player.getName()
+                  + "§f vient de miner §6"
+                  + (blockType == GOLD_ORE ? "de l'or" : "du diamant")
+                  + "§f (§6"
+                  + this.getMinedAmount(miningComponent, blockType)
+                  + "§f au total).",
+              block.getLocation());
+    }
 
     final var oreName = ORE_NAMES.get(blockType);
     if (oreName != null) {

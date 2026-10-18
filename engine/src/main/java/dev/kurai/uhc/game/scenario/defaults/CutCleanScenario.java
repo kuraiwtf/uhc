@@ -12,6 +12,7 @@ import dev.kurai.uhc.adventure.UltraHardcoreKey;
 import dev.kurai.uhc.game.configuration.ore.OreConfiguration;
 import dev.kurai.uhc.game.scenario.AbstractScenario;
 import dev.kurai.uhc.game.scenario.ScenarioCategory;
+import dev.kurai.uhc.logger.LogCategories;
 import dev.kurai.uhc.profile.Profile;
 import dev.kurai.uhc.profile.component.ProfileMiningComponent;
 import java.time.Duration;
@@ -97,6 +98,23 @@ public final class CutCleanScenario extends AbstractScenario implements Listener
     if (miningComponent != null) {
       this.incrementMined(blockType, miningComponent);
       this.sendLimitActionbar(profile, blockType, miningComponent);
+
+      if (blockType == GOLD_ORE || blockType == DIAMOND_ORE) {
+        this.ultraHardcore
+            .loggerService()
+            .broadcastSpectator(
+                LogCategories.ORE_MINING,
+                "§6"
+                    + player.getName()
+                    + "§f vient de miner §6"
+                    + (blockType == GOLD_ORE ? "de l'or" : "du diamant")
+                    + "§f (§6"
+                    + (blockType == GOLD_ORE
+                        ? miningComponent.getGoldMined()
+                        : miningComponent.getDiamondMined())
+                    + "§f au total).",
+                block.getLocation());
+      }
     }
 
     final var smeltedMaterial = ALLOWED_MATERIALS.get(blockType);

@@ -6,6 +6,7 @@ import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.manager.player.PlayerManager;
 import com.github.retrooper.packetevents.protocol.player.User;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerTeams;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import dev.kurai.uhc.util.Color;
@@ -28,12 +29,14 @@ final class NicknameHolderImpl implements NicknameHolder {
   private final NicknameService nicknameService;
   private final Map<UUID, Color> appliedColors;
   private final Set<String> createdTeams;
+  private final Map<UUID, Nickname> overlays;
 
   NicknameHolderImpl(final UUID ownerId, final NicknameService nicknameService) {
     this.ownerId = ownerId;
     this.nicknameService = nicknameService;
     this.appliedColors = Maps.newHashMap();
     this.createdTeams = Sets.newHashSet();
+    this.overlays = Maps.newHashMap();
   }
 
   void resetKnownTeams() {
@@ -144,59 +147,79 @@ final class NicknameHolderImpl implements NicknameHolder {
       NicknameHolderImpl.this.appliedColors.put(this.targetId, color);
     }
 
+    private Nickname overlay() {
+      return NicknameHolderImpl.this.overlays.computeIfAbsent(
+          this.targetId, id -> new NicknameImpl(this.base.getColor()));
+    }
+
     @Override
     public Set<NicknameStyle> getDecorations() {
-      return this.base.getDecorations();
+      final Set<NicknameStyle> merged = Sets.newHashSet(this.base.getDecorations());
+      merged.addAll(this.overlay().getDecorations());
+      return merged;
     }
 
     @Override
     public void addStyle(final NicknameStyle style) {
-      this.base.addStyle(style);
+      this.overlay().addStyle(style);
     }
 
     @Override
     public void removeStyle(final NicknameStyle style) {
-      this.base.removeStyle(style);
+      this.overlay().removeStyle(style);
     }
 
     @Override
     public String getGroup() {
-      return this.base.getGroup();
+      final String own = this.overlay().getGroup();
+      return own != null ? own : this.base.getGroup();
     }
 
     @Override
     public void setGroup(final String group) {
-      this.base.setGroup(group);
+      this.overlay().setGroup(group);
     }
 
     @Override
     public List<NicknameValue> getValues() {
-      return this.base.getValues();
+      final List<NicknameValue> merged = Lists.newArrayList(this.base.getValues());
+      merged.addAll(this.overlay().getValues());
+      return merged;
     }
 
     @Override
     public void addValue(final NicknameValue value) {
-      this.base.addValue(value);
+      this.overlay().addValue(value);
     }
 
     @Override
     public void removeValue(final String id) {
-      this.base.removeValue(id);
+      this.overlay().removeValue(id);
     }
 
     @Override
     public void clearValues(final NicknameValueType type) {
-      this.base.clearValues(type);
+      this.overlay().clearValues(type);
     }
 
     @Override
     public Component getPrefix() {
-      return this.base.getPrefix();
+      return this.join(NicknameValueType.PREFIX);
     }
 
     @Override
     public Component getSuffix() {
-      return this.base.getSuffix();
+      return this.join(NicknameValueType.SUFFIX);
+    }
+
+    private Component join(final NicknameValueType type) {
+      Component component = Component.empty();
+      for (final NicknameValue value : this.getValues()) {
+        if (value.type() == type) {
+          component = component.append(value.value());
+        }
+      }
+      return component;
     }
 
     @Override
