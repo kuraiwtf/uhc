@@ -1,7 +1,5 @@
 package dev.kurai.uhc.effect;
 
-import static org.bukkit.event.entity.EntityDamageEvent.DamageModifier.RESISTANCE;
-
 import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.manager.player.PlayerManager;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityEffect;
@@ -9,8 +7,6 @@ import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerRe
 import dev.kurai.uhc.effect.component.EffectHoldingComponent;
 import dev.kurai.uhc.effect.event.EffectPostAddEvent;
 import dev.kurai.uhc.effect.event.EffectPostRemoveEvent;
-import dev.kurai.uhc.effect.event.ResistanceApplyEvent;
-import dev.kurai.uhc.effect.event.StrengthApplyEvent;
 import dev.kurai.uhc.profile.Profile;
 import dev.kurai.uhc.profile.ProfileService;
 import java.util.UUID;
@@ -71,6 +67,10 @@ public final class EffectListener implements Listener {
 
   @EventHandler
   public void onTeleport(final PlayerTeleportEvent event) {
+    if (event.getFrom().getWorld().getName().equals(event.getTo().getWorld().getName())) {
+      return;
+    }
+
     final UUID uniqueId = event.getPlayer().getUniqueId();
     this.validateSpeed(uniqueId);
 
@@ -126,53 +126,30 @@ public final class EffectListener implements Listener {
   }
 
   @EventHandler(priority = EventPriority.LOWEST)
-  public void onStrength(final EntityDamageByEntityEvent event) {
+  public void applyDamage(final EntityDamageByEntityEvent event) {
     if (!(event.getDamager() instanceof final Player damager)
         || !(event.getEntity() instanceof final Player victim)) {
       return;
     }
 
-    final Profile profile = this.profileService.getOrCreateProfile(damager.getUniqueId());
-    final EffectHolder effectHolder = profile.getComponent(EffectHoldingComponent.class).holder();
-    final double strengthPercent = effectHolder.getEffectValue(EffectType.STRENGTH);
-    if (strengthPercent == 0.0) {
-      return;
-    }
+    final Profile victimProfile = this.profileService.getOrCreateProfile(victim.getUniqueId());
+    final Profile damagerProfile = this.profileService.getOrCreateProfile(damager.getUniqueId());
 
-    final StrengthApplyEvent applyEvent = new StrengthApplyEvent(damager, victim, strengthPercent);
-    Bukkit.getPluginManager().callEvent(applyEvent);
-    if (applyEvent.isCancelled()) {
-      return;
-    }
+    final EffectHolder victimEffectHolder =
+        victimProfile.getComponent(EffectHoldingComponent.class).holder();
+    final EffectHolder damagerEffectHolder =
+        damagerProfile.getComponent(EffectHoldingComponent.class).holder();
 
-    final double multiplier = Math.max(0.0, 1 + applyEvent.strengthValue());
-    event.setDamage(event.getDamage() * multiplier);
+    event.setDamage(
+        this.damageFormula(
+            event.getDamage(),
+            victimEffectHolder.getEffectValue(EffectType.STRENGTH),
+            damagerEffectHolder.getEffectValue(EffectType.RESISTANCE)));
   }
 
-  @EventHandler(priority = EventPriority.NORMAL)
-  public void onResistance(final EntityDamageByEntityEvent event) {
-    if (!(event.getDamager() instanceof final Player damager)
-        || !(event.getEntity() instanceof final Player victim)) {
-      return;
-    }
-
-    final Profile profile = this.profileService.getOrCreateProfile(victim.getUniqueId());
-    final EffectHolder effectHolder = profile.getComponent(EffectHoldingComponent.class).holder();
-    final double resistancePercent = effectHolder.getEffectValue(EffectType.RESISTANCE);
-    if (resistancePercent == 0.0) {
-      return;
-    }
-
-    final ResistanceApplyEvent applyEvent =
-        new ResistanceApplyEvent(damager, victim, resistancePercent);
-    Bukkit.getPluginManager().callEvent(applyEvent);
-    if (applyEvent.isCancelled()) {
-      return;
-    }
-
-    final double currentDamage = event.getFinalDamage();
-    final double reduction = currentDamage * Math.min(applyEvent.resistanceValue(), 1.0);
-    event.setDamage(RESISTANCE, -reduction);
+  private double damageFormula(
+      final double baseDamage, final double strengthValue, final double resistanceValue) {
+    return baseDamage * (1 + strengthValue) * (1 - resistanceValue);
   }
 
   private void validateSpeed(final UUID uniqueId) {
@@ -181,6 +158,8 @@ public final class EffectListener implements Listener {
     final EffectHolder effectHolder = profile.getComponent(EffectHoldingComponent.class).holder();
     final double totalPercent = effectHolder.getEffectValue(EffectType.SPEED);
     final float newSpeed = (float) Math.clamp(0.2f * (1 + totalPercent), 0.0, 1.0);
-    player.setWalkSpeed(newSpeed);
+    if (player.getWalkSpeed() != newSpeed) {
+      player.setWalkSpeed(newSpeed);
+    }
   }
 }
