@@ -5,6 +5,8 @@ import dev.kurai.uhc.profile.ProfileService;
 import java.util.Set;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.plugin.Plugin;
 
 public final class WorldServiceImpl implements WorldService {
@@ -40,6 +42,13 @@ public final class WorldServiceImpl implements WorldService {
   @Override
   public void preload(final World world, final int radius) {
     if (this.preloadedWorlds.add(world.getName())) {
+      for (final Entity entity : world.getEntities()) {
+        if (entity.getType() != EntityType.PLAYER) {
+          entity.remove();
+        }
+      }
+
+      world.setGameRuleValue("doMobSpawning", "false");
       new WorldPreloadTask(this.profileService, world, radius).runTaskTimer(this.plugin, 0, 1L);
     }
   }

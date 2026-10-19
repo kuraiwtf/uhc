@@ -88,6 +88,7 @@ public final class WorldPreloadTask extends BukkitRunnable {
                   .formatted(formatDuration(between(this.start, now()).toMillis())));
         }
 
+        this.world.setGameRuleValue("doMobSpawning", "true");
         this.cancel();
         return;
       }
