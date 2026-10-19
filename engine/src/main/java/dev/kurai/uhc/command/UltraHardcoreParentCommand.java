@@ -24,8 +24,13 @@ import org.bukkit.entity.Player;
 public final class UltraHardcoreParentCommand extends Command {
 
   private final BukkitAudiences bukkitAudiences;
+
   private final CommandRegistrar commandRegistrar;
+
+  private final CommandMeta commandMeta;
+
   private final List<SubCommandData> subCommands;
+
   private final HelpCommand helpCommand;
 
   public UltraHardcoreParentCommand(
@@ -39,11 +44,16 @@ public final class UltraHardcoreParentCommand extends Command {
         "/" + meta.name() + " help",
         Arrays.asList(meta.aliases()));
     this.bukkitAudiences = bukkitAudiences;
+
     this.commandRegistrar = commandRegistrar;
+
+    this.commandMeta = meta;
+
     this.subCommands =
         subCommands.stream()
             .sorted(Comparator.comparing(subCommandData -> subCommandData.commandMeta().name()))
             .toList();
+
     this.helpCommand = new HelpCommand(this);
   }
 
@@ -54,6 +64,12 @@ public final class UltraHardcoreParentCommand extends Command {
   @Override
   public boolean execute(
       final CommandSender sender, final String commandLabel, final String[] args) {
+    final PermissionProvider permissionProvider = this.commandRegistrar.getPermissionProvider();
+    if (!permissionProvider.hasPermission(sender, this.commandMeta.permission())) {
+      sender.sendMessage(prefix("&cVous n'avez pas la permission d'utiliser cette commande."));
+      return false;
+    }
+
     final var audience = this.bukkitAudiences.sender(sender);
     if (args.length < 1 || args[0].equalsIgnoreCase("help")) {
       final int page;
@@ -114,15 +130,11 @@ public final class UltraHardcoreParentCommand extends Command {
       return true;
     }
 
-    final String permission = subCommand.commandMeta().permission();
-    if (!permission.isEmpty()
-        && sender instanceof final Player player
-        && !player.hasPermission(permission)) {
-      player.sendMessage(prefix("&cVous n'avez pas la permission d'utiliser cette commande."));
+    if (!permissionProvider.hasPermission(sender, subCommand.commandMeta().permission())) {
+      sender.sendMessage(prefix("&cVous n'avez pas la permission d'utiliser cette commande."));
       return false;
     }
 
-    // Find first array parameter (1-based index; 0 = sender).
     int arrayParamIndex = -1;
     for (var i = 1; i < method.getParameterTypes().length; i++) {
       if (method.getParameterTypes()[i].isArray()) {
@@ -164,7 +176,6 @@ public final class UltraHardcoreParentCommand extends Command {
     final var registrar = this.commandRegistrar.getArgumentResolverRegistrar();
 
     if (arrayParamIndex < 0) {
-      // No array params: one arg per param, sequential.
       for (var i = 1; i < method.getParameters().length; i++) {
         final String rawArg =
             i - 1 < rawArguments.size()
@@ -180,7 +191,6 @@ public final class UltraHardcoreParentCommand extends Command {
         resolvedArguments.add(resolved);
       }
     } else {
-      // Array param present: layout is  [prefix args] [array args…] [suffix args]
       final int prefixCount = arrayParamIndex - 1;
       final int suffixCount = method.getParameters().length - arrayParamIndex - 1;
       final int arrayLength = rawArguments.size() - prefixCount - suffixCount;
@@ -189,7 +199,6 @@ public final class UltraHardcoreParentCommand extends Command {
         final Class<?> type = method.getParameterTypes()[i];
 
         if (i < arrayParamIndex) {
-          // Prefix param: sequential.
           final var resolved = registrar.resolveArgument(type, sender, rawArguments.get(i - 1));
           if (resolved == null) {
             audience.sendMessage(
@@ -199,7 +208,6 @@ public final class UltraHardcoreParentCommand extends Command {
           resolvedArguments.add(resolved);
 
         } else if (i == arrayParamIndex) {
-          // Array param: consume arrayLength args.
           final Class<?> componentType = type.getComponentType();
           final Object array = Array.newInstance(componentType, arrayLength);
           for (var j = 0; j < arrayLength; j++) {
@@ -215,7 +223,6 @@ public final class UltraHardcoreParentCommand extends Command {
           resolvedArguments.add(array);
 
         } else {
-          // Suffix param: counted from the end of rawArguments.
           final int argIndex = rawArguments.size() - (method.getParameters().length - i);
           final var resolved = registrar.resolveArgument(type, sender, rawArguments.get(argIndex));
           if (resolved == null) {
@@ -304,12 +311,9 @@ public final class UltraHardcoreParentCommand extends Command {
       return defaultCompletions;
     }
 
-    // rawArguments = args without the subcommand name; its size mirrors args.length
-    // in the orphan command for index computations.
     final var rawArguments = Lists.newArrayList(args);
     rawArguments.removeFirst();
 
-    // Find first array parameter (1-based index; 0 = sender).
     int arrayParamIndex = -1;
     for (var i = 1; i < method.getParameterTypes().length; i++) {
       if (method.getParameterTypes()[i].isArray()) {
@@ -321,30 +325,22 @@ public final class UltraHardcoreParentCommand extends Command {
     final Class<?> typeToComplete;
 
     if (arrayParamIndex < 0) {
-      // No array: stop once all params are filled.
       if (rawArguments.size() >= method.getParameters().length) {
         return defaultCompletions;
       }
-      // rawArguments.size() == 1 when typing first param → param[1] (skipping sender).
-      typeToComplete = method.getParameterTypes()[rawArguments.size()];
 
+      typeToComplete = method.getParameterTypes()[rawArguments.size()];
     } else {
       final int prefixCount = arrayParamIndex - 1;
       final int suffixCount = method.getParameters().length - arrayParamIndex - 1;
-      final int currentArgIndex = rawArguments.size() - 1; // 0-based index of the arg being typed
+      final int currentArgIndex = rawArguments.size() - 1;
 
       if (currentArgIndex < prefixCount) {
-        // Prefix zone.
         typeToComplete = method.getParameterTypes()[currentArgIndex + 1];
-
       } else if (suffixCount > 0 && rawArguments.size() > prefixCount + suffixCount) {
-        // Suffix zone: once more args than (prefix + suffix) have been typed,
-        // the last suffixCount positions belong to suffix params.
         final int posInSuffix = currentArgIndex - (rawArguments.size() - suffixCount);
         typeToComplete = method.getParameterTypes()[arrayParamIndex + 1 + posInSuffix];
-
       } else {
-        // Array zone: complete with the array's component type.
         typeToComplete = method.getParameterTypes()[arrayParamIndex].getComponentType();
       }
     }

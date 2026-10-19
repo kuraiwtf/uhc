@@ -22,9 +22,14 @@ import org.bukkit.entity.Player;
 public final class UltraHardcoreOrphanCommand extends Command {
 
   private final BukkitAudiences bukkitAudiences;
+
   private final CommandRegistrar commandRegistrar;
+
+  private final CommandMeta commandMeta;
+
   private final Object object;
   private final Method method;
+
   private final List<ArgumentData> arguments;
 
   public UltraHardcoreOrphanCommand(
@@ -36,9 +41,14 @@ public final class UltraHardcoreOrphanCommand extends Command {
       final List<ArgumentData> arguments) {
     super(meta.name(), meta.description(), "/" + meta.name(), Arrays.asList(meta.aliases()));
     this.bukkitAudiences = bukkitAudiences;
+
     this.commandRegistrar = commandRegistrar;
+
+    this.commandMeta = meta;
+
     this.object = object;
     this.method = method;
+
     this.arguments = arguments;
   }
 
@@ -54,7 +64,14 @@ public final class UltraHardcoreOrphanCommand extends Command {
               .appendSpace()
               .append(text("Seul un joueur peut effectuer cette action.", RED))
               .build());
-      return true;
+      return false;
+    }
+
+    if (!this.commandRegistrar
+        .getPermissionProvider()
+        .hasPermission(sender, this.commandMeta.permission())) {
+      sender.sendMessage(prefix("&cVous n'avez pas la permission d'utiliser cette commande."));
+      return false;
     }
 
     int arrayParamIndex = -1;

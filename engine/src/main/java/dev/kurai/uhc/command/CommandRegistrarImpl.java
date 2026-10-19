@@ -19,18 +19,28 @@ import org.bukkit.plugin.SimplePluginManager;
 public final class CommandRegistrarImpl implements CommandRegistrar {
 
   private final BukkitAudiences bukkitAudiences;
-  private final UltraHardcoreAPI ultraHardcore;
   private final ArgumentResolverRegistrar argumentResolverRegistrar;
+  private PermissionProvider permissionProvider;
 
   public CommandRegistrarImpl(final UltraHardcoreAPI ultraHardcore) {
     this.bukkitAudiences = ultraHardcore.bukkitAudiences();
-    this.ultraHardcore = ultraHardcore;
     this.argumentResolverRegistrar = new ArgumentResolverRegistrarImpl(this.bukkitAudiences);
+    this.permissionProvider = new BuiltinPermissionProvider();
   }
 
   @Override
   public ArgumentResolverRegistrar getArgumentResolverRegistrar() {
     return this.argumentResolverRegistrar;
+  }
+
+  @Override
+  public PermissionProvider getPermissionProvider() {
+    return this.permissionProvider;
+  }
+
+  @Override
+  public void setPermissionProvider(final PermissionProvider permissionProvider) {
+    this.permissionProvider = permissionProvider;
   }
 
   @Override

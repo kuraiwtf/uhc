@@ -8,6 +8,10 @@ public interface CommandRegistrar {
 
   ArgumentResolverRegistrar getArgumentResolverRegistrar();
 
+  PermissionProvider getPermissionProvider();
+
+  void setPermissionProvider(final PermissionProvider permissionProvider);
+
   void registerCommand(final Object command);
 
   default void registerCommands(final Object... commands) {
