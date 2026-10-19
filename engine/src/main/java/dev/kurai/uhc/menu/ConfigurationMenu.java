@@ -7,6 +7,7 @@ import static dev.kurai.uhc.util.CC.SQUARE;
 import com.google.common.collect.Lists;
 import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.event.EventService;
+import dev.kurai.uhc.game.configuration.border.BorderConfiguration;
 import dev.kurai.uhc.game.scenario.ScenarioService;
 import dev.kurai.uhc.game.slot.SlotService;
 import dev.kurai.uhc.game.slot.impl.MutableSlotProvider;
@@ -290,7 +291,8 @@ public final class ConfigurationMenu extends Menu {
 
     @Override
     public void onClick(final ButtonClick click) {
-      this.worldService.preload(this.worldService.getWorld(), 1250);
+      this.worldService.preload(
+          this.worldService.getWorld(), BorderConfiguration.INITIAL_SIZE_OPTION.getValue());
       click.getMenu().close();
     }
   }
