@@ -352,7 +352,7 @@ public final class HostCommand {
   }
 
   @Command(@CommandMeta(name = "heal", description = "Soigner des joueurs"))
-  public void heal(final Player player, final @Argument(name = "joueurs") String[] targets) {
+  public void heal(final Player player, final @Argument(name = "joueurs", defaultValue = "all") String[] targets) {
     if (!this.ultraHardcore.gameService().hostService().hasHostAccess(player)) {
       player.sendMessage(MISSING_PERMISSION);
       return;
