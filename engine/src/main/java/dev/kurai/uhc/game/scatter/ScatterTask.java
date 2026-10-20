@@ -51,6 +51,8 @@ public final class ScatterTask extends BukkitRunnable {
     location.getChunk().load(true);
 
     final var player = Bukkit.getPlayer(found);
-    player.teleport(location);
+    if (player != null) {
+      player.teleport(location);
+    }
   }
 }
