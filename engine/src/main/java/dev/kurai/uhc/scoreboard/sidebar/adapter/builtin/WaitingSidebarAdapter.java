@@ -17,24 +17,12 @@ import java.util.List;
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 
-public final class WaitingSidebarAdapter implements SidebarAdapter, SidebarTitleAdapter {
+public final class WaitingSidebarAdapter implements SidebarAdapter {
 
   private final UltraHardcoreAPI ultraHardcore;
 
   public WaitingSidebarAdapter(final UltraHardcoreAPI ultraHardcore) {
     this.ultraHardcore = ultraHardcore;
-  }
-
-  @Override
-  public Component provideTitle(final Player player) {
-    final AbstractModule module = this.ultraHardcore.moduleService().getCurrentModule();
-    return text()
-        .append(text('-', DARK_GRAY, BOLD))
-        .appendSpace()
-        .append(text(module.getShortName(), GOLD, BOLD))
-        .appendSpace()
-        .append(text('-', DARK_GRAY, BOLD))
-        .build();
   }
 
   @Override

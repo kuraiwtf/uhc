@@ -7,6 +7,7 @@ import dev.kurai.uhc.scoreboard.sidebar.SidebarAdapter;
 import dev.kurai.uhc.scoreboard.sidebar.SidebarImpl;
 import dev.kurai.uhc.scoreboard.sidebar.SidebarService;
 import dev.kurai.uhc.scoreboard.sidebar.SidebarTitleAdapter;
+import dev.kurai.uhc.scoreboard.sidebar.adapter.builtin.BuiltinSidebarTitleAdapter;
 import dev.kurai.uhc.scoreboard.sidebar.adapter.builtin.WaitingSidebarAdapter;
 import dev.kurai.uhc.scoreboard.sidebar.listener.SidebarListener;
 import dev.kurai.uhc.scoreboard.sidebar.task.updater.SidebarUpdaterTask;
@@ -25,7 +26,7 @@ public final class SidebarServiceImpl implements SidebarService {
   public SidebarServiceImpl(final UltraHardcoreAPI ultraHardcore) {
     this.sidebars = Maps.newHashMap();
     final var adapter = new WaitingSidebarAdapter(ultraHardcore);
-    this.install(adapter, adapter);
+    this.install(new BuiltinSidebarTitleAdapter(ultraHardcore), adapter);
     ultraHardcore.eventService().registerListener(new SidebarListener(this));
 
     Bukkit.getScheduler()

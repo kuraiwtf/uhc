@@ -1,0 +1,41 @@
+package dev.kurai.uhc.scoreboard.sidebar.adapter.builtin;
+
+import static net.kyori.adventure.text.Component.text;
+import static net.kyori.adventure.text.format.NamedTextColor.*;
+import static net.kyori.adventure.text.format.TextDecoration.BOLD;
+
+import dev.kurai.uhc.UltraHardcoreAPI;
+import dev.kurai.uhc.module.AbstractModule;
+import dev.kurai.uhc.scoreboard.sidebar.SidebarTitleAdapter;
+import dev.kurai.uhc.util.CC;
+import lombok.RequiredArgsConstructor;
+import net.kyori.adventure.text.Component;
+import org.bukkit.entity.Player;
+
+@RequiredArgsConstructor
+public final class BuiltinSidebarTitleAdapter implements SidebarTitleAdapter {
+
+  private final UltraHardcoreAPI ultraHardcore;
+
+  @Override
+  public Component provideTitle(final Player player) {
+    if (this.ultraHardcore.gameService().testMode()) {
+      return text()
+          .append(text(CC.DANGER, DARK_RED))
+          .appendSpace()
+          .append(text("DEVELOPPEMENT", RED, BOLD))
+          .appendSpace()
+          .append(text(CC.DANGER, DARK_RED))
+          .build();
+    }
+
+    final AbstractModule module = this.ultraHardcore.moduleService().getCurrentModule();
+    return text()
+        .append(text('-', DARK_GRAY, BOLD))
+        .appendSpace()
+        .append(text(module.getShortName(), GOLD, BOLD))
+        .appendSpace()
+        .append(text('-', DARK_GRAY, BOLD))
+        .build();
+  }
+}
