@@ -58,6 +58,8 @@ public final class GameServiceImpl implements GameService {
   private final StartService startService;
   private final TimerService timerService;
 
+  private boolean testMode;
+
   private long startTime;
 
   public GameServiceImpl(final UltraHardcoreAPI ultraHardcore) {
