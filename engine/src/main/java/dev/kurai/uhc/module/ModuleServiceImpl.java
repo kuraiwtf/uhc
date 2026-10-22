@@ -5,6 +5,14 @@ import dev.kurai.uhc.event.defaults.module.ModuleInstallEvent;
 import dev.kurai.uhc.module.camp.module.CampModule;
 import dev.kurai.uhc.module.service.ModuleService;
 import dev.kurai.uhc.module.team.module.TeamModule;
+import dev.kurai.uhc.command.annotation.SimpleCommandMeta;
+import dev.kurai.uhc.module.color.ColorModule;
+import dev.kurai.uhc.module.command.ColorModuleCommands;
+import dev.kurai.uhc.module.command.ModuleCommandProvider;
+import dev.kurai.uhc.module.command.RoleModuleCommands;
+import dev.kurai.uhc.module.role.module.RoleModule;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 
 public final class ModuleServiceImpl implements ModuleService {
@@ -12,11 +20,46 @@ public final class ModuleServiceImpl implements ModuleService {
   private static final Logger LOGGER = Logger.getLogger(ModuleServiceImpl.class.getSimpleName());
 
   private final UltraHardcoreAPI ultraHardcore;
+  private final List<ModuleCommandProvider> commandProviders = new ArrayList<>();
   private AbstractModule currentModule;
 
   public ModuleServiceImpl(final UltraHardcoreAPI ultraHardcore) {
     this.ultraHardcore = ultraHardcore;
     this.currentModule = new BuiltinModule(ultraHardcore);
+
+    this.registerCommandProvider(
+        module ->
+            module instanceof final RoleModule<?, ?, ?> roleModule
+                ? new RoleModuleCommands(ultraHardcore, roleModule)
+                : null);
+    this.registerCommandProvider(
+        module -> module instanceof ColorModule ? new ColorModuleCommands(ultraHardcore) : null);
+  }
+
+  @Override
+  public void registerCommandProvider(final ModuleCommandProvider provider) {
+    this.commandProviders.add(provider);
+  }
+
+  private void registerModuleCommand(final AbstractModule module) {
+    final var commandName = module.getCommandName();
+    if (commandName == null) {
+      return;
+    }
+
+    final var handlers = new ArrayList<>(module.commandHandlers());
+    for (final var provider : this.commandProviders) {
+      final var handler = provider.provide(module);
+      if (handler != null) {
+        handlers.add(handler);
+      }
+    }
+
+    this.ultraHardcore
+        .commandRegistrar()
+        .registerCommand(
+            SimpleCommandMeta.of(commandName, "Commandes du jeu " + module.getName()),
+            handlers.toArray());
   }
 
   @Override
@@ -36,7 +79,13 @@ public final class ModuleServiceImpl implements ModuleService {
       return;
     }
 
+    final var previousCommand = this.currentModule.getCommandName();
+    if (previousCommand != null) {
+      this.ultraHardcore.commandRegistrar().unregisterCommand(previousCommand);
+    }
+
     this.currentModule = module;
+    this.registerModuleCommand(module);
   }
 
   @Override

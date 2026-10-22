@@ -12,6 +12,8 @@ import dev.kurai.uhc.command.CommandRegistrar;
 import dev.kurai.uhc.command.CommandRegistrarImpl;
 import dev.kurai.uhc.command.argument.builtin.uhc.TimerArgumentResolver;
 import dev.kurai.uhc.command.defaults.*;
+import dev.kurai.uhc.module.command.RoleDataArgumentResolver;
+import dev.kurai.uhc.module.role.AbstractRoleData;
 import dev.kurai.uhc.effect.EffectListener;
 import dev.kurai.uhc.effect.EffectService;
 import dev.kurai.uhc.effect.EffectServiceImpl;
@@ -157,6 +159,7 @@ public final class UltraHardcoreEngine extends UltraHardcoreAPI {
         new ModuleCommands(this),
         new PlayerCommands(this),
         new SpectatorCommand(this),
+        new UltraHardcoreCommand(this),
         new WhitelistCommand(this));
 
     final TimerService timerService = this.gameService.timerService();
@@ -164,6 +167,10 @@ public final class UltraHardcoreEngine extends UltraHardcoreAPI {
         .getArgumentResolverRegistrar()
         .registerArgumentResolver(
             AbstractTimer.class, new TimerArgumentResolver(this.bukkitAudiences, timerService));
+    this.commandRegistrar
+        .getArgumentResolverRegistrar()
+        .registerArgumentResolver(
+            AbstractRoleData.class, new RoleDataArgumentResolver(this.moduleService));
 
     final EventManager eventManager = PacketEvents.getAPI().getEventManager();
 

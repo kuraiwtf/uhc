@@ -16,6 +16,7 @@ import dev.kurai.uhc.profile.ProfileService;
 import dev.kurai.uhc.scoreboard.sidebar.SidebarService;
 import dev.kurai.uhc.skin.SkinService;
 import dev.kurai.uhc.tablist.TabListService;
+import dev.kurai.uhc.team.TeamService;
 import dev.kurai.uhc.whitelist.WhitelistService;
 import dev.kurai.uhc.win.WinService;
 import dev.kurai.uhc.world.WorldService;
@@ -88,6 +89,8 @@ public abstract class UltraHardcoreAPI {
   public abstract SkinService skinService();
 
   public abstract TabListService tabListService();
+
+  public abstract TeamService teamService();
 
   public abstract WhitelistService whitelistService();
 

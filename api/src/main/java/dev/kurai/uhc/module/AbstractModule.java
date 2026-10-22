@@ -156,6 +156,10 @@ public abstract class AbstractModule
     return this.events.get(identifier);
   }
 
+  public Collection<Object> commandHandlers() {
+    return List.of();
+  }
+
   public @Nullable ModuleMenu provideModuleMenu(final Player player) {
     return null;
   }

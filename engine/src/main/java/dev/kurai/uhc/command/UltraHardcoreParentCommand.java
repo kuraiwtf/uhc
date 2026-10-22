@@ -14,12 +14,14 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
+import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.jspecify.annotations.Nullable;
 
 public final class UltraHardcoreParentCommand extends Command {
 
@@ -31,13 +33,16 @@ public final class UltraHardcoreParentCommand extends Command {
 
   private final List<SubCommandData> subCommands;
 
+  private final @Nullable SubCommandData defaultCommand;
+
   private final HelpCommand helpCommand;
 
   public UltraHardcoreParentCommand(
       final CommandMeta meta,
       final BukkitAudiences bukkitAudiences,
       final CommandRegistrar commandRegistrar,
-      final List<SubCommandData> subCommands) {
+      final List<SubCommandData> subCommands,
+      final @Nullable SubCommandData defaultCommand) {
     super(
         meta.name(),
         meta.description(),
@@ -53,6 +58,8 @@ public final class UltraHardcoreParentCommand extends Command {
         subCommands.stream()
             .sorted(Comparator.comparing(subCommandData -> subCommandData.commandMeta().name()))
             .toList();
+
+    this.defaultCommand = defaultCommand;
 
     this.helpCommand = new HelpCommand(this);
   }
@@ -71,6 +78,11 @@ public final class UltraHardcoreParentCommand extends Command {
     }
 
     final var audience = this.bukkitAudiences.sender(sender);
+    if (args.length < 1 && this.defaultCommand != null) {
+      return this.executeSubCommand(
+          sender, audience, permissionProvider, this.defaultCommand, Lists.newArrayList());
+    }
+
     if (args.length < 1 || args[0].equalsIgnoreCase("help")) {
       final int page;
 
@@ -119,6 +131,15 @@ public final class UltraHardcoreParentCommand extends Command {
       return false;
     }
 
+    return this.executeSubCommand(sender, audience, permissionProvider, subCommand, rawArguments);
+  }
+
+  private boolean executeSubCommand(
+      final CommandSender sender,
+      final Audience audience,
+      final PermissionProvider permissionProvider,
+      final SubCommandData subCommand,
+      final List<String> rawArguments) {
     final var method = subCommand.method();
     if (method.getParameterTypes()[0].isAssignableFrom(Player.class)
         && !(sender instanceof Player)) {

@@ -3,6 +3,8 @@ package dev.kurai.uhc.command;
 import com.google.common.collect.Lists;
 import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.command.annotation.Command;
+import dev.kurai.uhc.command.annotation.CommandMeta;
+import dev.kurai.uhc.command.annotation.DefaultCommand;
 import dev.kurai.uhc.command.annotation.SubCommand;
 import dev.kurai.uhc.command.argument.ArgumentResolverRegistrar;
 import dev.kurai.uhc.command.argument.ArgumentResolverRegistrarImpl;
@@ -53,28 +55,45 @@ public final class CommandRegistrarImpl implements CommandRegistrar {
   }
 
   private void registerParentCommand(final Object object) {
-    final var commandAnnotation = object.getClass().getAnnotation(Command.class);
+    this.registerCommand(object.getClass().getAnnotation(Command.class).value(), object);
+  }
+
+  @Override
+  public void registerCommand(final CommandMeta meta, final Object... handlers) {
     final var subCommands = Lists.<SubCommandData>newArrayList();
+    SubCommandData defaultCommand = null;
 
-    for (final var method : object.getClass().getDeclaredMethods()) {
-      if (!method.isAnnotationPresent(SubCommand.class)) {
-        continue;
+    for (final var object : handlers) {
+      for (final var method : object.getClass().getDeclaredMethods()) {
+        final var subCommand = method.getAnnotation(SubCommand.class);
+        final var isDefault = method.isAnnotationPresent(DefaultCommand.class);
+        if (subCommand == null && !isDefault) {
+          continue;
+        }
+
+        final var arguments = Lists.<ArgumentData>newArrayList();
+
+        for (var i = 1; i < method.getParameters().length; i++) {
+          final var argument = method.getParameters()[i].getAnnotation(Argument.class);
+          arguments.add(new ArgumentData(argument.name(), argument.defaultValue()));
+        }
+
+        if (isDefault) {
+          if (defaultCommand != null) {
+            throw new IllegalStateException("Multiple @DefaultCommand for /" + meta.name());
+          }
+          defaultCommand = new SubCommandData(meta, object, method, arguments);
+        }
+
+        if (subCommand != null) {
+          subCommands.add(new SubCommandData(subCommand.value(), object, method, arguments));
+        }
       }
-
-      final var subCommandMeta = method.getAnnotation(SubCommand.class).value();
-      final var arguments = Lists.<ArgumentData>newArrayList();
-
-      for (var i = 1; i < method.getParameters().length; i++) {
-        final var argument = method.getParameters()[i].getAnnotation(Argument.class);
-        arguments.add(new ArgumentData(argument.name(), argument.defaultValue()));
-      }
-
-      subCommands.add(new SubCommandData(subCommandMeta, object, method, arguments));
     }
 
     this.registerCommand(
         new UltraHardcoreParentCommand(
-            commandAnnotation.value(), this.bukkitAudiences, this, subCommands));
+            meta, this.bukkitAudiences, this, subCommands, defaultCommand));
   }
 
   private void registerOrphanCommand(final Object object) {
@@ -114,6 +133,7 @@ public final class CommandRegistrarImpl implements CommandRegistrar {
       final HashMap<String, org.bukkit.command.Command> knownCommands =
           (HashMap<String, org.bukkit.command.Command>) map;
       knownCommands.remove(name);
+      knownCommands.remove("uhc:" + name);
     } catch (final Exception e) {
       e.printStackTrace();
     }

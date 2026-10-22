@@ -57,13 +57,6 @@ public final class PlayerCommands {
 
   @Command(
       @CommandMeta(
-          name = "uhc",
-          aliases = {"rules", "regles"},
-          description = "uhc.command.rules.description"))
-  public void rules(final Player player) {}
-
-  @Command(
-      @CommandMeta(
           name = "scenarios",
           aliases = "scen",
           description = "uhc.command.scenarios.description"))

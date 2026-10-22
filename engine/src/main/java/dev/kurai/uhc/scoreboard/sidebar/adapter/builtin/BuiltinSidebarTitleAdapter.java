@@ -30,12 +30,6 @@ public final class BuiltinSidebarTitleAdapter implements SidebarTitleAdapter {
     }
 
     final AbstractModule module = this.ultraHardcore.moduleService().getCurrentModule();
-    return text()
-        .append(text('-', DARK_GRAY, BOLD))
-        .appendSpace()
-        .append(text(module.getShortName(), GOLD, BOLD))
-        .appendSpace()
-        .append(text('-', DARK_GRAY, BOLD))
-        .build();
+    return text(module.getName(), module.color().asTextColor(), BOLD);
   }
 }
