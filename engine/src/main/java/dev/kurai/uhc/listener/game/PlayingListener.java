@@ -14,8 +14,8 @@ import dev.kurai.uhc.event.defaults.game.GameTickEvent;
 import dev.kurai.uhc.event.defaults.player.PlayerDamageByPlayerEvent;
 import dev.kurai.uhc.game.configuration.ore.OreConfiguration;
 import dev.kurai.uhc.game.death.DeathContext;
-import dev.kurai.uhc.logger.LogCategories;
 import dev.kurai.uhc.game.rule.GameRuleService;
+import dev.kurai.uhc.logger.LogCategories;
 import dev.kurai.uhc.menu.rules.ore.OreType;
 import dev.kurai.uhc.menu.spectator.InventoryViewMenu;
 import dev.kurai.uhc.profile.Profile;
@@ -33,10 +33,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Consumer;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
-import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -352,31 +349,36 @@ public final class PlayingListener implements Listener {
       return;
     }
 
+    final PlayerInventory inventory = player.getInventory();
+    final Location deathLocation = player.getLocation().clone();
+    profile.addComponent(
+        new PlayerInformationComponent(
+            deathLocation,
+            inventory.getContents(),
+            inventory.getArmorContents(),
+            Lists.newArrayList(player.getActivePotionEffects()),
+            player.getFireTicks(),
+            player.getFallDistance()));
+
+    final Player killer = player.getKiller();
+    profile.addComponent(new ProcessingDeathComponent());
+    this.ultraHardcore
+        .gameService()
+        .deathService()
+        .processDeath(
+            new DeathContext(
+                profile,
+                (killer == null ? null : profileService.getOrCreateProfile(killer)),
+                event,
+                false));
+
     Bukkit.getScheduler()
         .runTaskLater(
             this.ultraHardcore.plugin(),
             () -> {
-              final PlayerInventory inventory = player.getInventory();
-              profile.addComponent(
-                  new PlayerInformationComponent(
-                      player.getLocation(),
-                      inventory.getContents(),
-                      inventory.getArmorContents(),
-                      Lists.newArrayList(player.getActivePotionEffects()),
-                      player.getFireTicks(),
-                      player.getFallDistance()));
-
-              final Player killer = player.getKiller();
-              profile.addComponent(new ProcessingDeathComponent());
-              this.ultraHardcore
-                  .gameService()
-                  .deathService()
-                  .processDeath(
-                      new DeathContext(
-                          profile,
-                          (killer == null ? null : profileService.getOrCreateProfile(killer)),
-                          event,
-                          false));
+              player.spigot().respawn();
+              player.setGameMode(GameMode.SPECTATOR);
+              player.teleport(deathLocation);
             },
             20L);
   }

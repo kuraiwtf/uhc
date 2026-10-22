@@ -36,6 +36,8 @@ public final class RoleModuleCommands {
 
   private static final String MARK_KEY = "role_add";
 
+  private static final int SUFFIX_LIMIT = 16;
+
   private record Entry(String name, @Nullable Class<? extends AbstractCamp<?>> camp) {}
 
   private record Group(String title, TextColor color, List<String> entries) {}
@@ -205,11 +207,10 @@ public final class RoleModuleCommands {
     nickname.removeValue(MARK_KEY);
 
     final var color = camp == null ? ChatColor.WHITE : camp.getChatColor();
-    nickname.addValue(
-        new NicknameValue(
-            MARK_KEY,
-            NicknameValueType.SUFFIX,
-            text(" §8" + BAR + " " + color + roleData.getName())));
+    final var separator = " §8" + BAR + " " + color;
+    final var name =
+        roleData.getName().substring(0, Math.min(roleData.getName().length(), SUFFIX_LIMIT - separator.length()));
+    nickname.addValue(new NicknameValue(MARK_KEY, NicknameValueType.SUFFIX, text(separator + name)));
     holder.updateNickname(target.getUniqueId());
   }
 

@@ -7,11 +7,12 @@ import com.google.common.collect.Sets;
 import com.lunarclient.apollo.Apollo;
 import com.lunarclient.apollo.common.location.ApolloLocation;
 import com.lunarclient.apollo.module.team.TeamMember;
-import com.lunarclient.apollo.player.ApolloPlayer;
 import dev.kurai.uhc.adventure.UltraHardcoreKey;
 import dev.kurai.uhc.module.service.ModuleService;
 import dev.kurai.uhc.module.team.module.TeamModule;
 import dev.kurai.uhc.profile.ProfileService;
+import dev.kurai.uhc.profile.state.PlayingProfileState;
+import dev.kurai.uhc.util.CC;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -65,11 +66,18 @@ public final class TeamDisplayTask implements Runnable {
               : team.members().stream()
                   .filter(id -> !id.equals(player.getUniqueId()))
                   .map(Bukkit::getPlayer)
-                  .filter(mate -> mate != null && mate.isOnline())
+                  .filter(
+                      mate ->
+                          mate != null
+                              && mate.isOnline()
+                              && this.profileService.getOrCreateProfile(mate).getState()
+                                  instanceof PlayingProfileState)
                   .toList();
 
       if (display.actionBar() && !teammates.isEmpty()) {
-        profile.getActionbar().registerActionbarEntry(ACTIONBAR_KEY, this.actionBar(player, team, teammates));
+        profile
+            .getActionbar()
+            .registerActionbarEntry(ACTIONBAR_KEY, this.actionBar(player, team, teammates));
       } else {
         profile.getActionbar().unregisterActionbarEntry(ACTIONBAR_KEY);
       }
@@ -87,7 +95,7 @@ public final class TeamDisplayTask implements Runnable {
     for (int i = 0; i < teammates.size(); i++) {
       final var mate = teammates.get(i);
       if (i > 0) {
-        builder.append(text(" ❘ ", DARK_GRAY));
+        builder.append(text(" " + CC.BAR + " ", DARK_GRAY));
       }
 
       final String distance =
@@ -96,7 +104,8 @@ public final class TeamDisplayTask implements Runnable {
               : "?";
       builder
           .append(text(mate.getName(), team.style().color().asTextColor()))
-          .append(text(" ❤" + Math.round(mate.getHealth() / 2), RED))
+          .append(text(" " + Math.round(mate.getHealth() / 2), RED))
+          .append(text('❤', DARK_RED))
           .append(text(" " + distance, GRAY));
     }
     return builder.build();
@@ -114,7 +123,8 @@ public final class TeamDisplayTask implements Runnable {
                           mate ->
                               TeamMember.builder()
                                   .playerUuid(mate.getUniqueId())
-                                  .displayName(text(mate.getName(), team.style().color().asTextColor()))
+                                  .displayName(
+                                      text(mate.getName(), team.style().color().asTextColor()))
                                   .markerColor(team.style().color().asJavaColor())
                                   .location(
                                       ApolloLocation.builder()

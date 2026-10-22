@@ -207,7 +207,7 @@ public final class UltraHardcoreEngine extends UltraHardcoreAPI {
             this.plugin,
             new TeamDisplayTask(this.profileService, this.teamService, this.moduleService),
             0,
-            10L);
+            1L);
 
     InventoryConfiguration.INVENTORY_CONTENT_OPTION.setValue(
         new ItemStack[] {

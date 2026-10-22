@@ -127,10 +127,6 @@ public final class DeathServiceImpl implements DeathService {
 
     profile.executeAction(
         player -> {
-          player.spigot().respawn();
-          player.setGameMode(GameMode.SPECTATOR);
-          player.teleport(component.lastLocation());
-
           final PlayerInventory inventory = player.getInventory();
           inventory.setContents(new ItemStack[36]);
           inventory.setArmorContents(new ItemStack[4]);

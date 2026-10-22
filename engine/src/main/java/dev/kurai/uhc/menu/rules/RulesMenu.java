@@ -6,12 +6,14 @@ import static dev.kurai.uhc.util.CC.*;
 
 import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.game.drop.DropRateService;
+import dev.kurai.uhc.game.episode.EpisodeService;
 import dev.kurai.uhc.game.recipe.RecipeService;
 import dev.kurai.uhc.game.rule.GameRuleService;
 import dev.kurai.uhc.menu.button.ItemButton;
 import dev.kurai.uhc.menu.rules.border.BorderConfigurationMenu;
 import dev.kurai.uhc.menu.rules.disconnect.DisconnectTimerEditMenu;
 import dev.kurai.uhc.menu.rules.drop.DropRateMenu;
+import dev.kurai.uhc.menu.rules.episode.EpisodeTimeMenu;
 import dev.kurai.uhc.menu.rules.game.GameRulesMenu;
 import dev.kurai.uhc.menu.rules.inventory.StartInventoryMenu;
 import dev.kurai.uhc.menu.rules.ore.OreLimitMenu;
@@ -90,6 +92,7 @@ public final class RulesMenu extends Menu {
 
     front.set(18, new DropRateButton(gameService.dropRateService()));
     front.set(19, new StartInventoryButton(this.ultraHardcore));
+    front.set(25, new EpisodeButton(this.ultraHardcore.gameService().episodeService()));
     front.set(26, new InvincibilityTimerButton(this.ultraHardcore));
 
     front.set(29, new OreLimitButton());
@@ -351,6 +354,39 @@ public final class RulesMenu extends Menu {
       }
 
       final var configMenu = new TimerDurationMenu(menu.getPlayer(), timerOpt.get());
+      configMenu.setPreviousMenu(menu);
+      configMenu.open();
+    }
+  }
+
+  private static final class EpisodeButton extends Button {
+
+    private final EpisodeService episodeService;
+
+    private EpisodeButton(final EpisodeService episodeService) {
+      this.episodeService = episodeService;
+    }
+
+    @Override
+    public ItemStack getIcon() {
+      final int duration = this.episodeService.getTimePerEpisode();
+      return new ItemBuilder(Material.BOOKSHELF)
+          .name("&b&lÉpisode")
+          .lore(
+              "",
+              "&b " + SQUARE + "&f Temps: &b" + TimeUtil.formatDuration(duration * 1000L),
+              "",
+              "&7" + BAR + "&r Permet de modifier la durée",
+              "  des&b épisodes&r de la partie.",
+              "")
+          .amount(Math.clamp(duration / 60, 1, 64))
+          .asItemStack();
+    }
+
+    @Override
+    public void onClick(final ButtonClick click) {
+      final Menu menu = click.getMenu();
+      final var configMenu = new EpisodeTimeMenu(menu.getPlayer(), this.episodeService);
       configMenu.setPreviousMenu(menu);
       configMenu.open();
     }

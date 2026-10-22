@@ -6,6 +6,14 @@ public interface EpisodeService {
 
   void setEnabled(final boolean enabled);
 
+  int getTimePerEpisode();
+
+  void setTimePerEpisode(final int timePerEpisode);
+
+  int getTimeLeft();
+
+  void setTimeLeft(final int timeLeft);
+
   int getEpisode();
 
   void start();

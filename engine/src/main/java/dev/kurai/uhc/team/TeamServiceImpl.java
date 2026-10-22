@@ -100,7 +100,7 @@ public final class TeamServiceImpl implements TeamService {
               new NicknameValue(
                   NICKNAME_VALUE_ID,
                   NicknameValueType.PREFIX,
-                  Component.text(style.symbol() + " ", style.color().asTextColor())));
+                  Component.text(style.symbol() + " ", style.color().asNamedColor())));
         }
         holder.applyColor(target, style.color());
       }
@@ -202,12 +202,12 @@ public final class TeamServiceImpl implements TeamService {
     Collections.shuffle(unteamed);
 
     for (final var id : unteamed) {
-      final var smallest =
+      final var fullest =
           this.teams.values().stream()
               .filter(team -> team.mutableMembers().size() < this.teamSize())
-              .min(Comparator.comparingInt(team -> team.mutableMembers().size()));
-      if (smallest.isPresent()) {
-        this.join(smallest.get(), id);
+              .max(Comparator.comparingInt(team -> team.mutableMembers().size()));
+      if (fullest.isPresent()) {
+        this.join(fullest.get(), id);
       } else {
         this.createTeam(id);
       }
