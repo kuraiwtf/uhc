@@ -51,6 +51,10 @@ import dev.kurai.uhc.skin.SkinServiceImpl;
 import dev.kurai.uhc.tablist.TabListService;
 import dev.kurai.uhc.tablist.TabListServiceImpl;
 import dev.kurai.uhc.tablist.TabListUpdaterTask;
+import dev.kurai.uhc.team.TeamDisplayTask;
+import dev.kurai.uhc.team.TeamListener;
+import dev.kurai.uhc.team.TeamService;
+import dev.kurai.uhc.team.TeamServiceImpl;
 import dev.kurai.uhc.timer.AbstractTimer;
 import dev.kurai.uhc.timer.TimerService;
 import dev.kurai.uhc.timer.builtin.BorderTimer;
@@ -94,6 +98,7 @@ public final class UltraHardcoreEngine extends UltraHardcoreAPI {
   private SidebarService sidebarService;
   private SkinService skinService;
   private TabListService tabListService;
+  private TeamService teamService;
   private WhitelistService whitelistService;
   private WinService winService;
   private WorldService worldService;
@@ -135,6 +140,7 @@ public final class UltraHardcoreEngine extends UltraHardcoreAPI {
                 .suffix(Component.space().append(text("«", DARK_GRAY)))
                 .build(),
             ActionbarUpdateConfiguration.EVERY_TICK);
+    this.teamService = new TeamServiceImpl(this);
     this.gameService = new GameServiceImpl(this);
     this.helpOpService = new HelpOpServiceImpl();
     this.itemService = new ItemServiceImpl(this);
@@ -146,7 +152,7 @@ public final class UltraHardcoreEngine extends UltraHardcoreAPI {
     this.skinService = new SkinServiceImpl(this.plugin, this.profileService);
     this.tabListService = new TabListServiceImpl(this);
     this.whitelistService = new WhitelistServiceImpl();
-    this.winService = new WinServiceImpl(this.profileService);
+    this.winService = new WinServiceImpl(this.profileService, this.teamService);
     this.worldService = new WorldServiceImpl(this.plugin, this.profileService);
 
     this.commandRegistrar.registerCommands(
@@ -159,6 +165,8 @@ public final class UltraHardcoreEngine extends UltraHardcoreAPI {
         new ModuleCommands(this),
         new PlayerCommands(this),
         new SpectatorCommand(this),
+        new TeamCommand(this),
+        new TeamInventoryCommand(this),
         new UltraHardcoreCommand(this),
         new WhitelistCommand(this));
 
@@ -187,11 +195,19 @@ public final class UltraHardcoreEngine extends UltraHardcoreAPI {
         new ItemListener(this.itemService),
         new WaitingListener(this),
         new EffectListener(this.effectService, this.profileService),
-        new RecipeListener(this.gameService.recipeService()));
+        new RecipeListener(this.gameService.recipeService()),
+        new TeamListener(this.teamService, this.moduleService));
 
     Bukkit.getScheduler()
         .runTaskTimerAsynchronously(
             this.plugin, new TabListUpdaterTask(this.tabListService), 0, 1L);
+
+    Bukkit.getScheduler()
+        .runTaskTimer(
+            this.plugin,
+            new TeamDisplayTask(this.profileService, this.teamService, this.moduleService),
+            0,
+            10L);
 
     InventoryConfiguration.INVENTORY_CONTENT_OPTION.setValue(
         new ItemStack[] {

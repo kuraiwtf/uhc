@@ -15,12 +15,16 @@ public final class ScatterTask extends BukkitRunnable {
 
   private final UltraHardcoreAPI ultraHardcore;
 
-  private final List<UUID> players;
+  /** Each entry is a group scattered at the same position: a whole team, or a lone player. */
+  private final List<List<UUID>> groups;
+
   private final List<Location> positions;
 
   public ScatterTask(final UltraHardcoreAPI ultraHardcore) {
     this.ultraHardcore = ultraHardcore;
-    this.players =
+
+    final var teamService = ultraHardcore.teamService();
+    final var remaining =
         Lists.newArrayList(
             ultraHardcore
                 .profileService()
@@ -28,6 +32,25 @@ public final class ScatterTask extends BukkitRunnable {
                 .stream()
                 .map(Profile::getId)
                 .toList());
+
+    this.groups = Lists.newArrayList();
+    while (!remaining.isEmpty()) {
+      final var id = remaining.removeFirst();
+      final var team = teamService.teamOf(id).orElse(null);
+      if (team == null) {
+        this.groups.add(List.of(id));
+        continue;
+      }
+
+      final var group = Lists.newArrayList(id);
+      for (final var member : team.members()) {
+        if (remaining.remove(member)) {
+          group.add(member);
+        }
+      }
+      this.groups.add(group);
+    }
+
     this.positions =
         Lists.newArrayList(
             ultraHardcore
@@ -35,24 +58,26 @@ public final class ScatterTask extends BukkitRunnable {
                 .scatterService()
                 .getPositionProvider()
                 .provideLocations(
-                    BorderConfiguration.INITIAL_SIZE_OPTION.getValue() - 50, this.players.size()));
+                    BorderConfiguration.INITIAL_SIZE_OPTION.getValue() - 50, this.groups.size()));
   }
 
   @Override
   public void run() {
-    if (this.players.isEmpty()) {
+    if (this.groups.isEmpty()) {
       this.ultraHardcore.gameService().startService().handleFinalStart();
       this.cancel();
       return;
     }
 
-    final var found = this.players.removeFirst();
+    final var group = this.groups.removeFirst();
     final var location = this.positions.removeFirst();
     location.getChunk().load(true);
 
-    final var player = Bukkit.getPlayer(found);
-    if (player != null) {
-      player.teleport(location);
+    for (final var found : group) {
+      final var player = Bukkit.getPlayer(found);
+      if (player != null) {
+        player.teleport(location);
+      }
     }
   }
 }

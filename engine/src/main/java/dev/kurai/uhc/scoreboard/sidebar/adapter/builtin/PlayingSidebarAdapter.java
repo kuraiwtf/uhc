@@ -33,18 +33,29 @@ public final class PlayingSidebarAdapter implements SidebarAdapter {
   public List<Component> provideLines(final Player player) {
     final var lines = Lists.<Component>newArrayList();
     lines.add(empty());
-    lines.add(
-        text()
-            .append(SEPARATOR)
-            .append(text("Joueurs: ", GRAY))
-            .append(
-                text(
-                    this.ultraHardcore
-                        .profileService()
-                        .getProfiles(profile -> profile.getState() instanceof PlayingProfileState)
-                        .size(),
-                    YELLOW))
-            .build());
+    final var alive =
+        this.ultraHardcore
+            .profileService()
+            .getProfiles(profile -> profile.getState() instanceof PlayingProfileState);
+    final var playersLine =
+        text().append(SEPARATOR).append(text("Joueurs: ", GRAY)).append(text(alive.size(), YELLOW));
+
+    final var teamService = this.ultraHardcore.teamService();
+    if (teamService.enabled()) {
+      final long teamsAlive =
+          alive.stream()
+              .map(
+                  profile ->
+                      teamService.teamOf(profile.getId()).<Object>map(team -> team).orElse(profile.getId()))
+              .distinct()
+              .count();
+      playersLine
+          .appendSpace()
+          .append(text('(', DARK_GRAY))
+          .append(text(teamsAlive, YELLOW))
+          .append(text(')', DARK_GRAY));
+    }
+    lines.add(playersLine.build());
 
     final GroupService groupService = this.ultraHardcore.gameService().groupService();
     final GroupProvider groupProvider = groupService.provider();
@@ -146,7 +157,7 @@ public final class PlayingSidebarAdapter implements SidebarAdapter {
             .append(
                 text(getArrow(player.getLocation().clone(), centerLocation.clone()), LIGHT_PURPLE))
             .appendSpace()
-            .append(text((int) centerLocation.distance(player.getLocation()), LIGHT_PURPLE, BOLD))
+            .append(text((int) centerLocation.distance(player.getLocation()), LIGHT_PURPLE))
             .append(text('m', LIGHT_PURPLE))
             .build());
     lines.add(empty());

@@ -2,6 +2,7 @@ package dev.kurai.uhc.module;
 
 import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.module.team.module.TeamModule;
+import dev.kurai.uhc.team.TeamDisplay;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Material;
@@ -16,12 +17,14 @@ public final class BuiltinModule extends AbstractModule implements TeamModule {
   private int teamSize;
   private int maxTeamSize;
 
-  private boolean teamView;
+  private TeamDisplay teamDisplay;
+  private boolean teamInventory;
   private boolean friendlyFire;
   private boolean randomTeam;
 
   public BuiltinModule(final UltraHardcoreAPI ultraHardcore) {
     super("uhc", "UHC", null, ultraHardcore);
+    this.teamDisplay = TeamDisplay.NONE;
     this.minTeamSize = 1;
     this.teamSize = 1;
     this.maxTeamSize = Integer.MAX_VALUE;

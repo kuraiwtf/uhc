@@ -14,7 +14,7 @@ public final class BuiltinWinCelebration implements WinCelebration {
     broadcastMessage(center("&e&lVICTOIRE"));
     broadcastMessage(
         center(
-            "Joueurs: &e"
+            "Gagnants: &e"
                 + String.join(
                     "&r, &e", information.winners().stream().map(Profile::getName).toList())
                 + "&r."));

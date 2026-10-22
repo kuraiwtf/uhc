@@ -1,10 +1,16 @@
 package dev.kurai.uhc.module.team.module;
 
+import dev.kurai.uhc.team.TeamDisplay;
+
 public interface TeamModule {
 
-  boolean teamView();
+  TeamDisplay teamDisplay();
 
-  void teamView(final boolean teamView);
+  void teamDisplay(final TeamDisplay teamDisplay);
+
+  boolean teamInventory();
+
+  void teamInventory(final boolean teamInventory);
 
   int minTeamSize();
 

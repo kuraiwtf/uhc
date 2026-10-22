@@ -72,7 +72,10 @@ public final class WaitingSidebarAdapter implements SidebarAdapter {
               .append(text("Équipes: ", GRAY))
               .append(
                   text(
-                      teamSize == 1 ? "FFA" : "%dvs%d".formatted(teamSize, teamSize), LIGHT_PURPLE))
+                      teamSize == 1
+                          ? "FFA"
+                          : "%s To%d".formatted(teamModule.randomTeam() ? "Random" : "Chosen", teamSize),
+                      LIGHT_PURPLE))
               .build());
     }
     lines.add(empty());

@@ -12,10 +12,10 @@ public final class Color {
   public static final Color BLACK =
       new Color("Noir", ChatColor.BLACK, DyeColor.BLACK, NamedTextColor.BLACK, 0, 0, 0);
   public static final Color DARK_BLUE =
-      new Color("Bleu Foncé", ChatColor.DARK_BLUE, DyeColor.BLUE, NamedTextColor.BLUE, 0, 0, 170);
+      new Color("Bleu Foncé", ChatColor.DARK_BLUE, DyeColor.BLUE, NamedTextColor.DARK_BLUE, 0, 0, 170);
   public static final Color DARK_GREEN =
       new Color(
-          "Vert Foncé", ChatColor.DARK_GREEN, DyeColor.GREEN, NamedTextColor.DARK_GRAY, 0, 170, 0);
+          "Vert Foncé", ChatColor.DARK_GREEN, DyeColor.GREEN, NamedTextColor.DARK_GREEN, 0, 170, 0);
   public static final Color DARK_AQUA =
       new Color("Cyan", ChatColor.DARK_AQUA, DyeColor.CYAN, NamedTextColor.DARK_AQUA, 0, 170, 170);
   public static final Color DARK_RED =

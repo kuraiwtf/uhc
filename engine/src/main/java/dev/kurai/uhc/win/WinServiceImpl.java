@@ -1,15 +1,16 @@
 package dev.kurai.uhc.win;
 
 import dev.kurai.uhc.profile.ProfileService;
+import dev.kurai.uhc.team.TeamService;
 
 public final class WinServiceImpl implements WinService {
 
   private WinCelebration celebration;
   private WinCondition condition;
 
-  public WinServiceImpl(final ProfileService profileService) {
+  public WinServiceImpl(final ProfileService profileService, final TeamService teamService) {
     this.celebration = new BuiltinWinCelebration();
-    this.condition = new BuiltinWinCondition(profileService);
+    this.condition = new BuiltinWinCondition(profileService, teamService);
   }
 
   @Override

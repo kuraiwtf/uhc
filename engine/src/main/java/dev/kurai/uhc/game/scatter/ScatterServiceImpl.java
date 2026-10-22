@@ -5,11 +5,14 @@ import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.ecs.component.defaults.NameComponent;
 import dev.kurai.uhc.game.configuration.border.BorderConfiguration;
 import dev.kurai.uhc.game.configuration.inventory.InventoryConfiguration;
+import dev.kurai.uhc.module.team.module.TeamModule;
 import dev.kurai.uhc.profile.Profile;
 import dev.kurai.uhc.profile.component.DisconnectComponent;
 import dev.kurai.uhc.profile.component.SpectatorComponent;
 import dev.kurai.uhc.profile.state.PlayingProfileState;
 import java.time.Instant;
+import java.util.Optional;
+import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -58,16 +61,32 @@ public final class ScatterServiceImpl implements ScatterService {
 
   @Override
   public void handleScatter() {
+    if (this.ultraHardcore.moduleService().getCurrentModule() instanceof final TeamModule module
+        && module.randomTeam()) {
+      this.ultraHardcore
+          .teamService()
+          .randomize(
+              this.ultraHardcore
+                  .profileService()
+                  .getProfiles(profile -> !profile.hasComponent(SpectatorComponent.class))
+                  .stream()
+                  .map(Profile::getId)
+                  .toList());
+    }
+
     new ScatterTask(this.ultraHardcore).runTaskTimer(this.ultraHardcore.plugin(), 0, 1L);
   }
 
   @Override
   public void handlePlayerLateScatter(final Player player) {
     final Location location =
-        this.positionProvider
-            .provideLocations(BorderConfiguration.INITIAL_SIZE_OPTION.getValue() - 50, 1)
-            .iterator()
-            .next();
+        this.findTeammateLocation(player)
+            .orElseGet(
+                () ->
+                    this.positionProvider
+                        .provideLocations(BorderConfiguration.INITIAL_SIZE_OPTION.getValue() - 50, 1)
+                        .iterator()
+                        .next());
 
     location.getChunk().load(true);
     player.teleport(location);
@@ -88,5 +107,23 @@ public final class ScatterServiceImpl implements ScatterService {
     final var inventory = player.getInventory();
     inventory.setContents(InventoryConfiguration.INVENTORY_CONTENT_OPTION.getValue());
     inventory.setArmorContents(InventoryConfiguration.INVENTORY_ARMOR_OPTION.getValue());
+  }
+
+  private Optional<Location> findTeammateLocation(final Player player) {
+    return this.ultraHardcore
+        .teamService()
+        .teamOf(player.getUniqueId())
+        .flatMap(
+            team ->
+                team.members().stream()
+                    .filter(id -> !id.equals(player.getUniqueId()))
+                    .map(Bukkit::getPlayer)
+                    .filter(
+                        mate ->
+                            mate != null
+                                && this.ultraHardcore.profileService().getOrCreateProfile(mate).getState()
+                                    instanceof PlayingProfileState)
+                    .findFirst()
+                    .map(Player::getLocation));
   }
 }
