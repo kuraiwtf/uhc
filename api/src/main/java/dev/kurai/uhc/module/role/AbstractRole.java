@@ -6,7 +6,9 @@ import dev.kurai.uhc.util.api.Identifiable;
 import dev.kurai.uhc.util.api.annotation.Identifier;
 import dev.kurai.uhc.util.api.annotation.Name;
 import dev.kurai.uhc.util.api.name.Nameable;
+import java.util.List;
 import java.util.UUID;
+import net.kyori.adventure.text.Component;
 
 public abstract class AbstractRole<M extends AbstractModule>
     implements Identifiable<String>, Nameable<String> {
@@ -38,6 +40,10 @@ public abstract class AbstractRole<M extends AbstractModule>
   @Override
   public final String getName() {
     return this.name;
+  }
+
+  public List<Component> description() {
+    return List.of();
   }
 
   public final UUID getOwner() {

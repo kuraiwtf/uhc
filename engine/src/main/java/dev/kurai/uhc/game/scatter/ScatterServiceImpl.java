@@ -61,17 +61,20 @@ public final class ScatterServiceImpl implements ScatterService {
 
   @Override
   public void handleScatter() {
+    final var players =
+        this.ultraHardcore
+            .profileService()
+            .getProfiles(profile -> !profile.hasComponent(SpectatorComponent.class))
+            .stream()
+            .map(Profile::getId)
+            .toList();
+
+    final var teamService = this.ultraHardcore.teamService();
     if (this.ultraHardcore.moduleService().getCurrentModule() instanceof final TeamModule module
         && module.randomTeam()) {
-      this.ultraHardcore
-          .teamService()
-          .randomize(
-              this.ultraHardcore
-                  .profileService()
-                  .getProfiles(profile -> !profile.hasComponent(SpectatorComponent.class))
-                  .stream()
-                  .map(Profile::getId)
-                  .toList());
+      teamService.randomize(players);
+    } else {
+      teamService.assignUnteamed(players);
     }
 
     new ScatterTask(this.ultraHardcore).runTaskTimer(this.ultraHardcore.plugin(), 0, 1L);

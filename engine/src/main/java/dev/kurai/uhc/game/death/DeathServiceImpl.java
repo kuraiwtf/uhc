@@ -48,7 +48,7 @@ public final class DeathServiceImpl implements DeathService {
   public DeathServiceImpl(final UltraHardcoreAPI ultraHardcore) {
     this.ultraHardcore = ultraHardcore;
 
-    this.deathAnnounce = new BuiltinDeathAnnounce();
+    this.deathAnnounce = new BuiltinDeathAnnounce(ultraHardcore.teamService());
     this.deathProcessor = new BuiltinDeathProcessor(ultraHardcore, this);
   }
 

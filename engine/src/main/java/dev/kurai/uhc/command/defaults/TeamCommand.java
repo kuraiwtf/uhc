@@ -7,6 +7,7 @@ import dev.kurai.uhc.command.annotation.Command;
 import dev.kurai.uhc.command.annotation.CommandMeta;
 import dev.kurai.uhc.command.annotation.SubCommand;
 import dev.kurai.uhc.command.argument.annotation.Argument;
+import dev.kurai.uhc.module.team.module.TeamModule;
 import dev.kurai.uhc.profile.state.WaitingProfileState;
 import dev.kurai.uhc.team.Team;
 import dev.kurai.uhc.team.TeamService;
@@ -30,6 +31,12 @@ public final class TeamCommand {
   private boolean editable(final Player player) {
     if (!this.teams().enabled()) {
       player.sendMessage(prefix("&cLes équipes ne sont pas activées dans ce jeu."));
+      return false;
+    }
+
+    if (this.ultraHardcore.moduleService().getCurrentModule() instanceof final TeamModule module
+        && module.randomTeam()) {
+      player.sendMessage(prefix("&cLes équipes sont aléatoires, vous ne pouvez pas les modifier."));
       return false;
     }
 

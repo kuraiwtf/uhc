@@ -9,6 +9,7 @@ import dev.kurai.uhc.nickname.NicknameValueType;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -188,6 +189,29 @@ public final class TeamServiceImpl implements TeamService {
     this.membership.clear();
     this.invitations.clear();
     this.refreshNicknames(previous);
+  }
+
+  @Override
+  public void assignUnteamed(final Collection<UUID> players) {
+    if (!this.enabled()) {
+      return;
+    }
+
+    final List<UUID> unteamed =
+        new ArrayList<>(players.stream().filter(id -> !this.membership.containsKey(id)).toList());
+    Collections.shuffle(unteamed);
+
+    for (final var id : unteamed) {
+      final var smallest =
+          this.teams.values().stream()
+              .filter(team -> team.mutableMembers().size() < this.teamSize())
+              .min(Comparator.comparingInt(team -> team.mutableMembers().size()));
+      if (smallest.isPresent()) {
+        this.join(smallest.get(), id);
+      } else {
+        this.createTeam(id);
+      }
+    }
   }
 
   @Override

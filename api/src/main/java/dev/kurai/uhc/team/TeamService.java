@@ -32,5 +32,7 @@ public interface TeamService {
 
   void clear();
 
+  void assignUnteamed(final Collection<UUID> players);
+
   void randomize(final Collection<UUID> players);
 }

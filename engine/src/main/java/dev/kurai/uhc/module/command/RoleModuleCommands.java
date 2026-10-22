@@ -55,8 +55,8 @@ public final class RoleModuleCommands {
     this.module
         .roleOf(player.getUniqueId())
         .ifPresentOrElse(
-            role -> profile.sendPrefixedMessage("Votre rôle est&6 %s&f.".formatted(role.getName())),
-            () -> profile.sendPrefixedMessage("Vous n'avez pas de rôle."));
+            role -> role.description().forEach(profile::sendMessage),
+            () -> profile.sendPrefixedMessage("§cVous n'avez pas de rôle."));
   }
 
   @SubCommand(@CommandMeta(name = "roles", description = "Voir les rôles en vie"))
@@ -233,8 +233,7 @@ public final class RoleModuleCommands {
         .toList();
   }
 
-  private @Nullable AbstractCampData<?> campData(
-      final @Nullable Class<?> campClass) {
+  private @Nullable AbstractCampData<?> campData(final @Nullable Class<?> campClass) {
     if (campClass == null) {
       return null;
     }
