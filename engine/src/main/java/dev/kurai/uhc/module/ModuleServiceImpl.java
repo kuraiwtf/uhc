@@ -64,12 +64,6 @@ public final class ModuleServiceImpl implements ModuleService {
 
   @Override
   public void installModule(final AbstractModule module) {
-    if (module instanceof TeamModule && module instanceof CampModule) {
-      LOGGER.warning(
-          "Module %s is not compatible with this game mode.".formatted(module.getName()));
-      return;
-    }
-
     final var event =
         this.ultraHardcore
             .eventService()
