@@ -141,6 +141,7 @@ public final class StartServiceImpl implements StartService {
     gameService.cycleService().start();
     //    gameService.disconnectService().start();
     gameService.episodeService().start();
+    gameService.playing(true);
 
     final var world = this.ultraHardcore.worldService().getWorld();
     world.setPVP(false);

@@ -38,6 +38,10 @@ public interface GameService extends ForwardingAudience {
 
   void testMode(final boolean testMode);
 
+  boolean playing();
+
+  void playing(final boolean playing);
+
   CycleService cycleService();
 
   DeathService deathService();

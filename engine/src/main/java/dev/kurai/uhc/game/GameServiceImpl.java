@@ -62,6 +62,7 @@ public final class GameServiceImpl implements GameService {
   private final TimerService timerService;
 
   private boolean testMode;
+  private boolean playing;
 
   private long startTime;
 
