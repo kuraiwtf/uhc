@@ -215,6 +215,8 @@ public final class DeathServiceImpl implements DeathService {
     if (profiles != null && !profiles.isEmpty()) {
       final WinCelebration celebration = winService.winCelebration();
       celebration.celebrate(location, new BuiltinWinInformation(profiles));
+
+      this.ultraHardcore.gameService().playing(false);
     }
   }
 
