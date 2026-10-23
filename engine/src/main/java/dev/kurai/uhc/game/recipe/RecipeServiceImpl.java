@@ -31,6 +31,10 @@ public final class RecipeServiceImpl implements RecipeService {
     final ShapelessRecipe stringRecipe = new ShapelessRecipe(new ItemStack(Material.STRING));
     stringRecipe.addIngredient(4, Material.WOOL);
     this.insertRecipe("string", "Ficelle", stringRecipe);
+
+    final ShapelessRecipe diamondRecipe = new ShapelessRecipe(new ItemStack(Material.DIAMOND));
+    diamondRecipe.addIngredient(1, Material.GOLD_INGOT);
+    this.insertRecipe("diamond", "Diamant", diamondRecipe);
   }
 
   @Override
