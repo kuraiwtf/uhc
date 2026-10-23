@@ -18,7 +18,6 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.jspecify.annotations.NullMarked;
 
-/** Read-only view of the enchantment limits that apply to the viewing player. */
 @NullMarked
 public final class EnchantmentLimitViewMenu extends Menu {
 

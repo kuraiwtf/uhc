@@ -18,7 +18,9 @@ public final class PlayersCommand {
   }
 
   @Command(
-      @CommandMeta(name = "players", description = "Modifier les limites d'enchantement des joueurs"))
+      @CommandMeta(
+          name = "players",
+          description = "Modifier les limites d'enchantement des joueurs"))
   public void players(final Player player) {
     if (!this.ultraHardcore.gameService().hostService().hasHostAccess(player)) {
       player.sendMessage(CC.MISSING_PERMISSION);

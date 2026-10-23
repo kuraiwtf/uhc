@@ -53,8 +53,7 @@ public final class PlayerCommands {
 
   @Command(@CommandMeta(name = "limits", description = "Voir vos limites d'enchantement"))
   public void limits(final Player player) {
-    new EnchantmentLimitViewMenu(
-            player, this.ultraHardcore.gameService().enchantmentLimitService())
+    new EnchantmentLimitViewMenu(player, this.ultraHardcore.gameService().enchantmentLimitService())
         .open();
   }
 
