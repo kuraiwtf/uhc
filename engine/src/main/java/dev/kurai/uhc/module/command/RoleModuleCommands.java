@@ -19,7 +19,6 @@ import dev.kurai.uhc.module.role.module.RoleModule;
 import dev.kurai.uhc.nickname.NicknameValue;
 import dev.kurai.uhc.nickname.NicknameValueType;
 import dev.kurai.uhc.profile.Profile;
-import dev.kurai.uhc.profile.component.SpectatorComponent;
 import dev.kurai.uhc.util.CC;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -34,7 +33,7 @@ import org.jspecify.annotations.Nullable;
 @NullMarked
 public final class RoleModuleCommands {
 
-  private static final String MARK_KEY = "role_add";
+  static final String MARK_KEY = "role_add";
 
   private static final int SUFFIX_LIMIT = 16;
 
@@ -110,29 +109,6 @@ public final class RoleModuleCommands {
     this.send(player, "Composition de la partie", entries.size(), entries);
   }
 
-  @SubCommand(@CommandMeta(name = "add", description = "Assigner un rôle à un joueur"))
-  public void add(
-      final Player player,
-      final @Argument(name = "joueur") Player target,
-      final @Argument(name = "role") AbstractRoleData<?> roleData) {
-    this.mark(player, target, roleData);
-    player.sendMessage(
-        CC.prefix(
-            "Vous avez marqué que le joueur &6%s&r incarnait le rôle &6%s&r."
-                .formatted(target.getName(), roleData.getName())));
-  }
-
-  @SubCommand(@CommandMeta(name = "reset", description = "Retirer le rôle assigné à un joueur"))
-  public void reset(final Player player, final @Argument(name = "joueur") Player target) {
-    final var holder = this.ultraHardcore.nicknameService().holder(player.getUniqueId());
-    holder.nickname(target.getUniqueId()).removeValue(MARK_KEY);
-    holder.updateNickname(target.getUniqueId());
-
-    player.sendMessage(
-        CC.prefix(
-            "Vous avez retiré le potentiel rôle qu'incarne &6%s&r".formatted(target.getName())));
-  }
-
   @SubCommand(
       @CommandMeta(
           name = "set-role",
@@ -154,50 +130,11 @@ public final class RoleModuleCommands {
                 .formatted(target.getName(), roleData.getName())));
   }
 
-  @SubCommand(@CommandMeta(name = "auto-color", description = "Colorer automatiquement"))
-  public void autoColor(final Player player) {
-    final var profileService = this.ultraHardcore.profileService();
-    if (!profileService.getOrCreateProfile(player).hasComponent(SpectatorComponent.class)
-        && !player.isOp()) {
-      player.sendMessage(MISSING_PERMISSION);
-      return;
-    }
-
-    final var holder = this.ultraHardcore.nicknameService().holder(player.getUniqueId());
-    int colored = 0;
-    for (final var profile : profileService.getPlayingProfiles()) {
-      final var role = this.module.roleOf(profile.getId()).orElse(null);
-      if (role == null) {
-        continue;
-      }
-
-      final var roleData = this.roleData(role).orElse(null);
-      if (roleData == null) {
-        continue;
-      }
-
-      final Class<?> campClass =
-          this.module instanceof final CampModule<?, ?, ?> campModule
-              ? campModule.campOf(profile.getId()).<Class<?>>map(Object::getClass).orElse(null)
-              : null;
-      final var camp = this.campData(campClass != null ? campClass : roleData.getCampClass());
-      if (camp != null && camp.getColor() != null) {
-        holder.applyColor(profile.getId(), camp.getColor());
-      }
-
-      profile.findPlayer().ifPresent(target -> this.mark(player, target, roleData, camp));
-      colored++;
-    }
-
-    player.sendMessage(
-        CC.prefix("&6%d&f joueurs ont été automatiquement &acolorés&f.".formatted(colored)));
-  }
-
-  private void mark(final Player player, final Player target, final AbstractRoleData<?> roleData) {
+  void mark(final Player player, final Player target, final AbstractRoleData<?> roleData) {
     this.mark(player, target, roleData, this.campData(roleData.getCampClass()));
   }
 
-  private void mark(
+  void mark(
       final Player player,
       final Player target,
       final AbstractRoleData<?> roleData,
@@ -214,7 +151,7 @@ public final class RoleModuleCommands {
     holder.updateNickname(target.getUniqueId());
   }
 
-  private java.util.Optional<? extends AbstractRoleData<?>> roleData(final AbstractRole<?> role) {
+  java.util.Optional<? extends AbstractRoleData<?>> roleData(final AbstractRole<?> role) {
     return this.module.getRoleRegistrar().getRepository().findAll().stream()
         .filter(data -> data.getId().equals(role.getClass()))
         .findFirst();
@@ -234,7 +171,7 @@ public final class RoleModuleCommands {
         .toList();
   }
 
-  private @Nullable AbstractCampData<?> campData(final @Nullable Class<?> campClass) {
+  @Nullable AbstractCampData<?> campData(final @Nullable Class<?> campClass) {
     if (campClass == null) {
       return null;
     }

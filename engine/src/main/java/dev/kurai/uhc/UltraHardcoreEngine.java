@@ -23,6 +23,7 @@ import dev.kurai.uhc.event.EventServiceImpl;
 import dev.kurai.uhc.game.GameService;
 import dev.kurai.uhc.game.GameServiceImpl;
 import dev.kurai.uhc.game.configuration.inventory.InventoryConfiguration;
+import dev.kurai.uhc.game.enchantment.EnchantmentLimitListener;
 import dev.kurai.uhc.game.recipe.RecipeListener;
 import dev.kurai.uhc.helpop.HelpOpService;
 import dev.kurai.uhc.helpop.HelpOpServiceImpl;
@@ -164,6 +165,7 @@ public final class UltraHardcoreEngine extends UltraHardcoreAPI {
         new ModerationCommands(this),
         new ModuleCommands(this),
         new PlayerCommands(this),
+        new PlayersCommand(this),
         new SpectatorCommand(this),
         new TeamCommand(this),
         new TeamInventoryCommand(this),
@@ -196,6 +198,7 @@ public final class UltraHardcoreEngine extends UltraHardcoreAPI {
         new WaitingListener(this),
         new EffectListener(this.effectService, this.profileService),
         new RecipeListener(this.gameService.recipeService()),
+        new EnchantmentLimitListener(this.gameService.enchantmentLimitService()),
         new TeamListener(this.teamService, this.moduleService));
 
     Bukkit.getScheduler()

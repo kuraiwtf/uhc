@@ -6,6 +6,7 @@ import static dev.kurai.uhc.util.CC.*;
 
 import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.game.drop.DropRateService;
+import dev.kurai.uhc.game.enchantment.EnchantmentLimitService;
 import dev.kurai.uhc.game.episode.EpisodeService;
 import dev.kurai.uhc.game.recipe.RecipeService;
 import dev.kurai.uhc.game.rule.GameRuleService;
@@ -13,6 +14,7 @@ import dev.kurai.uhc.menu.button.ItemButton;
 import dev.kurai.uhc.menu.rules.border.BorderConfigurationMenu;
 import dev.kurai.uhc.menu.rules.disconnect.DisconnectTimerEditMenu;
 import dev.kurai.uhc.menu.rules.drop.DropRateMenu;
+import dev.kurai.uhc.menu.rules.enchantment.EnchantmentLimitMenu;
 import dev.kurai.uhc.menu.rules.episode.EpisodeTimeMenu;
 import dev.kurai.uhc.menu.rules.game.GameRulesMenu;
 import dev.kurai.uhc.menu.rules.inventory.StartInventoryMenu;
@@ -96,18 +98,7 @@ public final class RulesMenu extends Menu {
     front.set(26, new InvincibilityTimerButton(this.ultraHardcore));
 
     front.set(29, new OreLimitButton());
-    front.set(
-        30,
-        new ItemButton(
-            new ItemBuilder(Material.ENCHANTED_BOOK)
-                .name("&6&lLimites des enchantements")
-                .lore(
-                    "",
-                    "&7" + BAR + "&f Permet de modifier",
-                    "  les limites des&d enchantements",
-                    "  de la partie.",
-                    "")
-                .asItemStack()));
+    front.set(30, new EnchantmentLimitButton(gameService.enchantmentLimitService()));
     front.set(32, new PvPTimerButton(this.ultraHardcore));
     front.set(33, new DisconnectTimerButton(this.ultraHardcore));
   }
@@ -470,6 +461,37 @@ public final class RulesMenu extends Menu {
       final var inventoryMenu = new StartInventoryMenu(menu.getPlayer(), this.ultraHardcore);
       inventoryMenu.setPreviousMenu(menu);
       inventoryMenu.open();
+    }
+  }
+
+  private static final class EnchantmentLimitButton extends Button {
+
+    private final EnchantmentLimitService limitService;
+
+    private EnchantmentLimitButton(final EnchantmentLimitService limitService) {
+      this.limitService = limitService;
+    }
+
+    @Override
+    public ItemStack getIcon() {
+      return new ItemBuilder(Material.ENCHANTED_BOOK)
+          .name("&6&lLimites des enchantements")
+          .lore(
+              "",
+              "&7" + BAR + "&f Permet de modifier",
+              "  les limites des&d enchantements",
+              "  de la partie.",
+              "")
+          .asItemStack();
+    }
+
+    @Override
+    public void onClick(final ButtonClick click) {
+      final var menu = click.getMenu();
+      final var limitMenu =
+          new EnchantmentLimitMenu(menu.getPlayer(), this.limitService, null, null);
+      limitMenu.setPreviousMenu(menu);
+      limitMenu.open();
     }
   }
 

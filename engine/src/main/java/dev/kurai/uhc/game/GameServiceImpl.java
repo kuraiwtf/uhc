@@ -11,6 +11,8 @@ import dev.kurai.uhc.game.drop.DropRateService;
 import dev.kurai.uhc.game.drop.DropRateServiceImpl;
 import dev.kurai.uhc.game.drop.defaults.AppleDropRateModifier;
 import dev.kurai.uhc.game.drop.defaults.FlintDropRateModifier;
+import dev.kurai.uhc.game.enchantment.EnchantmentLimitService;
+import dev.kurai.uhc.game.enchantment.EnchantmentLimitServiceImpl;
 import dev.kurai.uhc.game.episode.EpisodeService;
 import dev.kurai.uhc.game.episode.EpisodeServiceImpl;
 import dev.kurai.uhc.game.group.GroupService;
@@ -47,6 +49,7 @@ public final class GameServiceImpl implements GameService {
   private final DeathService deathService;
   private final DisconnectService disconnectService;
   private final DropRateService dropRateService;
+  private final EnchantmentLimitService enchantmentLimitService;
   private final EpisodeService episodeService;
   private final GroupService groupService;
   private final HostService hostService;
@@ -70,6 +73,7 @@ public final class GameServiceImpl implements GameService {
     this.disconnectService = new DisconnectServiceImpl(ultraHardcore);
     (this.dropRateService = new DropRateServiceImpl(ultraHardcore.eventService()))
         .registerModifiers(new AppleDropRateModifier(), new FlintDropRateModifier());
+    this.enchantmentLimitService = new EnchantmentLimitServiceImpl();
     this.episodeService = new EpisodeServiceImpl(ultraHardcore);
     this.groupService = new GroupServiceImpl();
     this.hostService = new HostServiceImpl(ultraHardcore);

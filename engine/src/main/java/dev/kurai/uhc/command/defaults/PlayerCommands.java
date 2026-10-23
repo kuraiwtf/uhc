@@ -9,6 +9,7 @@ import dev.kurai.uhc.command.annotation.CommandMeta;
 import dev.kurai.uhc.command.argument.annotation.Argument;
 import dev.kurai.uhc.menu.claim.ClaimMenu;
 import dev.kurai.uhc.menu.color.ColorMenu;
+import dev.kurai.uhc.menu.rules.enchantment.EnchantmentLimitViewMenu;
 import dev.kurai.uhc.menu.rules.inventory.StartInventoryViewMenu;
 import dev.kurai.uhc.menu.scenario.ScenarioViewMenu;
 import dev.kurai.uhc.nickname.NicknameHolder;
@@ -48,6 +49,13 @@ public final class PlayerCommands {
     }
 
     new ClaimMenu(player, claim).open();
+  }
+
+  @Command(@CommandMeta(name = "limits", description = "Voir vos limites d'enchantement"))
+  public void limits(final Player player) {
+    new EnchantmentLimitViewMenu(
+            player, this.ultraHardcore.gameService().enchantmentLimitService())
+        .open();
   }
 
   @Command(@CommandMeta(name = "inv"))

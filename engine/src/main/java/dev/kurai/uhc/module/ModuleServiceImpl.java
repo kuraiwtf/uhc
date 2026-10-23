@@ -9,6 +9,7 @@ import dev.kurai.uhc.command.annotation.SimpleCommandMeta;
 import dev.kurai.uhc.module.color.ColorModule;
 import dev.kurai.uhc.module.command.ColorModuleCommands;
 import dev.kurai.uhc.module.command.ModuleCommandProvider;
+import dev.kurai.uhc.module.command.RoleColorModuleCommands;
 import dev.kurai.uhc.module.command.RoleModuleCommands;
 import dev.kurai.uhc.module.role.module.RoleModule;
 import java.util.ArrayList;
@@ -34,6 +35,11 @@ public final class ModuleServiceImpl implements ModuleService {
                 : null);
     this.registerCommandProvider(
         module -> module instanceof ColorModule ? new ColorModuleCommands(ultraHardcore) : null);
+    this.registerCommandProvider(
+        module ->
+            module instanceof final RoleModule<?, ?, ?> roleModule && module instanceof ColorModule
+                ? new RoleColorModuleCommands(ultraHardcore, roleModule)
+                : null);
   }
 
   @Override

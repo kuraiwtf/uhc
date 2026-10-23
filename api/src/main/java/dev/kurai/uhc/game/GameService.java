@@ -7,6 +7,7 @@ import dev.kurai.uhc.game.cycle.CycleService;
 import dev.kurai.uhc.game.death.DeathService;
 import dev.kurai.uhc.game.disconnect.DisconnectService;
 import dev.kurai.uhc.game.drop.DropRateService;
+import dev.kurai.uhc.game.enchantment.EnchantmentLimitService;
 import dev.kurai.uhc.game.episode.EpisodeService;
 import dev.kurai.uhc.game.group.GroupService;
 import dev.kurai.uhc.game.host.HostService;
@@ -44,6 +45,8 @@ public interface GameService extends ForwardingAudience {
   DisconnectService disconnectService();
 
   DropRateService dropRateService();
+
+  EnchantmentLimitService enchantmentLimitService();
 
   EpisodeService episodeService();
 
