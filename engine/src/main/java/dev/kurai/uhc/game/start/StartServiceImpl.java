@@ -5,7 +5,8 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.event.defaults.game.GameStartEvent;
-import dev.kurai.uhc.event.defaults.game.GameTickEvent;
+import dev.kurai.uhc.game.GameService;
+import dev.kurai.uhc.game.GameTickingTask;
 import dev.kurai.uhc.game.configuration.border.BorderConfiguration;
 import dev.kurai.uhc.game.configuration.inventory.InventoryConfiguration;
 import dev.kurai.uhc.game.start.countdown.task.StartCountdownTask;
@@ -16,6 +17,7 @@ import dev.kurai.uhc.listener.game.SpectatorListener;
 import dev.kurai.uhc.module.power.listener.PowerListener;
 import dev.kurai.uhc.module.power.task.updater.CooldownUpdaterTask;
 import dev.kurai.uhc.module.power.task.updater.GlowingTargetUpdaterTask;
+import dev.kurai.uhc.profile.ProfileService;
 import dev.kurai.uhc.profile.component.DisconnectComponent;
 import dev.kurai.uhc.profile.component.SpectatorComponent;
 import dev.kurai.uhc.profile.state.PlayingProfileState;
@@ -31,6 +33,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -119,11 +122,10 @@ public final class StartServiceImpl implements StartService {
     this.startTask = null;
 
     final var eventService = this.ultraHardcore.eventService();
+    final Plugin plugin = this.ultraHardcore.plugin();
+    final ProfileService profileService = this.ultraHardcore.profileService();
     final PowerListener powerListener =
-        new PowerListener(
-            this.ultraHardcore.profileService(),
-            this.ultraHardcore.moduleService(),
-            this.ultraHardcore.plugin());
+        new PowerListener(profileService, this.ultraHardcore.moduleService(), plugin);
     eventService.registerListeners(
         new PlayingListener(this.ultraHardcore),
         new SpectatorListener(this.ultraHardcore),
@@ -132,9 +134,9 @@ public final class StartServiceImpl implements StartService {
     PacketEvents.getAPI().getEventManager().registerListeners(powerListener);
 
     final TabListService tabListService = this.ultraHardcore.tabListService();
-    tabListService.addPart(new EffectTabListPart(this.ultraHardcore.profileService()));
+    tabListService.addPart(new EffectTabListPart(profileService));
 
-    final var gameService = this.ultraHardcore.gameService();
+    final GameService gameService = this.ultraHardcore.gameService();
     gameService.startTime(System.currentTimeMillis());
     gameService.timerService().startAllTimers();
     gameService.cycleService().start();
@@ -151,23 +153,11 @@ public final class StartServiceImpl implements StartService {
     worldBorder.setCenter(0, 0);
 
     final BukkitScheduler scheduler = Bukkit.getScheduler();
-    scheduler.runTaskTimer(
-        this.ultraHardcore.plugin(),
-        () -> Bukkit.getPluginManager().callEvent(new GameTickEvent()),
-        0,
-        1L);
+    scheduler.runTaskTimer(plugin, new GameTickingTask(gameService), 0, 1L);
+    scheduler.runTaskTimerAsynchronously(plugin, new CooldownUpdaterTask(profileService), 0, 1L);
     scheduler.runTaskTimerAsynchronously(
-        this.ultraHardcore.plugin(),
-        new CooldownUpdaterTask(this.ultraHardcore.profileService()),
-        0,
-        1L);
-    scheduler.runTaskTimerAsynchronously(
-        this.ultraHardcore.plugin(),
-        new GlowingTargetUpdaterTask(this.ultraHardcore.profileService()),
-        0,
-        1L);
+        plugin, new GlowingTargetUpdaterTask(profileService), 0, 1L);
 
-    final var profileService = this.ultraHardcore.profileService();
     for (final var profile : profileService.getProfiles()) {
       final var player = profile.getPlayer();
       if (player == null) {

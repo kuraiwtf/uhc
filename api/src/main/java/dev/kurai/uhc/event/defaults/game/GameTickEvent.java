@@ -11,6 +11,16 @@ public final class GameTickEvent extends Event {
     return HANDLERS;
   }
 
+  private final int ticks;
+
+  public GameTickEvent(final int ticks) {
+    this.ticks = ticks;
+  }
+
+  public int ticks() {
+    return this.ticks;
+  }
+
   @Override
   public HandlerList getHandlers() {
     return HANDLERS;

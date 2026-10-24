@@ -34,6 +34,10 @@ public interface GameService extends ForwardingAudience {
 
   void startTime(final @Range(from = 0L, to = Long.MAX_VALUE) long startTime);
 
+  int duration();
+
+  void duration(final @Range(from = 0L, to = Integer.MAX_VALUE) int duration);
+
   boolean testMode();
 
   void testMode(final boolean testMode);
