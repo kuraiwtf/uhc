@@ -119,7 +119,6 @@ public final class StartServiceImpl implements StartService {
     this.startTask = null;
 
     final var eventService = this.ultraHardcore.eventService();
-    eventService.dispatchEvent(new GameStartEvent());
     final PowerListener powerListener =
         new PowerListener(
             this.ultraHardcore.profileService(),
@@ -197,5 +196,7 @@ public final class StartServiceImpl implements StartService {
     this.ultraHardcore
         .sidebarService()
         .installAdapter(new PlayingSidebarAdapter(this.ultraHardcore));
+
+    eventService.dispatchEvent(new GameStartEvent());
   }
 }
