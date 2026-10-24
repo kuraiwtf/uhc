@@ -1,5 +1,6 @@
 package dev.kurai.uhc.module.role;
 
+import dev.kurai.uhc.game.cycle.AbstractCycle;
 import dev.kurai.uhc.profile.Profile;
 import java.util.List;
 import net.kyori.adventure.text.Component;
@@ -10,9 +11,13 @@ public abstract class AbstractRole {
   protected final RoleMeta roleMeta;
   protected final Profile owner;
 
+  protected boolean disabledPassives;
+
   public AbstractRole(final RoleMeta roleMeta, final Profile owner) {
     this.roleMeta = roleMeta;
     this.owner = owner;
+
+    this.disabledPassives = false;
   }
 
   public RoleMeta roleMeta() {
@@ -26,6 +31,8 @@ public abstract class AbstractRole {
   public void onDistribute(final Profile gameProfile, final Player player) {}
 
   public void onDescription(final Player player) {}
+
+  public void onCycle(final Player player, final AbstractCycle cycle) {}
 
   public void onDay(final Player player) {}
 
