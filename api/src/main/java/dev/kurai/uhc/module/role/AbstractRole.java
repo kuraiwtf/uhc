@@ -49,6 +49,14 @@ public abstract class AbstractRole {
         && player.getItemInHand().getType().name().contains("SWORD");
   }
 
+  public boolean disabledPassives() {
+    return this.disabledPassives;
+  }
+
+  public void disabledPassives(final boolean disabledPassives) {
+    this.disabledPassives = disabledPassives;
+  }
+
   public List<Component> description() {
     return List.of();
   }
