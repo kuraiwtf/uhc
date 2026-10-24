@@ -2,9 +2,7 @@ package dev.kurai.uhc.module;
 
 import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.event.defaults.module.ModuleInstallEvent;
-import dev.kurai.uhc.module.camp.module.CampModule;
 import dev.kurai.uhc.module.service.ModuleService;
-import dev.kurai.uhc.module.team.module.TeamModule;
 import dev.kurai.uhc.command.annotation.SimpleCommandMeta;
 import dev.kurai.uhc.module.color.ColorModule;
 import dev.kurai.uhc.module.command.ColorModuleCommands;
@@ -30,14 +28,14 @@ public final class ModuleServiceImpl implements ModuleService {
 
     this.registerCommandProvider(
         module ->
-            module instanceof final RoleModule<?, ?, ?> roleModule
+            module instanceof final RoleModule roleModule
                 ? new RoleModuleCommands(ultraHardcore, roleModule)
                 : null);
     this.registerCommandProvider(
         module -> module instanceof ColorModule ? new ColorModuleCommands(ultraHardcore) : null);
     this.registerCommandProvider(
         module ->
-            module instanceof final RoleModule<?, ?, ?> roleModule && module instanceof ColorModule
+            module instanceof final RoleModule roleModule && module instanceof ColorModule
                 ? new RoleColorModuleCommands(ultraHardcore, roleModule)
                 : null);
   }

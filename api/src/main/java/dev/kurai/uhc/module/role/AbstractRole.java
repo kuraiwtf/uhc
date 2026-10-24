@@ -1,56 +1,48 @@
 package dev.kurai.uhc.module.role;
 
-import com.google.common.base.Preconditions;
-import dev.kurai.uhc.module.AbstractModule;
-import dev.kurai.uhc.util.api.Identifiable;
-import dev.kurai.uhc.util.api.annotation.Identifier;
-import dev.kurai.uhc.util.api.annotation.Name;
-import dev.kurai.uhc.util.api.name.Nameable;
+import dev.kurai.uhc.profile.Profile;
 import java.util.List;
-import java.util.UUID;
 import net.kyori.adventure.text.Component;
+import org.bukkit.entity.Player;
 
-public abstract class AbstractRole<M extends AbstractModule>
-    implements Identifiable<String>, Nameable<String> {
+public abstract class AbstractRole {
 
-  protected final String id;
-  protected final String name;
+  protected final RoleMeta roleMeta;
+  protected final Profile owner;
 
-  protected final UUID owner;
-  protected final M module;
-
-  public AbstractRole(final UUID owner, final M module) {
-    final var identifierAnnotation = this.getClass().getAnnotation(Identifier.class);
-    Preconditions.checkNotNull(identifierAnnotation, "Identifier annotation is missing!");
-    this.id = identifierAnnotation.value();
-
-    final var nameAnnotation = this.getClass().getAnnotation(Name.class);
-    Preconditions.checkNotNull(nameAnnotation, "Name annotation is missing!");
-    this.name = nameAnnotation.value();
-
+  public AbstractRole(final RoleMeta roleMeta, final Profile owner) {
+    this.roleMeta = roleMeta;
     this.owner = owner;
-    this.module = module;
   }
 
-  @Override
-  public final String getId() {
-    return this.id;
+  public RoleMeta roleMeta() {
+    return this.roleMeta;
   }
 
-  @Override
-  public final String getName() {
-    return this.name;
+  public Profile owner() {
+    return this.owner;
+  }
+
+  public void onDistribute(final Profile gameProfile, final Player player) {}
+
+  public void onDescription(final Player player) {}
+
+  public void onDay(final Player player) {}
+
+  public void onNight(final Player player) {}
+
+  public void onEpisode(final Player player, final int episode) {}
+
+  public void onSecond(final Player player, final int seconds) {}
+
+  public void onTick(final Player player) {}
+
+  protected boolean hasSword(Player player) {
+    return player.getItemInHand() != null
+        && player.getItemInHand().getType().name().contains("SWORD");
   }
 
   public List<Component> description() {
     return List.of();
-  }
-
-  public final UUID getOwner() {
-    return this.owner;
-  }
-
-  public final M getModule() {
-    return this.module;
   }
 }

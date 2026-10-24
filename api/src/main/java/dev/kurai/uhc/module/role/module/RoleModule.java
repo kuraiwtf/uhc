@@ -1,28 +1,20 @@
 package dev.kurai.uhc.module.role.module;
 
 import dev.kurai.uhc.module.role.AbstractRole;
-import dev.kurai.uhc.module.role.AbstractRoleData;
-import dev.kurai.uhc.module.role.registrar.AbstractRoleRegistrar;
+import dev.kurai.uhc.module.role.RoleMeta;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.UUID;
 
-public interface RoleModule<
-    C extends AbstractRole<?>,
-    D extends AbstractRoleData<C>,
-    R extends AbstractRoleRegistrar<C, D>> {
+public interface RoleModule {
 
-  R getRoleRegistrar();
+  Collection<RoleMeta> availableRoles();
 
-  default Collection<D> getEnabledRoles() {
-    return this.getRoleRegistrar().getRepository().findAll();
-  }
-
-  default Optional<? extends AbstractRole<?>> roleOf(final UUID uniqueId) {
+  default Optional<? extends AbstractRole> roleOf(final UUID uniqueId) {
     return Optional.empty();
   }
 
-  default boolean forceRole(final UUID target, final AbstractRoleData<?> roleData) {
+  default boolean forceRole(final UUID target, final RoleMeta roleMeta) {
     return false;
   }
 

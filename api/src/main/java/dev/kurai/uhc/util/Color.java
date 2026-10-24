@@ -58,6 +58,20 @@ public final class Color {
   public static final Color YELLOW =
       new Color("Jaune", ChatColor.YELLOW, DyeColor.YELLOW, NamedTextColor.YELLOW, 255, 255, 85);
 
+  private static final Color[] VALUES = {
+    WHITE, BLACK, DARK_BLUE, DARK_GREEN, DARK_AQUA, DARK_RED, DARK_PURPLE, GOLD, GRAY, DARK_GRAY,
+    BLUE, GREEN, AQUA, RED, LIGHT_PURPLE, YELLOW
+  };
+
+  public static Color of(final ChatColor chatColor) {
+    for (final Color color : VALUES) {
+      if (color.chatColor == chatColor) {
+        return color;
+      }
+    }
+    return WHITE;
+  }
+
   private final String name;
   private final ChatColor chatColor;
   private final DyeColor dyeColor;

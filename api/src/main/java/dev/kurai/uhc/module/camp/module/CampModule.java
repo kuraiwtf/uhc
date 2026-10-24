@@ -1,20 +1,15 @@
 package dev.kurai.uhc.module.camp.module;
 
-import dev.kurai.uhc.module.camp.AbstractCamp;
-import dev.kurai.uhc.module.camp.AbstractCampData;
-import dev.kurai.uhc.module.camp.registrar.AbstractCampRegistrar;
-
+import dev.kurai.uhc.module.camp.Camp;
+import java.util.Collection;
 import java.util.Optional;
 import java.util.UUID;
 
-public interface CampModule<
-    C extends AbstractCamp<?>,
-    D extends AbstractCampData<C>,
-    R extends AbstractCampRegistrar<C, D>> {
+public interface CampModule {
 
-  R getCampRegistrar();
+  Collection<Camp> availableCamps();
 
-  default Optional<? extends AbstractCamp<?>> campOf(final UUID uniqueId) {
+  default Optional<? extends Camp> campOf(final UUID uniqueId) {
     return Optional.empty();
   }
 }

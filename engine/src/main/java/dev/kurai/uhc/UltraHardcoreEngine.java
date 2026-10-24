@@ -13,7 +13,7 @@ import dev.kurai.uhc.command.CommandRegistrarImpl;
 import dev.kurai.uhc.command.argument.builtin.uhc.TimerArgumentResolver;
 import dev.kurai.uhc.command.defaults.*;
 import dev.kurai.uhc.module.command.RoleDataArgumentResolver;
-import dev.kurai.uhc.module.role.AbstractRoleData;
+import dev.kurai.uhc.module.role.RoleMeta;
 import dev.kurai.uhc.effect.EffectListener;
 import dev.kurai.uhc.effect.EffectService;
 import dev.kurai.uhc.effect.EffectServiceImpl;
@@ -180,7 +180,7 @@ public final class UltraHardcoreEngine extends UltraHardcoreAPI {
     this.commandRegistrar
         .getArgumentResolverRegistrar()
         .registerArgumentResolver(
-            AbstractRoleData.class, new RoleDataArgumentResolver(this.moduleService));
+            RoleMeta.class, new RoleDataArgumentResolver(this.moduleService));
 
     final EventManager eventManager = PacketEvents.getAPI().getEventManager();
 

@@ -29,7 +29,7 @@ public abstract class ModuleMenu extends Menu {
   public void setup(final BackgroundLayer backgroundLayer, final ForegroundLayer front) {
     this.apply(new BorderTemplate(this.module.color().asDyeColor().getData()));
 
-    if (this.module instanceof final RoleModule<?, ?, ?> roleModule) {
+    if (this.module instanceof final RoleModule roleModule) {
       front.set(10, new HiddenCompositionButton(roleModule));
     }
 
@@ -40,9 +40,9 @@ public abstract class ModuleMenu extends Menu {
 
   private static final class HiddenCompositionButton extends Button {
 
-    private final RoleModule<?, ?, ?> roleModule;
+    private final RoleModule roleModule;
 
-    private HiddenCompositionButton(final RoleModule<?, ?, ?> roleModule) {
+    private HiddenCompositionButton(final RoleModule roleModule) {
       this.roleModule = roleModule;
     }
 

@@ -10,16 +10,16 @@ import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.command.annotation.CommandMeta;
 import dev.kurai.uhc.command.annotation.SubCommand;
 import dev.kurai.uhc.command.argument.annotation.Argument;
-import dev.kurai.uhc.module.camp.AbstractCamp;
-import dev.kurai.uhc.module.camp.AbstractCampData;
+import dev.kurai.uhc.module.camp.Camp;
 import dev.kurai.uhc.module.camp.module.CampModule;
 import dev.kurai.uhc.module.role.AbstractRole;
-import dev.kurai.uhc.module.role.AbstractRoleData;
+import dev.kurai.uhc.module.role.RoleMeta;
 import dev.kurai.uhc.module.role.module.RoleModule;
 import dev.kurai.uhc.nickname.NicknameValue;
 import dev.kurai.uhc.nickname.NicknameValueType;
 import dev.kurai.uhc.profile.Profile;
 import dev.kurai.uhc.util.CC;
+import dev.kurai.uhc.util.Color;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -37,15 +37,14 @@ public final class RoleModuleCommands {
 
   private static final int SUFFIX_LIMIT = 16;
 
-  private record Entry(String name, @Nullable Class<? extends AbstractCamp<?>> camp) {}
+  private record Entry(String name, @Nullable Camp camp) {}
 
   private record Group(String title, TextColor color, List<String> entries) {}
 
   private final UltraHardcoreAPI ultraHardcore;
-  private final RoleModule<?, ?, ?> module;
+  private final RoleModule module;
 
-  public RoleModuleCommands(
-      final UltraHardcoreAPI ultraHardcore, final RoleModule<?, ?, ?> module) {
+  public RoleModuleCommands(final UltraHardcoreAPI ultraHardcore, final RoleModule module) {
     this.ultraHardcore = ultraHardcore;
     this.module = module;
   }
@@ -88,8 +87,11 @@ public final class RoleModuleCommands {
               role ->
                   entries.add(
                       this.roleData(role)
-                          .map(data -> new Entry(data.getName(), data.getCampClass()))
-                          .orElseGet(() -> new Entry(role.getName(), null))));
+                          .map(data -> new Entry(data.getDefaultName(), data.camp()))
+                          .orElseGet(
+                              () ->
+                                  new Entry(
+                                      role.roleMeta().getDefaultName(), role.roleMeta().camp()))));
     }
 
     this.send(player, "Rôles en vie", playing.size(), entries);
@@ -104,7 +106,7 @@ public final class RoleModuleCommands {
 
     final var entries =
         this.roleDatas().stream()
-            .map(data -> new Entry(data.getName(), data.getCampClass()))
+            .map(data -> new Entry(data.getDefaultName(), data.camp()))
             .toList();
     this.send(player, "Composition de la partie", entries.size(), entries);
   }
@@ -117,7 +119,7 @@ public final class RoleModuleCommands {
           permission = "uhc.command.setrole"))
   public void setRole(
       final Player player,
-      final @Argument(name = "rôle") AbstractRoleData<?> roleData,
+      final @Argument(name = "rôle") RoleMeta roleData,
       final @Argument(name = "joueur", defaultValue = "self") Player target) {
     if (!this.module.forceRole(target.getUniqueId(), roleData)) {
       player.sendMessage(CC.prefix("&cCe jeu ne permet pas de définir le rôle d'un joueur."));
@@ -127,59 +129,50 @@ public final class RoleModuleCommands {
     player.sendMessage(
         CC.prefix(
             "&6%s&r possède désormais le rôle&6 %s&r."
-                .formatted(target.getName(), roleData.getName())));
+                .formatted(target.getName(), roleData.getDefaultName())));
   }
 
-  void mark(final Player player, final Player target, final AbstractRoleData<?> roleData) {
-    this.mark(player, target, roleData, this.campData(roleData.getCampClass()));
+  void mark(final Player player, final Player target, final RoleMeta roleData) {
+    this.mark(player, target, roleData, roleData.camp());
   }
 
   void mark(
       final Player player,
       final Player target,
-      final AbstractRoleData<?> roleData,
-      final @Nullable AbstractCampData<?> camp) {
+      final RoleMeta roleData,
+      final @Nullable Camp camp) {
     final var holder = this.ultraHardcore.nicknameService().holder(player.getUniqueId());
     final var nickname = holder.nickname(target.getUniqueId());
     nickname.removeValue(MARK_KEY);
 
-    final var color = camp == null ? ChatColor.WHITE : camp.getChatColor();
+    final var color = camp == null ? ChatColor.WHITE : camp.primaryColor();
     final var separator = " §8" + BAR + " " + color;
     final var name =
-        roleData.getName().substring(0, Math.min(roleData.getName().length(), SUFFIX_LIMIT - separator.length()));
-    nickname.addValue(new NicknameValue(MARK_KEY, NicknameValueType.SUFFIX, text(separator + name)));
+        roleData
+            .getDefaultName()
+            .substring(
+                0, Math.min(roleData.getDefaultName().length(), SUFFIX_LIMIT - separator.length()));
+    nickname.addValue(
+        new NicknameValue(MARK_KEY, NicknameValueType.SUFFIX, text(separator + name)));
     holder.updateNickname(target.getUniqueId());
   }
 
-  java.util.Optional<? extends AbstractRoleData<?>> roleData(final AbstractRole<?> role) {
-    return this.module.getRoleRegistrar().getRepository().findAll().stream()
-        .filter(data -> data.getId().equals(role.getClass()))
-        .findFirst();
+  java.util.Optional<RoleMeta> roleData(final AbstractRole role) {
+    return java.util.Optional.of(role.roleMeta());
   }
 
-  private List<? extends AbstractRoleData<?>> roleDatas() {
-    return List.copyOf(this.module.getEnabledRoles());
+  private List<RoleMeta> roleDatas() {
+    return List.copyOf(this.module.availableRoles());
   }
 
-  private List<? extends AbstractCampData<?>> campDatas() {
-    if (!(this.module instanceof final CampModule<?, ?, ?> campModule)) {
+  private List<Camp> campDatas() {
+    if (!(this.module instanceof final CampModule campModule)) {
       return List.of();
     }
 
-    return campModule.getCampRegistrar().getRegistry().findAll().stream()
-        .sorted(Comparator.comparing(AbstractCampData::getName))
+    return campModule.availableCamps().stream()
+        .sorted(Comparator.comparing(Camp::getName))
         .toList();
-  }
-
-  @Nullable AbstractCampData<?> campData(final @Nullable Class<?> campClass) {
-    if (campClass == null) {
-      return null;
-    }
-
-    return this.campDatas().stream()
-        .filter(data -> data.getId().equals(campClass))
-        .findFirst()
-        .orElse(null);
   }
 
   private List<Group> group(final List<Entry> entries) {
@@ -189,13 +182,13 @@ public final class RoleModuleCommands {
     for (final var camp : this.campDatas()) {
       final var names =
           remaining.stream()
-              .filter(entry -> camp.getId().equals(entry.camp()))
+              .filter(entry -> camp.equals(entry.camp()))
               .map(Entry::name)
               .sorted()
               .toList();
-      remaining.removeIf(entry -> camp.getId().equals(entry.camp()));
+      remaining.removeIf(entry -> camp.equals(entry.camp()));
       if (!names.isEmpty()) {
-        groups.add(new Group(camp.getName(), camp.getTextColor(), names));
+        groups.add(new Group(camp.getName(), Color.of(camp.primaryColor()).asTextColor(), names));
       }
     }
 

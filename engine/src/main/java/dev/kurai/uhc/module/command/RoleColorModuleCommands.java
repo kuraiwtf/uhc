@@ -6,11 +6,13 @@ import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.command.annotation.CommandMeta;
 import dev.kurai.uhc.command.annotation.SubCommand;
 import dev.kurai.uhc.command.argument.annotation.Argument;
+import dev.kurai.uhc.module.camp.Camp;
 import dev.kurai.uhc.module.camp.module.CampModule;
-import dev.kurai.uhc.module.role.AbstractRoleData;
+import dev.kurai.uhc.module.role.RoleMeta;
 import dev.kurai.uhc.module.role.module.RoleModule;
 import dev.kurai.uhc.profile.component.SpectatorComponent;
 import dev.kurai.uhc.util.CC;
+import dev.kurai.uhc.util.Color;
 import org.bukkit.entity.Player;
 import org.jspecify.annotations.NullMarked;
 
@@ -22,11 +24,11 @@ import org.jspecify.annotations.NullMarked;
 public final class RoleColorModuleCommands {
 
   private final UltraHardcoreAPI ultraHardcore;
-  private final RoleModule<?, ?, ?> module;
+  private final RoleModule module;
   private final RoleModuleCommands helpers;
 
   public RoleColorModuleCommands(
-      final UltraHardcoreAPI ultraHardcore, final RoleModule<?, ?, ?> module) {
+      final UltraHardcoreAPI ultraHardcore, final RoleModule module) {
     this.ultraHardcore = ultraHardcore;
     this.module = module;
     this.helpers = new RoleModuleCommands(ultraHardcore, module);
@@ -36,12 +38,12 @@ public final class RoleColorModuleCommands {
   public void add(
       final Player player,
       final @Argument(name = "joueur") Player target,
-      final @Argument(name = "role") AbstractRoleData<?> roleData) {
+      final @Argument(name = "role") RoleMeta roleData) {
     this.helpers.mark(player, target, roleData);
     player.sendMessage(
         CC.prefix(
             "Vous avez marqué que le joueur &6%s&r incarnait le rôle &6%s&r."
-                .formatted(target.getName(), roleData.getName())));
+                .formatted(target.getName(), roleData.getDefaultName())));
   }
 
   @SubCommand(@CommandMeta(name = "reset", description = "Retirer le rôle assigné à un joueur"))
@@ -72,19 +74,12 @@ public final class RoleColorModuleCommands {
         continue;
       }
 
-      final var roleData = this.helpers.roleData(role).orElse(null);
-      if (roleData == null) {
-        continue;
-      }
-
-      final Class<?> campClass =
-          this.module instanceof final CampModule<?, ?, ?> campModule
-              ? campModule.campOf(profile.getId()).<Class<?>>map(Object::getClass).orElse(null)
-              : null;
-      final var camp = this.helpers.campData(campClass != null ? campClass : roleData.getCampClass());
-      if (camp != null && camp.getColor() != null) {
-        holder.applyColor(profile.getId(), camp.getColor());
-      }
+      final var roleData = role.roleMeta();
+      final var camp =
+          this.module instanceof final CampModule campModule
+              ? campModule.campOf(profile.getId()).<Camp>map(c -> c).orElse(roleData.camp())
+              : roleData.camp();
+      holder.applyColor(profile.getId(), Color.of(camp.primaryColor()));
 
       profile.findPlayer().ifPresent(target -> this.helpers.mark(player, target, roleData, camp));
       colored++;
