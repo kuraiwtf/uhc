@@ -67,12 +67,13 @@ public final class RoleDescriptionProvider {
 
     if (!role.getPassives().isEmpty()
         || !role.getParticularities().isEmpty()
-        || !particularPowers.isEmpty()) {
+        || !particularPowers.isEmpty()
+        || !role.getOtherParticularities().isEmpty()) {
       component.append(this.section("Particularités")).appendNewline().appendNewline();
     }
 
     if (!role.getPassives().isEmpty()) {
-      component.append(this.entry("Passifs", role.getPassives())).appendNewline();
+      component.append(this.entry("Passifs", role.getPassives())).appendNewline().appendNewline();
     }
 
     for (final var entry : role.getParticularities().entrySet()) {
@@ -114,7 +115,11 @@ public final class RoleDescriptionProvider {
         powerDescription.append(textComponent).appendNewline();
       }
 
-      component.append(text(':', GRAY)).appendSpace().append(powerDescription);
+      component.append(text(':', GRAY)).appendSpace().append(powerDescription).appendNewline();
+    }
+
+    for (final var entry : role.getOtherParticularities().entrySet()) {
+      component.append(this.hoverableLine(entry.getKey(), entry.getValue())).appendNewline();
     }
 
     if (!itemPowers.isEmpty()) {
@@ -133,6 +138,37 @@ public final class RoleDescriptionProvider {
 
     component.appendNewline().append(line(GOLD, YELLOW));
     profile.sendMessage(component.build());
+  }
+
+  private Component hoverableLine(final String name, final List<String> entries) {
+    final TextComponent.Builder line = text();
+    for (int i = 0; i < 2; i++) {
+      line.appendSpace();
+    }
+
+    final TextComponent.Builder powerDescription = text();
+    powerDescription
+        .append(text('»', DARK_GRAY))
+        .appendSpace()
+        .append(text(name))
+        .appendSpace()
+        .append(text('«', DARK_GRAY))
+        .appendNewline()
+        .appendNewline();
+
+    final var rawLore = entries.stream().map(Component::text).toList();
+    for (final TextComponent textComponent : rawLore) {
+      powerDescription.append(textComponent).appendNewline();
+    }
+
+    return line.append(text('▪', DARK_GRAY))
+        .appendSpace()
+        .append(text('[', DARK_GRAY))
+        .append(text('☰', YELLOW))
+        .appendSpace()
+        .append(text(name).hoverEvent(showText(powerDescription)))
+        .append(text(']', DARK_GRAY))
+        .build();
   }
 
   private Component powerLine(

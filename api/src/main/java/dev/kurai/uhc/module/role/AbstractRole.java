@@ -178,12 +178,4 @@ public abstract class AbstractRole {
   public Map<String, List<String>> getOtherParticularities() {
     return Maps.newHashMap();
   }
-
-  public Map<String, String> getParticularitiesLinks() {
-    return Maps.newHashMap();
-  }
-
-  public Map<String, String> getAdditionalParticularities() {
-    return Maps.newHashMap();
-  }
 }
