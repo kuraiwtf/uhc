@@ -13,6 +13,7 @@ import dev.kurai.uhc.event.defaults.game.death.GamePreDeathEvent;
 import dev.kurai.uhc.game.GameService;
 import dev.kurai.uhc.item.CustomItem;
 import dev.kurai.uhc.logger.LogCategories;
+import dev.kurai.uhc.module.power.defaults.item.AbstractItemPower;
 import dev.kurai.uhc.profile.Profile;
 import dev.kurai.uhc.profile.component.DeadComponent;
 import dev.kurai.uhc.profile.component.DisconnectComponent;
@@ -20,6 +21,7 @@ import dev.kurai.uhc.profile.component.PlayerInformationComponent;
 import dev.kurai.uhc.profile.component.ProcessingDeathComponent;
 import dev.kurai.uhc.profile.state.DeadProfileState;
 import dev.kurai.uhc.profile.state.PlayingProfileState;
+import dev.kurai.uhc.util.ItemBuilder;
 import dev.kurai.uhc.win.BuiltinWinInformation;
 import dev.kurai.uhc.win.WinCelebration;
 import dev.kurai.uhc.win.WinService;
@@ -134,6 +136,10 @@ public final class DeathServiceImpl implements DeathService {
           for (final CustomItem item : this.ultraHardcore.itemService().findAllBySpectatorOnly()) {
             inventory.setItem(item.getSlot(), item.provideIcon(player));
           }
+
+          player.spigot().respawn();
+          player.setGameMode(GameMode.SPECTATOR);
+          player.teleport(component.lastLocation());
         });
 
     Bukkit.getPluginManager().callEvent(new GameDeathEvent(killer, profile));
@@ -141,11 +147,15 @@ public final class DeathServiceImpl implements DeathService {
     final Location location = component.lastLocation();
     final List<UUID> droppedItems = Lists.newArrayList();
     for (final ItemStack stack : component.inventory()) {
-      this.dropAt(location, stack, droppedItems);
+      if (!ItemBuilder.hasTag(stack, AbstractItemPower.NBT_TAG)) {
+        this.dropAt(location, stack, droppedItems);
+      }
     }
 
     for (final ItemStack stack : component.armor()) {
-      this.dropAt(location, stack, droppedItems);
+      if (!ItemBuilder.hasTag(stack, AbstractItemPower.NBT_TAG)) {
+        this.dropAt(location, stack, droppedItems);
+      }
     }
 
     if (killer != null) {

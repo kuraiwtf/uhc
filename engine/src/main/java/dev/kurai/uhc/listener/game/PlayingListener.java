@@ -370,17 +370,8 @@ public final class PlayingListener implements Listener {
                 profile,
                 (killer == null ? null : profileService.getOrCreateProfile(killer)),
                 event,
+                deathLocation,
                 false));
-
-    Bukkit.getScheduler()
-        .runTaskLater(
-            this.ultraHardcore.plugin(),
-            () -> {
-              player.spigot().respawn();
-              player.setGameMode(GameMode.SPECTATOR);
-              player.teleport(deathLocation);
-            },
-            20L);
   }
 
   @EventHandler
