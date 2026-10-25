@@ -1,9 +1,11 @@
 package dev.kurai.uhc.module.role;
 
+import static java.time.Duration.*;
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.format.NamedTextColor.DARK_GRAY;
 import static net.kyori.adventure.text.format.NamedTextColor.GOLD;
 import static net.kyori.adventure.text.format.TextDecoration.BOLD;
+import static net.kyori.adventure.title.Title.Times.times;
 
 import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.module.camp.CampComponent;
@@ -13,7 +15,6 @@ import dev.kurai.uhc.util.Color;
 import dev.kurai.uhc.util.RoleUtils;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import net.kyori.adventure.text.Component;
 import net.kyori.adventure.title.Title;
 import org.bukkit.Bukkit;
 import org.bukkit.event.HandlerList;
@@ -110,18 +111,10 @@ public final class RoleAttributor {
                       text(
                           meta.camp().getName(),
                           Color.of(meta.camp().primaryColor()).asTextColor()),
-                      Title.Times.times(
-                          java.time.Duration.ZERO,
-                          java.time.Duration.ofSeconds(3),
-                          java.time.Duration.ZERO)));
+                      times(ZERO, ofSeconds(3), ZERO)));
 
               profile.findPlayer().ifPresent(player -> role.onDistribute(profile, player));
               role.description().forEach(profile::sendMessage);
-
-              for (final Component message : role.description()) {
-                profile.sendMessage(message);
-              }
-
               profile.findPlayer().ifPresent(role::onDescription);
 
               this.applyKnownRolesColor(profile, role);
