@@ -118,6 +118,10 @@ public abstract class AbstractRole {
     }
   }
 
+  public final @Unmodifiable Set<RoleMeta> knownRoles() {
+    return Set.copyOf(this.knownRoles);
+  }
+
   public void knowsRole(final RoleMeta info) {
     final Player player = this.getPlayer();
     if (player != null) {

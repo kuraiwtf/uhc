@@ -14,6 +14,7 @@ import dev.kurai.uhc.module.camp.Camp;
 import dev.kurai.uhc.module.camp.CampModule;
 import dev.kurai.uhc.module.role.AbstractRole;
 import dev.kurai.uhc.module.role.RoleComponent;
+import dev.kurai.uhc.module.role.RoleAttributor;
 import dev.kurai.uhc.module.role.RoleMeta;
 import dev.kurai.uhc.module.role.RoleModule;
 import dev.kurai.uhc.nickname.NicknameValue;
@@ -44,10 +45,12 @@ public final class RoleModuleCommands {
 
   private final UltraHardcoreAPI ultraHardcore;
   private final RoleModule module;
+  private final RoleAttributor attributor;
 
   public RoleModuleCommands(final UltraHardcoreAPI ultraHardcore, final RoleModule module) {
     this.ultraHardcore = ultraHardcore;
     this.module = module;
+    this.attributor = new RoleAttributor(ultraHardcore);
   }
 
   @SubCommand(@CommandMeta(name = "me", aliases = "role", description = "Voir votre rôle"))
@@ -122,10 +125,7 @@ public final class RoleModuleCommands {
       final Player player,
       final @Argument(name = "rôle") RoleMeta roleData,
       final @Argument(name = "joueur", defaultValue = "self") Player target) {
-    if (!this.module.forceRole(target.getUniqueId(), roleData)) {
-      player.sendMessage(CC.prefix("&cCe jeu ne permet pas de définir le rôle d'un joueur."));
-      return;
-    }
+    this.attributor.attribute(this.ultraHardcore.profileService().getOrCreateProfile(target), roleData);
 
     player.sendMessage(
         CC.prefix(
