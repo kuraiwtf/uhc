@@ -23,7 +23,7 @@ public final class BuiltinModule extends AbstractModule implements TeamModule {
   private boolean randomTeam;
 
   public BuiltinModule(final UltraHardcoreAPI ultraHardcore) {
-    super("uhc", "UHC", null, ultraHardcore);
+    super("uhc", "UHC", ultraHardcore.plugin(), null, ultraHardcore);
     this.teamDisplay = TeamDisplay.NONE;
     this.minTeamSize = 1;
     this.teamSize = 1;

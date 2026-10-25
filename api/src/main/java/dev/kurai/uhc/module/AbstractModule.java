@@ -17,6 +17,7 @@ import java.util.*;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.Plugin;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
@@ -26,11 +27,11 @@ public abstract class AbstractModule
 
   protected final Map<Class<? extends Component>, Component> components;
 
+  protected final Plugin plugin;
+
   protected final @Nullable String commandName;
 
   protected final UltraHardcoreAPI ultraHardcore;
-
-  protected final Color color;
 
   protected final Map<String, ModuleEvent> events;
   protected final Collection<ModuleEvent> eventsView;
@@ -38,18 +39,10 @@ public abstract class AbstractModule
   protected AbstractModule(
       final String id,
       final String name,
+      final Plugin plugin,
       final @Nullable String commandName,
       final UltraHardcoreAPI ultraHardcore) {
-    this(id, name, commandName, ultraHardcore, Color.GOLD);
-  }
-
-  protected AbstractModule(
-      final String id,
-      final String name,
-      final @Nullable String commandName,
-      final UltraHardcoreAPI ultraHardcore,
-      final Color color) {
-    this.color = color;
+    this.plugin = plugin;
     this.components = Maps.newHashMap();
     this.addComponents(new IdentifierComponent<>(id), new NameComponent(name));
 
@@ -62,7 +55,11 @@ public abstract class AbstractModule
   }
 
   public Color color() {
-    return this.color;
+    return Color.GOLD;
+  }
+
+  public <P extends Plugin> P plugin(final Class<P> pluginClass) {
+    return pluginClass.cast(this.plugin);
   }
 
   public abstract String developer();
@@ -165,4 +162,6 @@ public abstract class AbstractModule
   }
 
   public abstract ItemStack provideModuleIcon(final Player player);
+
+  public void onRoles() {}
 }

@@ -11,10 +11,11 @@ import dev.kurai.uhc.command.annotation.CommandMeta;
 import dev.kurai.uhc.command.annotation.SubCommand;
 import dev.kurai.uhc.command.argument.annotation.Argument;
 import dev.kurai.uhc.module.camp.Camp;
-import dev.kurai.uhc.module.camp.module.CampModule;
+import dev.kurai.uhc.module.camp.CampModule;
 import dev.kurai.uhc.module.role.AbstractRole;
+import dev.kurai.uhc.module.role.RoleComponent;
 import dev.kurai.uhc.module.role.RoleMeta;
-import dev.kurai.uhc.module.role.module.RoleModule;
+import dev.kurai.uhc.module.role.RoleModule;
 import dev.kurai.uhc.nickname.NicknameValue;
 import dev.kurai.uhc.nickname.NicknameValueType;
 import dev.kurai.uhc.profile.Profile;
@@ -52,11 +53,15 @@ public final class RoleModuleCommands {
   @SubCommand(@CommandMeta(name = "me", aliases = "role", description = "Voir votre rôle"))
   public void role(final Player player) {
     final Profile profile = this.ultraHardcore.profileService().getOrCreateProfile(player);
-    this.module
-        .roleOf(player.getUniqueId())
-        .ifPresentOrElse(
-            role -> role.description().forEach(profile::sendMessage),
-            () -> profile.sendPrefixedMessage("§cVous n'avez pas de rôle."));
+    final RoleComponent component = profile.getComponent(RoleComponent.class);
+    if (component == null) {
+      profile.sendPrefixedMessage("§cVous n'avez pas de rôle.");
+      return;
+    }
+
+    for (final Component message : component.role().description()) {
+      profile.sendMessage(message);
+    }
   }
 
   @SubCommand(@CommandMeta(name = "roles", description = "Voir les rôles en vie"))
@@ -81,17 +86,13 @@ public final class RoleModuleCommands {
     final var entries = new ArrayList<Entry>();
     final var playing = this.ultraHardcore.profileService().getPlayingProfiles();
     for (final var profile : playing) {
-      this.module
-          .roleOf(profile.getId())
-          .ifPresent(
-              role ->
-                  entries.add(
-                      this.roleData(role)
-                          .map(data -> new Entry(data.getDefaultName(), data.camp()))
-                          .orElseGet(
-                              () ->
-                                  new Entry(
-                                      role.roleMeta().getDefaultName(), role.roleMeta().camp()))));
+      final RoleComponent component = profile.getComponent(RoleComponent.class);
+      if (component == null) {
+        continue;
+      }
+
+      final RoleMeta roleMeta = component.role().roleMeta();
+      entries.add(new Entry(roleMeta.getDefaultName(), roleMeta.camp()));
     }
 
     this.send(player, "Rôles en vie", playing.size(), entries);

@@ -1,6 +1,5 @@
-package dev.kurai.uhc.module.camp.module;
+package dev.kurai.uhc.module.camp;
 
-import dev.kurai.uhc.module.camp.Camp;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.UUID;

@@ -7,28 +7,25 @@ import dev.kurai.uhc.command.annotation.CommandMeta;
 import dev.kurai.uhc.command.annotation.SubCommand;
 import dev.kurai.uhc.command.argument.annotation.Argument;
 import dev.kurai.uhc.module.camp.Camp;
-import dev.kurai.uhc.module.camp.module.CampModule;
+import dev.kurai.uhc.module.camp.CampModule;
+import dev.kurai.uhc.module.role.RoleComponent;
 import dev.kurai.uhc.module.role.RoleMeta;
-import dev.kurai.uhc.module.role.module.RoleModule;
+import dev.kurai.uhc.module.role.RoleModule;
 import dev.kurai.uhc.profile.component.SpectatorComponent;
 import dev.kurai.uhc.util.CC;
 import dev.kurai.uhc.util.Color;
 import org.bukkit.entity.Player;
 import org.jspecify.annotations.NullMarked;
 
-/**
- * Sous-commandes de marquage et de coloration des rôles, réservées aux modules qui sont à la fois
- * un {@link RoleModule} et un {@link dev.kurai.uhc.module.color.ColorModule}.
- */
 @NullMarked
 public final class RoleColorModuleCommands {
 
   private final UltraHardcoreAPI ultraHardcore;
+
   private final RoleModule module;
   private final RoleModuleCommands helpers;
 
-  public RoleColorModuleCommands(
-      final UltraHardcoreAPI ultraHardcore, final RoleModule module) {
+  public RoleColorModuleCommands(final UltraHardcoreAPI ultraHardcore, final RoleModule module) {
     this.ultraHardcore = ultraHardcore;
     this.module = module;
     this.helpers = new RoleModuleCommands(ultraHardcore, module);
@@ -69,12 +66,12 @@ public final class RoleColorModuleCommands {
     final var holder = this.ultraHardcore.nicknameService().holder(player.getUniqueId());
     int colored = 0;
     for (final var profile : profileService.getPlayingProfiles()) {
-      final var role = this.module.roleOf(profile.getId()).orElse(null);
-      if (role == null) {
+      final RoleComponent component = profile.getComponent(RoleComponent.class);
+      if (component == null) {
         continue;
       }
 
-      final var roleData = role.roleMeta();
+      final var roleData = component.role().roleMeta();
       final var camp =
           this.module instanceof final CampModule campModule
               ? campModule.campOf(profile.getId()).<Camp>map(c -> c).orElse(roleData.camp())

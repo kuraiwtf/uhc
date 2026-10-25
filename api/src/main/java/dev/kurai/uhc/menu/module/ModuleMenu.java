@@ -4,7 +4,7 @@ import static org.bukkit.Material.NETHER_STAR;
 
 import dev.kurai.uhc.menu.template.BorderTemplate;
 import dev.kurai.uhc.module.AbstractModule;
-import dev.kurai.uhc.module.role.module.RoleModule;
+import dev.kurai.uhc.module.role.RoleModule;
 import dev.kurai.uhc.util.CC;
 import dev.kurai.uhc.util.ItemBuilder;
 import net.j4c0b3y.api.menu.Menu;

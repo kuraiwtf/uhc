@@ -9,7 +9,8 @@ import dev.kurai.uhc.module.command.ColorModuleCommands;
 import dev.kurai.uhc.module.command.ModuleCommandProvider;
 import dev.kurai.uhc.module.command.RoleColorModuleCommands;
 import dev.kurai.uhc.module.command.RoleModuleCommands;
-import dev.kurai.uhc.module.role.module.RoleModule;
+import dev.kurai.uhc.module.role.RoleAttributionTimer;
+import dev.kurai.uhc.module.role.RoleModule;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -84,6 +85,12 @@ public final class ModuleServiceImpl implements ModuleService {
 
     this.currentModule = module;
     this.registerModuleCommand(module);
+
+    final var timerService = this.ultraHardcore.gameService().timerService();
+    timerService.unregisterTimer(RoleAttributionTimer.IDENTIFIER);
+    if (module instanceof RoleModule) {
+      timerService.registerTimer(new RoleAttributionTimer(this.ultraHardcore));
+    }
   }
 
   @Override

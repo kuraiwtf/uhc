@@ -2,7 +2,7 @@ package dev.kurai.uhc.module.command;
 
 import dev.kurai.uhc.command.argument.ArgumentResolver;
 import dev.kurai.uhc.module.role.RoleMeta;
-import dev.kurai.uhc.module.role.module.RoleModule;
+import dev.kurai.uhc.module.role.RoleModule;
 import dev.kurai.uhc.module.service.ModuleService;
 import dev.kurai.uhc.util.CC;
 import dev.kurai.uhc.util.api.annotation.Identifier;
