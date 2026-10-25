@@ -13,8 +13,8 @@ import dev.kurai.uhc.command.argument.annotation.Argument;
 import dev.kurai.uhc.module.camp.Camp;
 import dev.kurai.uhc.module.camp.CampModule;
 import dev.kurai.uhc.module.role.AbstractRole;
-import dev.kurai.uhc.module.role.RoleComponent;
 import dev.kurai.uhc.module.role.RoleAttributor;
+import dev.kurai.uhc.module.role.RoleComponent;
 import dev.kurai.uhc.module.role.RoleMeta;
 import dev.kurai.uhc.module.role.RoleModule;
 import dev.kurai.uhc.nickname.NicknameValue;
@@ -62,9 +62,7 @@ public final class RoleModuleCommands {
       return;
     }
 
-    for (final Component message : component.role().description()) {
-      profile.sendMessage(message);
-    }
+    this.attributor.descriptionProvider().sendDescription(component.role());
   }
 
   @SubCommand(@CommandMeta(name = "roles", description = "Voir les rôles en vie"))
@@ -125,7 +123,8 @@ public final class RoleModuleCommands {
       final Player player,
       final @Argument(name = "rôle") RoleMeta roleData,
       final @Argument(name = "joueur", defaultValue = "self") Player target) {
-    this.attributor.attribute(this.ultraHardcore.profileService().getOrCreateProfile(target), roleData);
+    this.attributor.attribute(
+        this.ultraHardcore.profileService().getOrCreateProfile(target), roleData);
 
     player.sendMessage(
         CC.prefix(

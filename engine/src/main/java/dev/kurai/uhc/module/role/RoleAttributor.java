@@ -27,8 +27,15 @@ public final class RoleAttributor {
 
   private final UltraHardcoreAPI ultraHardcore;
 
+  private final RoleDescriptionProvider descriptionProvider;
+
   public RoleAttributor(final UltraHardcoreAPI ultraHardcore) {
     this.ultraHardcore = ultraHardcore;
+    this.descriptionProvider = new RoleDescriptionProvider(ultraHardcore);
+  }
+
+  public RoleDescriptionProvider descriptionProvider() {
+    return this.descriptionProvider;
   }
 
   private Constructor<? extends AbstractRole> findConstructor(
@@ -114,7 +121,7 @@ public final class RoleAttributor {
                       times(ZERO, ofSeconds(3), ZERO)));
 
               profile.findPlayer().ifPresent(player -> role.onDistribute(profile, player));
-              role.description().forEach(profile::sendMessage);
+              this.descriptionProvider.sendDescription(role);
               profile.findPlayer().ifPresent(role::onDescription);
 
               this.applyKnownRolesColor(profile, role);

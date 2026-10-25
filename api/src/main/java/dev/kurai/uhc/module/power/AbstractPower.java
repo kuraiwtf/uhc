@@ -27,6 +27,8 @@ public abstract class AbstractPower
 
   protected final Profile profile;
 
+  protected boolean roleDescriptionDisplay;
+
   protected AbstractPower(
       final String identifier,
       final String name,
@@ -40,6 +42,14 @@ public abstract class AbstractPower
     this.restrictions = Maps.newConcurrentMap();
 
     this.profile = ultraHardcore.profileService().getOrCreateProfile(owner);
+  }
+
+  public boolean roleDescriptionDisplay() {
+    return this.roleDescriptionDisplay;
+  }
+
+  public void roleDescriptionDisplay(final boolean roleDescriptionDisplay) {
+    this.roleDescriptionDisplay = roleDescriptionDisplay;
   }
 
   public List<String> lore() {

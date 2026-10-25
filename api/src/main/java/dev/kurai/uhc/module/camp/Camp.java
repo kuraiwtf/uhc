@@ -7,6 +7,8 @@ public interface Camp {
 
   String getName();
 
+  String objective();
+
   ChatColor primaryColor();
 
   ChatColor secondaryColor();

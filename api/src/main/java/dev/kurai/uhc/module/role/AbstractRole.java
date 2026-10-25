@@ -1,17 +1,14 @@
 package dev.kurai.uhc.module.role;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import dev.kurai.uhc.game.cycle.AbstractCycle;
 import dev.kurai.uhc.module.power.AbstractPower;
 import dev.kurai.uhc.profile.Profile;
 import dev.kurai.uhc.util.CC;
 import dev.kurai.uhc.util.RoleUtils;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-import net.kyori.adventure.text.Component;
+import java.util.*;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Contract;
@@ -36,7 +33,11 @@ public abstract class AbstractRole {
     this.powers = Lists.newArrayList();
     this.knownRoles = Sets.newHashSet();
 
-    this.powers.addAll(Arrays.asList(powers));
+    for (final AbstractPower power : powers) {
+      this.addPower(power);
+      power.roleDescriptionDisplay(true);
+    }
+
     this.disabledPassives = false;
   }
 
@@ -166,7 +167,23 @@ public abstract class AbstractRole {
     this.disabledPassives = disabledPassives;
   }
 
-  public List<Component> description() {
-    return List.of();
+  public String getPassives() {
+    return "";
+  }
+
+  public Map<String, List<String>> getParticularities() {
+    return Maps.newHashMap();
+  }
+
+  public Map<String, List<String>> getOtherParticularities() {
+    return Maps.newHashMap();
+  }
+
+  public Map<String, String> getParticularitiesLinks() {
+    return Maps.newHashMap();
+  }
+
+  public Map<String, String> getAdditionalParticularities() {
+    return Maps.newHashMap();
   }
 }
