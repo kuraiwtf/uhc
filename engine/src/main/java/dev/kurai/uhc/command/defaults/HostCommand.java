@@ -20,7 +20,7 @@ import dev.kurai.uhc.profile.Profile;
 import dev.kurai.uhc.profile.component.DeadComponent;
 import dev.kurai.uhc.profile.component.DisconnectComponent;
 import dev.kurai.uhc.profile.component.InventoryEditorComponent;
-import dev.kurai.uhc.profile.state.DeadProfileState;
+import dev.kurai.uhc.profile.component.PlayerInformationComponent;
 import dev.kurai.uhc.profile.state.PlayingProfileState;
 import dev.kurai.uhc.timer.AbstractTimer;
 import dev.kurai.uhc.util.CC;
@@ -102,6 +102,11 @@ public final class HostCommand {
       return;
     }
 
+    if (!timer.isRunning()) {
+      player.sendMessage(CC.prefix("Ce timer n'est&c pas en cours&r."));
+      return;
+    }
+
     timer.setTimeLeft(5);
     this.bukkitAudiences
         .player(player)
@@ -148,12 +153,13 @@ public final class HostCommand {
       @CommandMeta(name = "refill", description = "Redonner les objets de pouvoir à un joueur"))
   public void refill(
       final Player player, final @Argument(name = "joueur", defaultValue = "self") Player target) {
-    final Profile profile = this.ultraHardcore.profileService().getOrCreateProfile(target);
-    if (!this.ultraHardcore.gameService().hostService().isHost(player)
+    if (!this.ultraHardcore.gameService().hostService().hasHostAccess(player)
         && !player.getUniqueId().equals(target.getUniqueId())) {
       player.sendMessage(MISSING_PERMISSION);
       return;
     }
+
+    final Profile profile = this.ultraHardcore.profileService().getOrCreateProfile(target);
 
     final var childPowers =
         profile.getPowers().stream()
@@ -196,13 +202,13 @@ public final class HostCommand {
         this.ultraHardcore.profileService().getOrCreateProfile(target.getUniqueId());
     if (target.isOnline()
         || !profile.hasComponent(DisconnectComponent.class)
+        || !profile.hasComponent(PlayerInformationComponent.class)
         || profile.hasComponent(DeadComponent.class)) {
       player.sendMessage(
           CC.prefix("Le joueur&6 %s&r est&c mort&r ou&a en ligne&r.".formatted(target.getName())));
       return;
     }
 
-    profile.setState(new DeadProfileState());
     gameService.deathService().eliminate(profile, null, true);
 
     player.sendMessage(
