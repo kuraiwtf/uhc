@@ -14,6 +14,7 @@ import dev.kurai.uhc.event.defaults.game.GameTickEvent;
 import dev.kurai.uhc.event.defaults.player.PlayerDamageByPlayerEvent;
 import dev.kurai.uhc.game.configuration.ore.OreConfiguration;
 import dev.kurai.uhc.game.death.DeathContext;
+import dev.kurai.uhc.game.disconnect.DisconnectService;
 import dev.kurai.uhc.game.rule.GameRuleService;
 import dev.kurai.uhc.logger.LogCategories;
 import dev.kurai.uhc.menu.rules.ore.OreType;
@@ -147,8 +148,11 @@ public final class PlayingListener implements Listener {
       return;
     }
 
-    component.timeLeft(
-        component.timeLeft() - Duration.between(component.lastLogin(), Instant.now()).toMillis());
+    final DisconnectService disconnectService = this.ultraHardcore.gameService().disconnectService();
+    if (disconnectService.strategy() == DisconnectService.Strategy.ONCE) {
+      component.timeLeft(disconnectService.disconnectTime());
+    }
+
     component.lastLogin(Instant.now());
   }
 
@@ -170,7 +174,7 @@ public final class PlayingListener implements Listener {
     Bukkit.broadcastMessage(
         CC.prefix(
                 "Le joueur&6 %s&r vient de se&c déconnecter&r. Il dispose de&6 &l%s&r pour se reconnecter avant d'être&c éliminé&r.")
-            .formatted(player.getName(), TimeUtil.formatDuration(disconnectComponent.timeLeft())));
+            .formatted(player.getName(), TimeUtil.formatDuration(disconnectComponent.timeLeft() * 1000L)));
 
     final PlayerInventory inventory = player.getInventory();
     profile.addComponent(

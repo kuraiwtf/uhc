@@ -12,7 +12,7 @@ import dev.kurai.uhc.game.recipe.RecipeService;
 import dev.kurai.uhc.game.rule.GameRuleService;
 import dev.kurai.uhc.menu.button.ItemButton;
 import dev.kurai.uhc.menu.rules.border.BorderConfigurationMenu;
-import dev.kurai.uhc.menu.rules.disconnect.DisconnectTimerEditMenu;
+import dev.kurai.uhc.menu.rules.disconnect.DisconnectMenu;
 import dev.kurai.uhc.menu.rules.drop.DropRateMenu;
 import dev.kurai.uhc.menu.rules.enchantment.EnchantmentLimitMenu;
 import dev.kurai.uhc.menu.rules.episode.EpisodeTimeMenu;
@@ -100,7 +100,7 @@ public final class RulesMenu extends Menu {
     front.set(29, new OreLimitButton());
     front.set(30, new EnchantmentLimitButton(gameService.enchantmentLimitService()));
     front.set(32, new PvPTimerButton(this.ultraHardcore));
-    front.set(33, new DisconnectTimerButton(this.ultraHardcore));
+    front.set(33, new DisconnectButton(this.ultraHardcore));
   }
 
   private static final class GameRulesButton extends Button {
@@ -263,29 +263,28 @@ public final class RulesMenu extends Menu {
     }
   }
 
-  private static final class DisconnectTimerButton extends Button {
+  private static final class DisconnectButton extends Button {
 
     private final UltraHardcoreAPI ultraHardcore;
 
-    private DisconnectTimerButton(final UltraHardcoreAPI ultraHardcore) {
+    private DisconnectButton(final UltraHardcoreAPI ultraHardcore) {
       this.ultraHardcore = ultraHardcore;
     }
 
     @Override
     public ItemStack getIcon() {
-      final long time = this.ultraHardcore.gameService().disconnectService().disconnectTime();
+      final int time = this.ultraHardcore.gameService().disconnectService().disconnectTime();
       return new ItemBuilder(Material.DARK_OAK_DOOR_ITEM)
-          .name("&6&lTemps de déconnexion")
+          .name("&6&lDéconnexion")
           .lore(
               "",
-              "&6 " + SQUARE + "&f Temps: &b" + TimeUtil.formatDuration(time),
+              "&6 " + SQUARE + "&f Temps: &b" + TimeUtil.formatDuration(time * 1000L),
               "",
-              "&7" + BAR + "&f Permet de modifier le",
-              "  temps avant l'élimination",
-              "  automatique d'un joueur.",
-              "  &chors-ligne&r.",
+              "&7" + BAR + "&f Permet de configurer le temps",
+              "  et la stratégie d'élimination",
+              "  des joueurs &chors-ligne&r.",
               "")
-          .amount(Math.clamp((int) (time / (60 * 1_000L)), 1, 64))
+          .amount(Math.clamp(time / 60, 1, 64))
           .asItemStack();
     }
 
@@ -293,7 +292,7 @@ public final class RulesMenu extends Menu {
     public void onClick(final ButtonClick click) {
       final Menu menu = click.getMenu();
       final Menu configMenu =
-          new DisconnectTimerEditMenu(
+          new DisconnectMenu(
               menu.getPlayer(), this.ultraHardcore.gameService().disconnectService());
       configMenu.setPreviousMenu(menu);
       configMenu.open();
