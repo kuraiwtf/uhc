@@ -8,7 +8,13 @@ import org.bukkit.entity.Player;
 
 final class PacketEventsWrapper implements PacketWrapper {
 
-  private static final ExecutorService EXECUTOR = Executors.newSingleThreadExecutor();
+  private static final ExecutorService EXECUTOR =
+      Executors.newSingleThreadExecutor(
+          runnable -> {
+            final Thread thread = new Thread(runnable, "uhc-packet-sender");
+            thread.setDaemon(true);
+            return thread;
+          });
   private static final PlayerManager PLAYER_MANAGER = PacketEvents.getAPI().getPlayerManager();
 
   private final com.github.retrooper.packetevents.wrapper.PacketWrapper<?> packet;
