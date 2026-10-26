@@ -78,7 +78,7 @@ public final class GameServiceImpl implements GameService {
         .registerModifiers(new AppleDropRateModifier(), new FlintDropRateModifier());
     this.enchantmentLimitService = new EnchantmentLimitServiceImpl();
     this.episodeService = new EpisodeServiceImpl(ultraHardcore);
-    this.groupService = new GroupServiceImpl();
+    this.groupService = new GroupServiceImpl(ultraHardcore.plugin());
     this.hostService = new HostServiceImpl(ultraHardcore);
     this.recipeService = new RecipeServiceImpl();
     this.ruleService = new GameRuleServiceImpl();

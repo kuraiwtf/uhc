@@ -44,19 +44,6 @@ public final class GroupCommand {
 
   @SubCommand(@CommandMeta(name = "alert", description = "Alerter de la limite des groupes"))
   public void alert(final Player player) {
-    for (final Profile profile :
-        this.profileService.getProfiles(profile -> profile.findPlayer().isPresent())) {
-      profile.showTitle(
-          Title.title(
-              text()
-                  .append(text(CC.DANGER, DARK_RED))
-                  .appendSpace()
-                  .append(text("Groupes de " + this.groupService.provider().groups(), RED))
-                  .appendSpace()
-                  .append(text(CC.DANGER, DARK_RED))
-                  .build(),
-              empty(),
-              times(Duration.ZERO, Duration.ofSeconds(3), Duration.ZERO)));
-    }
+    this.groupService.alertGroups();
   }
 }
