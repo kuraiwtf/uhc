@@ -35,7 +35,7 @@ public final class BorderTimer extends AbstractTimer {
     final var world = this.worldService.getWorld();
     final var time =
         (INITIAL_SIZE_OPTION.getValue() - FINAL_SIZE_OPTION.getValue())
-            / SHRINK_SPEED_OPTION.getValue();
+            / Math.max(0.01f, SHRINK_SPEED_OPTION.getValue());
     world.getWorldBorder().setSize(FINAL_SIZE_OPTION.getValue() * 2, (long) time);
 
     this.bukkitAudiences
