@@ -1,10 +1,10 @@
 package dev.kurai.uhc.whitelist;
 
-import com.google.common.collect.Maps;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import org.jspecify.annotations.NullMarked;
 
 @NullMarked
@@ -13,7 +13,7 @@ public final class WhitelistServiceImpl implements WhitelistService {
   private final Map<UUID, WhitelistMeta> whitelistedPlayers;
 
   public WhitelistServiceImpl() {
-    this.whitelistedPlayers = Maps.newHashMap();
+    this.whitelistedPlayers = new ConcurrentHashMap<>();
   }
 
   @Override
