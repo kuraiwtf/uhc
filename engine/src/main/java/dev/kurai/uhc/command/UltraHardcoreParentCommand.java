@@ -14,6 +14,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
+import java.util.logging.Level;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -141,8 +142,7 @@ public final class UltraHardcoreParentCommand extends Command {
       final SubCommandData subCommand,
       final List<String> rawArguments) {
     final var method = subCommand.method();
-    if (method.getParameterTypes()[0].isAssignableFrom(Player.class)
-        && !(sender instanceof Player)) {
+    if (!method.getParameterTypes()[0].isInstance(sender)) {
       audience.sendMessage(
           text()
               .append(prefix())
@@ -264,7 +264,8 @@ public final class UltraHardcoreParentCommand extends Command {
               .append(prefix())
               .append(text("Une erreur est survenue lors de l'exécution de cette commande..", RED))
               .build());
-      e.printStackTrace();
+      Bukkit.getLogger()
+          .log(Level.SEVERE, "Command /" + this.commandMeta.name() + " failed", e.getCause() != null ? e.getCause() : e);
     }
     return true;
   }
@@ -327,8 +328,7 @@ public final class UltraHardcoreParentCommand extends Command {
     }
 
     final var method = subCommand.method();
-    if (method.getParameterTypes()[0].isAssignableFrom(Player.class)
-        && !(sender instanceof Player)) {
+    if (!method.getParameterTypes()[0].isInstance(sender)) {
       return defaultCompletions;
     }
 

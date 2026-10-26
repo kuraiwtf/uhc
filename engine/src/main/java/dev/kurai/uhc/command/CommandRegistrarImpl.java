@@ -113,7 +113,6 @@ public final class CommandRegistrarImpl implements CommandRegistrar {
       this.registerCommand(
           new UltraHardcoreOrphanCommand(
               commandMeta, this.bukkitAudiences, this, object, method, arguments));
-      System.out.println("Registered: " + commandMeta.name());
     }
   }
 
@@ -135,7 +134,7 @@ public final class CommandRegistrarImpl implements CommandRegistrar {
       knownCommands.remove(name);
       knownCommands.remove("uhc:" + name);
     } catch (final Exception e) {
-      e.printStackTrace();
+      Bukkit.getLogger().log(java.util.logging.Level.SEVERE, "Could not unregister command", e);
     }
   }
 

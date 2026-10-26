@@ -56,8 +56,7 @@ public final class UltraHardcoreOrphanCommand extends Command {
   public boolean execute(
       final CommandSender sender, final String commandLabel, final String[] args) {
     final var audience = this.bukkitAudiences.sender(sender);
-    if (this.method.getParameterTypes()[0].isAssignableFrom(Player.class)
-        && !(sender instanceof Player)) {
+    if (!this.method.getParameterTypes()[0].isInstance(sender)) {
       audience.sendMessage(
           text()
               .append(prefix())
@@ -198,7 +197,11 @@ public final class UltraHardcoreOrphanCommand extends Command {
               .appendSpace()
               .append(text("Une erreur est survenue lors de l'exécution de cette commande.", RED))
               .build());
-      e.printStackTrace();
+      org.bukkit.Bukkit.getLogger()
+          .log(
+              java.util.logging.Level.SEVERE,
+              "Command failed",
+              e.getCause() != null ? e.getCause() : e);
     }
     return true;
   }
