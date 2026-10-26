@@ -17,4 +17,6 @@ public interface EpisodeService {
   int getEpisode();
 
   void start();
+
+  void stop();
 }

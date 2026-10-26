@@ -14,6 +14,8 @@ public interface GroupService {
 
   void start();
 
+  void stop();
+
   boolean enabled();
 
   void enabled(final boolean enabled);

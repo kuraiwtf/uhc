@@ -28,4 +28,6 @@ public interface StartService extends StartPhaseHolder {
   void handleStart();
 
   void handleFinalStart();
+
+  void stopGameTasks();
 }

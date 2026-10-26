@@ -12,6 +12,8 @@ public interface DisconnectService {
 
   void start();
 
+  void stop();
+
   enum Strategy {
     DISABLED,
     ONCE,
