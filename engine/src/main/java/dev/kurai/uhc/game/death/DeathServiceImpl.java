@@ -227,6 +227,7 @@ public final class DeathServiceImpl implements DeathService {
       celebration.celebrate(location, new BuiltinWinInformation(profiles));
 
       this.ultraHardcore.gameService().playing(false);
+      this.ultraHardcore.gameService().startService().stopGameTasks();
     }
   }
 
