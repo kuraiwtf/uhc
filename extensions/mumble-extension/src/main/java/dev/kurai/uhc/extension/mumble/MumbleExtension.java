@@ -15,12 +15,14 @@ import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitTask;
 
 public final class MumbleExtension {
 
   private final UltraHardcoreAPI ultraHardcore;
 
   private boolean initialized;
+  private BukkitTask advertiseTask;
 
   public MumbleExtension(final UltraHardcoreAPI ultraHardcore) {
     this.ultraHardcore = ultraHardcore;
@@ -39,11 +41,11 @@ public final class MumbleExtension {
   }
 
   public void advertise(final Player player) {
-    if (false) {
+    final String url = this.ultraHardcore.plugin().getConfig().getString("mumble.url", "");
+    if (url.isBlank()) {
       return;
     }
 
-    // TODO: Is connected?
     player.sendMessage("");
     player.sendMessage(center("&b&lMUMBLE LINK"));
     player.sendMessage("");
@@ -58,13 +60,18 @@ public final class MumbleExtension {
             text("Cliquez-ici")
                 .decorate(TextDecoration.UNDERLINED)
                 .hoverEvent(showText(text("Cliquez pour ouvrir le lien.")))
-                .clickEvent(openUrl("https://google.com"))));
+                .clickEvent(openUrl(url))));
     player.sendMessage("");
   }
 
   public void start() {
-    Bukkit.getScheduler()
-        .runTaskTimerAsynchronously(
+    if (this.advertiseTask != null) {
+      return;
+    }
+
+    this.advertiseTask =
+        Bukkit.getScheduler()
+            .runTaskTimer(
             this.ultraHardcore.plugin(),
             () -> Bukkit.getOnlinePlayers().forEach(this::advertise),
             0,
