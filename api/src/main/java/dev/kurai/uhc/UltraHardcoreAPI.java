@@ -42,6 +42,12 @@ public abstract class UltraHardcoreAPI {
     return UltraHardcoreAPI.instance = instance;
   }
 
+  public static synchronized void destroy(final UltraHardcoreAPI instance) {
+    if (UltraHardcoreAPI.instance == instance) {
+      UltraHardcoreAPI.instance = null;
+    }
+  }
+
   public static UltraHardcoreAPI getInstance() {
     return instance;
   }
