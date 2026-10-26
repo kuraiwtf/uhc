@@ -126,7 +126,7 @@ public final class AnswerCommand {
     player.sendMessage(prefix("Voici la liste des questions en attente&7:"));
     for (final var ticket : tickets) {
       player.sendMessage(
-          CC.colorize("&8 -&r &6#%s&r: %s".formatted(ticket.id(), ticket.question())));
+          CC.colorize("&8 -&r &6#%s&r: %s".formatted(ticket.id(), ticket.question().replace("&", ""))));
     }
   }
 
