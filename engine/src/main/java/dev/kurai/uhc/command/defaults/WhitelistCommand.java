@@ -19,6 +19,8 @@ import org.bukkit.Sound;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.scheduler.BukkitTask;
+import org.jspecify.annotations.Nullable;
 import org.jspecify.annotations.NullMarked;
 
 @Command(@CommandMeta(name = "whitelist", aliases = "wl"))
@@ -29,6 +31,8 @@ public final class WhitelistCommand {
   private static final Pattern MATCHER = Pattern.compile("[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}");
 
   private final UltraHardcoreAPI ultraHardcore;
+
+  private @Nullable BukkitTask hostMcTask;
 
   @SubCommand(@CommandMeta(name = "add", description = "Ajouter un joueur à la liste blanche."))
   public void add(
@@ -110,18 +114,21 @@ public final class WhitelistCommand {
       return;
     }
 
-    if (!MATCHER.matcher(code).find()) {
+    if (!MATCHER.matcher(code).matches()) {
       player.sendMessage(prefix("Le code&b %s&r est&c invalide&r.".formatted(code)));
       return;
     }
 
     final Plugin plugin = this.ultraHardcore.plugin();
-    new HostMCWhitelistProviderTask(
-            this.ultraHardcore,
-            this.ultraHardcore.whitelistService(),
-            plugin.getConfig().getString("authorization"),
-            code)
-        .runTaskTimer(plugin, 0L, 10 * 20L);
+    final String authorization = plugin.getConfig().getString("authorization", "");
+    if (this.hostMcTask != null) {
+      this.hostMcTask.cancel();
+    }
+
+    this.hostMcTask =
+        new HostMCWhitelistProviderTask(
+                this.ultraHardcore, this.ultraHardcore.whitelistService(), authorization, code)
+            .runTaskTimerAsynchronously(plugin, 0L, 10 * 20L);
 
     player.playSound(player.getLocation(), Sound.ORB_PICKUP, 1, 1);
     player.sendMessage(
