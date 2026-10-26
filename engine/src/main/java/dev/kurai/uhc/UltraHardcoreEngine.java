@@ -116,6 +116,15 @@ public final class UltraHardcoreEngine extends UltraHardcoreAPI {
   }
 
   @Override
+  public void onDisable() {
+    if (this.bukkitAudiences != null) {
+      this.bukkitAudiences.close();
+    }
+
+    destroy(this);
+  }
+
+  @Override
   public void onEnable() {
     this.spawnLocation =
         Location.deserialize(
@@ -159,7 +168,10 @@ public final class UltraHardcoreEngine extends UltraHardcoreAPI {
     this.commandRegistrar.registerCommands(
         new AnswerCommand(this),
         new DevelopmentCommands(this),
-        new GroupCommand(this.gameService().groupService(), this.profileService),
+        new GroupCommand(
+            this.gameService().groupService(),
+            this.profileService,
+            this.gameService().hostService()),
         new HelpOpCommand(this),
         new HostCommand(this.bukkitAudiences, this),
         new ModerationCommands(this),
@@ -203,7 +215,7 @@ public final class UltraHardcoreEngine extends UltraHardcoreAPI {
 
     Bukkit.getScheduler()
         .runTaskTimerAsynchronously(
-            this.plugin, new TabListUpdaterTask(this.tabListService), 0, 1L);
+            this.plugin, new TabListUpdaterTask(this.tabListService), 0, 10L);
 
     Bukkit.getScheduler()
         .runTaskTimer(
@@ -226,7 +238,6 @@ public final class UltraHardcoreEngine extends UltraHardcoreAPI {
         new BorderTimer(this.worldService, this.bukkitAudiences));
 
     Bukkit.getScheduler()
-        .runTaskTimerAsynchronously(
-            this.plugin, new EffectValidatorTask(this.profileService), 0, 1);
+        .runTaskTimer(this.plugin, new EffectValidatorTask(this.profileService), 0, 5);
   }
 }
