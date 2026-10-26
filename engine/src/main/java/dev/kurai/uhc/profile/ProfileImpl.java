@@ -5,7 +5,6 @@ import static dev.kurai.uhc.util.packet.PacketWrapper.createPacketWrapper;
 import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.wrapper.PacketWrapper;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityAnimation;
-import com.google.common.collect.Maps;
 import dev.kurai.actionbar.Actionbar;
 import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.ecs.component.Component;
@@ -22,6 +21,7 @@ import dev.kurai.uhc.profile.state.ProfileState;
 import dev.kurai.uhc.profile.state.WaitingProfileState;
 import dev.kurai.uhc.util.CC;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 import lombok.Getter;
 import lombok.Setter;
@@ -52,7 +52,7 @@ final class ProfileImpl implements Profile {
   private int assists;
 
   ProfileImpl(final UUID id, final UltraHardcoreAPI ultraHardcore) {
-    this.components = Maps.newHashMap();
+    this.components = new ConcurrentHashMap<>();
     this.addComponent(new ProfileIdentifierComponent(id));
     this.addComponents(
         new NameComponent(this.getOfflinePlayer().getName()),
@@ -64,7 +64,7 @@ final class ProfileImpl implements Profile {
         new EffectHoldingComponent(new EffectHolderImpl(id)));
 
     this.ultraHardcore = ultraHardcore;
-    this.powers = Maps.newHashMap();
+    this.powers = new ConcurrentHashMap<>();
   }
 
   @Override
@@ -278,7 +278,11 @@ final class ProfileImpl implements Profile {
   }
 
   private void setMaxHealthInternal(final Player player, final double maxHealth) {
-    player.setMaxHealth(Math.max(maxHealth, player.getHealth()));
+    final double newMax = Math.max(1.0, maxHealth);
+    player.setMaxHealth(newMax);
+    if (player.getHealth() > newMax) {
+      player.setHealth(newMax);
+    }
   }
 
   @Override
