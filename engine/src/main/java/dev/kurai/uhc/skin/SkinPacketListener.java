@@ -29,6 +29,7 @@ final class SkinPacketListener implements PacketListener {
       final var playerInfoDataList = packet.getPlayerDataList();
       final Player receiver = event.getPlayer();
       final SkinHolder skinHolder = this.skinService.holder(receiver.getUniqueId());
+      final boolean[] modified = {false};
       playerInfoDataList.stream()
           .filter(playerData -> playerData.getUserProfile() != null)
           .forEach(
@@ -37,7 +38,11 @@ final class SkinPacketListener implements PacketListener {
                 Skin customSkin = skinHolder.skin(userProfile.getUUID());
                 if (customSkin == null) {
                   final Profile profile =
-                      this.profileService.getOrCreateProfile(userProfile.getUUID());
+                      this.profileService.findProfile(userProfile.getUUID()).orElse(null);
+                  if (profile == null) {
+                    return;
+                  }
+
                   final SkinComponent component = profile.getComponent(SkinComponent.class);
                   if (component == null) {
                     return;
@@ -54,8 +59,11 @@ final class SkinPacketListener implements PacketListener {
                     .getTextureProperties()
                     .removeIf(textureProperty -> textureProperty.getName().equals("textures"));
                 userProfile.getTextureProperties().add(newTextureProperty);
+                modified[0] = true;
               });
-      event.markForReEncode(true);
+      if (modified[0]) {
+        event.markForReEncode(true);
+      }
     }
   }
 }

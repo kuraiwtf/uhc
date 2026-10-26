@@ -3,10 +3,10 @@ package dev.kurai.uhc.skin;
 import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.event.EventManager;
 import com.github.retrooper.packetevents.event.PacketListenerPriority;
-import com.google.common.collect.Maps;
 import dev.kurai.uhc.profile.ProfileService;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 
@@ -19,7 +19,7 @@ public final class SkinServiceImpl implements SkinService {
 
   public SkinServiceImpl(final Plugin plugin, final ProfileService profileService) {
     this.profileService = profileService;
-    this.skinHolders = Maps.newHashMap();
+    this.skinHolders = new ConcurrentHashMap<>();
     EVENT_MANAGER.registerListener(
         new SkinPacketListener(profileService, this), PacketListenerPriority.NORMAL);
     Bukkit.getScheduler().runTaskTimer(plugin, new SkinUpdaterTask(profileService, this), 0, 1L);
