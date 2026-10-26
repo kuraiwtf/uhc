@@ -1,7 +1,8 @@
 package dev.kurai.uhc.scoreboard.sidebar.listener;
 
 import dev.kurai.uhc.scoreboard.sidebar.SidebarService;
-import java.util.concurrent.CompletableFuture;
+import dev.kurai.uhc.UltraHardcoreAPI;
+import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -17,13 +18,16 @@ public final class SidebarListener implements Listener {
 
   @EventHandler
   public void onJoin(final PlayerJoinEvent event) {
-    CompletableFuture.runAsync(
-        () -> this.sidebarService.createScoreboard(event.getPlayer().getUniqueId()));
+    final var uniqueId = event.getPlayer().getUniqueId();
+    Bukkit.getScheduler()
+        .runTaskLater(
+            UltraHardcoreAPI.getInstance().plugin(),
+            () -> this.sidebarService.createScoreboard(uniqueId),
+            1L);
   }
 
   @EventHandler
   public void onQuit(final PlayerQuitEvent event) {
-    CompletableFuture.runAsync(
-        () -> this.sidebarService.destroyScoreboard(event.getPlayer().getUniqueId()));
+    this.sidebarService.destroyScoreboard(event.getPlayer().getUniqueId());
   }
 }

@@ -19,6 +19,7 @@ import org.bukkit.ChatColor;
 public final class SidebarImpl implements Sidebar {
 
   private static final String OBJECTIVE_NAME = "arena";
+  private static final int MAX_ENTRY_LENGTH = 40;
 
   private final UUID uniqueId;
   private final Map<Integer, Component> entries;
@@ -69,10 +70,7 @@ public final class SidebarImpl implements Sidebar {
 
     this.writePacket(
         new WrapperPlayServerUpdateScore(
-            this.provideColor(score)
-                + ""
-                + ChatColor.WHITE
-                + LegacyComponentSerializer.legacySection().serialize(content),
+            this.entryName(score, content),
             WrapperPlayServerUpdateScore.Action.CREATE_OR_UPDATE_ITEM,
             OBJECTIVE_NAME,
             score,
@@ -94,10 +92,7 @@ public final class SidebarImpl implements Sidebar {
 
     this.writePacket(
         new WrapperPlayServerUpdateScore(
-            this.provideColor(score)
-                + ""
-                + ChatColor.WHITE
-                + LegacyComponentSerializer.legacySection().serialize(component),
+            this.entryName(score, component),
             WrapperPlayServerUpdateScore.Action.REMOVE_ITEM,
             OBJECTIVE_NAME,
             score,
@@ -141,6 +136,24 @@ public final class SidebarImpl implements Sidebar {
     }
 
     user.flushPackets();
+  }
+
+  /** 1.8 clients are disconnected by score entries longer than 40 characters. */
+  private String entryName(final int score, final Component content) {
+    final String name =
+        this.provideColor(score)
+            + ""
+            + ChatColor.WHITE
+            + LegacyComponentSerializer.legacySection().serialize(content);
+    if (name.length() <= MAX_ENTRY_LENGTH) {
+      return name;
+    }
+
+    int end = MAX_ENTRY_LENGTH;
+    if (name.charAt(end - 1) == ChatColor.COLOR_CHAR) {
+      end--;
+    }
+    return name.substring(0, end);
   }
 
   private ChatColor provideColor(final int score) {

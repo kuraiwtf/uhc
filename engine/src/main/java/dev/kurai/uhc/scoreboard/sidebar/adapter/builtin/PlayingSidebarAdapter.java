@@ -29,30 +29,55 @@ public final class PlayingSidebarAdapter implements SidebarAdapter {
     this.ultraHardcore = ultraHardcore;
   }
 
-  @Override
-  public List<Component> provideLines(final Player player) {
-    final var lines = Lists.<Component>newArrayList();
-    lines.add(empty());
+  private static final long SNAPSHOT_TTL_MILLIS = 500L;
+
+  private volatile long snapshotTime;
+  private volatile int aliveCount;
+  private volatile long teamsAlive;
+
+  /** The alive counts are shared by every viewer, so they are computed at most twice a second. */
+  private void refreshSnapshot() {
+    final long now = System.currentTimeMillis();
+    if (now - this.snapshotTime < SNAPSHOT_TTL_MILLIS) {
+      return;
+    }
+
     final var alive =
         this.ultraHardcore
             .profileService()
             .getProfiles(profile -> profile.getState() instanceof PlayingProfileState);
+    final var teamService = this.ultraHardcore.teamService();
+    this.aliveCount = alive.size();
+    this.teamsAlive =
+        alive.stream()
+            .map(
+                profile ->
+                    teamService
+                        .teamOf(profile.getId())
+                        .<Object>map(team -> team)
+                        .orElse(profile.getId()))
+            .distinct()
+            .count();
+    this.snapshotTime = now;
+  }
+
+  @Override
+  public List<Component> provideLines(final Player player) {
+    final var lines = Lists.<Component>newArrayList();
+    lines.add(empty());
+    this.refreshSnapshot();
     final var playersLine =
-        text().append(SEPARATOR).append(text("Joueurs: ", GRAY)).append(text(alive.size(), YELLOW));
+        text()
+            .append(SEPARATOR)
+            .append(text("Joueurs: ", GRAY))
+            .append(text(this.aliveCount, YELLOW));
 
     final var teamService = this.ultraHardcore.teamService();
     if (teamService.enabled()) {
-      final long teamsAlive =
-          alive.stream()
-              .map(
-                  profile ->
-                      teamService.teamOf(profile.getId()).<Object>map(team -> team).orElse(profile.getId()))
-              .distinct()
-              .count();
       playersLine
           .appendSpace()
           .append(text('(', DARK_GRAY))
-          .append(text(teamsAlive, YELLOW))
+          .append(text(this.teamsAlive, YELLOW))
           .append(text(')', DARK_GRAY));
     }
     lines.add(playersLine.build());

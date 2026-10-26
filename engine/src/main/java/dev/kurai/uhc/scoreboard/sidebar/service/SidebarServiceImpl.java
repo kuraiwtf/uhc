@@ -1,6 +1,5 @@
 package dev.kurai.uhc.scoreboard.sidebar.service;
 
-import com.google.common.collect.Maps;
 import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.scoreboard.sidebar.Sidebar;
 import dev.kurai.uhc.scoreboard.sidebar.SidebarAdapter;
@@ -13,6 +12,7 @@ import dev.kurai.uhc.scoreboard.sidebar.listener.SidebarListener;
 import dev.kurai.uhc.scoreboard.sidebar.task.updater.SidebarUpdaterTask;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import org.bukkit.Bukkit;
 import org.jspecify.annotations.Nullable;
 
@@ -24,13 +24,13 @@ public final class SidebarServiceImpl implements SidebarService {
   private SidebarAdapter adapter;
 
   public SidebarServiceImpl(final UltraHardcoreAPI ultraHardcore) {
-    this.sidebars = Maps.newHashMap();
+    this.sidebars = new ConcurrentHashMap<>();
     final var adapter = new WaitingSidebarAdapter(ultraHardcore);
     this.install(new BuiltinSidebarTitleAdapter(ultraHardcore), adapter);
     ultraHardcore.eventService().registerListener(new SidebarListener(this));
 
     Bukkit.getScheduler()
-        .runTaskTimerAsynchronously(ultraHardcore.plugin(), new SidebarUpdaterTask(this), 0L, 1L);
+        .runTaskTimerAsynchronously(ultraHardcore.plugin(), new SidebarUpdaterTask(this), 0L, 2L);
   }
 
   @Override
@@ -71,6 +71,10 @@ public final class SidebarServiceImpl implements SidebarService {
     }
 
     final var sidebar = this.sidebars.remove(uniqueId);
+    if (sidebar == null) {
+      return;
+    }
+
     sidebar.destroy();
     sidebar.send();
   }
