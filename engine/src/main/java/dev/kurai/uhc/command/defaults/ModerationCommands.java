@@ -42,6 +42,11 @@ public final class ModerationCommands {
       return;
     }
 
+    if (radius <= 0) {
+      player.sendMessage(CC.prefix("&cLe rayon doit être supérieur à 0."));
+      return;
+    }
+
     final var toTeleport =
         GlobalUtil.getPlayersAround(target.getLocation(), radius).stream()
             .filter(filtered -> !filtered.getUniqueId().equals(player.getUniqueId()))
@@ -55,20 +60,17 @@ public final class ModerationCommands {
                 .provideLocations(
                     BorderConfiguration.FINAL_SIZE_OPTION.getValue(), toTeleport.size()));
 
-    final var iterator = toTeleport.iterator();
-    while (iterator.hasNext()) {
+    for (final Player next : toTeleport) {
       final Location location = locations.removeFirst();
-      final Player next = iterator.next();
       final Profile profile = this.ultraHardcore.profileService().getOrCreateProfile(next);
       profile.addDamageImmunityUntilNext(EntityDamageEvent.DamageCause.FALL);
       next.teleport(location);
-      iterator.remove();
     }
 
     player.sendMessage(
         CC.prefix(
             "Vous avez dispersé un total de§d %d§f joueurs dans un rayon de §b%d blocs§f autour de §e%s§f."
-                .formatted(locations.size(), radius, target.getName())));
+                .formatted(toTeleport.size(), radius, target.getName())));
   }
 
   @Command(@CommandMeta(name = "invsee", description = "Voir l'inventaire d'un joueur"))
