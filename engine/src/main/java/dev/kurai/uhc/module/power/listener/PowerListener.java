@@ -27,6 +27,9 @@ import dev.kurai.uhc.profile.ProfileService;
 import dev.kurai.uhc.util.CC;
 import dev.kurai.uhc.util.GlobalUtil;
 import io.github.retrooper.packetevents.util.SpigotConversionUtil;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
@@ -35,6 +38,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -49,11 +54,27 @@ public final class PowerListener extends PacketListenerAbstract implements Liste
   private final ModuleService moduleService;
   private final Plugin plugin;
 
+  private final Map<Integer, UUID> entityOwners = new ConcurrentHashMap<>();
+
   public PowerListener(
       final ProfileService profileService, final ModuleService moduleService, final Plugin plugin) {
     this.profileService = profileService;
     this.moduleService = moduleService;
     this.plugin = plugin;
+
+    for (final Player online : Bukkit.getOnlinePlayers()) {
+      this.entityOwners.put(online.getEntityId(), online.getUniqueId());
+    }
+  }
+
+  @EventHandler
+  public void onJoin(final PlayerJoinEvent event) {
+    this.entityOwners.put(event.getPlayer().getEntityId(), event.getPlayer().getUniqueId());
+  }
+
+  @EventHandler
+  public void onQuit(final PlayerQuitEvent event) {
+    this.entityOwners.remove(event.getPlayer().getEntityId());
   }
 
   @EventHandler
@@ -79,7 +100,7 @@ public final class PowerListener extends PacketListenerAbstract implements Liste
 
     final PlayerInventory inventory = player.getInventory();
     for (final ItemStack content : inventory.getContents()) {
-      if (power.isSimilar(content)) {
+      if (content != null && power.isSimilar(content)) {
         inventory.setItem(inventory.first(content), power.getIcon(player));
       }
     }
@@ -102,21 +123,31 @@ public final class PowerListener extends PacketListenerAbstract implements Liste
       return;
     }
 
-    final Player player = event.getPlayer();
-    if (packet.getEntityId() == player.getEntityId()) {
+    final Player receiver = event.getPlayer();
+    if (receiver == null || packet.getEntityId() == receiver.getEntityId()) {
       return;
     }
 
-    final Profile profile = this.profileService.getOrCreateProfile(player);
+    final UUID ownerId = this.entityOwners.get(packet.getEntityId());
+    if (ownerId == null) {
+      return;
+    }
+
+    final Profile ownerProfile = this.profileService.findProfile(ownerId).orElse(null);
+    if (ownerProfile == null) {
+      return;
+    }
+
+    final ItemStack held = SpigotConversionUtil.toBukkitItemStack(hand.getItem());
+    if (held == null) {
+      return;
+    }
+
     final var foundPower =
-        profile.getPowers().stream()
+        ownerProfile.getPowers().stream()
             .filter(AbstractItemPower.class::isInstance)
             .map(AbstractItemPower.class::cast)
-            .filter(
-                power ->
-                    power
-                        .getIcon(player)
-                        .isSimilar(SpigotConversionUtil.toBukkitItemStack(hand.getItem())))
+            .filter(power -> power.isSimilar(held))
             .findFirst()
             .orElse(null);
 
@@ -222,6 +253,7 @@ public final class PowerListener extends PacketListenerAbstract implements Liste
       final Player player, final PlayerTargetItemPower foundPower, final Cancellable cancellable) {
     final var target = GlobalUtil.getTargetPlayer(player);
     if (target == null
+        || target.getWorld() != player.getWorld()
         || target.getLocation().distanceSquared(player.getLocation())
             > foundPower.getRange() * foundPower.getRange()) {
       player.sendMessage(CC.prefix("&cVous devez cibler un joueur pour utiliser ce pouvoir."));
@@ -278,13 +310,18 @@ public final class PowerListener extends PacketListenerAbstract implements Liste
       return;
     }
 
-    final var prefix = "/" + this.moduleService.getCurrentModule().getCommandName() + " ";
-    if (!event.getMessage().startsWith(prefix)) {
+    final var commandLabel = this.moduleService.getCurrentModule().getCommandName();
+    if (commandLabel == null) {
+      return;
+    }
+
+    final var prefix = "/" + commandLabel.toLowerCase() + " ";
+    if (!event.getMessage().toLowerCase().startsWith(prefix)) {
       return;
     }
 
     final var arguments =
-        Lists.newArrayList(event.getMessage().substring(prefix.length()).split(" "));
+        Lists.newArrayList(event.getMessage().substring(prefix.length()).trim().split("\\s+"));
     final var commandName = arguments.removeFirst();
     final var foundPower =
         profile.getPowers().stream()
