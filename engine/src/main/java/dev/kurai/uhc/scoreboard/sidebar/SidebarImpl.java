@@ -138,7 +138,6 @@ public final class SidebarImpl implements Sidebar {
     user.flushPackets();
   }
 
-  /** 1.8 clients are disconnected by score entries longer than 40 characters. */
   private String entryName(final int score, final Component content) {
     final String name =
         this.provideColor(score)

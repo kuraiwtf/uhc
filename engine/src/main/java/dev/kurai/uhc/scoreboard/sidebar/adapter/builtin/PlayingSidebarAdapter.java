@@ -35,7 +35,6 @@ public final class PlayingSidebarAdapter implements SidebarAdapter {
   private volatile int aliveCount;
   private volatile long teamsAlive;
 
-  /** The alive counts are shared by every viewer, so they are computed at most twice a second. */
   private void refreshSnapshot() {
     final long now = System.currentTimeMillis();
     if (now - this.snapshotTime < SNAPSHOT_TTL_MILLIS) {
