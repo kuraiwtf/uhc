@@ -16,6 +16,8 @@ public interface ProfileService {
     return this.getOrCreateProfile(player.getUniqueId());
   }
 
+  Optional<Profile> findProfile(final UUID uniqueId);
+
   Optional<Profile> getProfile(final String name);
 
   Optional<Profile> getProfile(final Predicate<Profile> filter);

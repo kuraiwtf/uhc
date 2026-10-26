@@ -1,8 +1,8 @@
 package dev.kurai.uhc.profile.component;
 
-import com.google.common.collect.Sets;
 import dev.kurai.uhc.ecs.component.Component;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import lombok.*;
 import org.bukkit.event.entity.EntityDamageEvent;
 
@@ -11,7 +11,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 @AllArgsConstructor
 public final class DamageImmunityComponent implements Component {
 
-  private Set<DamageImmunity> immunities = Sets.newHashSet();
+  private Set<DamageImmunity> immunities = ConcurrentHashMap.newKeySet();
 
   @Getter
   @Setter
