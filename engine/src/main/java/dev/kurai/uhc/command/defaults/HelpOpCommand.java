@@ -10,6 +10,9 @@ import dev.kurai.uhc.command.annotation.CommandMeta;
 import dev.kurai.uhc.command.argument.annotation.Argument;
 import dev.kurai.uhc.helpop.HelpOpAction;
 import dev.kurai.uhc.profile.component.SpectatorComponent;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
@@ -20,14 +23,28 @@ import org.bukkit.entity.Player;
 @RequiredArgsConstructor
 public final class HelpOpCommand {
 
+  private static final long COOLDOWN_MILLIS = 5_000L;
+  private static final int MAX_LENGTH = 200;
+
   private final UltraHardcoreAPI ultraHardcore;
+  private final Map<UUID, Long> lastUse = new ConcurrentHashMap<>();
 
   @Command(
       @CommandMeta(
           name = "helpop",
           description = "Poser une question anonyme aux hôtes et spectateurs."))
   public void helpop(final Player player, final @Argument(name = "question") String[] question) {
-    final var message = String.join(" ", question);
+    final long now = System.currentTimeMillis();
+    final Long previous = this.lastUse.put(player.getUniqueId(), now);
+    if (previous != null && now - previous < COOLDOWN_MILLIS) {
+      player.sendMessage(prefix("&cVeuillez patienter avant de poser une nouvelle question."));
+      return;
+    }
+
+    var message = String.join(" ", question);
+    if (message.length() > MAX_LENGTH) {
+      message = message.substring(0, MAX_LENGTH);
+    }
     final var ticket =
         this.ultraHardcore
             .helpOpService()
