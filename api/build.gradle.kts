@@ -17,7 +17,7 @@ dependencies {
   api(files("../libs/MenuAPI-core-1.5.5.jar"))
   api(libs.entity.lib)
   api(libs.actionbar.api)
-  api(libs.lombok)
+  compileOnlyApi(libs.lombok)
   api(libs.fastutil)
   annotationProcessor(libs.lombok)
   compileOnly(libs.packetevents.spigot)
