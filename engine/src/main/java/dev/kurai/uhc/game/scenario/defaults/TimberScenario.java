@@ -2,6 +2,7 @@ package dev.kurai.uhc.game.scenario.defaults;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Queues;
+import com.google.common.collect.Sets;
 import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.game.scenario.AbstractScenario;
 import dev.kurai.uhc.game.scenario.ScenarioCategory;
@@ -18,6 +19,8 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 public final class TimberScenario extends AbstractScenario implements Listener {
 
+  private static final int MAX_LOGS = 300;
+
   public TimberScenario(final UltraHardcoreAPI ultraHardcore) {
     super("timber", "Timber", ultraHardcore, ScenarioCategory.MINING);
   }
@@ -32,38 +35,35 @@ public final class TimberScenario extends AbstractScenario implements Listener {
     return new ItemStack(Material.LOG);
   }
 
-  @EventHandler
+  @EventHandler(ignoreCancelled = true)
   public void onBlockBreak(final BlockBreakEvent event) {
     final var block = event.getBlock();
     if (this.isNotLog(block.getType())) {
       return;
     }
 
-    event.getBlock().setType(Material.AIR);
     new TimberTask(event.getPlayer(), this.check(block))
         .runTaskTimer(this.ultraHardcore.plugin(), 0, 4L);
   }
 
   private List<Block> check(final Block block) {
-    final var checkedBlocks = Lists.<Block>newArrayList();
+    final var checkedBlocks = Sets.<Block>newHashSet();
     final var logBlocks = Lists.<Block>newArrayList();
-    final var toCheck = Queues.<Block>newConcurrentLinkedQueue();
+    final var toCheck = Queues.<Block>newArrayDeque();
 
     checkedBlocks.add(block);
     toCheck.add(block);
 
-    while (!toCheck.isEmpty()) {
+    while (!toCheck.isEmpty() && logBlocks.size() < MAX_LOGS) {
       final var current = toCheck.poll();
 
       for (int x = -1; x <= 1; x++) {
         for (int y = -1; y <= 1; y++) {
           for (int z = -1; z <= 1; z++) {
             final var blockAt = current.getLocation().clone().add(x, y, z).getBlock();
-            if (checkedBlocks.contains(blockAt)) {
+            if (!checkedBlocks.add(blockAt)) {
               continue;
             }
-
-            checkedBlocks.add(blockAt);
 
             if (this.isNotLog(blockAt.getType())) {
               continue;
@@ -95,6 +95,11 @@ public final class TimberScenario extends AbstractScenario implements Listener {
 
     @Override
     public void run() {
+      if (!this.player.isOnline()) {
+        this.cancel();
+        return;
+      }
+
       for (int i = 0; i < 4; i++) {
         if (this.blocks.isEmpty()) {
           this.cancel();

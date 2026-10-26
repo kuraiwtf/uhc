@@ -42,7 +42,7 @@ public final class BatsScenario extends AbstractScenario implements Listener {
   public void onEntityDeath(final EntityDeathEvent event) {
     final LivingEntity entity = event.getEntity();
     if (entity.getType() == EntityType.BAT) {
-      if (ThreadLocalRandom.current().nextInt(100) > RATE_CONFIGURATION.getValue()) {
+      if (ThreadLocalRandom.current().nextInt(100) >= RATE_CONFIGURATION.getValue()) {
         final Player killer = entity.getKiller();
         if (killer != null) {
           killer.setHealth(0);

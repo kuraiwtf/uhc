@@ -74,6 +74,7 @@ public final class ArmorReplaceScenario extends AbstractScenario implements List
 
     final var player = event.getPlayer();
     piece.getApply().accept(player, item.clone());
+    event.setCancelled(true);
     player.playSound(player.getLocation(), Sound.WOOD_CLICK, 1f, 1f);
   }
 
@@ -99,27 +100,27 @@ public final class ArmorReplaceScenario extends AbstractScenario implements List
   public enum ArmorPiece {
     HELMET(
         (player, itemStack) -> {
-          final var helmet = player.getInventory().getHelmet().clone();
+          final var helmet = player.getInventory().getHelmet();
           player.getInventory().setHelmet(itemStack);
-          player.getInventory().setItemInHand(helmet);
+          player.getInventory().setItemInHand(helmet == null ? null : helmet.clone());
         }),
     CHESTPLATE(
         (player, itemStack) -> {
-          final var chestplate = player.getInventory().getChestplate().clone();
+          final var chestplate = player.getInventory().getChestplate();
           player.getInventory().setChestplate(itemStack);
-          player.getInventory().setItemInHand(chestplate);
+          player.getInventory().setItemInHand(chestplate == null ? null : chestplate.clone());
         }),
     LEGGINGS(
         (player, itemStack) -> {
-          final var leggings = player.getInventory().getLeggings().clone();
+          final var leggings = player.getInventory().getLeggings();
           player.getInventory().setLeggings(itemStack);
-          player.getInventory().setItemInHand(leggings);
+          player.getInventory().setItemInHand(leggings == null ? null : leggings.clone());
         }),
     BOOTS(
         (player, itemStack) -> {
-          final var boots = player.getInventory().getBoots().clone();
+          final var boots = player.getInventory().getBoots();
           player.getInventory().setBoots(itemStack);
-          player.getInventory().setItemInHand(boots);
+          player.getInventory().setItemInHand(boots == null ? null : boots.clone());
         }),
     ;
 

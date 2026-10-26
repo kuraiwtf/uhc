@@ -39,7 +39,7 @@ public final class BetaZombieScenario extends AbstractScenario implements Listen
   @EventHandler
   public void onEntityDeath(final EntityDeathEvent event) {
     if (event.getEntity().getType() != EntityType.ZOMBIE
-        || ThreadLocalRandom.current().nextInt(100) > RATE_CONFIGURATION.getValue()) {
+        || ThreadLocalRandom.current().nextInt(100) >= RATE_CONFIGURATION.getValue()) {
       return;
     }
 

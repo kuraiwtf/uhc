@@ -11,6 +11,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockExplodeEvent;
+import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.inventory.ItemStack;
 
 public final class CobblestoneOnlyScenario extends AbstractScenario implements Listener {
@@ -26,7 +27,24 @@ public final class CobblestoneOnlyScenario extends AbstractScenario implements L
 
   @EventHandler
   public void onBlockExplode(final BlockExplodeEvent event) {
-    this.apply(event.getBlock());
+    this.applyAll(event.blockList());
+  }
+
+  @EventHandler
+  public void onEntityExplode(final EntityExplodeEvent event) {
+    this.applyAll(event.blockList());
+  }
+
+  private void applyAll(final List<Block> blocks) {
+    blocks.removeIf(
+        block -> {
+          if (block.getType() != Material.STONE) {
+            return false;
+          }
+
+          this.apply(block);
+          return true;
+        });
   }
 
   private void apply(final Block block) {
