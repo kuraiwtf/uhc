@@ -26,7 +26,7 @@ public final class TimerDurationMenu extends Menu {
   private final AbstractTimer timer;
 
   public TimerDurationMenu(final Player player, final AbstractTimer timer) {
-    super("Configuration: " + timer.getName(), MenuSize.THREE, player);
+    super(timer.getName(), MenuSize.THREE, player);
     this.timer = timer;
   }
 
