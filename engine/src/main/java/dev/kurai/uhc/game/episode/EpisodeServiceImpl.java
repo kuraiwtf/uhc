@@ -10,6 +10,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.title.Title;
 import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 
 public final class EpisodeServiceImpl implements EpisodeService {
 
@@ -20,6 +21,7 @@ public final class EpisodeServiceImpl implements EpisodeService {
   private int timeLeft;
 
   private boolean enabled;
+  private BukkitTask task;
 
   public EpisodeServiceImpl(final UltraHardcoreAPI ultraHardcore) {
     this.ultraHardcore = ultraHardcore;
@@ -27,6 +29,14 @@ public final class EpisodeServiceImpl implements EpisodeService {
     this.currentEpisode = 1;
     this.timePerEpisode = 20 * 60;
     this.timeLeft = this.timePerEpisode;
+  }
+
+  @Override
+  public void stop() {
+    if (this.task != null) {
+      this.task.cancel();
+      this.task = null;
+    }
   }
 
   @Override
@@ -71,8 +81,10 @@ public final class EpisodeServiceImpl implements EpisodeService {
     }
 
     this.timeLeft = this.timePerEpisode;
+    this.stop();
     final var service = EpisodeServiceImpl.this;
-    new BukkitRunnable() {
+    this.task =
+        new BukkitRunnable() {
       @Override
       public void run() {
         service.timeLeft--;
