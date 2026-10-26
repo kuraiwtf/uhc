@@ -49,12 +49,14 @@ public final class WorldPreloadTask extends BukkitRunnable {
 
   @Override
   public void run() {
-    for (int i = 0; i <= CHUNKS_PER_TICK; i++) {
+    for (int i = 0; i < CHUNKS_PER_TICK; i++) {
       this.world.getChunkAt(this.currentX >> 4, this.currentZ >> 4).load();
       this.loadedChunks++;
       final double progress = Math.min(100.0, (this.loadedChunks * 100.0) / this.totalChunks);
 
-      for (final Profile profile : this.profileService.getProfiles()) {
+      final boolean report = i == 0;
+      for (final Profile profile :
+          this.profileService.getProfiles(p -> report && p.findPlayer().isPresent())) {
         final Actionbar actionbar = profile.getActionbar();
         actionbar.registerActionbarEntry(
             UltraHardcoreKey.key("preload"),
