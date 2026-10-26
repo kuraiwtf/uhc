@@ -26,6 +26,7 @@ import dev.kurai.uhc.scoreboard.sidebar.adapter.builtin.PlayingSidebarAdapter;
 import dev.kurai.uhc.tablist.TabListService;
 import dev.kurai.uhc.tablist.part.EffectTabListPart;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -45,6 +46,8 @@ public final class StartServiceImpl implements StartService {
   private StartPhase phase;
 
   private BukkitTask startTask;
+
+  private final List<BukkitTask> gameTasks = new ArrayList<>();
 
   public StartServiceImpl(final UltraHardcoreAPI ultraHardcore) {
     this.ultraHardcore = ultraHardcore;
@@ -75,7 +78,7 @@ public final class StartServiceImpl implements StartService {
   public void registerPhaseBefore(final StartPhase from, final StartPhase phase) {
     Preconditions.checkArgument(
         this.phases.contains(from), "Phase %s is not registered.", from.getId());
-    this.phases.add(this.phases.indexOf(from) - 1, phase);
+    this.phases.add(this.phases.indexOf(from), phase);
   }
 
   @Override
@@ -110,6 +113,10 @@ public final class StartServiceImpl implements StartService {
 
   @Override
   public void handleStart() {
+    if (this.startTask != null) {
+      return;
+    }
+
     this.startTask =
         new StartCountdownTask(
                 this.ultraHardcore.bukkitAudiences(),
@@ -155,9 +162,10 @@ public final class StartServiceImpl implements StartService {
 
     final BukkitScheduler scheduler = Bukkit.getScheduler();
     scheduler.runTaskTimer(plugin, new GameTickingTask(gameService), 0, 1L);
-    scheduler.runTaskTimerAsynchronously(plugin, new CooldownUpdaterTask(profileService), 0, 1L);
-    scheduler.runTaskTimerAsynchronously(
-        plugin, new GlowingTargetUpdaterTask(profileService), 0, 1L);
+    this.gameTasks.add(
+        scheduler.runTaskTimer(plugin, new CooldownUpdaterTask(profileService), 0, 2L));
+    this.gameTasks.add(
+        scheduler.runTaskTimer(plugin, new GlowingTargetUpdaterTask(profileService), 0, 2L));
 
     for (final var profile : profileService.getProfiles()) {
       final var player = profile.getPlayer();
@@ -189,5 +197,17 @@ public final class StartServiceImpl implements StartService {
         .installAdapter(new PlayingSidebarAdapter(this.ultraHardcore));
 
     eventService.dispatchEvent(new GameStartEvent());
+  }
+
+  @Override
+  public void stopGameTasks() {
+    this.gameTasks.forEach(BukkitTask::cancel);
+    this.gameTasks.clear();
+
+    final GameService gameService = this.ultraHardcore.gameService();
+    gameService.disconnectService().stop();
+    gameService.episodeService().stop();
+    gameService.groupService().stop();
+    gameService.cycleService().stop();
   }
 }
