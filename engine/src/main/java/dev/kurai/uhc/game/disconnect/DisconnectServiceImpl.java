@@ -4,10 +4,12 @@ import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.profile.Profile;
 import dev.kurai.uhc.profile.component.DisconnectComponent;
 import dev.kurai.uhc.profile.state.PlayingProfileState;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.bukkit.Bukkit;
+import org.bukkit.scheduler.BukkitTask;
 
 @RequiredArgsConstructor
 @Getter
@@ -16,13 +18,19 @@ public final class DisconnectServiceImpl implements DisconnectService {
 
   private final UltraHardcoreAPI ultraHardcore;
 
+  @Getter(AccessLevel.NONE)
+  @Setter(AccessLevel.NONE)
+  private BukkitTask task;
+
   private int disconnectTime = 15 * 60;
   private Strategy strategy = Strategy.CUMULATIVE;
 
   @Override
   public void start() {
-    Bukkit.getScheduler()
-        .runTaskTimer(
+    this.stop();
+    this.task =
+        Bukkit.getScheduler()
+            .runTaskTimer(
             this.ultraHardcore.plugin(),
             () -> {
               if (this.strategy == Strategy.DISABLED) {
@@ -50,5 +58,13 @@ public final class DisconnectServiceImpl implements DisconnectService {
             },
             0,
             20L);
+  }
+
+  @Override
+  public void stop() {
+    if (this.task != null) {
+      this.task.cancel();
+      this.task = null;
+    }
   }
 }
