@@ -33,7 +33,7 @@ public final class CycleServiceImpl implements CycleService {
 
   @Override
   public void start() {
-    if (!this.enabled) {
+    if (!this.enabled || this.phases.isEmpty()) {
       return;
     }
 
@@ -72,6 +72,14 @@ public final class CycleServiceImpl implements CycleService {
                   this.runCycle(next, cycle);
                 },
                 this.currentCycleDuration);
+  }
+
+  @Override
+  public void stop() {
+    if (this.currentTask != null) {
+      this.currentTask.cancel();
+      this.currentTask = null;
+    }
   }
 
   @Override
