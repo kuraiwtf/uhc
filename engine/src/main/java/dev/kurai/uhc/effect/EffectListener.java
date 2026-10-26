@@ -143,8 +143,8 @@ public final class EffectListener implements Listener {
     event.setDamage(
         this.damageFormula(
             event.getDamage(),
-            victimEffectHolder.getEffectValue(EffectType.STRENGTH),
-            damagerEffectHolder.getEffectValue(EffectType.RESISTANCE)));
+            damagerEffectHolder.getEffectValue(EffectType.STRENGTH),
+            victimEffectHolder.getEffectValue(EffectType.RESISTANCE)));
   }
 
   private double damageFormula(
@@ -154,6 +154,10 @@ public final class EffectListener implements Listener {
 
   private void validateSpeed(final UUID uniqueId) {
     final Player player = Bukkit.getPlayer(uniqueId);
+    if (player == null) {
+      return;
+    }
+
     final Profile profile = this.profileService.getOrCreateProfile(uniqueId);
     final EffectHolder effectHolder = profile.getComponent(EffectHoldingComponent.class).holder();
     final double totalPercent = effectHolder.getEffectValue(EffectType.SPEED);

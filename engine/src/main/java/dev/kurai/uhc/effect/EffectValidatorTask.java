@@ -14,7 +14,7 @@ public final class EffectValidatorTask implements Runnable {
 
   @Override
   public void run() {
-    for (final Profile profile : this.profileService.getPlayingProfiles()) {
+    for (final Profile profile : this.profileService.getProfiles()) {
       final EffectHoldingComponent component = profile.getComponent(EffectHoldingComponent.class);
       if (component != null) {
         component.holder().validateEffects();

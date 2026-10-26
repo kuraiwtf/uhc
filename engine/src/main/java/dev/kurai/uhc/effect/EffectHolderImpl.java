@@ -1,8 +1,8 @@
 package dev.kurai.uhc.effect;
 
-import com.google.common.collect.Maps;
 import dev.kurai.uhc.effect.event.*;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import org.bukkit.Bukkit;
 
 public final class EffectHolderImpl implements EffectHolder {
@@ -13,7 +13,7 @@ public final class EffectHolderImpl implements EffectHolder {
 
   public EffectHolderImpl(final UUID uniqueId) {
     this.uniqueId = uniqueId;
-    this.effects = Maps.newHashMap();
+    this.effects = new ConcurrentHashMap<>();
     this.effectsView = Collections.unmodifiableCollection(this.effects.values());
   }
 
