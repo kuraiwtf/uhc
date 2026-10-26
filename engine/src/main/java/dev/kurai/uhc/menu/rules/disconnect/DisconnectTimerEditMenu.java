@@ -61,7 +61,7 @@ public final class DisconnectTimerEditMenu extends Menu {
       return new ItemBuilder(Material.BANNER)
           .data(this.color.getDyeData())
           .name((this.modifier > 0 ? "&a+" : "&c") + TimeUtil.formatDuration(this.modifier * 1000L))
-          .amount(this.modifier / 60)
+          .amount(Math.max(1, Math.abs(this.modifier) / 60))
           .asItemStack();
     }
 
@@ -69,9 +69,9 @@ public final class DisconnectTimerEditMenu extends Menu {
     public void onClick(final ButtonClick click) {
       this.disconnectService.disconnectTime(
           Math.clamp(
-              this.disconnectService.disconnectTime() + (this.modifier * 1_000L),
-              5 * 60 * 1_000L,
-              20 * 60 * 1_000L));
+              this.disconnectService.disconnectTime() + (this.modifier),
+              5 * 60,
+              20 * 60));
       click.getMenu().update();
     }
   }
@@ -92,7 +92,7 @@ public final class DisconnectTimerEditMenu extends Menu {
           "&6 "
               + SQUARE
               + "&f Durée actuelle: &b"
-              + TimeUtil.formatDuration(this.disconnectService.disconnectTime()));
+              + TimeUtil.formatDuration(this.disconnectService.disconnectTime() * 1000L));
       lines.add("");
       lines.add("&7" + BAR + "&f Modifiez le temps avec");
       lines.add("  les boutons autour.");
@@ -101,7 +101,7 @@ public final class DisconnectTimerEditMenu extends Menu {
       return new ItemBuilder(Material.WATCH)
           .name("&6&lTemps de déconnexion")
           .lore(lines)
-          .amount(Math.clamp(this.disconnectService.disconnectTime() / (60 * 1_000L), 1, 64))
+          .amount(Math.clamp(this.disconnectService.disconnectTime() / 60, 1, 64))
           .lunarTag("unclickable", true)
           .lunarTag("hideSlotHighlight", true)
           .asItemStack();

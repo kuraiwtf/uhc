@@ -1,13 +1,9 @@
 package dev.kurai.uhc.game.disconnect;
 
 import dev.kurai.uhc.UltraHardcoreAPI;
-import dev.kurai.uhc.game.GameService;
-import dev.kurai.uhc.game.death.DeathService;
 import dev.kurai.uhc.profile.Profile;
 import dev.kurai.uhc.profile.component.DisconnectComponent;
 import dev.kurai.uhc.profile.state.PlayingProfileState;
-import java.time.Duration;
-import java.time.Instant;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -20,7 +16,7 @@ public final class DisconnectServiceImpl implements DisconnectService {
 
   private final UltraHardcoreAPI ultraHardcore;
 
-  private long disconnectTime = 15 * 60 * 1_000L;
+  private int disconnectTime = 15 * 60;
   private Strategy strategy = Strategy.CUMULATIVE;
 
   @Override
@@ -29,6 +25,10 @@ public final class DisconnectServiceImpl implements DisconnectService {
         .runTaskTimer(
             this.ultraHardcore.plugin(),
             () -> {
+              if (this.strategy == Strategy.DISABLED) {
+                return;
+              }
+
               for (final Profile profile :
                   this.ultraHardcore
                       .profileService()
@@ -42,18 +42,13 @@ public final class DisconnectServiceImpl implements DisconnectService {
                   continue;
                 }
 
-                if (Duration.between(disconnectComponent.lastLogin(), Instant.now()).toMillis()
-                        >= this.disconnectTime
-                    || disconnectComponent.timeLeft() <= 0) {
-                  final GameService gameService = this.ultraHardcore.gameService();
-                  final DeathService deathService = gameService.deathService();
-                  deathService.eliminate(profile, null, true);
-                  gameService.sendMessage(
-                      deathService.deathAnnounce().provideDeathMessage(profile, null, true));
+                disconnectComponent.timeLeft(disconnectComponent.timeLeft() - 1);
+                if (disconnectComponent.timeLeft() <= 0) {
+                  this.ultraHardcore.gameService().deathService().eliminate(profile, null, true);
                 }
               }
             },
             0,
-            1L);
+            20L);
   }
 }

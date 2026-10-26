@@ -9,10 +9,10 @@ import lombok.Setter;
 @Setter
 public final class DisconnectComponent implements Component {
 
-  private long timeLeft;
+  private int timeLeft;
   private Instant lastLogin;
 
-  public DisconnectComponent(final long timeLeft, final Instant lastLogin) {
+  public DisconnectComponent(final int timeLeft, final Instant lastLogin) {
     this.timeLeft = timeLeft;
     this.lastLogin = lastLogin;
   }

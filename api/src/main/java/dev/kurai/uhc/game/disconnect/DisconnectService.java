@@ -1,13 +1,10 @@
 package dev.kurai.uhc.game.disconnect;
 
-import org.jetbrains.annotations.Range;
-
 public interface DisconnectService {
 
-  long disconnectTime();
+  int disconnectTime();
 
-  void disconnectTime(
-      final @Range(from = 5 * 60 * 1_000L, to = 20 * 60 * 1_000L) long disconnectTime);
+  void disconnectTime(final int disconnectTime);
 
   Strategy strategy();
 
