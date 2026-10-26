@@ -24,7 +24,6 @@ import org.bukkit.entity.Player;
 public final class HelpOpCommand {
 
   private static final long COOLDOWN_MILLIS = 5_000L;
-  private static final int MAX_LENGTH = 200;
 
   private final UltraHardcoreAPI ultraHardcore;
   private final Map<UUID, Long> lastUse = new ConcurrentHashMap<>();
@@ -42,9 +41,6 @@ public final class HelpOpCommand {
     }
 
     var message = String.join(" ", question);
-    if (message.length() > MAX_LENGTH) {
-      message = message.substring(0, MAX_LENGTH);
-    }
     final var ticket =
         this.ultraHardcore
             .helpOpService()
