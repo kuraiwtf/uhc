@@ -5,3 +5,5 @@ main: dev.kurai.uhc.UltraHardcorePlugin
 
 depend:
   - packetevents
+softdepend:
+  - Apollo-Bukkit
