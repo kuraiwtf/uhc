@@ -10,20 +10,20 @@ import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerDe
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityMetadata;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSpawnEntity;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import dev.kurai.uhc.event.defaults.sit.PlayerSitEvent;
 import dev.kurai.uhc.event.defaults.sit.PlayerUnsitEvent;
 import io.github.retrooper.packetevents.util.SpigotConversionUtil;
 import io.github.retrooper.packetevents.util.SpigotReflectionUtil;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 public final class SitUtil {
 
-  private static final Map<UUID, Integer> SEATS = Maps.newHashMap();
+  private static final Map<UUID, Integer> SEATS = new ConcurrentHashMap<>();
 
   public static void sit(final Player player, final Plugin plugin) {
     sit(player, -1L, plugin);
@@ -95,9 +95,10 @@ public final class SitUtil {
     final var detachPacket = new WrapperPlayServerAttachEntity(player.getEntityId(), -1, false);
     user.sendPacket(detachPacket);
 
-    final var removePacket =
-        new WrapperPlayServerDestroyEntities(SEATS.remove(player.getUniqueId()));
-    user.sendPacket(removePacket);
+    final var seat = SEATS.remove(player.getUniqueId());
+    if (seat != null) {
+      user.sendPacket(new WrapperPlayServerDestroyEntities(seat));
+    }
   }
 
   public static boolean isSit(final Player player) {
