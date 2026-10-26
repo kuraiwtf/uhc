@@ -47,12 +47,20 @@ public final class ItemBuilder {
 
   public static boolean hasTag(final ItemStack itemStack, final String key) {
     final var copy = CraftItemStack.asNMSCopy(itemStack);
+    if (copy == null) {
+      return false;
+    }
+
     final var tag = (copy.getTag() == null ? new NBTTagCompound() : copy.getTag());
     return tag.hasKey(key);
   }
 
   public static String getTag(final ItemStack itemStack, final String key) {
     final var copy = CraftItemStack.asNMSCopy(itemStack);
+    if (copy == null) {
+      return "";
+    }
+
     final var tag = (copy.getTag() == null ? new NBTTagCompound() : copy.getTag());
     return tag.getString(key);
   }
