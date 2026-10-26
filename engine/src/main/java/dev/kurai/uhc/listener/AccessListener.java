@@ -6,9 +6,10 @@ import dev.kurai.uhc.game.host.HostService;
 import dev.kurai.uhc.module.service.ModuleService;
 import dev.kurai.uhc.whitelist.WhitelistService;
 import java.util.UUID;
-import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 
 public final class AccessListener implements Listener {
@@ -26,13 +27,20 @@ public final class AccessListener implements Listener {
     this.whitelistService = whitelistService;
   }
 
+  @EventHandler(priority = EventPriority.HIGHEST)
+  public void onLogin(final PlayerLoginEvent event) {
+    if (event.getResult() == PlayerLoginEvent.Result.KICK_FULL
+        && this.hostService.hasHostAccess(event.getPlayer().getUniqueId())) {
+      event.allow();
+    }
+  }
+
   @EventHandler
   public void onJoin(final AsyncPlayerPreLoginEvent event) {
     final UUID uniqueId = event.getUniqueId();
     if (WHITELIST_OPTION.getValue()
         && !this.whitelistService.isWhitelisted(uniqueId)
-        && !this.hostService.hasHostAccess(uniqueId)
-        && !Bukkit.getOfflinePlayer(uniqueId).isOp()) {
+        && !this.hostService.hasHostAccess(uniqueId)) {
       event.setLoginResult(AsyncPlayerPreLoginEvent.Result.KICK_WHITELIST);
       event.setKickMessage("§cVous n'êtes pas dans la liste blanche de la partie.");
     }

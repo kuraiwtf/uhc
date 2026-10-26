@@ -18,6 +18,10 @@ public final class ItemListener implements Listener {
 
   @EventHandler
   public void onInteract(final PlayerInteractEvent event) {
+    if (event.getItem() == null) {
+      return;
+    }
+
     final var player = event.getPlayer();
     this.itemService
         .findByIcon(player, event.getItem())
