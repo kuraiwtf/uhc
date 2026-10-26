@@ -92,7 +92,18 @@ public final class RoleAttributionTimer extends AbstractTimer {
         .sendMessage(prefix().append(text("Attribution des rôles...")).build());
 
     for (final var profile : profiles) {
-      this.attributor.attribute(profile, roles.removeFirst());
+      final var meta = roles.removeFirst();
+      try {
+        this.attributor.attribute(profile, meta);
+      } catch (final RuntimeException e) {
+        this.ultraHardcore
+            .plugin()
+            .getLogger()
+            .log(
+                java.util.logging.Level.SEVERE,
+                "Could not attribute role " + meta.getName() + " to " + profile.getName(),
+                e);
+      }
     }
 
     this.ultraHardcore.moduleService().getCurrentModule().onRoles();
