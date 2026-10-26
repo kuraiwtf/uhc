@@ -2,6 +2,7 @@ package dev.kurai.uhc.win;
 
 import dev.kurai.uhc.profile.Profile;
 import dev.kurai.uhc.profile.ProfileService;
+import dev.kurai.uhc.profile.state.PlayingProfileState;
 import dev.kurai.uhc.team.Team;
 import dev.kurai.uhc.team.TeamService;
 import java.util.Collection;
@@ -23,7 +24,9 @@ public final class BuiltinWinCondition implements WinCondition {
 
   @Override
   public @Nullable @Unmodifiable Collection<Profile> validateWin() {
-    final var playingProfiles = this.profileService.getPlayingProfiles();
+    final var playingProfiles =
+        this.profileService.getProfiles(
+            profile -> profile.getState() instanceof PlayingProfileState);
     if (playingProfiles.isEmpty()) {
       return Collections.emptyList();
     }
