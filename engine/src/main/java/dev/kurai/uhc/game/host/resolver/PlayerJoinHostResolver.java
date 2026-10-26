@@ -11,7 +11,7 @@ import org.jspecify.annotations.Nullable;
 public final class PlayerJoinHostResolver implements TickableHostResolver, Listener {
 
   private final EventService eventService;
-  private @Nullable UUID hostFound;
+  private volatile @Nullable UUID hostFound;
 
   public PlayerJoinHostResolver(final EventService eventService) {
     this.eventService = eventService;

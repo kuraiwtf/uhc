@@ -1,6 +1,5 @@
 package dev.kurai.uhc.game.host;
 
-import com.google.common.collect.Sets;
 import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.event.defaults.host.HostAccessUpdateEvent;
 import dev.kurai.uhc.game.host.resolver.PlayerJoinHostResolver;
@@ -8,6 +7,7 @@ import dev.kurai.uhc.profile.Profile;
 import java.util.Collection;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
@@ -20,10 +20,11 @@ import org.jspecify.annotations.Nullable;
 @NullMarked
 public final class HostServiceImpl implements HostService {
 
-  private final Set<UUID> coHosts = Sets.newHashSet();
-  private final Collection<TickableHostResolver> tickableHostResolvers = Sets.newHashSet();
+  private final Set<UUID> coHosts = ConcurrentHashMap.newKeySet();
+  private final Collection<TickableHostResolver> tickableHostResolvers =
+      ConcurrentHashMap.newKeySet();
   private final UltraHardcoreAPI ultraHardcore;
-  private @Nullable UUID host;
+  private volatile @Nullable UUID host;
 
   public HostServiceImpl(final UltraHardcoreAPI ultraHardcore) {
     this.ultraHardcore = ultraHardcore;
@@ -32,7 +33,14 @@ public final class HostServiceImpl implements HostService {
         () -> {
           final var env = System.getenv("SERVER_HOST_ID");
           if (env != null) {
-            return UUID.fromString(env);
+            try {
+              return UUID.fromString(env.trim());
+            } catch (final IllegalArgumentException e) {
+              ultraHardcore
+                  .plugin()
+                  .getLogger()
+                  .warning("SERVER_HOST_ID is not a valid UUID: " + env);
+            }
           }
 
           return null;
@@ -56,7 +64,7 @@ public final class HostServiceImpl implements HostService {
           }
         }
       }
-    }.runTaskTimerAsynchronously(ultraHardcore.plugin(), 0L, 1L);
+    }.runTaskTimer(ultraHardcore.plugin(), 0L, 20L);
   }
 
   @Override
@@ -75,7 +83,8 @@ public final class HostServiceImpl implements HostService {
 
   @Override
   public @Nullable Profile hostProfile() {
-    return this.ultraHardcore.profileService().getOrCreateProfile(this.host);
+    final var current = this.host;
+    return current == null ? null : this.ultraHardcore.profileService().getOrCreateProfile(current);
   }
 
   @Override
