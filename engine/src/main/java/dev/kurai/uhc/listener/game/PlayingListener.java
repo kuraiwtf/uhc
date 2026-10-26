@@ -197,10 +197,15 @@ public final class PlayingListener implements Listener {
 
   @EventHandler
   public void onSuffocationDamage(final EntityDamageEvent event) {
+    if (event.getCause() != SUFFOCATION || !(event.getEntity() instanceof Player)) {
+      return;
+    }
+
     final GameRuleService ruleService = this.ultraHardcore.gameService().ruleService();
     final Block block = event.getEntity().getLocation().clone().add(0, 1, 0).getBlock();
     if (event.getCause() == SUFFOCATION
         && block.getType() != AIR
+        && block.getType() != BEDROCK
         && !ruleService.isRuleEnabled("obsidian_trap")) {
       block.setType(AIR);
       event.setCancelled(true);
@@ -279,13 +284,13 @@ public final class PlayingListener implements Listener {
       while (iterator.hasNext()) {
         final var next = iterator.next();
         if (next.timeLeft() < 0) {
-          return;
+          continue;
         }
 
         next.timeLeft(next.timeLeft() - 1);
 
         if (next.timeLeft() > 0) {
-          return;
+          continue;
         }
 
         iterator.remove();
@@ -388,7 +393,7 @@ public final class PlayingListener implements Listener {
     }
   }
 
-  @EventHandler
+  @EventHandler(ignoreCancelled = true)
   public void onBlockBreak(final BlockBreakEvent event) {
     final var block = event.getBlock();
     if (!MINING_STATISTICS.containsKey(block.getType())) {

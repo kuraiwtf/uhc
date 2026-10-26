@@ -135,7 +135,7 @@ public final class WaitingListener implements Listener {
   @EventHandler
   public void onPlayerMove(final PlayerMoveEvent event) {
     final var player = event.getPlayer();
-    if (player.getLocation().getBlockY() > 0) {
+    if (event.getTo().getBlockY() > 0) {
       return;
     }
 

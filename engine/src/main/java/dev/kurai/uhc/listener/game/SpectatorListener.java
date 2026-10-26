@@ -8,6 +8,7 @@ import dev.kurai.uhc.module.power.AbstractPower;
 import dev.kurai.uhc.module.power.defaults.item.impl.parent.AbstractParentItemPower;
 import dev.kurai.uhc.profile.Profile;
 import dev.kurai.uhc.profile.component.SpectatorComponent;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -27,6 +28,11 @@ import org.jspecify.annotations.NullMarked;
 public final class SpectatorListener implements Listener {
 
   private static final Class<? extends Component> SPECTATOR_COMPONENT = SpectatorComponent.class;
+
+  private static final Set<String> PRIVATE_COMMANDS =
+      Set.of(
+          "msg", "tell", "w", "whisper", "r", "reply", "m", "t", "helpop", "hop", "login",
+          "l", "register", "reg", "password");
 
   private final UltraHardcoreAPI ultraHardcore;
 
@@ -94,7 +100,7 @@ public final class SpectatorListener implements Listener {
     }
 
     final String content = event.getMessage();
-    if (content.startsWith("/")) {
+    if (content.startsWith("/") && !isPrivateCommand(content)) {
       this.ultraHardcore
           .loggerService()
           .broadcastSpectator(
@@ -104,10 +110,16 @@ public final class SpectatorListener implements Listener {
     }
   }
 
+  private static boolean isPrivateCommand(final String content) {
+    final String label = content.substring(1).split(" ", 2)[0].toLowerCase();
+    return PRIVATE_COMMANDS.contains(label);
+  }
+
   @EventHandler
   public void onPowerUse(final PowerUseEvent event) {
     final AbstractPower power = event.getPower();
-    if (power instanceof AbstractParentItemPower) {
+    final Player holder = event.getProfile().getPlayer();
+    if (power instanceof AbstractParentItemPower || holder == null) {
       return;
     }
 
@@ -120,6 +132,6 @@ public final class SpectatorListener implements Listener {
                 + "§f vient d'utiliser§6 "
                 + power.getName()
                 + "§f.",
-            event.getProfile().getPlayer().getLocation());
+            holder.getLocation());
   }
 }
