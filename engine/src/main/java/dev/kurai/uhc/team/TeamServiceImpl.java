@@ -1,7 +1,6 @@
 package dev.kurai.uhc.team;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.module.team.module.TeamModule;
 import dev.kurai.uhc.nickname.NicknameValue;
@@ -14,6 +13,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentSkipListMap;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.stream.Collectors;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
@@ -24,15 +27,17 @@ public final class TeamServiceImpl implements TeamService {
 
   private final UltraHardcoreAPI ultraHardcore;
 
-  private final Map<Integer, TeamImpl> teams = Maps.newLinkedHashMap();
-  private final Map<UUID, Integer> membership = Maps.newHashMap();
+  private final Map<Integer, TeamImpl> teams = new ConcurrentSkipListMap<>();
+  private final Map<UUID, Integer> membership = new ConcurrentHashMap<>();
 
-  /** Invitee to the (inviter to team id) invitations they hold. */
-  private final Map<UUID, Map<UUID, Integer>> invitations = Maps.newHashMap();
+  private final Map<UUID, Map<UUID, Integer>> invitations = new ConcurrentHashMap<>();
 
   private static final String NICKNAME_VALUE_ID = "team";
 
   private int nextId = 1;
+
+  private boolean batching;
+  private final Set<UUID> pendingNicknames = new HashSet<>();
 
   public TeamServiceImpl(final UltraHardcoreAPI ultraHardcore) {
     this.ultraHardcore = ultraHardcore;
@@ -82,6 +87,11 @@ public final class TeamServiceImpl implements TeamService {
   }
 
   private void refreshNicknames(final Collection<UUID> targets) {
+    if (this.batching) {
+      this.pendingNicknames.addAll(targets);
+      return;
+    }
+
     final var nicknameService = this.ultraHardcore.nicknameService();
     for (final var viewer : Bukkit.getOnlinePlayers()) {
       final var holder = nicknameService.holder(viewer.getUniqueId());
@@ -124,7 +134,7 @@ public final class TeamServiceImpl implements TeamService {
     }
 
     this.invitations
-        .computeIfAbsent(invitee, key -> Maps.newHashMap())
+        .computeIfAbsent(invitee, key -> new ConcurrentHashMap<>())
         .put(team.leader(), team.getId());
     return true;
   }
@@ -178,6 +188,7 @@ public final class TeamServiceImpl implements TeamService {
     this.teams.remove(team.getId());
     for (final var member : team.members()) {
       this.membership.remove(member);
+      this.invitations.remove(member);
     }
     this.refreshNicknames(team.members());
   }
@@ -193,6 +204,29 @@ public final class TeamServiceImpl implements TeamService {
 
   @Override
   public void assignUnteamed(final Collection<UUID> players) {
+    this.batch(() -> this.assignUnteamedInternal(players));
+  }
+
+  private void batch(final Runnable action) {
+    if (this.batching) {
+      action.run();
+      return;
+    }
+
+    this.batching = true;
+    try {
+      action.run();
+    } finally {
+      this.batching = false;
+      final var targets = List.copyOf(this.pendingNicknames);
+      this.pendingNicknames.clear();
+      if (!targets.isEmpty()) {
+        this.refreshNicknames(targets);
+      }
+    }
+  }
+
+  private void assignUnteamedInternal(final Collection<UUID> players) {
     if (!this.enabled()) {
       return;
     }
@@ -216,6 +250,10 @@ public final class TeamServiceImpl implements TeamService {
 
   @Override
   public void randomize(final Collection<UUID> players) {
+    this.batch(() -> this.randomizeInternal(players));
+  }
+
+  private void randomizeInternal(final Collection<UUID> players) {
     if (!this.enabled()) {
       return;
     }
