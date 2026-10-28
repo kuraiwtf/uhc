@@ -19,6 +19,7 @@ public final class GroupVariableTask implements Runnable {
       if (!this.appliedVariables.contains(variable) && variable.shouldApply()) {
         this.appliedVariables.add(variable);
         this.groupService.provider().groups(variable.groupSize());
+        this.groupService.alertGroups();
       }
     }
   }
