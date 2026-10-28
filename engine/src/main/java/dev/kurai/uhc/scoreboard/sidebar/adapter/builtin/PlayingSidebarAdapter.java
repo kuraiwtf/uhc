@@ -111,12 +111,7 @@ public final class PlayingSidebarAdapter implements SidebarAdapter {
         text()
             .append(SEPARATOR)
             .append(text("Durée: ", GRAY))
-            .append(
-                text(
-                    formatDuration(
-                        (System.currentTimeMillis()
-                            - this.ultraHardcore.gameService().startTime())),
-                    GREEN))
+            .append(text(formatDuration(this.ultraHardcore.gameService().duration() * 1000L), GREEN))
             .build());
 
     this.ultraHardcore

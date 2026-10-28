@@ -78,6 +78,8 @@ public final class WorldPreloadTask extends BukkitRunnable {
       if (this.currentX > this.borderSize) {
         this.currentX = -this.borderSize;
         this.currentZ += 16;
+
+        this.unloadRow(this.currentZ - 32);
       }
 
       if (this.currentZ > this.borderSize) {
@@ -91,9 +93,21 @@ public final class WorldPreloadTask extends BukkitRunnable {
         }
 
         this.world.setGameRuleValue("doMobSpawning", "true");
+
+        for (int z = this.currentZ - 32; z <= this.borderSize; z += 16) {
+          this.unloadRow(z);
+        }
+
         this.cancel();
         return;
       }
+    }
+  }
+
+  private void unloadRow(final int blockZ) {
+    final int chunkZ = blockZ >> 4;
+    for (int x = -this.borderSize; x <= this.borderSize; x += 16) {
+      this.world.unloadChunkRequest(x >> 4, chunkZ);
     }
   }
 }
