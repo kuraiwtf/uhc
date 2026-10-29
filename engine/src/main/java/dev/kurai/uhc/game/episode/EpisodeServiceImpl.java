@@ -2,6 +2,9 @@ package dev.kurai.uhc.game.episode;
 
 import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.event.defaults.game.GameEpisodeChangeEvent;
+import dev.kurai.uhc.module.role.AbstractRole;
+import dev.kurai.uhc.module.role.RoleComponent;
+import dev.kurai.uhc.profile.Profile;
 import java.time.Duration;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
@@ -9,6 +12,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.title.Title;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -85,26 +89,38 @@ public final class EpisodeServiceImpl implements EpisodeService {
     final var service = EpisodeServiceImpl.this;
     this.task =
         new BukkitRunnable() {
-      @Override
-      public void run() {
-        service.timeLeft--;
+          @Override
+          public void run() {
+            service.timeLeft--;
 
-        if (service.timeLeft == 0) {
-          service.timeLeft = service.timePerEpisode;
-          service.currentEpisode++;
-          Bukkit.getPluginManager().callEvent(new GameEpisodeChangeEvent(service.currentEpisode));
+            if (service.timeLeft == 0) {
+              service.timeLeft = service.timePerEpisode;
+              service.currentEpisode++;
+              Bukkit.getPluginManager()
+                  .callEvent(new GameEpisodeChangeEvent(service.currentEpisode));
 
-          final var gameService = EpisodeServiceImpl.this.ultraHardcore.gameService();
-          gameService.showTitle(
-              Title.title(
-                  Component.empty(),
-                  Component.text("Épisode ", NamedTextColor.AQUA)
-                      .append(Component.text(service.currentEpisode)),
-                  Title.Times.times(Duration.ZERO, Duration.ofSeconds(3L), Duration.ZERO)));
+              final var gameService = service.ultraHardcore.gameService();
+              gameService.showTitle(
+                  Title.title(
+                      Component.empty(),
+                      Component.text("Épisode ", NamedTextColor.AQUA)
+                          .append(Component.text(service.currentEpisode)),
+                      Title.Times.times(Duration.ZERO, Duration.ofSeconds(3L), Duration.ZERO)));
 
-          gameService.playSound(Sound.sound(Key.key("note.pling"), Sound.Source.NEUTRAL, 1f, 1f));
-        }
-      }
-    }.runTaskTimer(this.ultraHardcore.plugin(), 20L, 20L);
+              gameService.playSound(
+                  Sound.sound(Key.key("note.pling"), Sound.Source.NEUTRAL, 1f, 1f));
+
+              for (final Profile profile :
+                  service.ultraHardcore.profileService().getPlayingProfiles()) {
+                final Player player = profile.getPlayer();
+                final RoleComponent roleComponent = profile.getComponent(RoleComponent.class);
+                if (player != null && roleComponent != null) {
+                  final AbstractRole role = roleComponent.role();
+                  role.onEpisode(player, service.currentEpisode);
+                }
+              }
+            }
+          }
+        }.runTaskTimer(this.ultraHardcore.plugin(), 20L, 20L);
   }
 }

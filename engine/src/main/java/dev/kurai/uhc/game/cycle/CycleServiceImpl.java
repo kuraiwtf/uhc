@@ -8,9 +8,14 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+
+import dev.kurai.uhc.module.role.AbstractRole;
+import dev.kurai.uhc.module.role.RoleComponent;
+import dev.kurai.uhc.profile.Profile;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
 
 @Getter
@@ -61,6 +66,15 @@ public final class CycleServiceImpl implements CycleService {
 
     this.currentIndex = index;
     cycle.onStart();
+
+    for (final Profile profile : this.ultraHardcore.profileService().getPlayingProfiles()) {
+      final Player player = profile.getPlayer();
+      final RoleComponent roleComponent = profile.getComponent(RoleComponent.class);
+      if (player != null && roleComponent != null) {
+        final AbstractRole role = roleComponent.role();
+        role.onCycle(player, cycle);
+      }
+    }
 
     this.currentTask =
         Bukkit.getScheduler()

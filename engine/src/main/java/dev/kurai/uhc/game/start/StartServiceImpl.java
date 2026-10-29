@@ -163,7 +163,7 @@ public final class StartServiceImpl implements StartService {
     worldBorder.setCenter(0, 0);
 
     final BukkitScheduler scheduler = Bukkit.getScheduler();
-    scheduler.runTaskTimer(plugin, new GameTickingTask(gameService), 0, 1L);
+    scheduler.runTaskTimer(plugin, new GameTickingTask(this.ultraHardcore), 0, 1L);
     this.gameTasks.add(
         scheduler.runTaskTimer(plugin, new CooldownUpdaterTask(profileService), 0, 2L));
     this.gameTasks.add(
