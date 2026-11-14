@@ -25,6 +25,7 @@ import dev.kurai.uhc.profile.state.PlayingProfileState;
 import dev.kurai.uhc.timer.AbstractTimer;
 import dev.kurai.uhc.util.CC;
 import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -369,27 +370,40 @@ public final class HostCommand {
       return;
     }
 
-    if (targets[0].equalsIgnoreCase("all")) {
-      Bukkit.broadcastMessage(
-          CC.prefix(
-              "§6" + player.getName() + "§f vient de§d soigner§f tous les joueurs de la partie."));
-      Bukkit.getOnlinePlayers().forEach(this::heal);
-      return;
-    }
-
+    final boolean all = targets[0].equalsIgnoreCase("all");
     final var targetNames = Arrays.stream(targets).toList();
-    final var players =
+    final List<Player> candidates =
         Bukkit.getOnlinePlayers().stream()
             .filter(
                 p ->
-                    targetNames.stream()
-                        .anyMatch(filtered -> filtered.equalsIgnoreCase(p.getName())))
+                    all
+                        || targetNames.stream()
+                            .anyMatch(filtered -> filtered.equalsIgnoreCase(p.getName())))
+            .map(Player.class::cast)
             .toList();
 
-    for (final Player target : players) {
-      target.sendMessage(CC.prefix("Vous avez été soigné par§6 " + player.getName() + "§f."));
+    final var healable = candidates.stream().filter(this::isNotInCombat).toList();
+    if (all) {
+      Bukkit.broadcastMessage(
+          CC.prefix(
+              "§6"
+                  + player.getName()
+                  + "§f vient de§d soigner§f tous les joueurs de la partie."));
+    }
+
+    for (final Player target : healable) {
+      if (!all) {
+        target.sendMessage(CC.prefix("Vous avez été soigné par§6 " + player.getName() + "§f."));
+      }
       this.heal(target);
     }
+  }
+
+  private boolean isNotInCombat(final Player target) {
+    return !this.ultraHardcore
+        .gameService()
+        .combatService()
+        .inCombat(this.ultraHardcore.profileService().getOrCreateProfile(target.getUniqueId()));
   }
 
   private void heal(final Player target) {

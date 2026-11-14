@@ -3,6 +3,7 @@ package dev.kurai.uhc.game;
 import static dev.kurai.uhc.util.api.option.Option.option;
 import static net.kyori.adventure.key.Key.key;
 
+import dev.kurai.uhc.game.combat.CombatService;
 import dev.kurai.uhc.game.cycle.CycleService;
 import dev.kurai.uhc.game.death.DeathService;
 import dev.kurai.uhc.game.disconnect.DisconnectService;
@@ -45,6 +46,8 @@ public interface GameService extends ForwardingAudience {
   boolean playing();
 
   void playing(final boolean playing);
+
+  CombatService combatService();
 
   CycleService cycleService();
 

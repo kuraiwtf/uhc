@@ -14,6 +14,7 @@ import dev.kurai.uhc.command.argument.builtin.uhc.TimerArgumentResolver;
 import dev.kurai.uhc.command.defaults.*;
 import dev.kurai.uhc.module.command.RoleDataArgumentResolver;
 import dev.kurai.uhc.module.role.RoleMeta;
+import dev.kurai.uhc.game.combat.CombatValidatorTask;
 import dev.kurai.uhc.effect.EffectListener;
 import dev.kurai.uhc.effect.EffectPacketSender;
 import dev.kurai.uhc.effect.EffectRefreshTask;
@@ -242,6 +243,13 @@ public final class UltraHardcoreEngine extends UltraHardcoreAPI {
 
     Bukkit.getScheduler()
         .runTaskTimer(this.plugin, new EffectValidatorTask(this.profileService), 0, 5);
+
+    Bukkit.getScheduler()
+        .runTaskTimer(
+            this.plugin,
+            new CombatValidatorTask(this.profileService, this.gameService.combatService()),
+            0,
+            1L);
 
     Bukkit.getScheduler()
         .runTaskTimerAsynchronously(

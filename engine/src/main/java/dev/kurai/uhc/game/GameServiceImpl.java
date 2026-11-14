@@ -1,6 +1,8 @@
 package dev.kurai.uhc.game;
 
 import dev.kurai.uhc.UltraHardcoreAPI;
+import dev.kurai.uhc.game.combat.CombatService;
+import dev.kurai.uhc.game.combat.CombatServiceImpl;
 import dev.kurai.uhc.game.cycle.CycleService;
 import dev.kurai.uhc.game.cycle.CycleServiceImpl;
 import dev.kurai.uhc.game.death.DeathService;
@@ -45,6 +47,7 @@ public final class GameServiceImpl implements GameService {
 
   private final UltraHardcoreAPI ultraHardcore;
 
+  private final CombatService combatService;
   private final CycleService cycleService;
   private final DeathService deathService;
   private final DisconnectService disconnectService;
@@ -71,6 +74,7 @@ public final class GameServiceImpl implements GameService {
   public GameServiceImpl(final UltraHardcoreAPI ultraHardcore) {
     this.ultraHardcore = ultraHardcore;
 
+    this.combatService = new CombatServiceImpl();
     this.cycleService = new CycleServiceImpl(ultraHardcore);
     this.deathService = new DeathServiceImpl(ultraHardcore);
     this.disconnectService = new DisconnectServiceImpl(ultraHardcore);

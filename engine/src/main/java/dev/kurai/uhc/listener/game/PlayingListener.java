@@ -37,7 +37,9 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -228,6 +230,29 @@ public final class PlayingListener implements Listener {
     if (bucket == LAVA_BUCKET && !ruleService.isRuleEnabled("lava")) {
       event.setCancelled(true);
     }
+  }
+
+  @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+  public void trackCombat(final EntityDamageByEntityEvent event) {
+    if (!(event.getEntity() instanceof final Player victim)) {
+      return;
+    }
+
+    final Player attacker =
+        event.getDamager() instanceof final Player player
+            ? player
+            : event.getDamager() instanceof final Projectile projectile
+                    && projectile.getShooter() instanceof final Player shooter
+                ? shooter
+                : null;
+    if (attacker == null || attacker.equals(victim)) {
+      return;
+    }
+
+    final var profileService = this.ultraHardcore.profileService();
+    final var combatService = this.ultraHardcore.gameService().combatService();
+    combatService.enterCombat(profileService.getOrCreateProfile(attacker));
+    combatService.enterCombat(profileService.getOrCreateProfile(victim));
   }
 
   @EventHandler
