@@ -20,6 +20,8 @@ import dev.kurai.uhc.menu.rules.game.GameRulesMenu;
 import dev.kurai.uhc.menu.rules.inventory.StartInventoryMenu;
 import dev.kurai.uhc.menu.rules.ore.OreLimitMenu;
 import dev.kurai.uhc.menu.rules.recipe.RecipeMenu;
+import dev.kurai.uhc.game.cycle.CycleService;
+import dev.kurai.uhc.menu.rules.cycle.CycleTimeMenu;
 import dev.kurai.uhc.menu.rules.timer.TimerDurationMenu;
 import dev.kurai.uhc.menu.template.BackTemplate;
 import dev.kurai.uhc.menu.template.ModernBorderTemplate;
@@ -57,19 +59,7 @@ public final class RulesMenu extends Menu {
     if (cycleService.enabled()) {
       front.set(
           4,
-          new ItemButton(
-              new ItemBuilder(Material.WATCH)
-                  .name("&6&lDurée d'un cycle")
-                  .lore(
-                      "",
-                      "&6 " + SQUARE + "&f Temps:&b %d",
-                      "",
-                      "&7" + BAR + "&f Permet de modifier la",
-                      "  durée d'un&e cycle complet",
-                      "  au cours de la partie.",
-                      "")
-                  .amount(cycleService.totalCycleDuration() / 60)
-                  .asItemStack()));
+          new CycleButton(cycleService));
     } else {
       front.set(
           4,
@@ -344,6 +334,40 @@ public final class RulesMenu extends Menu {
       }
 
       final var configMenu = new TimerDurationMenu(menu.getPlayer(), timerOpt.get());
+      configMenu.setPreviousMenu(menu);
+      configMenu.open();
+    }
+  }
+
+  private static final class CycleButton extends Button {
+
+    private final CycleService cycleService;
+
+    private CycleButton(final CycleService cycleService) {
+      this.cycleService = cycleService;
+    }
+
+    @Override
+    public ItemStack getIcon() {
+      final int duration = this.cycleService.totalCycleDuration();
+      return new ItemBuilder(Material.WATCH)
+          .name("&6&lDurée d'un cycle")
+          .lore(
+              "",
+              "&6 " + SQUARE + "&f Temps: &b" + TimeUtil.formatDuration(duration * 1000L),
+              "",
+              "&7" + BAR + "&f Permet de modifier la",
+              "  durée d'un&e cycle complet",
+              "  au cours de la partie.",
+              "")
+          .amount(Math.clamp(duration / 60, 1, 64))
+          .asItemStack();
+    }
+
+    @Override
+    public void onClick(final ButtonClick click) {
+      final Menu menu = click.getMenu();
+      final var configMenu = new CycleTimeMenu(menu.getPlayer(), this.cycleService);
       configMenu.setPreviousMenu(menu);
       configMenu.open();
     }
