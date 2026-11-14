@@ -98,7 +98,6 @@ public final class UltraHardcoreOrphanCommand extends Command {
       audience.sendMessage(
           text()
               .append(prefix())
-              .appendSpace()
               .append(text("Vous n'avez pas fourni suffisament d'arguments.", RED))
               .appendSpace()
               .append(text("(", DARK_GRAY))
@@ -124,7 +123,6 @@ public final class UltraHardcoreOrphanCommand extends Command {
           audience.sendMessage(
               text()
                   .append(prefix())
-                  .appendSpace()
                   .append(text("Un argument est invalide.", RED))
                   .build());
           return false;
@@ -145,7 +143,6 @@ public final class UltraHardcoreOrphanCommand extends Command {
             audience.sendMessage(
                 text()
                     .append(prefix())
-                    .appendSpace()
                     .append(text("Un argument est invalide.", RED))
                     .build());
             return false;
@@ -162,7 +159,6 @@ public final class UltraHardcoreOrphanCommand extends Command {
               audience.sendMessage(
                   text()
                       .append(prefix())
-                      .appendSpace()
                       .append(text("Un argument est invalide.", RED))
                       .build());
               return false;
@@ -178,7 +174,6 @@ public final class UltraHardcoreOrphanCommand extends Command {
             audience.sendMessage(
                 text()
                     .append(prefix())
-                    .appendSpace()
                     .append(text("Un argument est invalide.", RED))
                     .build());
             return false;
@@ -194,7 +189,6 @@ public final class UltraHardcoreOrphanCommand extends Command {
       audience.sendMessage(
           text()
               .append(prefix())
-              .appendSpace()
               .append(text("Une erreur est survenue lors de l'exécution de cette commande.", RED))
               .build());
       org.bukkit.Bukkit.getLogger()

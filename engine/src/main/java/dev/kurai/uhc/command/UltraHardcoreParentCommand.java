@@ -94,7 +94,6 @@ public final class UltraHardcoreParentCommand extends Command {
           audience.sendMessage(
               text()
                   .append(prefix())
-                  .appendSpace()
                   .append(text("La page ", RED))
                   .append(text(args[1], DARK_RED))
                   .append(text(" n'existe pas.", RED))
@@ -124,7 +123,6 @@ public final class UltraHardcoreParentCommand extends Command {
     if (subCommand == null) {
       audience.sendMessage(
           text()
-              .append(prefix())
               .append(text("La sous-commande ", RED))
               .append(text(subCommandName, RED))
               .append(text(" n'existe pas.", RED))

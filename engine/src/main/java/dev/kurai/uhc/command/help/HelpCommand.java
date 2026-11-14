@@ -32,7 +32,6 @@ public final class HelpCommand {
       audience.sendMessage(
           text()
               .append(prefix())
-              .appendSpace()
               .append(text("La page ", RED))
               .append(text(page, DARK_RED))
               .append(text(" n'existe pas.", RED))
