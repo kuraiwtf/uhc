@@ -291,12 +291,6 @@ public final class PowerListener extends PacketListenerAbstract implements Liste
             .findFirst()
             .orElse(null);
 
-    if (foundPower == null) {
-      return;
-    }
-
-    event.setCancelled(true);
-
     if (foundPower instanceof BlockPlacePower) {
       foundPower.use(player);
     }
