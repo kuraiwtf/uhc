@@ -33,7 +33,7 @@ public final class EnchantmentLimitListMenu extends Menu {
     39, 40, 41, 42, 43
   };
 
-  static final Map<String, String> NAMES =
+  public static final Map<String, String> NAMES =
       Map.ofEntries(
           Map.entry("PROTECTION_ENVIRONMENTAL", "Protection"),
           Map.entry("PROTECTION_FIRE", "Protection contre le feu"),

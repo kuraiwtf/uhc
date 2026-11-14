@@ -5,6 +5,7 @@ import dev.kurai.uhc.command.annotation.Command;
 import dev.kurai.uhc.command.annotation.CommandMeta;
 import dev.kurai.uhc.command.annotation.DefaultCommand;
 import dev.kurai.uhc.command.annotation.SubCommand;
+import dev.kurai.uhc.menu.rules.view.RulesViewMenu;
 import org.bukkit.entity.Player;
 import org.jspecify.annotations.NullMarked;
 
@@ -24,7 +25,7 @@ public final class UltraHardcoreCommand {
 
   @DefaultCommand
   public void rules(final Player player) {
-    //    new RulesMenu(player, this.ultraHardcore).open();
+    new RulesViewMenu(player, this.ultraHardcore).open();
   }
 
   @SubCommand(

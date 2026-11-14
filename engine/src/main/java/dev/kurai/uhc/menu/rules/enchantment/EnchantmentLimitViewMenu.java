@@ -4,6 +4,7 @@ import static dev.kurai.uhc.util.CC.*;
 
 import dev.kurai.uhc.game.enchantment.EnchantmentLimitService;
 import dev.kurai.uhc.game.enchantment.EnchantmentLimitType;
+import dev.kurai.uhc.menu.template.BackTemplate;
 import dev.kurai.uhc.menu.template.BorderTemplate;
 import dev.kurai.uhc.util.ItemBuilder;
 import java.util.Map;
@@ -42,6 +43,7 @@ public final class EnchantmentLimitViewMenu extends Menu {
   @Override
   public void setup(final BackgroundLayer back, final ForegroundLayer front) {
     this.apply(new BorderTemplate(DyeColor.PURPLE.getData()));
+    this.apply(new BackTemplate(this.getPreviousMenu()));
 
     final var enchantments = Enchantment.values();
     for (int i = 0; i < enchantments.length && i < SLOTS.length; i++) {
