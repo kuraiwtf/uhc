@@ -7,6 +7,7 @@ import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.game.scenario.AbstractScenario;
 import dev.kurai.uhc.game.scenario.ScenarioCategory;
 import java.util.List;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
@@ -42,8 +43,25 @@ public final class TimberScenario extends AbstractScenario implements Listener {
       return;
     }
 
-    new TimberTask(event.getPlayer(), this.check(block))
-        .runTaskTimer(this.ultraHardcore.plugin(), 0, 4L);
+    final var player = event.getPlayer();
+    final var logs = this.check(block);
+
+    event.setCancelled(true);
+    giveOrDrop(
+        player,
+        block.getLocation().clone().add(0.5, 0.5, 0.5),
+        new ItemStack(block.getType(), 1, block.getData()));
+    block.getWorld().playSound(block.getLocation(), Sound.DIG_WOOD, 1f, 1f);
+    block.setType(Material.AIR);
+
+    new TimberTask(player, logs).runTaskTimer(this.ultraHardcore.plugin(), 0, 4L);
+  }
+
+  private static void giveOrDrop(final Player player, final Location location, final ItemStack stack) {
+    final var leftover = player.getInventory().addItem(stack);
+    if (!leftover.isEmpty()) {
+      location.getWorld().dropItemNaturally(location, stack);
+    }
   }
 
   private List<Block> check(final Block block) {
@@ -113,10 +131,7 @@ public final class TimberScenario extends AbstractScenario implements Listener {
 
         final var world = log.getWorld();
         final var stack = new ItemStack(log.getType(), 1, log.getData());
-        final var leftover = this.player.getInventory().addItem(stack);
-        if (!leftover.isEmpty()) {
-          world.dropItemNaturally(log.getLocation().clone().add(0.5, 0.5, 0.5), stack);
-        }
+        giveOrDrop(this.player, log.getLocation().clone().add(0.5, 0.5, 0.5), stack);
 
         world.playSound(log.getLocation(), Sound.DIG_WOOD, 1f, 1f);
         log.setType(Material.AIR);
