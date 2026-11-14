@@ -172,7 +172,9 @@ public final class UltraHardcoreParentCommand extends Command {
       }
       minArgs = required;
     } else {
-      minArgs = method.getParameters().length - 1;
+      final boolean arrayOptional =
+          !subCommand.arguments().get(arrayParamIndex - 1).defaultValue().isEmpty();
+      minArgs = method.getParameters().length - (arrayOptional ? 2 : 1);
     }
 
     if (rawArguments.size() < minArgs) {
@@ -228,10 +230,16 @@ public final class UltraHardcoreParentCommand extends Command {
 
         } else if (i == arrayParamIndex) {
           final Class<?> componentType = type.getComponentType();
-          final Object array = Array.newInstance(componentType, arrayLength);
-          for (var j = 0; j < arrayLength; j++) {
+          final String arrayDefault = subCommand.arguments().get(arrayParamIndex - 1).defaultValue();
+          final boolean useDefault = arrayLength == 0 && !arrayDefault.isEmpty();
+          final int length = useDefault ? 1 : arrayLength;
+          final Object array = Array.newInstance(componentType, length);
+          for (var j = 0; j < length; j++) {
             final var resolved =
-                registrar.resolveArgument(componentType, sender, rawArguments.get(prefixCount + j));
+                registrar.resolveArgument(
+                    componentType,
+                    sender,
+                    useDefault ? arrayDefault : rawArguments.get(prefixCount + j));
             if (resolved == null) {
               audience.sendMessage(
                   text().append(prefix()).append(text("Un argument est invalide.", RED)).build());

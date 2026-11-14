@@ -91,7 +91,9 @@ public final class UltraHardcoreOrphanCommand extends Command {
       }
       minArgs = required;
     } else {
-      minArgs = this.method.getParameters().length - 1;
+      final boolean arrayOptional =
+          !this.arguments.get(arrayParamIndex - 1).defaultValue().isEmpty();
+      minArgs = this.method.getParameters().length - (arrayOptional ? 2 : 1);
     }
 
     if (args.length < minArgs) {
@@ -151,10 +153,14 @@ public final class UltraHardcoreOrphanCommand extends Command {
           resolvedArguments.add(resolved);
         } else if (i == arrayParamIndex) {
           final Class<?> componentType = type.getComponentType();
-          final Object array = Array.newInstance(componentType, arrayLength);
-          for (var j = 0; j < arrayLength; j++) {
+          final String arrayDefault = this.arguments.get(arrayParamIndex - 1).defaultValue();
+          final boolean useDefault = arrayLength == 0 && !arrayDefault.isEmpty();
+          final int length = useDefault ? 1 : arrayLength;
+          final Object array = Array.newInstance(componentType, length);
+          for (var j = 0; j < length; j++) {
             final var resolved =
-                registrar.resolveArgument(componentType, sender, args[prefixCount + j]);
+                registrar.resolveArgument(
+                    componentType, sender, useDefault ? arrayDefault : args[prefixCount + j]);
             if (resolved == null) {
               audience.sendMessage(
                   text()
