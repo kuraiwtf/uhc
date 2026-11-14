@@ -6,6 +6,7 @@ import dev.kurai.uhc.command.argument.builtin.bukkit.PlayerArgumentResolver;
 import dev.kurai.uhc.command.argument.builtin.bukkit.WorldArgumentResolver;
 import dev.kurai.uhc.command.argument.builtin.java.BooleanArgumentResolver;
 import dev.kurai.uhc.command.argument.builtin.java.DoubleArgumentResolver;
+import dev.kurai.uhc.command.argument.builtin.java.EnumArgumentResolver;
 import dev.kurai.uhc.command.argument.builtin.java.FloatArgumentResolver;
 import dev.kurai.uhc.command.argument.builtin.java.IntegerArgumentResolver;
 import dev.kurai.uhc.command.argument.builtin.java.LongArgumentResolver;
@@ -17,15 +18,18 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.jspecify.annotations.Nullable;
 
 public final class ArgumentResolverRegistrarImpl implements ArgumentResolverRegistrar {
 
   private final BukkitAudiences bukkitAudiences;
   private final Map<Class<?>, ArgumentResolver<?>> argumentResolvers;
+  private final Map<Class<?>, ArgumentResolver<?>> enumResolvers;
 
   public ArgumentResolverRegistrarImpl(final BukkitAudiences bukkitAudiences) {
     this.bukkitAudiences = bukkitAudiences;
     this.argumentResolvers = Maps.newConcurrentMap();
+    this.enumResolvers = Maps.newConcurrentMap();
     this.loadArgumentResolvers();
   }
 
@@ -61,20 +65,39 @@ public final class ArgumentResolverRegistrarImpl implements ArgumentResolverRegi
   @Override
   public <T> T resolveArgument(
       final Class<?> clazz, final CommandSender sender, final String argument) {
-    if (!this.argumentResolvers.containsKey(clazz)) {
+    final var resolver = this.findResolver(clazz);
+    if (resolver == null) {
       throw new RuntimeException("There is no argument resolver for " + clazz.getName());
     }
 
-    return (T) (this.argumentResolvers.get(clazz)).resolve(sender, argument);
+    return (T) resolver.resolve(sender, argument);
   }
 
   @Override
   public Collection<String> complete(
       final Class<?> clazz, final CommandSender sender, final String argument) {
-    final var resolver = this.argumentResolvers.get(clazz);
+    final var resolver = this.findResolver(clazz);
     if (resolver == null) {
       return java.util.Collections.emptyList();
     }
     return resolver.complete(sender, argument);
+  }
+
+  private @Nullable ArgumentResolver<?> findResolver(final Class<?> clazz) {
+    final var registered = this.argumentResolvers.get(clazz);
+    if (registered != null) {
+      return registered;
+    }
+
+    if (clazz.isEnum()) {
+      return this.enumResolvers.computeIfAbsent(clazz, this::createEnumResolver);
+    }
+
+    return null;
+  }
+
+  @SuppressWarnings({"unchecked", "rawtypes"})
+  private ArgumentResolver<?> createEnumResolver(final Class<?> clazz) {
+    return new EnumArgumentResolver(this.bukkitAudiences, clazz);
   }
 }
