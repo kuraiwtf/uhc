@@ -15,6 +15,8 @@ import dev.kurai.uhc.command.defaults.*;
 import dev.kurai.uhc.module.command.RoleDataArgumentResolver;
 import dev.kurai.uhc.module.role.RoleMeta;
 import dev.kurai.uhc.effect.EffectListener;
+import dev.kurai.uhc.effect.EffectPacketSender;
+import dev.kurai.uhc.effect.EffectRefreshTask;
 import dev.kurai.uhc.effect.EffectService;
 import dev.kurai.uhc.effect.EffectServiceImpl;
 import dev.kurai.uhc.effect.EffectValidatorTask;
@@ -200,6 +202,7 @@ public final class UltraHardcoreEngine extends UltraHardcoreAPI {
     final var resourcePackListener = new ResourcePackListener(this.plugin, this.moduleService);
     eventManager.registerListeners(fixListener, resourcePackListener);
 
+    final var effectPacketSender = new EffectPacketSender(this.effectService, this.profileService);
     this.eventService.registerListeners(
         fixListener,
         resourcePackListener,
@@ -208,7 +211,7 @@ public final class UltraHardcoreEngine extends UltraHardcoreAPI {
         new ChatListener(),
         new ItemListener(this.itemService),
         new WaitingListener(this),
-        new EffectListener(this.effectService, this.profileService),
+        new EffectListener(effectPacketSender, this.profileService),
         new RecipeListener(this.gameService.recipeService()),
         new EnchantmentLimitListener(this.gameService.enchantmentLimitService()),
         new TeamListener(this.teamService, this.moduleService));
@@ -239,5 +242,12 @@ public final class UltraHardcoreEngine extends UltraHardcoreAPI {
 
     Bukkit.getScheduler()
         .runTaskTimer(this.plugin, new EffectValidatorTask(this.profileService), 0, 5);
+
+    Bukkit.getScheduler()
+        .runTaskTimerAsynchronously(
+            this.plugin,
+            new EffectRefreshTask(effectPacketSender),
+            0,
+            EffectRefreshTask.INTERVAL_TICKS);
   }
 }

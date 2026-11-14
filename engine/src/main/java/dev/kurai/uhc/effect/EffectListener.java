@@ -1,9 +1,5 @@
 package dev.kurai.uhc.effect;
 
-import com.github.retrooper.packetevents.PacketEvents;
-import com.github.retrooper.packetevents.manager.player.PlayerManager;
-import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityEffect;
-import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerRemoveEntityEffect;
 import dev.kurai.uhc.effect.component.EffectHoldingComponent;
 import dev.kurai.uhc.effect.event.EffectPostAddEvent;
 import dev.kurai.uhc.effect.event.EffectPostRemoveEvent;
@@ -23,13 +19,11 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 
 public final class EffectListener implements Listener {
 
-  private static final PlayerManager PLAYER_MANAGER = PacketEvents.getAPI().getPlayerManager();
-
-  private final EffectService effectService;
   private final ProfileService profileService;
+  private final EffectPacketSender packetSender;
 
-  public EffectListener(final EffectService effectService, final ProfileService profileService) {
-    this.effectService = effectService;
+  public EffectListener(final EffectPacketSender packetSender, final ProfileService profileService) {
+    this.packetSender = packetSender;
     this.profileService = profileService;
   }
 
@@ -105,24 +99,7 @@ public final class EffectListener implements Listener {
       return;
     }
 
-    final Profile profile = this.profileService.getOrCreateProfile(uniqueId);
-    final EffectHolder effectHolder = profile.getComponent(EffectHoldingComponent.class).holder();
-    final double valuePerLevel = this.effectService.effectValuePerLevel(effectType) * 100;
-    final int amplifier =
-        (int) Math.round((effectHolder.getEffectValue(effectType) * 100) / valuePerLevel);
-
-    final WrapperPlayServerRemoveEntityEffect removeEffectPacket =
-        new WrapperPlayServerRemoveEntityEffect(player.getEntityId(), effectType.packetType());
-    PLAYER_MANAGER.sendPacket(player, removeEffectPacket);
-
-    if (amplifier < 1) {
-      return;
-    }
-
-    final WrapperPlayServerEntityEffect sendEffectPacket =
-        new WrapperPlayServerEntityEffect(
-            player.getEntityId(), effectType.packetType(), amplifier - 1, 32767, (byte) 0);
-    PLAYER_MANAGER.sendPacket(player, sendEffectPacket);
+    this.packetSender.send(player, effectType, true);
   }
 
   @EventHandler(priority = EventPriority.LOWEST)
