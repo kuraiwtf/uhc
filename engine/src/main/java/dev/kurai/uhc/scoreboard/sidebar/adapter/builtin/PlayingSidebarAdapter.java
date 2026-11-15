@@ -14,9 +14,11 @@ import dev.kurai.uhc.game.group.GroupService;
 import dev.kurai.uhc.profile.Profile;
 import dev.kurai.uhc.profile.state.PlayingProfileState;
 import dev.kurai.uhc.scoreboard.sidebar.SidebarAdapter;
+import dev.kurai.uhc.timer.TimerService;
 import dev.kurai.uhc.timer.builtin.BorderTimer;
 import dev.kurai.uhc.timer.builtin.PvPTimer;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -49,12 +51,11 @@ public final class PlayingSidebarAdapter implements SidebarAdapter {
     this.aliveCount = alive.size();
     this.teamsAlive =
         alive.stream()
-            .map(
-                profile ->
-                    teamService
-                        .teamOf(profile.getId())
-                        .<Object>map(team -> team)
-                        .orElse(profile.getId()))
+            .map(profile ->
+                teamService
+                    .teamOf(profile.getId())
+                    .<Object>map(team -> team)
+                    .orElse(profile.getId()))
             .distinct()
             .count();
     this.snapshotTime = now;
@@ -69,14 +70,14 @@ public final class PlayingSidebarAdapter implements SidebarAdapter {
         text()
             .append(SEPARATOR)
             .append(text("Joueurs: ", GRAY))
-            .append(text(this.aliveCount, YELLOW));
+            .append(text(this.aliveCount, GOLD));
 
     final var teamService = this.ultraHardcore.teamService();
     if (teamService.enabled()) {
       playersLine
           .appendSpace()
           .append(text('(', DARK_GRAY))
-          .append(text(this.teamsAlive, YELLOW))
+          .append(text(this.teamsAlive, GOLD))
           .append(text(')', DARK_GRAY));
     }
     lines.add(playersLine.build());
@@ -105,55 +106,59 @@ public final class PlayingSidebarAdapter implements SidebarAdapter {
               .append(text(')', GRAY))
               .build());
     }
-    lines.add(empty());
 
     lines.add(
         text()
             .append(SEPARATOR)
             .append(text("Durée: ", GRAY))
-            .append(text(formatDuration(this.ultraHardcore.gameService().duration() * 1000L), GREEN))
+            .append(
+                text(formatDuration(this.ultraHardcore.gameService().duration() * 1000L), GREEN))
             .build());
 
-    this.ultraHardcore
-        .gameService()
-        .timerService()
-        .getTimer(PvPTimer.class)
-        .ifPresent(
-            timer -> {
-              if (timer.isRunning()) {
-                lines.add(
-                    text()
-                        .append(SEPARATOR)
-                        .append(text("PvP: ", GRAY))
-                        .append(text(formatDuration(timer.getTimeLeft() * 1000L), GOLD))
-                        .build());
-              }
-            });
+    lines.add(empty());
 
-    this.ultraHardcore
-        .gameService()
-        .timerService()
+    final AtomicBoolean hasTimerSection = new AtomicBoolean(false);
+    final TimerService timerService = this.ultraHardcore.gameService().timerService();
+    timerService
+        .getTimer(PvPTimer.class)
+        .ifPresent(timer -> {
+          if (timer.isRunning()) {
+            lines.add(
+                text()
+                    .append(SEPARATOR)
+                    .append(text("PvP: ", GRAY))
+                    .append(text(formatDuration(timer.getTimeLeft() * 1000L), GOLD))
+                    .build());
+            hasTimerSection.set(true);
+          }
+        });
+
+    timerService
         .getTimer(BorderTimer.class)
-        .ifPresent(
-            timer -> {
-              if (timer.isRunning()) {
-                lines.add(
-                    text()
-                        .append(SEPARATOR)
-                        .append(text("Bordure: ", GRAY))
-                        .append(text(formatDuration(timer.getTimeLeft() * 1000L), GOLD))
-                        .build());
-              }
-            });
+        .ifPresent(timer -> {
+          if (timer.isRunning()) {
+            lines.add(
+                text()
+                    .append(SEPARATOR)
+                    .append(text("Bordure: ", GRAY))
+                    .append(text(formatDuration(timer.getTimeLeft() * 1000L), GOLD))
+                    .build());
+            hasTimerSection.set(true);
+          }
+        });
 
     final var module = this.ultraHardcore.moduleService().getCurrentModule();
     if (module instanceof final SidebarAdapter moduleSidebar) {
       final var moduleSidebarLines = moduleSidebar.provideLines(player);
       if (!moduleSidebarLines.isEmpty()) {
         lines.addAll(moduleSidebarLines);
+        hasTimerSection.set(true);
       }
     }
-    lines.add(empty());
+
+    if (hasTimerSection.get()) {
+      lines.add(empty());
+    }
 
     lines.add(
         text()
