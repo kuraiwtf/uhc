@@ -27,7 +27,7 @@ import java.util.Map;
 
 @NullMarked
 public abstract class AbstractModule
-        implements EntityBridge<String>, Identifiable<String>, Nameable<String>, ModuleEventHolder {
+        implements EntityBridge<String, AbstractModule>, Identifiable<String>, Nameable<String>, ModuleEventHolder {
 
     protected final Entity<String> entity;
 
@@ -45,8 +45,7 @@ public abstract class AbstractModule
             final Plugin plugin,
             final @Nullable String commandName,
             final UltraHardcoreAPI ultraHardcore) {
-        this.entity = new Entity<>(id);
-        this.addComponent(new NameComponent(name));
+        this.entity = new Entity<>(id).addComponent(new NameComponent(name));
 
         this.plugin = plugin;
         this.ultraHardcore = ultraHardcore;

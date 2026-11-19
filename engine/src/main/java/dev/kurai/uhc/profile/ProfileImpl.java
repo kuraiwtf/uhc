@@ -52,16 +52,15 @@ final class ProfileImpl implements Profile {
     private int assists;
 
     ProfileImpl(final UUID id, final UltraHardcoreAPI ultraHardcore) {
-        this.entity = new Entity<>(id);
-
-        this.addComponents(
-                new NameComponent(this.getOfflinePlayer().getName()),
-                new ClaimComponent(),
-                new DamageImmunityComponent(),
-                new ProfileMiningComponent(),
-                new OfflineActionComponent(),
-                new ProfileStateComponent(new WaitingProfileState()),
-                new EffectHoldingComponent(new EffectHolderImpl(id)));
+        this.entity = new Entity<>(id)
+                .addComponents(
+                        new NameComponent(this.getOfflinePlayer().getName()),
+                        new ClaimComponent(),
+                        new DamageImmunityComponent(),
+                        new ProfileMiningComponent(),
+                        new OfflineActionComponent(),
+                        new ProfileStateComponent(new WaitingProfileState()),
+                        new EffectHoldingComponent(new EffectHolderImpl(id)));
 
         this.ultraHardcore = ultraHardcore;
         this.powers = new ConcurrentHashMap<>();

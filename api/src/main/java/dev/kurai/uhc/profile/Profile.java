@@ -31,7 +31,7 @@ public interface Profile
         extends Identifiable<UUID>,
                 Nameable<String>,
                 Stateful<ProfileState>,
-                EntityBridge<UUID>,
+                EntityBridge<UUID, Profile>,
                 PowerHolder,
                 ForwardingAudience.Single {
 

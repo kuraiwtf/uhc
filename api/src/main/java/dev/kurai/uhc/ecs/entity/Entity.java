@@ -13,7 +13,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-public final class Entity<I> implements EntityBridge<I>, Identifiable<I> {
+public final class Entity<I> implements EntityBridge<I, Entity<I>>, Identifiable<I> {
 
     private final EventService eventService;
 
@@ -40,18 +40,18 @@ public final class Entity<I> implements EntityBridge<I>, Identifiable<I> {
     }
 
     @Override
-    public <E extends Entity<I>> E addComponent(final Component component) {
+    public Entity<I> addComponent(final Component component) {
         this.components.put(component.getClass(), component);
         this.eventService.dispatchEvent(new ComponentAddEvent(this, component));
-        return (E) this;
+        return this;
     }
 
     @Override
-    public <E extends Entity<I>> E addComponents(final Component... components) {
+    public Entity<I> addComponents(final Component... components) {
         for (final Component component : components) {
             this.addComponent(component);
         }
-        return (E) this;
+        return this;
     }
 
     @Override
