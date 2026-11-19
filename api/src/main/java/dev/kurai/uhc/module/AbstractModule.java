@@ -66,6 +66,10 @@ public abstract class AbstractModule
         return Color.GOLD;
     }
 
+    public Plugin plugin() {
+        return this.plugin;
+    }
+
     public <P extends Plugin> P plugin(final Class<P> pluginClass) {
         return pluginClass.cast(this.plugin);
     }
