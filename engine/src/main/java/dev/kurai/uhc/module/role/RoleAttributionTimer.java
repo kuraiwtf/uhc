@@ -2,6 +2,7 @@ package dev.kurai.uhc.module.role;
 
 import com.google.common.collect.Lists;
 import dev.kurai.uhc.UltraHardcoreAPI;
+import dev.kurai.uhc.game.GameService;
 import dev.kurai.uhc.profile.component.DeadComponent;
 import dev.kurai.uhc.profile.component.SpectatorComponent;
 import dev.kurai.uhc.timer.AbstractTimer;
@@ -50,6 +51,7 @@ public final class RoleAttributionTimer extends AbstractTimer {
                         !profile.hasComponent(SpectatorComponent.class) && !profile.hasComponent(DeadComponent.class)));
 
         final var iterator = profiles.iterator();
+        final GameService gameService = this.ultraHardcore.gameService();
         while (iterator.hasNext()) {
             final var profile = iterator.next();
             if (profile.hasComponent(RoleComponent.class)) {
@@ -58,7 +60,7 @@ public final class RoleAttributionTimer extends AbstractTimer {
             }
 
             if (profile.getPlayer() == null) {
-                this.ultraHardcore.gameService().deathService().eliminate(profile, null, true);
+                gameService.deathService().eliminate(profile, null, true);
                 iterator.remove();
             }
         }
@@ -67,10 +69,8 @@ public final class RoleAttributionTimer extends AbstractTimer {
         shuffle(profiles);
 
         if (roles.size() < profiles.size()) {
-            this.ultraHardcore
-                    .gameService()
-                    .sendMessage(prefix().append(
-                                    text("Impossible d'attribuer les rôles, cette dernière vient d'être décalée de "))
+            gameService.sendMessage(
+                    prefix().append(text("Impossible d'attribuer les rôles, cette dernière vient d'être décalée de "))
                             .append(text(RETRY_DELAY_SECONDS + " secondes", AQUA))
                             .append(text('.'))
                             .build());
@@ -79,9 +79,8 @@ public final class RoleAttributionTimer extends AbstractTimer {
             return;
         }
 
-        this.ultraHardcore
-                .gameService()
-                .sendMessage(prefix().append(text("Attribution des rôles...")).build());
+        gameService.sendMessage(
+                prefix().append(text("Attribution des rôles...")).build());
 
         for (final var profile : profiles) {
             final var meta = roles.removeFirst();
@@ -98,6 +97,6 @@ public final class RoleAttributionTimer extends AbstractTimer {
             }
         }
 
-        this.ultraHardcore.moduleService().getCurrentModule().onRoles();
+        module.onRoles();
     }
 }

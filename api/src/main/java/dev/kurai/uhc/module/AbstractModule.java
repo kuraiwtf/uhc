@@ -146,6 +146,4 @@ public abstract class AbstractModule
     }
 
     public abstract ItemStack provideModuleIcon(final Player player);
-
-    public void onRoles() {}
 }

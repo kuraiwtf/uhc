@@ -16,4 +16,6 @@ public interface RoleModule {
     boolean hiddenComposition();
 
     void hiddenComposition(final boolean hiddenComposition);
+
+    default void onRoles() {}
 }
