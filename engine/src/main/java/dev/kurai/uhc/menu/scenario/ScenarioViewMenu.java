@@ -9,8 +9,6 @@ import dev.kurai.uhc.menu.template.BorderTemplate;
 import dev.kurai.uhc.menu.template.PaginationTemplate;
 import dev.kurai.uhc.util.CC;
 import dev.kurai.uhc.util.ItemBuilder;
-import java.util.Comparator;
-import java.util.List;
 import net.j4c0b3y.api.menu.MenuSize;
 import net.j4c0b3y.api.menu.button.Button;
 import net.j4c0b3y.api.menu.layer.impl.BackgroundLayer;
@@ -22,52 +20,55 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.Comparator;
+import java.util.List;
+
 public final class ScenarioViewMenu extends PaginatedMenu {
 
-  private static final Button GLASS = new GlassButton(DyeColor.GRAY.getData());
+    private static final Button GLASS = new GlassButton(DyeColor.GRAY.getData());
 
-  private final ScenarioService scenarioService;
+    private final ScenarioService scenarioService;
 
-  public ScenarioViewMenu(final Player player, final ScenarioService scenarioService) {
-    super("Scénarios", MenuSize.FIVE, player);
-    this.scenarioService = scenarioService;
-  }
-
-  @Override
-  public List<Button> getEntries() {
-    return this.scenarioService.getEnabledScenarios().stream()
-        .sorted(Comparator.comparing(AbstractScenario::getName))
-        .map(ScenarioButton::new)
-        .map(Button.class::cast)
-        .toList();
-  }
-
-  @Override
-  public void setup(final BackgroundLayer background, final ForegroundLayer foreground) {
-    this.apply(new BorderTemplate(DyeColor.LIME.getData()));
-    this.apply(new BackTemplate(this.getPreviousMenu()));
-    this.apply(new PaginationTemplate());
-
-    for (final int i : new int[] {2, 3, 5, 6, 18, 26, 38, 39, 41, 42}) {
-      background.set(i, GLASS);
+    public ScenarioViewMenu(final Player player, final ScenarioService scenarioService) {
+        super("Scénarios", MenuSize.FIVE, player);
+        this.scenarioService = scenarioService;
     }
 
-    foreground.center(new PaginationSlot(this));
-
-    if (this.getEntries().isEmpty()) {
-      foreground.set(22, new EmptyButton());
-    }
-  }
-
-  private static final class EmptyButton extends Button {
     @Override
-    public ItemStack getIcon() {
-      return new ItemBuilder(Material.INK_SACK)
-          .data(DyeColor.RED.getDyeData())
-          .name("&c&lAucun scénario activé")
-          .lore("", "&7" + CC.BAR + "&f Aucun scénario n'est actif.", "")
-          .lunarTag("unclickable", true)
-          .asItemStack();
+    public List<Button> getEntries() {
+        return this.scenarioService.getEnabledScenarios().stream()
+                .sorted(Comparator.comparing(AbstractScenario::getName))
+                .map(ScenarioButton::new)
+                .map(Button.class::cast)
+                .toList();
     }
-  }
+
+    @Override
+    public void setup(final BackgroundLayer background, final ForegroundLayer foreground) {
+        this.apply(new BorderTemplate(DyeColor.LIME.getData()));
+        this.apply(new BackTemplate(this.getPreviousMenu()));
+        this.apply(new PaginationTemplate());
+
+        for (final int i : new int[] {2, 3, 5, 6, 18, 26, 38, 39, 41, 42}) {
+            background.set(i, GLASS);
+        }
+
+        foreground.center(new PaginationSlot(this));
+
+        if (this.getEntries().isEmpty()) {
+            foreground.set(22, new EmptyButton());
+        }
+    }
+
+    private static final class EmptyButton extends Button {
+        @Override
+        public ItemStack getIcon() {
+            return new ItemBuilder(Material.INK_SACK)
+                    .data(DyeColor.RED.getDyeData())
+                    .name("&c&lAucun scénario activé")
+                    .lore("", "&7" + CC.BAR + "&f Aucun scénario n'est actif.", "")
+                    .lunarTag("unclickable", true)
+                    .asItemStack();
+        }
+    }
 }

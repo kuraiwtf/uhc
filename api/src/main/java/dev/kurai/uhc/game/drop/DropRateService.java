@@ -1,29 +1,31 @@
 package dev.kurai.uhc.game.drop;
 
-import java.util.Collection;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
+
+import java.util.Collection;
 
 @NullMarked
 public interface DropRateService {
 
-  Collection<AbstractDropRateModifier> getModifiers();
+    Collection<AbstractDropRateModifier> getModifiers();
 
-  void registerModifier(AbstractDropRateModifier modifier);
+    void registerModifier(AbstractDropRateModifier modifier);
 
-  default void registerModifiers(final AbstractDropRateModifier... modifiers) {
-    for (final var modifier : modifiers) {
-      this.registerModifier(modifier);
+    default void registerModifiers(final AbstractDropRateModifier... modifiers) {
+        for (final var modifier : modifiers) {
+            this.registerModifier(modifier);
+        }
     }
-  }
 
-  void unregisterModifier(String id);
+    void unregisterModifier(String id);
 
-  default void unregisterModifiers(final String... ids) {
-    for (final var id : ids) {
-      this.unregisterModifier(id);
+    default void unregisterModifiers(final String... ids) {
+        for (final var id : ids) {
+            this.unregisterModifier(id);
+        }
     }
-  }
 
-  @Nullable AbstractDropRateModifier getModifier(final String id);
+    @Nullable
+    AbstractDropRateModifier getModifier(final String id);
 }

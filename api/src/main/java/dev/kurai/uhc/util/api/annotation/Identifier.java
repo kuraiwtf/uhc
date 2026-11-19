@@ -9,5 +9,5 @@ import java.lang.annotation.Target;
 @Target({ElementType.METHOD, ElementType.TYPE})
 public @interface Identifier {
 
-  String value();
+    String value();
 }

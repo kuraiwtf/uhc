@@ -5,5 +5,7 @@ import lombok.Setter;
 
 final class BuiltinGroupProvider implements GroupProvider {
 
-  @Getter @Setter private int groups = 5;
+    @Getter
+    @Setter
+    private int groups = 5;
 }

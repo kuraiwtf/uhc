@@ -5,5 +5,5 @@ import java.util.Locale;
 
 public interface MutableLocalizable extends Localizable {
 
-  void setLocale(final Locale locale);
+    void setLocale(final Locale locale);
 }

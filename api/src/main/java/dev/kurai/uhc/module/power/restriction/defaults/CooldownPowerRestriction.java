@@ -1,15 +1,10 @@
 package dev.kurai.uhc.module.power.restriction.defaults;
 
-import static dev.kurai.uhc.util.CC.prefix;
-import static net.kyori.adventure.text.Component.text;
-import static net.kyori.adventure.text.format.NamedTextColor.*;
-
 import dev.kurai.uhc.event.defaults.power.cooldown.PowerCooldownEndEvent;
 import dev.kurai.uhc.event.defaults.power.cooldown.PowerCooldownStartEvent;
 import dev.kurai.uhc.module.power.AbstractPower;
 import dev.kurai.uhc.module.power.restriction.PowerRestriction;
 import dev.kurai.uhc.module.power.restriction.RestrictionStrategy;
-import java.util.UUID;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -21,84 +16,89 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
+import java.util.UUID;
+
+import static dev.kurai.uhc.util.CC.prefix;
+import static net.kyori.adventure.text.Component.text;
+import static net.kyori.adventure.text.format.NamedTextColor.DARK_RED;
+import static net.kyori.adventure.text.format.NamedTextColor.RED;
+
 @Getter
 @Setter
 public final class CooldownPowerRestriction implements PowerRestriction {
 
-  private static final String IDENTIFIER = "cooldown";
+    private static final String IDENTIFIER = "cooldown";
 
-  private final Plugin plugin;
+    private final Plugin plugin;
 
-  private final RestrictionStrategy strategy;
+    private final RestrictionStrategy strategy;
 
-  private int initialCooldownTime;
-  private int timeLeft;
+    private int initialCooldownTime;
+    private int timeLeft;
 
-  @Getter(AccessLevel.NONE)
-  private BukkitTask task;
+    @Getter(AccessLevel.NONE)
+    private BukkitTask task;
 
-  public CooldownPowerRestriction(
-      final Plugin plugin, final int initialCooldownTime, final RestrictionStrategy strategy) {
-    this.plugin = plugin;
-    this.strategy = strategy;
-    this.initialCooldownTime = initialCooldownTime;
-    this.timeLeft = 0;
-  }
-
-  public CooldownPowerRestriction(final Plugin plugin, final int initialCooldownTime) {
-    this(plugin, initialCooldownTime, RestrictionStrategy.onUse());
-  }
-
-  @Override
-  public String getId() {
-    return IDENTIFIER;
-  }
-
-  @Override
-  public void onUse(final AbstractPower power, final Player player) {
-    this.timeLeft = this.initialCooldownTime;
-
-    Bukkit.getPluginManager().callEvent(new PowerCooldownStartEvent(player, this));
-
-    if (this.task == null) {
-      this.task =
-          new CooldownDecrementTask(this, player.getUniqueId()).runTaskTimer(this.plugin, 0, 20L);
+    public CooldownPowerRestriction(
+            final Plugin plugin, final int initialCooldownTime, final RestrictionStrategy strategy) {
+        this.plugin = plugin;
+        this.strategy = strategy;
+        this.initialCooldownTime = initialCooldownTime;
+        this.timeLeft = 0;
     }
-  }
 
-  @Override
-  public Component provideRestrictionMessage(final AbstractPower power, final Player player) {
-    return prefix()
-        .append(text("Vous devez patienter ", RED))
-        .append(text(this.timeLeft, DARK_RED))
-        .appendSpace()
-        .append(text("secondes", DARK_RED))
-        .append(text(" avant de pouvoir réutiliser ce pouvoir.", RED))
-        .build();
-  }
-
-  @Override
-  public boolean restrictsPower(final AbstractPower power, final Player player) {
-    return this.timeLeft > 0;
-  }
-
-  @RequiredArgsConstructor
-  private static final class CooldownDecrementTask extends BukkitRunnable {
-
-    private final CooldownPowerRestriction restriction;
-    private final UUID owner;
+    public CooldownPowerRestriction(final Plugin plugin, final int initialCooldownTime) {
+        this(plugin, initialCooldownTime, RestrictionStrategy.onUse());
+    }
 
     @Override
-    public void run() {
-      if (this.restriction.timeLeft <= 0) {
-        this.restriction.task = null;
-        this.cancel();
-        Bukkit.getPluginManager()
-            .callEvent(new PowerCooldownEndEvent(Bukkit.getPlayer(this.owner), this.restriction));
-        return;
-      }
-
-      this.restriction.timeLeft--;
+    public String getId() {
+        return IDENTIFIER;
     }
-  }
+
+    @Override
+    public void onUse(final AbstractPower power, final Player player) {
+        this.timeLeft = this.initialCooldownTime;
+
+        Bukkit.getPluginManager().callEvent(new PowerCooldownStartEvent(player, this));
+
+        if (this.task == null) {
+            this.task = new CooldownDecrementTask(this, player.getUniqueId()).runTaskTimer(this.plugin, 0, 20L);
+        }
+    }
+
+    @Override
+    public Component provideRestrictionMessage(final AbstractPower power, final Player player) {
+        return prefix().append(text("Vous devez patienter ", RED))
+                .append(text(this.timeLeft, DARK_RED))
+                .appendSpace()
+                .append(text("secondes", DARK_RED))
+                .append(text(" avant de pouvoir réutiliser ce pouvoir.", RED))
+                .build();
+    }
+
+    @Override
+    public boolean restrictsPower(final AbstractPower power, final Player player) {
+        return this.timeLeft > 0;
+    }
+
+    @RequiredArgsConstructor
+    private static final class CooldownDecrementTask extends BukkitRunnable {
+
+        private final CooldownPowerRestriction restriction;
+        private final UUID owner;
+
+        @Override
+        public void run() {
+            if (this.restriction.timeLeft <= 0) {
+                this.restriction.task = null;
+                this.cancel();
+                Bukkit.getPluginManager()
+                        .callEvent(new PowerCooldownEndEvent(Bukkit.getPlayer(this.owner), this.restriction));
+                return;
+            }
+
+            this.restriction.timeLeft--;
+        }
+    }
 }

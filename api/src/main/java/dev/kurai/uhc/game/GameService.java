@@ -1,8 +1,5 @@
 package dev.kurai.uhc.game;
 
-import static dev.kurai.uhc.util.api.option.Option.option;
-import static net.kyori.adventure.key.Key.key;
-
 import dev.kurai.uhc.game.combat.CombatService;
 import dev.kurai.uhc.game.cycle.CycleService;
 import dev.kurai.uhc.game.death.DeathService;
@@ -24,58 +21,61 @@ import net.kyori.adventure.audience.ForwardingAudience;
 import org.jetbrains.annotations.Range;
 import org.jspecify.annotations.NullMarked;
 
+import static dev.kurai.uhc.util.api.option.Option.option;
+import static net.kyori.adventure.key.Key.key;
+
 @NullMarked
 public interface GameService extends ForwardingAudience {
 
-  Option<Boolean> WHITELIST_OPTION = option(key("whitelist"), true);
+    Option<Boolean> WHITELIST_OPTION = option(key("whitelist"), true);
 
-  Option<Boolean> CHAT_OPTION = option(key("chat"), true);
+    Option<Boolean> CHAT_OPTION = option(key("chat"), true);
 
-  long startTime();
+    long startTime();
 
-  void startTime(final @Range(from = 0L, to = Long.MAX_VALUE) long startTime);
+    void startTime(final @Range(from = 0L, to = Long.MAX_VALUE) long startTime);
 
-  int duration();
+    int duration();
 
-  void duration(final @Range(from = 0L, to = Integer.MAX_VALUE) int duration);
+    void duration(final @Range(from = 0L, to = Integer.MAX_VALUE) int duration);
 
-  boolean testMode();
+    boolean testMode();
 
-  void testMode(final boolean testMode);
+    void testMode(final boolean testMode);
 
-  boolean playing();
+    boolean playing();
 
-  void playing(final boolean playing);
+    void playing(final boolean playing);
 
-  CombatService combatService();
+    CombatService combatService();
 
-  CycleService cycleService();
+    CycleService cycleService();
 
-  DeathService deathService();
+    DeathService deathService();
 
-  DisconnectService disconnectService();
+    DisconnectService disconnectService();
 
-  DropRateService dropRateService();
+    DropRateService dropRateService();
 
-  EnchantmentLimitService enchantmentLimitService();
+    EnchantmentLimitService enchantmentLimitService();
 
-  EpisodeService episodeService();
+    EpisodeService episodeService();
 
-  GroupService groupService();
+    GroupService groupService();
 
-  HostService hostService();
+    HostService hostService();
 
-  RecipeService recipeService();
+    RecipeService recipeService();
 
-  GameRuleService ruleService();
+    GameRuleService ruleService();
 
-  ScatterService scatterService();
+    ScatterService scatterService();
 
-  ScenarioService scenarioService();
+    ScenarioService scenarioService();
 
-  SlotService slotService();
+    SlotService slotService();
 
-  StartService startService();
+    StartService startService();
 
-  TimerService timerService();
+    TimerService timerService();
 }

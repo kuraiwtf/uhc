@@ -5,19 +5,19 @@ import dev.kurai.uhc.profile.state.ProfileState;
 
 public final class ProfileStateComponent implements Component {
 
-  private ProfileState state;
+    private ProfileState state;
 
-  public ProfileStateComponent() {}
+    public ProfileStateComponent() {}
 
-  public ProfileStateComponent(final ProfileState state) {
-    this.state = state;
-  }
+    public ProfileStateComponent(final ProfileState state) {
+        this.state = state;
+    }
 
-  public ProfileState getState() {
-    return this.state;
-  }
+    public ProfileState getState() {
+        return this.state;
+    }
 
-  public void setState(final ProfileState state) {
-    this.state = state;
-  }
+    public void setState(final ProfileState state) {
+        this.state = state;
+    }
 }

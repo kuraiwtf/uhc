@@ -2,21 +2,21 @@ package dev.kurai.uhc.game.episode;
 
 public interface EpisodeService {
 
-  boolean isEnabled();
+    boolean isEnabled();
 
-  void setEnabled(final boolean enabled);
+    void setEnabled(final boolean enabled);
 
-  int getTimePerEpisode();
+    int getTimePerEpisode();
 
-  void setTimePerEpisode(final int timePerEpisode);
+    void setTimePerEpisode(final int timePerEpisode);
 
-  int getTimeLeft();
+    int getTimeLeft();
 
-  void setTimeLeft(final int timeLeft);
+    void setTimeLeft(final int timeLeft);
 
-  int getEpisode();
+    int getEpisode();
 
-  void start();
+    void start();
 
-  void stop();
+    void stop();
 }

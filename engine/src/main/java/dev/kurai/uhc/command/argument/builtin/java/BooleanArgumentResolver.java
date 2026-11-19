@@ -6,13 +6,13 @@ import org.bukkit.command.CommandSender;
 
 public final class BooleanArgumentResolver implements ArgumentResolver<Boolean> {
 
-  @Override
-  public Boolean resolve(final CommandSender sender, final String argument) {
-    try {
-      return Boolean.parseBoolean(argument);
-    } catch (final Exception e) {
-      sender.sendMessage(CC.prefix("&6%s&r n'est pas un booléen valide.".formatted(argument)));
-      throw new RuntimeException(e);
+    @Override
+    public Boolean resolve(final CommandSender sender, final String argument) {
+        try {
+            return Boolean.parseBoolean(argument);
+        } catch (final Exception e) {
+            sender.sendMessage(CC.prefix("&6%s&r n'est pas un booléen valide.".formatted(argument)));
+            throw new RuntimeException(e);
+        }
     }
-  }
 }

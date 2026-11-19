@@ -9,10 +9,6 @@ import dev.kurai.uhc.profile.state.ProfileState;
 import dev.kurai.uhc.util.api.Identifiable;
 import dev.kurai.uhc.util.api.name.Nameable;
 import dev.kurai.uhc.util.api.state.Stateful;
-import java.util.Collection;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.function.Consumer;
 import net.kyori.adventure.audience.ForwardingAudience;
 import net.minecraft.server.v1_8_R3.Packet;
 import org.bukkit.Bukkit;
@@ -25,137 +21,145 @@ import org.bukkit.potion.PotionEffectType;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
+import java.util.Collection;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.function.Consumer;
+
 @NullMarked
 public interface Profile
-    extends Identifiable<UUID>, Nameable<String>,
-        Stateful<ProfileState>,
-        EntityBridge<UUID>,
-        PowerHolder,
-        ForwardingAudience.Single {
+        extends Identifiable<UUID>,
+                Nameable<String>,
+                Stateful<ProfileState>,
+                EntityBridge<UUID>,
+                PowerHolder,
+                ForwardingAudience.Single {
 
-  int UNKNOWN_IMMUNITY_TICKS = -Integer.MAX_VALUE;
-  int INFINITE_IMMUNITY_TICKS = -1;
-  int IMMUNITY_UNTIL_NEXT_DAMAGE_TICKS = -2;
+    int UNKNOWN_IMMUNITY_TICKS = -Integer.MAX_VALUE;
+    int INFINITE_IMMUNITY_TICKS = -1;
+    int IMMUNITY_UNTIL_NEXT_DAMAGE_TICKS = -2;
 
-  @Override
-  UUID getId();
+    @Override
+    UUID getId();
 
-  @Override
-  String getName();
+    @Override
+    String getName();
 
-  int kills();
+    int kills();
 
-  void kills(final int kills);
+    void kills(final int kills);
 
-  int assists();
+    int assists();
 
-  void assists(final int assists);
+    void assists(final int assists);
 
-  Actionbar getActionbar();
+    Actionbar getActionbar();
 
-  void executeAction(Consumer<Player> action);
+    void executeAction(Consumer<Player> action);
 
-  void addItem(final ItemStack item);
+    void addItem(final ItemStack item);
 
-  default void addItems(final ItemStack... items) {
-    for (final var item : items) {
-      this.addItem(item);
+    default void addItems(final ItemStack... items) {
+        for (final var item : items) {
+            this.addItem(item);
+        }
     }
-  }
 
-  @Override
-  ProfileState getState();
+    @Override
+    ProfileState getState();
 
-  @Override
-  void setState(final ProfileState state);
+    @Override
+    void setState(final ProfileState state);
 
-  void addPotionEffect(final PotionEffect effect);
+    void addPotionEffect(final PotionEffect effect);
 
-  void removePotionEffect(final PotionEffectType type);
+    void removePotionEffect(final PotionEffectType type);
 
-  boolean hasPotionEffect(final PotionEffectType type);
+    boolean hasPotionEffect(final PotionEffectType type);
 
-  @Nullable PotionEffect getPotionEffect(final PotionEffectType type);
+    @Nullable
+    PotionEffect getPotionEffect(final PotionEffectType type);
 
-  Optional<PotionEffect> findPotionEffect(final PotionEffectType type);
+    Optional<PotionEffect> findPotionEffect(final PotionEffectType type);
 
-  default void damage(final double damage) {
-    this.damage(damage, false);
-  }
+    default void damage(final double damage) {
+        this.damage(damage, false);
+    }
 
-  default void damage(final double damage, final boolean absorptionBypass) {
-    this.damage(damage, absorptionBypass, true);
-  }
+    default void damage(final double damage, final boolean absorptionBypass) {
+        this.damage(damage, absorptionBypass, true);
+    }
 
-  void damage(final double damage, final boolean absorptionBypass, final boolean visible);
+    void damage(final double damage, final boolean absorptionBypass, final boolean visible);
 
-  void addHealth(final double health);
+    void addHealth(final double health);
 
-  void removeHealth(final double health);
+    void removeHealth(final double health);
 
-  double getHealth();
+    double getHealth();
 
-  void setHealth(final double health);
+    void setHealth(final double health);
 
-  void addMaxHealth(final double maxHealth);
+    void addMaxHealth(final double maxHealth);
 
-  void removeMaxHealth(final double maxHealth);
+    void removeMaxHealth(final double maxHealth);
 
-  double getMaxHealth();
+    double getMaxHealth();
 
-  void setMaxHealth(final double maxHealth);
+    void setMaxHealth(final double maxHealth);
 
-  default void addDamageImmunity(final EntityDamageEvent.DamageCause cause) {
-    this.addDamageImmunity(cause, INFINITE_IMMUNITY_TICKS);
-  }
+    default void addDamageImmunity(final EntityDamageEvent.DamageCause cause) {
+        this.addDamageImmunity(cause, INFINITE_IMMUNITY_TICKS);
+    }
 
-  default void addDamageImmunityUntilNext(final EntityDamageEvent.DamageCause cause) {
-    this.addDamageImmunity(cause, IMMUNITY_UNTIL_NEXT_DAMAGE_TICKS);
-  }
+    default void addDamageImmunityUntilNext(final EntityDamageEvent.DamageCause cause) {
+        this.addDamageImmunity(cause, IMMUNITY_UNTIL_NEXT_DAMAGE_TICKS);
+    }
 
-  void addDamageImmunity(final EntityDamageEvent.DamageCause cause, final int ticks);
+    void addDamageImmunity(final EntityDamageEvent.DamageCause cause, final int ticks);
 
-  void removeDamageImmunity(final EntityDamageEvent.DamageCause cause);
+    void removeDamageImmunity(final EntityDamageEvent.DamageCause cause);
 
-  boolean hasDamageImmunity(final EntityDamageEvent.DamageCause cause);
+    boolean hasDamageImmunity(final EntityDamageEvent.DamageCause cause);
 
-  int getDamageImmunityTicks(final EntityDamageEvent.DamageCause cause);
+    int getDamageImmunityTicks(final EntityDamageEvent.DamageCause cause);
 
-  void sendMessage(final String message);
+    void sendMessage(final String message);
 
-  void sendPrefixedMessage(final String message);
+    void sendPrefixedMessage(final String message);
 
-  void sendPrefixedMessage(final String message, final String prefix);
+    void sendPrefixedMessage(final String message, final String prefix);
 
-  @Override
-  Collection<AbstractPower> getPowers();
+    @Override
+    Collection<AbstractPower> getPowers();
 
-  @Nullable AbstractPower getPower(final String id);
+    @Nullable
+    AbstractPower getPower(final String id);
 
-  @Override
-  <T extends AbstractPower> @Nullable T getPower(final Class<T> clazz);
+    @Override
+    <T extends AbstractPower> @Nullable T getPower(final Class<T> clazz);
 
-  @Override
-  void registerPower(final AbstractPower power);
+    @Override
+    void registerPower(final AbstractPower power);
 
-  void registerPower(AbstractPower power, boolean roleAttribution);
+    void registerPower(AbstractPower power, boolean roleAttribution);
 
-  @Override
-  void unregisterPower(final String id);
+    @Override
+    void unregisterPower(final String id);
 
-  void sendPacket(final PacketWrapper<?> wrapper);
+    void sendPacket(final PacketWrapper<?> wrapper);
 
-  void sendPacket(final Packet<?> packet);
+    void sendPacket(final Packet<?> packet);
 
-  default Optional<Player> findPlayer() {
-    return Optional.ofNullable(Bukkit.getPlayer(this.getId()));
-  }
+    default Optional<Player> findPlayer() {
+        return Optional.ofNullable(Bukkit.getPlayer(this.getId()));
+    }
 
-  default @Nullable Player getPlayer() {
-    return this.findPlayer().orElse(null);
-  }
+    default @Nullable Player getPlayer() {
+        return this.findPlayer().orElse(null);
+    }
 
-  default OfflinePlayer getOfflinePlayer() {
-    return Bukkit.getOfflinePlayer(this.getId());
-  }
+    default OfflinePlayer getOfflinePlayer() {
+        return Bukkit.getOfflinePlayer(this.getId());
+    }
 }

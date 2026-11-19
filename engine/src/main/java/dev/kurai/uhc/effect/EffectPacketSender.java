@@ -11,38 +11,37 @@ import org.bukkit.entity.Player;
 
 public final class EffectPacketSender {
 
-  public static final int CLIENT_DURATION = 32767;
+    public static final int CLIENT_DURATION = 32767;
 
-  private static final PlayerManager PLAYER_MANAGER = PacketEvents.getAPI().getPlayerManager();
+    private static final PlayerManager PLAYER_MANAGER = PacketEvents.getAPI().getPlayerManager();
 
-  private final EffectService effectService;
-  private final ProfileService profileService;
+    private final EffectService effectService;
+    private final ProfileService profileService;
 
-  public EffectPacketSender(final EffectService effectService, final ProfileService profileService) {
-    this.effectService = effectService;
-    this.profileService = profileService;
-  }
-
-  public void send(final Player player, final EffectType effectType, final boolean reset) {
-    final Profile profile = this.profileService.getOrCreateProfile(player.getUniqueId());
-    final EffectHolder effectHolder = profile.getComponent(EffectHoldingComponent.class).holder();
-    final double valuePerLevel = this.effectService.effectValuePerLevel(effectType) * 100;
-    final int amplifier =
-        (int) Math.floor((effectHolder.getEffectValue(effectType) * 100) / valuePerLevel + 1e-9);
-
-    if (reset) {
-      PLAYER_MANAGER.sendPacket(
-          player,
-          new WrapperPlayServerRemoveEntityEffect(player.getEntityId(), effectType.packetType()));
+    public EffectPacketSender(final EffectService effectService, final ProfileService profileService) {
+        this.effectService = effectService;
+        this.profileService = profileService;
     }
 
-    if (amplifier < 1) {
-      return;
-    }
+    public void send(final Player player, final EffectType effectType, final boolean reset) {
+        final Profile profile = this.profileService.getOrCreateProfile(player.getUniqueId());
+        final EffectHolder effectHolder =
+                profile.getComponent(EffectHoldingComponent.class).holder();
+        final double valuePerLevel = this.effectService.effectValuePerLevel(effectType) * 100;
+        final int amplifier = (int) Math.floor((effectHolder.getEffectValue(effectType) * 100) / valuePerLevel + 1e-9);
 
-    PLAYER_MANAGER.sendPacket(
-        player,
-        new WrapperPlayServerEntityEffect(
-            player.getEntityId(), effectType.packetType(), amplifier - 1, CLIENT_DURATION, (byte) 0));
-  }
+        if (reset) {
+            PLAYER_MANAGER.sendPacket(
+                    player, new WrapperPlayServerRemoveEntityEffect(player.getEntityId(), effectType.packetType()));
+        }
+
+        if (amplifier < 1) {
+            return;
+        }
+
+        PLAYER_MANAGER.sendPacket(
+                player,
+                new WrapperPlayServerEntityEffect(
+                        player.getEntityId(), effectType.packetType(), amplifier - 1, CLIENT_DURATION, (byte) 0));
+    }
 }

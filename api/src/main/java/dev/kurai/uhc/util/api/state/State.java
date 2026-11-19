@@ -4,6 +4,6 @@ import dev.kurai.uhc.util.api.Identifiable;
 
 public interface State extends Identifiable<String> {
 
-  @Override
-  String getId();
+    @Override
+    String getId();
 }

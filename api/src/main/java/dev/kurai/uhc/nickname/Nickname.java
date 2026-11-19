@@ -1,39 +1,40 @@
 package dev.kurai.uhc.nickname;
 
 import dev.kurai.uhc.util.Color;
-import java.util.List;
-import java.util.Set;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
+import java.util.Set;
+
 public interface Nickname {
 
-  Color getColor();
+    Color getColor();
 
-  void setColor(final Color color);
+    void setColor(final Color color);
 
-  Set<NicknameStyle> getDecorations();
+    Set<NicknameStyle> getDecorations();
 
-  void addStyle(final NicknameStyle style);
+    void addStyle(final NicknameStyle style);
 
-  void removeStyle(final NicknameStyle style);
+    void removeStyle(final NicknameStyle style);
 
-  @Nullable
-  String getGroup();
+    @Nullable
+    String getGroup();
 
-  void setGroup(@Nullable final String group);
+    void setGroup(@Nullable final String group);
 
-  List<NicknameValue> getValues();
+    List<NicknameValue> getValues();
 
-  void addValue(final NicknameValue value);
+    void addValue(final NicknameValue value);
 
-  void removeValue(final String id);
+    void removeValue(final String id);
 
-  void clearValues(final NicknameValueType type);
+    void clearValues(final NicknameValueType type);
 
-  Component getPrefix();
+    Component getPrefix();
 
-  Component getSuffix();
+    Component getSuffix();
 
-  Component render(final String baseName);
+    Component render(final String baseName);
 }

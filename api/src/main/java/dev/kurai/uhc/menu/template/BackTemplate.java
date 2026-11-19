@@ -12,36 +12,34 @@ import org.bukkit.inventory.ItemStack;
 
 public final class BackTemplate implements Template {
 
-  private final Menu parentMenu;
+    private final Menu parentMenu;
 
-  public BackTemplate(final Menu parentMenu) {
-    this.parentMenu = parentMenu;
-  }
-
-  @Override
-  public void apply(final BackgroundLayer background, final ForegroundLayer foreground) {
-    if (this.parentMenu == null) {
-      return;
+    public BackTemplate(final Menu parentMenu) {
+        this.parentMenu = parentMenu;
     }
 
-    foreground.set(
-        background.getMenu().getTotalSlots() - 5,
-        new Button() {
+    @Override
+    public void apply(final BackgroundLayer background, final ForegroundLayer foreground) {
+        if (this.parentMenu == null) {
+            return;
+        }
 
-          @Override
-          public ItemStack getIcon() {
-            return new ItemBuilder(Material.SKULL_ITEM)
-                .data(3)
-                .name("&cRevenir en arrière")
-                .url(
-                    "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZmNhOTQyYTkyOWQzNjc5YTI2ZjAwOTIwMDVlOTg1YTU1ZTc4OGExYjU2NDkxMDEzMDc0OWQ5ZmM4OTZlOTAxMyJ9fX0")
-                .asItemStack();
-          }
+        foreground.set(background.getMenu().getTotalSlots() - 5, new Button() {
 
-          @Override
-          public void onClick(final ButtonClick click) {
-            BackTemplate.this.parentMenu.open();
-          }
+            @Override
+            public ItemStack getIcon() {
+                return new ItemBuilder(Material.SKULL_ITEM)
+                        .data(3)
+                        .name("&cRevenir en arrière")
+                        .url(
+                                "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZmNhOTQyYTkyOWQzNjc5YTI2ZjAwOTIwMDVlOTg1YTU1ZTc4OGExYjU2NDkxMDEzMDc0OWQ5ZmM4OTZlOTAxMyJ9fX0")
+                        .asItemStack();
+            }
+
+            @Override
+            public void onClick(final ButtonClick click) {
+                BackTemplate.this.parentMenu.open();
+            }
         });
-  }
+    }
 }

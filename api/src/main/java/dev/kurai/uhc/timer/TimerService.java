@@ -5,29 +5,29 @@ import java.util.Optional;
 
 public interface TimerService {
 
-  void registerTimer(final AbstractTimer timer);
+    void registerTimer(final AbstractTimer timer);
 
-  default void registerTimers(final AbstractTimer... timers) {
-    for (final var timer : timers) {
-      this.registerTimer(timer);
+    default void registerTimers(final AbstractTimer... timers) {
+        for (final var timer : timers) {
+            this.registerTimer(timer);
+        }
     }
-  }
 
-  void unregisterTimer(final String identifier);
+    void unregisterTimer(final String identifier);
 
-  default void unregisterTimers(final String... identifiers) {
-    for (final var identifier : identifiers) {
-      this.unregisterTimer(identifier);
+    default void unregisterTimers(final String... identifiers) {
+        for (final var identifier : identifiers) {
+            this.unregisterTimer(identifier);
+        }
     }
-  }
 
-  Optional<AbstractTimer> getTimer(final String identifier);
+    Optional<AbstractTimer> getTimer(final String identifier);
 
-  Optional<AbstractTimer> getTimer(final Class<? extends AbstractTimer> timerClass);
+    Optional<AbstractTimer> getTimer(final Class<? extends AbstractTimer> timerClass);
 
-  Collection<AbstractTimer> getTimers();
+    Collection<AbstractTimer> getTimers();
 
-  void startAllTimers();
+    void startAllTimers();
 
-  void stopAllTimers();
+    void stopAllTimers();
 }

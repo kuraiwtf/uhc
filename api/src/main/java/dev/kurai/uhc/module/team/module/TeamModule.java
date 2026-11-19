@@ -4,35 +4,35 @@ import dev.kurai.uhc.team.TeamDisplay;
 
 public interface TeamModule {
 
-  TeamDisplay teamDisplay();
+    TeamDisplay teamDisplay();
 
-  void teamDisplay(final TeamDisplay teamDisplay);
+    void teamDisplay(final TeamDisplay teamDisplay);
 
-  boolean teamInventory();
+    boolean teamInventory();
 
-  void teamInventory(final boolean teamInventory);
+    void teamInventory(final boolean teamInventory);
 
-  int minTeamSize();
+    int minTeamSize();
 
-  void minTeamSize(final int minTeamSize);
+    void minTeamSize(final int minTeamSize);
 
-  int teamSize();
+    int teamSize();
 
-  void teamSize(final int teamSize);
+    void teamSize(final int teamSize);
 
-  int maxTeamSize();
+    int maxTeamSize();
 
-  void maxTeamSize(final int maxTeamSize);
+    void maxTeamSize(final int maxTeamSize);
 
-  default boolean ffa() {
-    return this.teamSize() == 1;
-  }
+    default boolean ffa() {
+        return this.teamSize() == 1;
+    }
 
-  boolean friendlyFire();
+    boolean friendlyFire();
 
-  void friendlyFire(final boolean friendlyFire);
+    void friendlyFire(final boolean friendlyFire);
 
-  boolean randomTeam();
+    boolean randomTeam();
 
-  void randomTeam(final boolean randomTeam);
+    void randomTeam(final boolean randomTeam);
 }

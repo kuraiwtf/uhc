@@ -1,9 +1,6 @@
 package dev.kurai.uhc.game.group;
 
 import dev.kurai.uhc.util.CC;
-import java.util.Collection;
-import java.util.concurrent.CopyOnWriteArrayList;
-
 import dev.kurai.uhc.util.Title;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -14,69 +11,72 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scheduler.BukkitTask;
 
+import java.util.Collection;
+import java.util.concurrent.CopyOnWriteArrayList;
+
 @Getter
 @Setter
 public final class GroupServiceImpl implements GroupService {
 
-  private final GroupProvider provider;
+    private final GroupProvider provider;
 
-  private final Plugin plugin;
+    private final Plugin plugin;
 
-  private final Collection<GroupVariable> variables;
+    private final Collection<GroupVariable> variables;
 
-  private boolean enabled;
+    private boolean enabled;
 
-  @Getter(AccessLevel.NONE)
-  @Setter(AccessLevel.NONE)
-  private BukkitTask task;
+    @Getter(AccessLevel.NONE)
+    @Setter(AccessLevel.NONE)
+    private BukkitTask task;
 
-  public GroupServiceImpl(final Plugin plugin) {
-    this.provider = new BuiltinGroupProvider();
+    public GroupServiceImpl(final Plugin plugin) {
+        this.provider = new BuiltinGroupProvider();
 
-    this.plugin = plugin;
+        this.plugin = plugin;
 
-    this.variables = new CopyOnWriteArrayList<>();
-  }
-
-  @Override
-  public void addGroupVariable(final GroupVariable variable) {
-    this.variables.add(variable);
-  }
-
-  @Override
-  public void removeGroupVariable(final GroupVariable variable) {
-    this.variables.remove(variable);
-  }
-
-  @Override
-  public void start() {
-    if (!this.enabled || this.variables.isEmpty()) {
-      return;
+        this.variables = new CopyOnWriteArrayList<>();
     }
 
-    this.stop();
-    final BukkitScheduler scheduler = this.plugin.getServer().getScheduler();
-    this.task = scheduler.runTaskTimerAsynchronously(this.plugin, new GroupVariableTask(this), 0, 20);
-  }
-
-  @Override
-  public void stop() {
-    if (this.task != null) {
-      this.task.cancel();
-      this.task = null;
+    @Override
+    public void addGroupVariable(final GroupVariable variable) {
+        this.variables.add(variable);
     }
-  }
 
-  @Override
-  public void alertGroups() {
-    for (final Player player : Bukkit.getOnlinePlayers()) {
-        Title.sendTitle(
-          player,
-          0,
-          3 * 20,
-          0,
-          "§4" + CC.DANGER + " §cGroupes de " + this.provider.groups() + " §4" + CC.DANGER,
-          "");
+    @Override
+    public void removeGroupVariable(final GroupVariable variable) {
+        this.variables.remove(variable);
     }
-  }
+
+    @Override
+    public void start() {
+        if (!this.enabled || this.variables.isEmpty()) {
+            return;
+        }
+
+        this.stop();
+        final BukkitScheduler scheduler = this.plugin.getServer().getScheduler();
+        this.task = scheduler.runTaskTimerAsynchronously(this.plugin, new GroupVariableTask(this), 0, 20);
+    }
+
+    @Override
+    public void stop() {
+        if (this.task != null) {
+            this.task.cancel();
+            this.task = null;
+        }
+    }
+
+    @Override
+    public void alertGroups() {
+        for (final Player player : Bukkit.getOnlinePlayers()) {
+            Title.sendTitle(
+                    player,
+                    0,
+                    3 * 20,
+                    0,
+                    "§4" + CC.DANGER + " §cGroupes de " + this.provider.groups() + " §4" + CC.DANGER,
+                    "");
+        }
+    }
 }

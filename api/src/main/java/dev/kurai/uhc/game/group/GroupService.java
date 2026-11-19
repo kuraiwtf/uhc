@@ -4,21 +4,21 @@ import java.util.Collection;
 
 public interface GroupService {
 
-  GroupProvider provider();
+    GroupProvider provider();
 
-  Collection<GroupVariable> variables();
+    Collection<GroupVariable> variables();
 
-  void addGroupVariable(final GroupVariable variable);
+    void addGroupVariable(final GroupVariable variable);
 
-  void removeGroupVariable(final GroupVariable variable);
+    void removeGroupVariable(final GroupVariable variable);
 
-  void start();
+    void start();
 
-  void stop();
+    void stop();
 
-  boolean enabled();
+    boolean enabled();
 
-  void enabled(final boolean enabled);
+    void enabled(final boolean enabled);
 
-  void alertGroups();
+    void alertGroups();
 }

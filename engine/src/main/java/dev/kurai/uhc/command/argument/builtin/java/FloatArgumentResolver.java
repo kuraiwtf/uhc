@@ -6,13 +6,13 @@ import org.bukkit.command.CommandSender;
 
 public final class FloatArgumentResolver implements ArgumentResolver<Float> {
 
-  @Override
-  public Float resolve(final CommandSender sender, final String argument) {
-    try {
-      return Float.parseFloat(argument);
-    } catch (final NumberFormatException e) {
-      sender.sendMessage(CC.prefix("&6%s&r n'est pas un float valide.".formatted(argument)));
-      throw new RuntimeException(e);
+    @Override
+    public Float resolve(final CommandSender sender, final String argument) {
+        try {
+            return Float.parseFloat(argument);
+        } catch (final NumberFormatException e) {
+            sender.sendMessage(CC.prefix("&6%s&r n'est pas un float valide.".formatted(argument)));
+            throw new RuntimeException(e);
+        }
     }
-  }
 }

@@ -11,19 +11,19 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 @RequiredArgsConstructor
 public final class PlayerDamageByPlayerEvent extends Event {
 
-  private static final HandlerList HANDLERS = new HandlerList();
+    private static final HandlerList HANDLERS = new HandlerList();
 
-  private final Profile player;
-  private final Profile victim;
+    private final Profile player;
+    private final Profile victim;
 
-  private final EntityDamageByEntityEvent bukkitEvent;
+    private final EntityDamageByEntityEvent bukkitEvent;
 
-  public static HandlerList getHandlerList() {
-    return HANDLERS;
-  }
+    public static HandlerList getHandlerList() {
+        return HANDLERS;
+    }
 
-  @Override
-  public HandlerList getHandlers() {
-    return HANDLERS;
-  }
+    @Override
+    public HandlerList getHandlers() {
+        return HANDLERS;
+    }
 }

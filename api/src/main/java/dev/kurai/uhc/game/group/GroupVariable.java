@@ -2,7 +2,7 @@ package dev.kurai.uhc.game.group;
 
 public interface GroupVariable {
 
-  int groupSize();
+    int groupSize();
 
-  boolean shouldApply();
+    boolean shouldApply();
 }

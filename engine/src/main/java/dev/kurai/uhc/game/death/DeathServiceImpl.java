@@ -1,11 +1,5 @@
 package dev.kurai.uhc.game.death;
 
-import static dev.kurai.uhc.util.CC.*;
-import static net.kyori.adventure.key.Key.key;
-import static net.kyori.adventure.text.format.NamedTextColor.*;
-import static org.bukkit.ChatColor.DARK_PURPLE;
-import static org.bukkit.ChatColor.LIGHT_PURPLE;
-
 import com.google.common.collect.Lists;
 import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.event.defaults.game.death.GameDeathEvent;
@@ -25,9 +19,6 @@ import dev.kurai.uhc.util.ItemBuilder;
 import dev.kurai.uhc.win.BuiltinWinInformation;
 import dev.kurai.uhc.win.WinCelebration;
 import dev.kurai.uhc.win.WinService;
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
 import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.sound.Sound;
@@ -37,206 +28,206 @@ import org.bukkit.inventory.PlayerInventory;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
+import java.util.Collection;
+import java.util.List;
+import java.util.UUID;
+
+import static dev.kurai.uhc.util.CC.center;
+import static dev.kurai.uhc.util.CC.emptyLine;
+import static net.kyori.adventure.key.Key.key;
+import static org.bukkit.ChatColor.DARK_PURPLE;
+import static org.bukkit.ChatColor.LIGHT_PURPLE;
+
 @NullMarked
 @Getter
 @Setter
 public final class DeathServiceImpl implements DeathService {
 
-  private final UltraHardcoreAPI ultraHardcore;
+    private final UltraHardcoreAPI ultraHardcore;
 
-  private DeathAnnounce deathAnnounce;
-  private DeathProcessor deathProcessor;
+    private DeathAnnounce deathAnnounce;
+    private DeathProcessor deathProcessor;
 
-  public DeathServiceImpl(final UltraHardcoreAPI ultraHardcore) {
-    this.ultraHardcore = ultraHardcore;
+    public DeathServiceImpl(final UltraHardcoreAPI ultraHardcore) {
+        this.ultraHardcore = ultraHardcore;
 
-    this.deathAnnounce = new BuiltinDeathAnnounce(ultraHardcore.teamService());
-    this.deathProcessor = new BuiltinDeathProcessor(ultraHardcore, this);
-  }
-
-  @Override
-  public void processDeath(final DeathContext context) {
-    final GamePreDeathEvent event =
-        new GamePreDeathEvent(context.profile(), context.killer(), context);
-    Bukkit.getPluginManager().callEvent(event);
-
-    if (event.isCancelled()) {
-      this.revive(context.profile(), event.getRespawnLocation());
-      return;
+        this.deathAnnounce = new BuiltinDeathAnnounce(ultraHardcore.teamService());
+        this.deathProcessor = new BuiltinDeathProcessor(ultraHardcore, this);
     }
 
-    this.deathProcessor.processDeath(context);
-  }
+    @Override
+    public void processDeath(final DeathContext context) {
+        final GamePreDeathEvent event = new GamePreDeathEvent(context.profile(), context.killer(), context);
+        Bukkit.getPluginManager().callEvent(event);
 
-  @Override
-  public void revive(final Profile profile, final @Nullable Location location) {
-    profile.executeAction(
-        player -> {
-          final Location target = location != null ? location : this.randomLocation();
-          player.spigot().respawn();
-          player.teleport(target);
+        if (event.isCancelled()) {
+            this.revive(context.profile(), event.getRespawnLocation());
+            return;
+        }
 
-          player.setGameMode(GameMode.SURVIVAL);
-          player.setHealth(player.getMaxHealth());
+        this.deathProcessor.processDeath(context);
+    }
 
-          player.setFoodLevel(20);
-          player.setSaturation(20.0f);
-          player.setExhaustion(0.0f);
+    @Override
+    public void revive(final Profile profile, final @Nullable Location location) {
+        profile.executeAction(player -> {
+            final Location target = location != null ? location : this.randomLocation();
+            player.spigot().respawn();
+            player.teleport(target);
 
-          player.setFireTicks(0);
+            player.setGameMode(GameMode.SURVIVAL);
+            player.setHealth(player.getMaxHealth());
 
-          final DeadComponent component = profile.getComponent(DeadComponent.class);
-          if (component != null) {
-            final var droppedItems = component.droppedItems();
-            for (final var entity : component.location().getWorld().getEntities()) {
-              if (droppedItems.contains(entity.getUniqueId())) {
-                entity.remove();
-              }
+            player.setFoodLevel(20);
+            player.setSaturation(20.0f);
+            player.setExhaustion(0.0f);
+
+            player.setFireTicks(0);
+
+            final DeadComponent component = profile.getComponent(DeadComponent.class);
+            if (component != null) {
+                final var droppedItems = component.droppedItems();
+                for (final var entity : component.location().getWorld().getEntities()) {
+                    if (droppedItems.contains(entity.getUniqueId())) {
+                        entity.remove();
+                    }
+                }
+
+                player.getInventory().setContents(component.inventory());
+                player.getInventory().setArmorContents(component.armor());
+            }
+        });
+
+        profile.setState(new PlayingProfileState());
+        profile.removeComponent(DeadComponent.class);
+
+        profile.removeComponent(ProcessingDeathComponent.class);
+        profile.removeComponent(PlayerInformationComponent.class);
+    }
+
+    private Location randomLocation() {
+        final World world = this.ultraHardcore.worldService().getWorld();
+        final int radius = (int) (world.getWorldBorder().getSize() / 2);
+        return this.ultraHardcore
+                .gameService()
+                .scatterService()
+                .getPositionProvider()
+                .provideLocations(radius, 1)
+                .iterator()
+                .next();
+    }
+
+    @Override
+    public void eliminate(final Profile profile, final @Nullable Profile killer, final boolean offline) {
+        final PlayerInformationComponent component = profile.getComponent(PlayerInformationComponent.class);
+        if (component == null) {
+            return;
+        }
+
+        profile.executeAction(player -> {
+            final PlayerInventory inventory = player.getInventory();
+            inventory.setContents(new ItemStack[36]);
+            inventory.setArmorContents(new ItemStack[4]);
+
+            for (final CustomItem item : this.ultraHardcore.itemService().findAllBySpectatorOnly()) {
+                inventory.setItem(item.getSlot(), item.provideIcon(player));
             }
 
-            player.getInventory().setContents(component.inventory());
-            player.getInventory().setArmorContents(component.armor());
-          }
+            player.spigot().respawn();
+            player.setGameMode(GameMode.SPECTATOR);
+            player.teleport(component.lastLocation());
         });
 
-    profile.setState(new PlayingProfileState());
-    profile.removeComponent(DeadComponent.class);
+        Bukkit.getPluginManager().callEvent(new GameDeathEvent(killer, profile));
 
-    profile.removeComponent(ProcessingDeathComponent.class);
-    profile.removeComponent(PlayerInformationComponent.class);
-  }
+        final Location location = component.lastLocation();
+        final List<UUID> droppedItems = Lists.newArrayList();
+        for (final ItemStack stack : component.inventory()) {
+            if (!ItemBuilder.hasTag(stack, AbstractItemPower.NBT_TAG)) {
+                this.dropAt(location, stack, droppedItems);
+            }
+        }
 
-  private Location randomLocation() {
-    final World world = this.ultraHardcore.worldService().getWorld();
-    final int radius = (int) (world.getWorldBorder().getSize() / 2);
-    return this.ultraHardcore
-        .gameService()
-        .scatterService()
-        .getPositionProvider()
-        .provideLocations(radius, 1)
-        .iterator()
-        .next();
-  }
+        for (final ItemStack stack : component.armor()) {
+            if (!ItemBuilder.hasTag(stack, AbstractItemPower.NBT_TAG)) {
+                this.dropAt(location, stack, droppedItems);
+            }
+        }
 
-  @Override
-  public void eliminate(
-      final Profile profile, final @Nullable Profile killer, final boolean offline) {
-    final PlayerInformationComponent component =
-        profile.getComponent(PlayerInformationComponent.class);
-    if (component == null) {
-      return;
+        if (killer != null) {
+            killer.kills(killer.kills() + 1);
+            this.ultraHardcore
+                    .loggerService()
+                    .broadcastSpectator(
+                            LogCategories.KILL, "§c" + killer.getName() + " §8» §c" + profile.getName(), location);
+        } else {
+            this.ultraHardcore
+                    .loggerService()
+                    .broadcastSpectator(LogCategories.KILL, "§c? §8» §c" + profile.getName(), location);
+        }
+
+        final GameService gameService = this.ultraHardcore.gameService();
+        gameService.playSound(Sound.sound()
+                .source(Sound.Source.HOSTILE)
+                .type(key("mob.wither.death"))
+                .volume(1f)
+                .pitch(1f)
+                .build());
+
+        gameService.sendMessage(this.deathAnnounce.provideDeathMessage(profile, killer, offline));
+
+        this.processVictimDeath(profile, killer, component, droppedItems);
+        this.processWin(location.clone());
     }
 
-    profile.executeAction(
-        player -> {
-          final PlayerInventory inventory = player.getInventory();
-          inventory.setContents(new ItemStack[36]);
-          inventory.setArmorContents(new ItemStack[4]);
+    private void processVictimDeath(
+            final Profile profile,
+            final @Nullable Profile killer,
+            final PlayerInformationComponent informationComponent,
+            final List<UUID> droppedItems) {
+        profile.removeComponent(DisconnectComponent.class);
+        profile.removeComponent(PlayerInformationComponent.class);
+        profile.removeComponent(ProcessingDeathComponent.class);
 
-          for (final CustomItem item : this.ultraHardcore.itemService().findAllBySpectatorOnly()) {
-            inventory.setItem(item.getSlot(), item.provideIcon(player));
-          }
+        profile.addComponent(new DeadComponent(
+                killer == null ? null : killer.getId(),
+                System.currentTimeMillis() - this.ultraHardcore.gameService().startTime(),
+                informationComponent.lastLocation().clone(),
+                informationComponent.inventory().clone(),
+                informationComponent.armor().clone(),
+                droppedItems));
 
-          player.spigot().respawn();
-          player.setGameMode(GameMode.SPECTATOR);
-          player.teleport(component.lastLocation());
-        });
+        profile.setState(new DeadProfileState());
 
-    Bukkit.getPluginManager().callEvent(new GameDeathEvent(killer, profile));
-
-    final Location location = component.lastLocation();
-    final List<UUID> droppedItems = Lists.newArrayList();
-    for (final ItemStack stack : component.inventory()) {
-      if (!ItemBuilder.hasTag(stack, AbstractItemPower.NBT_TAG)) {
-        this.dropAt(location, stack, droppedItems);
-      }
+        profile.sendMessage(emptyLine(DARK_PURPLE, LIGHT_PURPLE));
+        profile.sendMessage("");
+        profile.sendMessage(center("&d&l»&r &lSPECTATEUR&d &l«"));
+        profile.sendMessage(center("Suite à votre&c mort&r, vous êtes devenu"));
+        profile.sendMessage(center("un&d spectateur&r de la&d partie&r."));
+        profile.sendMessage("");
+        profile.sendMessage(center("Utilisez la&c boussole&r dans votre&a inventaire"));
+        profile.sendMessage(center("pour accéder à l'interface&d spectateur&r."));
+        profile.sendMessage("");
+        profile.sendMessage(emptyLine(DARK_PURPLE, LIGHT_PURPLE));
     }
 
-    for (final ItemStack stack : component.armor()) {
-      if (!ItemBuilder.hasTag(stack, AbstractItemPower.NBT_TAG)) {
-        this.dropAt(location, stack, droppedItems);
-      }
+    private void processWin(final Location location) {
+        final WinService winService = this.ultraHardcore.winService();
+        final Collection<Profile> profiles = winService.winCondition().validateWin();
+        if (profiles != null && !profiles.isEmpty()) {
+            final WinCelebration celebration = winService.winCelebration();
+            celebration.celebrate(location, new BuiltinWinInformation(profiles));
+
+            this.ultraHardcore.gameService().playing(false);
+            this.ultraHardcore.gameService().startService().stopGameTasks();
+        }
     }
 
-    if (killer != null) {
-      killer.kills(killer.kills() + 1);
-      this.ultraHardcore
-          .loggerService()
-          .broadcastSpectator(
-              LogCategories.KILL,
-              "§c" + killer.getName() + " §8» §c" + profile.getName(),
-              location);
-    } else {
-      this.ultraHardcore
-          .loggerService()
-          .broadcastSpectator(LogCategories.KILL, "§c? §8» §c" + profile.getName(), location);
+    private void dropAt(final Location location, final @Nullable ItemStack item, final List<UUID> droppedItems) {
+        if (item == null || item.getType() == Material.AIR) {
+            return;
+        }
+
+        droppedItems.add(location.getWorld().dropItem(location, item).getUniqueId());
     }
-
-    final GameService gameService = this.ultraHardcore.gameService();
-    gameService.playSound(
-        Sound.sound()
-            .source(Sound.Source.HOSTILE)
-            .type(key("mob.wither.death"))
-            .volume(1f)
-            .pitch(1f)
-            .build());
-
-    gameService.sendMessage(this.deathAnnounce.provideDeathMessage(profile, killer, offline));
-
-    this.processVictimDeath(profile, killer, component, droppedItems);
-    this.processWin(location.clone());
-  }
-
-  private void processVictimDeath(
-      final Profile profile,
-      final @Nullable Profile killer,
-      final PlayerInformationComponent informationComponent,
-      final List<UUID> droppedItems) {
-    profile.removeComponent(DisconnectComponent.class);
-    profile.removeComponent(PlayerInformationComponent.class);
-    profile.removeComponent(ProcessingDeathComponent.class);
-
-    profile.addComponent(
-        new DeadComponent(
-            killer == null ? null : killer.getId(),
-            System.currentTimeMillis() - this.ultraHardcore.gameService().startTime(),
-            informationComponent.lastLocation().clone(),
-            informationComponent.inventory().clone(),
-            informationComponent.armor().clone(),
-            droppedItems));
-
-    profile.setState(new DeadProfileState());
-
-    profile.sendMessage(emptyLine(DARK_PURPLE, LIGHT_PURPLE));
-    profile.sendMessage("");
-    profile.sendMessage(center("&d&l»&r &lSPECTATEUR&d &l«"));
-    profile.sendMessage(center("Suite à votre&c mort&r, vous êtes devenu"));
-    profile.sendMessage(center("un&d spectateur&r de la&d partie&r."));
-    profile.sendMessage("");
-    profile.sendMessage(center("Utilisez la&c boussole&r dans votre&a inventaire"));
-    profile.sendMessage(center("pour accéder à l'interface&d spectateur&r."));
-    profile.sendMessage("");
-    profile.sendMessage(emptyLine(DARK_PURPLE, LIGHT_PURPLE));
-  }
-
-  private void processWin(final Location location) {
-    final WinService winService = this.ultraHardcore.winService();
-    final Collection<Profile> profiles = winService.winCondition().validateWin();
-    if (profiles != null && !profiles.isEmpty()) {
-      final WinCelebration celebration = winService.winCelebration();
-      celebration.celebrate(location, new BuiltinWinInformation(profiles));
-
-      this.ultraHardcore.gameService().playing(false);
-      this.ultraHardcore.gameService().startService().stopGameTasks();
-    }
-  }
-
-  private void dropAt(
-      final Location location, final @Nullable ItemStack item, final List<UUID> droppedItems) {
-    if (item == null || item.getType() == Material.AIR) {
-      return;
-    }
-
-    droppedItems.add(location.getWorld().dropItem(location, item).getUniqueId());
-  }
 }

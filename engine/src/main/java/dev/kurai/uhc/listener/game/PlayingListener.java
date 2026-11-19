@@ -1,10 +1,5 @@
 package dev.kurai.uhc.listener.game;
 
-import static dev.kurai.uhc.util.CC.prefix;
-import static net.kyori.adventure.text.Component.text;
-import static org.bukkit.Material.*;
-import static org.bukkit.event.entity.EntityDamageEvent.DamageCause.SUFFOCATION;
-
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import dev.kurai.uhc.UltraHardcoreAPI;
@@ -27,11 +22,6 @@ import dev.kurai.uhc.util.CC;
 import dev.kurai.uhc.util.SitUtil;
 import dev.kurai.uhc.util.SpectatorVisibility;
 import dev.kurai.uhc.util.TimeUtil;
-import java.time.Duration;
-import java.time.Instant;
-import java.util.Map;
-import java.util.concurrent.ThreadLocalRandom;
-import java.util.function.Consumer;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.*;
@@ -49,469 +39,459 @@ import org.bukkit.event.player.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
+import java.time.Duration;
+import java.time.Instant;
+import java.util.Map;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.function.Consumer;
+
+import static dev.kurai.uhc.util.CC.prefix;
+import static net.kyori.adventure.text.Component.text;
+import static org.bukkit.Material.*;
+import static org.bukkit.event.entity.EntityDamageEvent.DamageCause.SUFFOCATION;
+
 public final class PlayingListener implements Listener {
 
-  private static final Map<Material, Consumer<ProfileMiningComponent>> MINING_STATISTICS =
-      Maps.newHashMap();
-  private static final Map<Material, OreType> ORE_TYPES =
-      Map.of(
-          IRON_ORE, OreType.IRON,
-          GOLD_ORE, OreType.GOLD,
-          DIAMOND_ORE, OreType.DIAMOND);
-  private static final Map<Material, Component> ORE_NAMES =
-      Map.of(
-          IRON_ORE, text("fer", NamedTextColor.GRAY),
-          GOLD_ORE, text("or", NamedTextColor.YELLOW),
-          DIAMOND_ORE, text("diamant", NamedTextColor.AQUA));
-  private static final Map<Material, String> ARTICLES =
-      Map.of(
-          IRON_ORE, "du ",
-          GOLD_ORE, "de l'",
-          DIAMOND_ORE, "du ");
+    private static final Map<Material, Consumer<ProfileMiningComponent>> MINING_STATISTICS = Maps.newHashMap();
+    private static final Map<Material, OreType> ORE_TYPES = Map.of(
+            IRON_ORE, OreType.IRON,
+            GOLD_ORE, OreType.GOLD,
+            DIAMOND_ORE, OreType.DIAMOND);
+    private static final Map<Material, Component> ORE_NAMES = Map.of(
+            IRON_ORE, text("fer", NamedTextColor.GRAY),
+            GOLD_ORE, text("or", NamedTextColor.YELLOW),
+            DIAMOND_ORE, text("diamant", NamedTextColor.AQUA));
+    private static final Map<Material, String> ARTICLES = Map.of(
+            IRON_ORE, "du ",
+            GOLD_ORE, "de l'",
+            DIAMOND_ORE, "du ");
 
-  static {
-    MINING_STATISTICS.put(
-        STONE, component -> component.setStoneMined(component.getStoneMined() + 1));
-    MINING_STATISTICS.put(
-        IRON_ORE, component -> component.setIronMined(component.getIronMined() + 1));
-    MINING_STATISTICS.put(
-        GOLD_ORE, component -> component.setGoldMined(component.getGoldMined() + 1));
-    MINING_STATISTICS.put(
-        DIAMOND_ORE, component -> component.setDiamondMined(component.getDiamondMined() + 1));
-  }
-
-  private final UltraHardcoreAPI ultraHardcore;
-
-  public PlayingListener(final UltraHardcoreAPI ultraHardcore) {
-    this.ultraHardcore = ultraHardcore;
-  }
-
-  @EventHandler
-  public void onPreLogin(final AsyncPlayerPreLoginEvent event) {
-    final Profile profile =
-        this.ultraHardcore.profileService().getOrCreateProfile(event.getUniqueId());
-    final OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(event.getUniqueId());
-    if (!(profile.getState() instanceof PlayingProfileState)
-        && !offlinePlayer.isOp()
-        && !offlinePlayer.isWhitelisted()
-        && !this.ultraHardcore.gameService().ruleService().isRuleEnabled("spectator")) {
-      event.disallow(
-          AsyncPlayerPreLoginEvent.Result.KICK_OTHER,
-          "Les spectateurs sont interdits dans la partie.");
-    }
-  }
-
-  @EventHandler
-  public void onJoin(final PlayerJoinEvent event) {
-    event.setJoinMessage(null);
-
-    final Player player = event.getPlayer();
-
-    final Profile profile = this.ultraHardcore.profileService().getOrCreateProfile(player);
-    profile.addComponent(new NameComponent(player.getName()));
-
-    if (!(profile.getState() instanceof PlayingProfileState)) {
-      player.teleport(this.ultraHardcore.worldService().getWorld().getSpawnLocation());
-      player.setGameMode(GameMode.SPECTATOR);
-      SpectatorVisibility.refresh(this.ultraHardcore);
-      return;
+    static {
+        MINING_STATISTICS.put(STONE, component -> component.setStoneMined(component.getStoneMined() + 1));
+        MINING_STATISTICS.put(IRON_ORE, component -> component.setIronMined(component.getIronMined() + 1));
+        MINING_STATISTICS.put(GOLD_ORE, component -> component.setGoldMined(component.getGoldMined() + 1));
+        MINING_STATISTICS.put(DIAMOND_ORE, component -> component.setDiamondMined(component.getDiamondMined() + 1));
     }
 
-    SpectatorVisibility.refresh(this.ultraHardcore);
+    private final UltraHardcoreAPI ultraHardcore;
 
-    this.ultraHardcore
-        .gameService()
-        .sendMessage(
-            prefix()
-                .append(text("Le joueur "))
-                .append(text(player.getName(), NamedTextColor.AQUA))
-                .append(text(" s'est "))
-                .append(text("reconnecté", NamedTextColor.GREEN))
-                .append(text('.'))
-                .build());
-
-    final PlayerInformationComponent informationComponent =
-        profile.getComponent(PlayerInformationComponent.class);
-    if (informationComponent != null) {
-      player.teleport(informationComponent.lastLocation());
-
-      final PlayerInventory inventory = player.getInventory();
-      inventory.setContents(informationComponent.inventory());
-      inventory.setArmorContents(informationComponent.armor());
-
-      player.setFireTicks(informationComponent.fireTicks());
-      player.setFallDistance(informationComponent.fallDistance());
-
-      profile.removeComponent(PlayerInformationComponent.class);
+    public PlayingListener(final UltraHardcoreAPI ultraHardcore) {
+        this.ultraHardcore = ultraHardcore;
     }
 
-    final DisconnectComponent component = profile.getComponent(DisconnectComponent.class);
-    if (component == null) {
-      return;
+    @EventHandler
+    public void onPreLogin(final AsyncPlayerPreLoginEvent event) {
+        final Profile profile = this.ultraHardcore.profileService().getOrCreateProfile(event.getUniqueId());
+        final OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(event.getUniqueId());
+        if (!(profile.getState() instanceof PlayingProfileState)
+                && !offlinePlayer.isOp()
+                && !offlinePlayer.isWhitelisted()
+                && !this.ultraHardcore.gameService().ruleService().isRuleEnabled("spectator")) {
+            event.disallow(
+                    AsyncPlayerPreLoginEvent.Result.KICK_OTHER, "Les spectateurs sont interdits dans la partie.");
+        }
     }
 
-    final DisconnectService disconnectService = this.ultraHardcore.gameService().disconnectService();
-    if (disconnectService.strategy() == DisconnectService.Strategy.ONCE) {
-      component.timeLeft(disconnectService.disconnectTime());
-    }
+    @EventHandler
+    public void onJoin(final PlayerJoinEvent event) {
+        event.setJoinMessage(null);
 
-    component.lastLogin(Instant.now());
-  }
+        final Player player = event.getPlayer();
 
-  @EventHandler
-  public void onPlayerQuit(final PlayerQuitEvent event) {
-    event.setQuitMessage(null);
+        final Profile profile = this.ultraHardcore.profileService().getOrCreateProfile(player);
+        profile.addComponent(new NameComponent(player.getName()));
 
-    final Player player = event.getPlayer();
-    final Profile profile = this.ultraHardcore.profileService().getOrCreateProfile(player);
-    if (!(profile.getState() instanceof PlayingProfileState)) {
-      return;
-    }
-
-    final DisconnectComponent disconnectComponent = profile.getComponent(DisconnectComponent.class);
-    if (disconnectComponent == null) {
-      return;
-    }
-
-    Bukkit.broadcastMessage(
-        CC.prefix(
-                "Le joueur&6 %s&r vient de se&c déconnecter&r. Il dispose de&6 &l%s&r pour se reconnecter avant d'être&c éliminé&r.")
-            .formatted(player.getName(), TimeUtil.formatDuration(disconnectComponent.timeLeft() * 1000L)));
-
-    final PlayerInventory inventory = player.getInventory();
-    profile.addComponent(
-        new PlayerInformationComponent(
-            player.getLocation(),
-            inventory.getContents(),
-            inventory.getArmorContents(),
-            Lists.newArrayList(player.getActivePotionEffects()),
-            player.getFireTicks(),
-            player.getFallDistance()));
-  }
-
-  @EventHandler
-  public void onSitKick(final PlayerKickEvent event) {
-    if (event.getReason().equals("Flying is not enabled on this server")
-        && SitUtil.isSit(event.getPlayer())) {
-      event.setCancelled(true);
-    }
-  }
-
-  @EventHandler
-  public void onSuffocationDamage(final EntityDamageEvent event) {
-    if (event.getCause() != SUFFOCATION || !(event.getEntity() instanceof Player)) {
-      return;
-    }
-
-    final GameRuleService ruleService = this.ultraHardcore.gameService().ruleService();
-    final Block block = event.getEntity().getLocation().clone().add(0, 1, 0).getBlock();
-    if (event.getCause() == SUFFOCATION
-        && block.getType() != AIR
-        && block.getType() != BEDROCK
-        && !ruleService.isRuleEnabled("obsidian_trap")) {
-      block.setType(AIR);
-      event.setCancelled(true);
-    }
-  }
-
-  @EventHandler
-  public void onLavaPickup(final PlayerBucketFillEvent event) {
-    final GameRuleService ruleService = this.ultraHardcore.gameService().ruleService();
-    final Material bucket = event.getItemStack().getType();
-    if (bucket == LAVA_BUCKET && !ruleService.isRuleEnabled("lava")) {
-      event.setCancelled(true);
-    }
-  }
-
-  @EventHandler
-  public void onLavaPlace(final PlayerBucketEmptyEvent event) {
-    final GameRuleService ruleService = this.ultraHardcore.gameService().ruleService();
-    final Material bucket = event.getBucket();
-    if (bucket == LAVA_BUCKET && !ruleService.isRuleEnabled("lava")) {
-      event.setCancelled(true);
-    }
-  }
-
-  @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-  public void trackCombat(final EntityDamageByEntityEvent event) {
-    if (!(event.getEntity() instanceof final Player victim)) {
-      return;
-    }
-
-    final Player attacker =
-        event.getDamager() instanceof final Player player
-            ? player
-            : event.getDamager() instanceof final Projectile projectile
-                    && projectile.getShooter() instanceof final Player shooter
-                ? shooter
-                : null;
-    if (attacker == null || attacker.equals(victim)) {
-      return;
-    }
-
-    final var profileService = this.ultraHardcore.profileService();
-    final var combatService = this.ultraHardcore.gameService().combatService();
-    combatService.enterCombat(profileService.getOrCreateProfile(attacker));
-    combatService.enterCombat(profileService.getOrCreateProfile(victim));
-  }
-
-  @EventHandler
-  public void onDamage(final EntityDamageByEntityEvent event) {
-    if (!(event.getDamager() instanceof final Player player)
-        || !(event.getEntity() instanceof final Player victim)
-        || event.isCancelled()
-        || victim.getNoDamageTicks() > 10) {
-      return;
-    }
-
-    final var profileService = this.ultraHardcore.profileService();
-    final var attackerProfile = profileService.getOrCreateProfile(player);
-    final var victimProfile = profileService.getOrCreateProfile(victim);
-
-    this.ultraHardcore
-        .eventService()
-        .dispatchEvent(new PlayerDamageByPlayerEvent(attackerProfile, victimProfile, event));
-  }
-
-  @EventHandler
-  public void processOfflineActions(final GameTickEvent event) {
-    for (final var profile :
-        this.ultraHardcore
-            .profileService()
-            .getProfiles(profile -> profile.findPlayer().isPresent())) {
-      final var component = profile.getComponent(OfflineActionComponent.class);
-      if (component == null) {
-        continue;
-      }
-
-      final var poll = component.actions().poll();
-      if (poll == null) {
-        continue;
-      }
-
-      final var player = profile.getPlayer();
-      poll.onJoin(player);
-    }
-  }
-
-  @EventHandler
-  public void processDamageImmunities(final GameTickEvent event) {
-    for (final var profile :
-        this.ultraHardcore
-            .profileService()
-            .getProfiles(profile -> profile.findPlayer().isPresent())) {
-      final var component = profile.getComponent(DamageImmunityComponent.class);
-      if (component == null) {
-        continue;
-      }
-
-      final var iterator = component.immunities().iterator();
-      while (iterator.hasNext()) {
-        final var next = iterator.next();
-        if (next.timeLeft() < 0) {
-          continue;
+        if (!(profile.getState() instanceof PlayingProfileState)) {
+            player.teleport(this.ultraHardcore.worldService().getWorld().getSpawnLocation());
+            player.setGameMode(GameMode.SPECTATOR);
+            SpectatorVisibility.refresh(this.ultraHardcore);
+            return;
         }
 
-        next.timeLeft(next.timeLeft() - 1);
+        SpectatorVisibility.refresh(this.ultraHardcore);
 
-        if (next.timeLeft() > 0) {
-          continue;
+        this.ultraHardcore
+                .gameService()
+                .sendMessage(prefix().append(text("Le joueur "))
+                        .append(text(player.getName(), NamedTextColor.AQUA))
+                        .append(text(" s'est "))
+                        .append(text("reconnecté", NamedTextColor.GREEN))
+                        .append(text('.'))
+                        .build());
+
+        final PlayerInformationComponent informationComponent = profile.getComponent(PlayerInformationComponent.class);
+        if (informationComponent != null) {
+            player.teleport(informationComponent.lastLocation());
+
+            final PlayerInventory inventory = player.getInventory();
+            inventory.setContents(informationComponent.inventory());
+            inventory.setArmorContents(informationComponent.armor());
+
+            player.setFireTicks(informationComponent.fireTicks());
+            player.setFallDistance(informationComponent.fallDistance());
+
+            profile.removeComponent(PlayerInformationComponent.class);
         }
 
-        iterator.remove();
-      }
-    }
-  }
+        final DisconnectComponent component = profile.getComponent(DisconnectComponent.class);
+        if (component == null) {
+            return;
+        }
 
-  @EventHandler
-  public void processDamageImmunity(final EntityDamageEvent event) {
-    if (!(event.getEntity() instanceof final Player player)) {
-      return;
-    }
+        final DisconnectService disconnectService =
+                this.ultraHardcore.gameService().disconnectService();
+        if (disconnectService.strategy() == DisconnectService.Strategy.ONCE) {
+            component.timeLeft(disconnectService.disconnectTime());
+        }
 
-    final var profile = this.ultraHardcore.profileService().getOrCreateProfile(player);
-    if (!profile.hasDamageImmunity(event.getCause())) {
-      return;
+        component.lastLogin(Instant.now());
     }
 
-    event.setCancelled(true);
-  }
+    @EventHandler
+    public void onPlayerQuit(final PlayerQuitEvent event) {
+        event.setQuitMessage(null);
 
-  @EventHandler
-  public void processImmunityUntilNextDamage(final EntityDamageEvent event) {
-    if (!(event.getEntity() instanceof final Player player)) {
-      return;
+        final Player player = event.getPlayer();
+        final Profile profile = this.ultraHardcore.profileService().getOrCreateProfile(player);
+        if (!(profile.getState() instanceof PlayingProfileState)) {
+            return;
+        }
+
+        final DisconnectComponent disconnectComponent = profile.getComponent(DisconnectComponent.class);
+        if (disconnectComponent == null) {
+            return;
+        }
+
+        Bukkit.broadcastMessage(
+                CC.prefix("Le joueur&6 %s&r vient de se&c déconnecter&r. Il dispose de&6 &l%s&r pour se reconnecter"
+                                + " avant d'être&c éliminé&r.")
+                        .formatted(player.getName(), TimeUtil.formatDuration(disconnectComponent.timeLeft() * 1000L)));
+
+        final PlayerInventory inventory = player.getInventory();
+        profile.addComponent(new PlayerInformationComponent(
+                player.getLocation(),
+                inventory.getContents(),
+                inventory.getArmorContents(),
+                Lists.newArrayList(player.getActivePotionEffects()),
+                player.getFireTicks(),
+                player.getFallDistance()));
     }
 
-    final var profile = this.ultraHardcore.profileService().getOrCreateProfile(player);
-    final var cause = event.getCause();
-    if (profile.getDamageImmunityTicks(cause) != Profile.IMMUNITY_UNTIL_NEXT_DAMAGE_TICKS) {
-      return;
+    @EventHandler
+    public void onSitKick(final PlayerKickEvent event) {
+        if (event.getReason().equals("Flying is not enabled on this server") && SitUtil.isSit(event.getPlayer())) {
+            event.setCancelled(true);
+        }
     }
 
-    profile.removeDamageImmunity(cause);
-    event.setCancelled(true);
-  }
+    @EventHandler
+    public void onSuffocationDamage(final EntityDamageEvent event) {
+        if (event.getCause() != SUFFOCATION || !(event.getEntity() instanceof Player)) {
+            return;
+        }
 
-  @EventHandler
-  public void onSpectatorPlayerInteraction(final PlayerInteractAtEntityEvent event) {
-    final Player player = event.getPlayer();
-    final ProfileService profileService = this.ultraHardcore.profileService();
-    final Profile profile = profileService.getOrCreateProfile(player.getUniqueId());
-
-    if (!profile.hasComponent(SpectatorComponent.class)
-        || !(event.getRightClicked() instanceof final Player target)) {
-      return;
+        final GameRuleService ruleService = this.ultraHardcore.gameService().ruleService();
+        final Block block = event.getEntity().getLocation().clone().add(0, 1, 0).getBlock();
+        if (event.getCause() == SUFFOCATION
+                && block.getType() != AIR
+                && block.getType() != BEDROCK
+                && !ruleService.isRuleEnabled("obsidian_trap")) {
+            block.setType(AIR);
+            event.setCancelled(true);
+        }
     }
 
-    new InventoryViewMenu(player, target, profileService.getOrCreateProfile(target)).open();
-  }
-
-  @EventHandler
-  public void onPlayerDeath(final PlayerDeathEvent event) {
-    event.setDeathMessage(null);
-    event.setKeepInventory(true);
-    event.setKeepLevel(true);
-
-    final Player player = event.getEntity();
-
-    final ProfileService profileService = this.ultraHardcore.profileService();
-    final Profile profile = profileService.getOrCreateProfile(player.getUniqueId());
-    if (!(profile.getState() instanceof PlayingProfileState)) {
-      player.spigot().respawn();
-      player.teleport(this.ultraHardcore.worldService().getWorld().getSpawnLocation());
-      return;
+    @EventHandler
+    public void onLavaPickup(final PlayerBucketFillEvent event) {
+        final GameRuleService ruleService = this.ultraHardcore.gameService().ruleService();
+        final Material bucket = event.getItemStack().getType();
+        if (bucket == LAVA_BUCKET && !ruleService.isRuleEnabled("lava")) {
+            event.setCancelled(true);
+        }
     }
 
-    final PlayerInventory inventory = player.getInventory();
-    final Location deathLocation = player.getLocation().clone();
-    profile.addComponent(
-        new PlayerInformationComponent(
-            deathLocation,
-            inventory.getContents(),
-            inventory.getArmorContents(),
-            Lists.newArrayList(player.getActivePotionEffects()),
-            player.getFireTicks(),
-            player.getFallDistance()));
+    @EventHandler
+    public void onLavaPlace(final PlayerBucketEmptyEvent event) {
+        final GameRuleService ruleService = this.ultraHardcore.gameService().ruleService();
+        final Material bucket = event.getBucket();
+        if (bucket == LAVA_BUCKET && !ruleService.isRuleEnabled("lava")) {
+            event.setCancelled(true);
+        }
+    }
 
-    final Player killer = player.getKiller();
-    profile.addComponent(new ProcessingDeathComponent());
-    this.ultraHardcore
-        .gameService()
-        .deathService()
-        .processDeath(
-            new DeathContext(
-                profile,
-                (killer == null ? null : profileService.getOrCreateProfile(killer)),
-                event,
-                deathLocation,
-                false));
-  }
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void trackCombat(final EntityDamageByEntityEvent event) {
+        if (!(event.getEntity() instanceof final Player victim)) {
+            return;
+        }
 
-  @EventHandler
-  public void onDeadDamage(final EntityDamageEvent event) {
-    if (event.getEntity() instanceof final Player player) {
-      final Profile profile = this.ultraHardcore.profileService().getOrCreateProfile(player);
-      if (profile.hasComponent(ProcessingDeathComponent.class)) {
+        final Player attacker = event.getDamager() instanceof final Player player
+                ? player
+                : event.getDamager() instanceof final Projectile projectile
+                                && projectile.getShooter() instanceof final Player shooter
+                        ? shooter
+                        : null;
+        if (attacker == null || attacker.equals(victim)) {
+            return;
+        }
+
+        final var profileService = this.ultraHardcore.profileService();
+        final var combatService = this.ultraHardcore.gameService().combatService();
+        combatService.enterCombat(profileService.getOrCreateProfile(attacker));
+        combatService.enterCombat(profileService.getOrCreateProfile(victim));
+    }
+
+    @EventHandler
+    public void onDamage(final EntityDamageByEntityEvent event) {
+        if (!(event.getDamager() instanceof final Player player)
+                || !(event.getEntity() instanceof final Player victim)
+                || event.isCancelled()
+                || victim.getNoDamageTicks() > 10) {
+            return;
+        }
+
+        final var profileService = this.ultraHardcore.profileService();
+        final var attackerProfile = profileService.getOrCreateProfile(player);
+        final var victimProfile = profileService.getOrCreateProfile(victim);
+
+        this.ultraHardcore
+                .eventService()
+                .dispatchEvent(new PlayerDamageByPlayerEvent(attackerProfile, victimProfile, event));
+    }
+
+    @EventHandler
+    public void processOfflineActions(final GameTickEvent event) {
+        for (final var profile : this.ultraHardcore
+                .profileService()
+                .getProfiles(profile -> profile.findPlayer().isPresent())) {
+            final var component = profile.getComponent(OfflineActionComponent.class);
+            if (component == null) {
+                continue;
+            }
+
+            final var poll = component.actions().poll();
+            if (poll == null) {
+                continue;
+            }
+
+            final var player = profile.getPlayer();
+            poll.onJoin(player);
+        }
+    }
+
+    @EventHandler
+    public void processDamageImmunities(final GameTickEvent event) {
+        for (final var profile : this.ultraHardcore
+                .profileService()
+                .getProfiles(profile -> profile.findPlayer().isPresent())) {
+            final var component = profile.getComponent(DamageImmunityComponent.class);
+            if (component == null) {
+                continue;
+            }
+
+            final var iterator = component.immunities().iterator();
+            while (iterator.hasNext()) {
+                final var next = iterator.next();
+                if (next.timeLeft() < 0) {
+                    continue;
+                }
+
+                next.timeLeft(next.timeLeft() - 1);
+
+                if (next.timeLeft() > 0) {
+                    continue;
+                }
+
+                iterator.remove();
+            }
+        }
+    }
+
+    @EventHandler
+    public void processDamageImmunity(final EntityDamageEvent event) {
+        if (!(event.getEntity() instanceof final Player player)) {
+            return;
+        }
+
+        final var profile = this.ultraHardcore.profileService().getOrCreateProfile(player);
+        if (!profile.hasDamageImmunity(event.getCause())) {
+            return;
+        }
+
         event.setCancelled(true);
-      }
-    }
-  }
-
-  @EventHandler(ignoreCancelled = true)
-  public void onBlockBreak(final BlockBreakEvent event) {
-    final var block = event.getBlock();
-    if (!MINING_STATISTICS.containsKey(block.getType())) {
-      return;
     }
 
-    final Player player = event.getPlayer();
-    final var profile =
-        this.ultraHardcore.profileService().getOrCreateProfile(player.getUniqueId());
-    if (profile == null) {
-      return;
+    @EventHandler
+    public void processImmunityUntilNextDamage(final EntityDamageEvent event) {
+        if (!(event.getEntity() instanceof final Player player)) {
+            return;
+        }
+
+        final var profile = this.ultraHardcore.profileService().getOrCreateProfile(player);
+        final var cause = event.getCause();
+        if (profile.getDamageImmunityTicks(cause) != Profile.IMMUNITY_UNTIL_NEXT_DAMAGE_TICKS) {
+            return;
+        }
+
+        profile.removeDamageImmunity(cause);
+        event.setCancelled(true);
     }
 
-    final var miningComponent = profile.getComponent(ProfileMiningComponent.class);
-    final var blockType = block.getType();
+    @EventHandler
+    public void onSpectatorPlayerInteraction(final PlayerInteractAtEntityEvent event) {
+        final Player player = event.getPlayer();
+        final ProfileService profileService = this.ultraHardcore.profileService();
+        final Profile profile = profileService.getOrCreateProfile(player.getUniqueId());
 
-    boolean limitReached = false;
-    if (blockType == IRON_ORE) {
-      final var ironLimit = OreConfiguration.IRON_LIMIT_OPTION.getValue();
-      if (ironLimit > 0 && miningComponent.getIronMined() >= ironLimit) {
-        limitReached = true;
-      }
-    } else if (blockType == GOLD_ORE) {
-      final var goldLimit = OreConfiguration.GOLD_LIMIT_OPTION.getValue();
-      if (goldLimit > 0 && miningComponent.getGoldMined() >= goldLimit) {
-        limitReached = true;
-      }
-    } else if (blockType == DIAMOND_ORE) {
-      final var diamondLimit = OreConfiguration.DIAMOND_LIMIT_OPTION.getValue();
-      if (diamondLimit > 0 && miningComponent.getDiamondMined() >= diamondLimit) {
-        limitReached = true;
-      }
+        if (!profile.hasComponent(SpectatorComponent.class)
+                || !(event.getRightClicked() instanceof final Player target)) {
+            return;
+        }
+
+        new InventoryViewMenu(player, target, profileService.getOrCreateProfile(target)).open();
     }
 
-    if (limitReached) {
-      if (blockType == DIAMOND_ORE) {
-        player.getInventory().addItem(new ItemStack(Material.GOLD_INGOT, 2));
-        event.setExpToDrop(0);
-        player.giveExp(ThreadLocalRandom.current().nextInt(2, 6));
-      }
+    @EventHandler
+    public void onPlayerDeath(final PlayerDeathEvent event) {
+        event.setDeathMessage(null);
+        event.setKeepInventory(true);
+        event.setKeepLevel(true);
 
-      event.getBlock().setType(AIR);
-      return;
+        final Player player = event.getEntity();
+
+        final ProfileService profileService = this.ultraHardcore.profileService();
+        final Profile profile = profileService.getOrCreateProfile(player.getUniqueId());
+        if (!(profile.getState() instanceof PlayingProfileState)) {
+            player.spigot().respawn();
+            player.teleport(this.ultraHardcore.worldService().getWorld().getSpawnLocation());
+            return;
+        }
+
+        final PlayerInventory inventory = player.getInventory();
+        final Location deathLocation = player.getLocation().clone();
+        profile.addComponent(new PlayerInformationComponent(
+                deathLocation,
+                inventory.getContents(),
+                inventory.getArmorContents(),
+                Lists.newArrayList(player.getActivePotionEffects()),
+                player.getFireTicks(),
+                player.getFallDistance()));
+
+        final Player killer = player.getKiller();
+        profile.addComponent(new ProcessingDeathComponent());
+        this.ultraHardcore
+                .gameService()
+                .deathService()
+                .processDeath(new DeathContext(
+                        profile,
+                        (killer == null ? null : profileService.getOrCreateProfile(killer)),
+                        event,
+                        deathLocation,
+                        false));
     }
 
-    MINING_STATISTICS.get(blockType).accept(miningComponent);
-
-    if (blockType == GOLD_ORE || blockType == DIAMOND_ORE) {
-      this.ultraHardcore
-          .loggerService()
-          .broadcastSpectator(
-              LogCategories.ORE_MINING,
-              "§6"
-                  + player.getName()
-                  + "§f vient de miner §6"
-                  + (blockType == GOLD_ORE ? "de l'or" : "du diamant")
-                  + "§f (§6"
-                  + this.getMinedAmount(miningComponent, blockType)
-                  + "§f au total).",
-              block.getLocation());
+    @EventHandler
+    public void onDeadDamage(final EntityDamageEvent event) {
+        if (event.getEntity() instanceof final Player player) {
+            final Profile profile = this.ultraHardcore.profileService().getOrCreateProfile(player);
+            if (profile.hasComponent(ProcessingDeathComponent.class)) {
+                event.setCancelled(true);
+            }
+        }
     }
 
-    final var oreName = ORE_NAMES.get(blockType);
-    if (oreName != null) {
-      final var limit = ORE_TYPES.get(blockType).getOption().getValue();
-      if (limit > 0) {
-        final var oreColor = oreName.color();
-        profile
-            .getActionbar()
-            .registerActionbarEntry(
-                UltraHardcoreKey.key("ore_mined"),
-                text("Vous venez de miner ")
-                    .append(text(ARTICLES.get(blockType)))
-                    .append(oreName)
-                    .append(text("."))
-                    .appendSpace()
-                    .append(text('(', NamedTextColor.GRAY))
-                    .append(text(this.getMinedAmount(miningComponent, blockType), oreColor))
-                    .append(text('/', NamedTextColor.GRAY))
-                    .append(text(limit, oreColor))
-                    .append(text(')', NamedTextColor.GRAY)),
-                Duration.ofSeconds(3L));
-      }
-    }
-  }
+    @EventHandler(ignoreCancelled = true)
+    public void onBlockBreak(final BlockBreakEvent event) {
+        final var block = event.getBlock();
+        if (!MINING_STATISTICS.containsKey(block.getType())) {
+            return;
+        }
 
-  private int getMinedAmount(final ProfileMiningComponent component, final Material blockType) {
-    if (blockType == IRON_ORE) {
-      return component.getIronMined();
-    } else if (blockType == GOLD_ORE) {
-      return component.getGoldMined();
-    } else {
-      return component.getDiamondMined();
+        final Player player = event.getPlayer();
+        final var profile = this.ultraHardcore.profileService().getOrCreateProfile(player.getUniqueId());
+        if (profile == null) {
+            return;
+        }
+
+        final var miningComponent = profile.getComponent(ProfileMiningComponent.class);
+        final var blockType = block.getType();
+
+        boolean limitReached = false;
+        if (blockType == IRON_ORE) {
+            final var ironLimit = OreConfiguration.IRON_LIMIT_OPTION.getValue();
+            if (ironLimit > 0 && miningComponent.getIronMined() >= ironLimit) {
+                limitReached = true;
+            }
+        } else if (blockType == GOLD_ORE) {
+            final var goldLimit = OreConfiguration.GOLD_LIMIT_OPTION.getValue();
+            if (goldLimit > 0 && miningComponent.getGoldMined() >= goldLimit) {
+                limitReached = true;
+            }
+        } else if (blockType == DIAMOND_ORE) {
+            final var diamondLimit = OreConfiguration.DIAMOND_LIMIT_OPTION.getValue();
+            if (diamondLimit > 0 && miningComponent.getDiamondMined() >= diamondLimit) {
+                limitReached = true;
+            }
+        }
+
+        if (limitReached) {
+            if (blockType == DIAMOND_ORE) {
+                player.getInventory().addItem(new ItemStack(Material.GOLD_INGOT, 2));
+                event.setExpToDrop(0);
+                player.giveExp(ThreadLocalRandom.current().nextInt(2, 6));
+            }
+
+            event.getBlock().setType(AIR);
+            return;
+        }
+
+        MINING_STATISTICS.get(blockType).accept(miningComponent);
+
+        if (blockType == GOLD_ORE || blockType == DIAMOND_ORE) {
+            this.ultraHardcore
+                    .loggerService()
+                    .broadcastSpectator(
+                            LogCategories.ORE_MINING,
+                            "§6"
+                                    + player.getName()
+                                    + "§f vient de miner §6"
+                                    + (blockType == GOLD_ORE ? "de l'or" : "du diamant")
+                                    + "§f (§6"
+                                    + this.getMinedAmount(miningComponent, blockType)
+                                    + "§f au total).",
+                            block.getLocation());
+        }
+
+        final var oreName = ORE_NAMES.get(blockType);
+        if (oreName != null) {
+            final var limit = ORE_TYPES.get(blockType).getOption().getValue();
+            if (limit > 0) {
+                final var oreColor = oreName.color();
+                profile.getActionbar()
+                        .registerActionbarEntry(
+                                UltraHardcoreKey.key("ore_mined"),
+                                text("Vous venez de miner ")
+                                        .append(text(ARTICLES.get(blockType)))
+                                        .append(oreName)
+                                        .append(text("."))
+                                        .appendSpace()
+                                        .append(text('(', NamedTextColor.GRAY))
+                                        .append(text(this.getMinedAmount(miningComponent, blockType), oreColor))
+                                        .append(text('/', NamedTextColor.GRAY))
+                                        .append(text(limit, oreColor))
+                                        .append(text(')', NamedTextColor.GRAY)),
+                                Duration.ofSeconds(3L));
+            }
+        }
     }
-  }
+
+    private int getMinedAmount(final ProfileMiningComponent component, final Material blockType) {
+        if (blockType == IRON_ORE) {
+            return component.getIronMined();
+        } else if (blockType == GOLD_ORE) {
+            return component.getGoldMined();
+        } else {
+            return component.getDiamondMined();
+        }
+    }
 }

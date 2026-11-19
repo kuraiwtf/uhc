@@ -1,7 +1,6 @@
 package dev.kurai.uhc.command.argument.builtin.bukkit;
 
 import dev.kurai.uhc.command.argument.ArgumentResolver;
-import java.util.Collection;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -10,32 +9,32 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Unmodifiable;
 import org.jspecify.annotations.Nullable;
 
-public final class OfflinePlayerArgumentResolver
-    implements ArgumentResolver<@Nullable OfflinePlayer> {
+import java.util.Collection;
 
-  private final BukkitAudiences bukkitAudiences;
+public final class OfflinePlayerArgumentResolver implements ArgumentResolver<@Nullable OfflinePlayer> {
 
-  public OfflinePlayerArgumentResolver(final BukkitAudiences bukkitAudiences) {
-    this.bukkitAudiences = bukkitAudiences;
-  }
+    private final BukkitAudiences bukkitAudiences;
 
-  @Override
-  public @Nullable OfflinePlayer resolve(final CommandSender sender, final String argument) {
-    final var found = Bukkit.getOfflinePlayer(argument);
-    if (sender instanceof final OfflinePlayer player && argument.equalsIgnoreCase("self")) {
-      return player;
+    public OfflinePlayerArgumentResolver(final BukkitAudiences bukkitAudiences) {
+        this.bukkitAudiences = bukkitAudiences;
     }
 
-    return found;
-  }
+    @Override
+    public @Nullable OfflinePlayer resolve(final CommandSender sender, final String argument) {
+        final var found = Bukkit.getOfflinePlayer(argument);
+        if (sender instanceof final OfflinePlayer player && argument.equalsIgnoreCase("self")) {
+            return player;
+        }
 
-  @Override
-  public @Unmodifiable Collection<String> complete(
-      final CommandSender sender, final String argument) {
-    return sender.getServer().getOnlinePlayers().stream()
-        .map(Player::getName)
-        .filter(s -> s.startsWith(argument))
-        .sorted(String.CASE_INSENSITIVE_ORDER)
-        .toList();
-  }
+        return found;
+    }
+
+    @Override
+    public @Unmodifiable Collection<String> complete(final CommandSender sender, final String argument) {
+        return sender.getServer().getOnlinePlayers().stream()
+                .map(Player::getName)
+                .filter(s -> s.startsWith(argument))
+                .sorted(String.CASE_INSENSITIVE_ORDER)
+                .toList();
+    }
 }

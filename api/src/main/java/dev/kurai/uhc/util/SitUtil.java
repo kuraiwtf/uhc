@@ -14,98 +14,96 @@ import dev.kurai.uhc.event.defaults.sit.PlayerSitEvent;
 import dev.kurai.uhc.event.defaults.sit.PlayerUnsitEvent;
 import io.github.retrooper.packetevents.util.SpigotConversionUtil;
 import io.github.retrooper.packetevents.util.SpigotReflectionUtil;
-import java.util.Map;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+
 public final class SitUtil {
 
-  private static final Map<UUID, Integer> SEATS = new ConcurrentHashMap<>();
+    private static final Map<UUID, Integer> SEATS = new ConcurrentHashMap<>();
 
-  public static void sit(final Player player, final Plugin plugin) {
-    sit(player, -1L, plugin);
-  }
-
-  public static void sit(final Player player, final long ticks, final Plugin plugin) {
-    if (isSit(player)) {
-      removeFromSit(player);
+    public static void sit(final Player player, final Plugin plugin) {
+        sit(player, -1L, plugin);
     }
 
-    final var event = new PlayerSitEvent(player, ticks);
-    Bukkit.getPluginManager().callEvent(event);
+    public static void sit(final Player player, final long ticks, final Plugin plugin) {
+        if (isSit(player)) {
+            removeFromSit(player);
+        }
 
-    if (event.isCancelled()) {
-      return;
+        final var event = new PlayerSitEvent(player, ticks);
+        Bukkit.getPluginManager().callEvent(event);
+
+        if (event.isCancelled()) {
+            return;
+        }
+
+        final var fakeEntity = SpigotReflectionUtil.generateEntityId();
+        final var spawnPacket = new WrapperPlayServerSpawnEntity(
+                fakeEntity,
+                UUID.randomUUID(),
+                EntityTypes.ARMOR_STAND,
+                SpigotConversionUtil.fromBukkitLocation(
+                        player.getLocation().clone().add(0, -player.getEyeHeight(), 0)),
+                0F,
+                0,
+                new Vector3d(0, 0, 0));
+
+        final var attachPacket = new WrapperPlayServerAttachEntity(player.getEntityId(), fakeEntity, false);
+
+        final var metadata = Lists.<EntityData<?>>newArrayList();
+        metadata.add(new EntityData<>(0, EntityDataTypes.BYTE, (byte) 0x20));
+
+        final var metadataPacket = new WrapperPlayServerEntityMetadata(fakeEntity, metadata);
+
+        final var playerManager = PacketEvents.getAPI().getPlayerManager();
+        final var user = playerManager.getUser(player);
+        user.sendPacket(spawnPacket);
+        user.sendPacket(attachPacket);
+        user.sendPacket(metadataPacket);
+
+        SEATS.put(player.getUniqueId(), fakeEntity);
+
+        if (event.getDurationInTicks() == -1) {
+            return;
+        }
+
+        Bukkit.getScheduler().runTaskLater(plugin, () -> removeFromSit(player), event.getDurationInTicks());
     }
 
-    final var fakeEntity = SpigotReflectionUtil.generateEntityId();
-    final var spawnPacket =
-        new WrapperPlayServerSpawnEntity(
-            fakeEntity,
-            UUID.randomUUID(),
-            EntityTypes.ARMOR_STAND,
-            SpigotConversionUtil.fromBukkitLocation(
-                player.getLocation().clone().add(0, -player.getEyeHeight(), 0)),
-            0F,
-            0,
-            new Vector3d(0, 0, 0));
+    public static void removeFromSit(final Player player) {
+        if (!isSit(player)) {
+            return;
+        }
 
-    final var attachPacket =
-        new WrapperPlayServerAttachEntity(player.getEntityId(), fakeEntity, false);
+        final var event = new PlayerUnsitEvent(player);
+        Bukkit.getPluginManager().callEvent(event);
 
-    final var metadata = Lists.<EntityData<?>>newArrayList();
-    metadata.add(new EntityData<>(0, EntityDataTypes.BYTE, (byte) 0x20));
+        if (event.isCancelled()) {
+            return;
+        }
 
-    final var metadataPacket = new WrapperPlayServerEntityMetadata(fakeEntity, metadata);
+        final var playerManager = PacketEvents.getAPI().getPlayerManager();
+        final var user = playerManager.getUser(player);
 
-    final var playerManager = PacketEvents.getAPI().getPlayerManager();
-    final var user = playerManager.getUser(player);
-    user.sendPacket(spawnPacket);
-    user.sendPacket(attachPacket);
-    user.sendPacket(metadataPacket);
+        final var detachPacket = new WrapperPlayServerAttachEntity(player.getEntityId(), -1, false);
+        user.sendPacket(detachPacket);
 
-    SEATS.put(player.getUniqueId(), fakeEntity);
-
-    if (event.getDurationInTicks() == -1) {
-      return;
+        final var seat = SEATS.remove(player.getUniqueId());
+        if (seat != null) {
+            user.sendPacket(new WrapperPlayServerDestroyEntities(seat));
+        }
     }
 
-    Bukkit.getScheduler()
-        .runTaskLater(plugin, () -> removeFromSit(player), event.getDurationInTicks());
-  }
-
-  public static void removeFromSit(final Player player) {
-    if (!isSit(player)) {
-      return;
+    public static boolean isSit(final Player player) {
+        return isSit(player.getUniqueId());
     }
 
-    final var event = new PlayerUnsitEvent(player);
-    Bukkit.getPluginManager().callEvent(event);
-
-    if (event.isCancelled()) {
-      return;
+    public static boolean isSit(final UUID uniqueId) {
+        return SEATS.containsKey(uniqueId);
     }
-
-    final var playerManager = PacketEvents.getAPI().getPlayerManager();
-    final var user = playerManager.getUser(player);
-
-    final var detachPacket = new WrapperPlayServerAttachEntity(player.getEntityId(), -1, false);
-    user.sendPacket(detachPacket);
-
-    final var seat = SEATS.remove(player.getUniqueId());
-    if (seat != null) {
-      user.sendPacket(new WrapperPlayServerDestroyEntities(seat));
-    }
-  }
-
-  public static boolean isSit(final Player player) {
-    return isSit(player.getUniqueId());
-  }
-
-  public static boolean isSit(final UUID uniqueId) {
-    return SEATS.containsKey(uniqueId);
-  }
 }

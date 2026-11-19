@@ -7,20 +7,18 @@ import net.j4c0b3y.api.menu.template.Template;
 
 public final class BorderTemplate implements Template {
 
-  private final int primaryColour;
+    private final int primaryColour;
 
-  public BorderTemplate(final int primaryColour) {
-    this.primaryColour = primaryColour;
-  }
-
-  @Override
-  public void apply(final BackgroundLayer background, final ForegroundLayer foreground) {
-    final var size = background.getMenu().getTotalSlots();
-    for (final int i :
-        new int[] {
-          0, 1, 7, 8, 9, 17, size - 18, size - 10, size - 9, size - 8, size - 2, size - 1
-        }) {
-      background.set(i, new GlassButton(this.primaryColour));
+    public BorderTemplate(final int primaryColour) {
+        this.primaryColour = primaryColour;
     }
-  }
+
+    @Override
+    public void apply(final BackgroundLayer background, final ForegroundLayer foreground) {
+        final var size = background.getMenu().getTotalSlots();
+        for (final int i :
+                new int[] {0, 1, 7, 8, 9, 17, size - 18, size - 10, size - 9, size - 8, size - 2, size - 1}) {
+            background.set(i, new GlassButton(this.primaryColour));
+        }
+    }
 }

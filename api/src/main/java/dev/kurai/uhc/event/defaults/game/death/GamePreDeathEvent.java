@@ -12,58 +12,57 @@ import org.jspecify.annotations.Nullable;
 @NullMarked
 public final class GamePreDeathEvent extends Event implements Cancellable {
 
-  private static final HandlerList HANDLERS = new HandlerList();
+    private static final HandlerList HANDLERS = new HandlerList();
 
-  private final Profile victim;
-  private final @Nullable Profile killer;
-  private final DeathContext context;
+    private final Profile victim;
+    private final @Nullable Profile killer;
+    private final DeathContext context;
 
-  private @Nullable Location respawnLocation;
-  private boolean cancelled;
+    private @Nullable Location respawnLocation;
+    private boolean cancelled;
 
-  public GamePreDeathEvent(
-      final Profile victim, final @Nullable Profile killer, final DeathContext context) {
-    this.victim = victim;
-    this.killer = killer;
-    this.context = context;
-  }
+    public GamePreDeathEvent(final Profile victim, final @Nullable Profile killer, final DeathContext context) {
+        this.victim = victim;
+        this.killer = killer;
+        this.context = context;
+    }
 
-  public static HandlerList getHandlerList() {
-    return HANDLERS;
-  }
+    public static HandlerList getHandlerList() {
+        return HANDLERS;
+    }
 
-  public Profile getVictim() {
-    return this.victim;
-  }
+    public Profile getVictim() {
+        return this.victim;
+    }
 
-  public @Nullable Profile getKiller() {
-    return this.killer;
-  }
+    public @Nullable Profile getKiller() {
+        return this.killer;
+    }
 
-  public DeathContext getContext() {
-    return this.context;
-  }
+    public DeathContext getContext() {
+        return this.context;
+    }
 
-  public @Nullable Location getRespawnLocation() {
-    return this.respawnLocation;
-  }
+    public @Nullable Location getRespawnLocation() {
+        return this.respawnLocation;
+    }
 
-  public void setRespawnLocation(final @Nullable Location respawnLocation) {
-    this.respawnLocation = respawnLocation;
-  }
+    public void setRespawnLocation(final @Nullable Location respawnLocation) {
+        this.respawnLocation = respawnLocation;
+    }
 
-  @Override
-  public boolean isCancelled() {
-    return this.cancelled;
-  }
+    @Override
+    public boolean isCancelled() {
+        return this.cancelled;
+    }
 
-  @Override
-  public void setCancelled(final boolean cancelled) {
-    this.cancelled = cancelled;
-  }
+    @Override
+    public void setCancelled(final boolean cancelled) {
+        this.cancelled = cancelled;
+    }
 
-  @Override
-  public HandlerList getHandlers() {
-    return HANDLERS;
-  }
+    @Override
+    public HandlerList getHandlers() {
+        return HANDLERS;
+    }
 }

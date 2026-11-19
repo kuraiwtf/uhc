@@ -4,11 +4,11 @@ import dev.kurai.uhc.game.scenario.configuration.ScenarioConfiguration;
 
 public final class BooleanScenarioConfiguration extends ScenarioConfiguration<Boolean> {
 
-  public BooleanScenarioConfiguration(final String id) {
-    super(id, true);
-  }
+    public BooleanScenarioConfiguration(final String id) {
+        super(id, true);
+    }
 
-  public BooleanScenarioConfiguration(final String id, final boolean value) {
-    super(id, value);
-  }
+    public BooleanScenarioConfiguration(final String id, final boolean value) {
+        super(id, value);
+    }
 }

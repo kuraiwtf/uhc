@@ -1,72 +1,76 @@
 package dev.kurai.uhc.effect;
 
 import dev.kurai.uhc.effect.event.*;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 import org.bukkit.Bukkit;
+
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 public final class EffectHolderImpl implements EffectHolder {
 
-  private final UUID uniqueId;
-  private final Map<String, Effect> effects;
-  private final Collection<Effect> effectsView;
+    private final UUID uniqueId;
+    private final Map<String, Effect> effects;
+    private final Collection<Effect> effectsView;
 
-  public EffectHolderImpl(final UUID uniqueId) {
-    this.uniqueId = uniqueId;
-    this.effects = new ConcurrentHashMap<>();
-    this.effectsView = Collections.unmodifiableCollection(this.effects.values());
-  }
-
-  @Override
-  public Collection<Effect> effects() {
-    return this.effectsView;
-  }
-
-  @Override
-  public void validateEffects() {
-    for (final Effect effect : this.effects.values()) {
-      if (effect.isExpired()) {
-        this.removeEffect(effect.key());
-      }
+    public EffectHolderImpl(final UUID uniqueId) {
+        this.uniqueId = uniqueId;
+        this.effects = new ConcurrentHashMap<>();
+        this.effectsView = Collections.unmodifiableCollection(this.effects.values());
     }
 
-    Bukkit.getPluginManager().callEvent(new EffectValidateEvent(this.uniqueId));
-  }
-
-  @Override
-  public void addEffect(final Effect effect) {
-    final EffectPreAddEvent preAddEvent = new EffectPreAddEvent(this.uniqueId, effect);
-    Bukkit.getPluginManager().callEvent(preAddEvent);
-    if (preAddEvent.isCancelled()) {
-      return;
+    @Override
+    public Collection<Effect> effects() {
+        return this.effectsView;
     }
 
-    this.effects.put(effect.key(), effect);
-    Bukkit.getPluginManager().callEvent(new EffectPostAddEvent(this.uniqueId, effect));
-  }
+    @Override
+    public void validateEffects() {
+        for (final Effect effect : this.effects.values()) {
+            if (effect.isExpired()) {
+                this.removeEffect(effect.key());
+            }
+        }
 
-  @Override
-  public void removeEffect(final String key) {
-    final Effect effect = this.effects.get(key);
-    if (effect == null) {
-      return;
+        Bukkit.getPluginManager().callEvent(new EffectValidateEvent(this.uniqueId));
     }
 
-    final EffectPreRemoveEvent preRemoveEvent = new EffectPreRemoveEvent(this.uniqueId, effect);
-    Bukkit.getPluginManager().callEvent(preRemoveEvent);
-    if (preRemoveEvent.isCancelled()) {
-      return;
+    @Override
+    public void addEffect(final Effect effect) {
+        final EffectPreAddEvent preAddEvent = new EffectPreAddEvent(this.uniqueId, effect);
+        Bukkit.getPluginManager().callEvent(preAddEvent);
+        if (preAddEvent.isCancelled()) {
+            return;
+        }
+
+        this.effects.put(effect.key(), effect);
+        Bukkit.getPluginManager().callEvent(new EffectPostAddEvent(this.uniqueId, effect));
     }
 
-    this.effects.remove(key);
-    Bukkit.getPluginManager().callEvent(new EffectPostRemoveEvent(this.uniqueId, effect));
-  }
+    @Override
+    public void removeEffect(final String key) {
+        final Effect effect = this.effects.get(key);
+        if (effect == null) {
+            return;
+        }
 
-  @Override
-  public double getEffectValue(final EffectType effectType) {
-    return this.effectsView.stream()
-        .filter(effect -> effect.type() == effectType)
-        .mapToDouble(Effect::value)
-        .sum();
-  }
+        final EffectPreRemoveEvent preRemoveEvent = new EffectPreRemoveEvent(this.uniqueId, effect);
+        Bukkit.getPluginManager().callEvent(preRemoveEvent);
+        if (preRemoveEvent.isCancelled()) {
+            return;
+        }
+
+        this.effects.remove(key);
+        Bukkit.getPluginManager().callEvent(new EffectPostRemoveEvent(this.uniqueId, effect));
+    }
+
+    @Override
+    public double getEffectValue(final EffectType effectType) {
+        return this.effectsView.stream()
+                .filter(effect -> effect.type() == effectType)
+                .mapToDouble(Effect::value)
+                .sum();
+    }
 }

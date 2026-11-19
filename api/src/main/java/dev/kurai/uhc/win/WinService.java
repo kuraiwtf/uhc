@@ -2,11 +2,11 @@ package dev.kurai.uhc.win;
 
 public interface WinService {
 
-  WinCelebration winCelebration();
+    WinCelebration winCelebration();
 
-  void installWinCelebration(final WinCelebration winCelebration);
+    void installWinCelebration(final WinCelebration winCelebration);
 
-  WinCondition winCondition();
+    WinCondition winCondition();
 
-  void installWinCondition(final WinCondition winCondition);
+    void installWinCondition(final WinCondition winCondition);
 }

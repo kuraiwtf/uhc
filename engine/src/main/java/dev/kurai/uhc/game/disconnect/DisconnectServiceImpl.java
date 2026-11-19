@@ -16,55 +16,54 @@ import org.bukkit.scheduler.BukkitTask;
 @Setter
 public final class DisconnectServiceImpl implements DisconnectService {
 
-  private final UltraHardcoreAPI ultraHardcore;
+    private final UltraHardcoreAPI ultraHardcore;
 
-  @Getter(AccessLevel.NONE)
-  @Setter(AccessLevel.NONE)
-  private BukkitTask task;
+    @Getter(AccessLevel.NONE)
+    @Setter(AccessLevel.NONE)
+    private BukkitTask task;
 
-  private int disconnectTime = 15 * 60;
-  private Strategy strategy = Strategy.CUMULATIVE;
+    private int disconnectTime = 15 * 60;
+    private Strategy strategy = Strategy.CUMULATIVE;
 
-  @Override
-  public void start() {
-    this.stop();
-    this.task =
-        Bukkit.getScheduler()
-            .runTaskTimer(
-            this.ultraHardcore.plugin(),
-            () -> {
-              if (this.strategy == Strategy.DISABLED) {
-                return;
-              }
+    @Override
+    public void start() {
+        this.stop();
+        this.task = Bukkit.getScheduler()
+                .runTaskTimer(
+                        this.ultraHardcore.plugin(),
+                        () -> {
+                            if (this.strategy == Strategy.DISABLED) {
+                                return;
+                            }
 
-              for (final Profile profile :
-                  this.ultraHardcore
-                      .profileService()
-                      .getProfiles(
-                          profile ->
-                              profile.getState() instanceof PlayingProfileState
-                                  && profile.findPlayer().isEmpty())) {
-                final DisconnectComponent disconnectComponent =
-                    profile.getComponent(DisconnectComponent.class);
-                if (disconnectComponent == null) {
-                  continue;
-                }
+                            for (final Profile profile : this.ultraHardcore
+                                    .profileService()
+                                    .getProfiles(profile -> profile.getState() instanceof PlayingProfileState
+                                            && profile.findPlayer().isEmpty())) {
+                                final DisconnectComponent disconnectComponent =
+                                        profile.getComponent(DisconnectComponent.class);
+                                if (disconnectComponent == null) {
+                                    continue;
+                                }
 
-                disconnectComponent.timeLeft(disconnectComponent.timeLeft() - 1);
-                if (disconnectComponent.timeLeft() <= 0) {
-                  this.ultraHardcore.gameService().deathService().eliminate(profile, null, true);
-                }
-              }
-            },
-            0,
-            20L);
-  }
-
-  @Override
-  public void stop() {
-    if (this.task != null) {
-      this.task.cancel();
-      this.task = null;
+                                disconnectComponent.timeLeft(disconnectComponent.timeLeft() - 1);
+                                if (disconnectComponent.timeLeft() <= 0) {
+                                    this.ultraHardcore
+                                            .gameService()
+                                            .deathService()
+                                            .eliminate(profile, null, true);
+                                }
+                            }
+                        },
+                        0,
+                        20L);
     }
-  }
+
+    @Override
+    public void stop() {
+        if (this.task != null) {
+            this.task.cancel();
+            this.task = null;
+        }
+    }
 }

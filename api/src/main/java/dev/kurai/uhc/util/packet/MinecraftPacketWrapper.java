@@ -6,14 +6,14 @@ import org.bukkit.entity.Player;
 
 final class MinecraftPacketWrapper implements PacketWrapper {
 
-  private final Packet<?> packet;
+    private final Packet<?> packet;
 
-  MinecraftPacketWrapper(final Packet<?> packet) {
-    this.packet = packet;
-  }
+    MinecraftPacketWrapper(final Packet<?> packet) {
+        this.packet = packet;
+    }
 
-  @Override
-  public void send(final Player player) {
-    ((CraftPlayer) player).getHandle().playerConnection.sendPacket(this.packet);
-  }
+    @Override
+    public void send(final Player player) {
+        ((CraftPlayer) player).getHandle().playerConnection.sendPacket(this.packet);
+    }
 }

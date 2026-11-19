@@ -1,28 +1,31 @@
 package dev.kurai.uhc.scoreboard.sidebar;
 
-import java.util.UUID;
 import org.jspecify.annotations.Nullable;
+
+import java.util.UUID;
 
 public interface SidebarService {
 
-  @Nullable SidebarTitleAdapter getTitleAdapter();
+    @Nullable
+    SidebarTitleAdapter getTitleAdapter();
 
-  void installTitleAdapter(final @Nullable SidebarTitleAdapter titleAdapter);
+    void installTitleAdapter(final @Nullable SidebarTitleAdapter titleAdapter);
 
-  @Nullable SidebarAdapter getAdapter();
+    @Nullable
+    SidebarAdapter getAdapter();
 
-  void installAdapter(final @Nullable SidebarAdapter adapter);
+    void installAdapter(final @Nullable SidebarAdapter adapter);
 
-  default void install(final SidebarTitleAdapter titleAdapter, final SidebarAdapter adapter) {
-    this.installTitleAdapter(titleAdapter);
-    this.installAdapter(adapter);
-  }
+    default void install(final SidebarTitleAdapter titleAdapter, final SidebarAdapter adapter) {
+        this.installTitleAdapter(titleAdapter);
+        this.installAdapter(adapter);
+    }
 
-  void createScoreboard(final UUID uniqueId);
+    void createScoreboard(final UUID uniqueId);
 
-  void destroyScoreboard(final UUID uniqueId);
+    void destroyScoreboard(final UUID uniqueId);
 
-  boolean hasScoreboard(final UUID uniqueId);
+    boolean hasScoreboard(final UUID uniqueId);
 
-  Sidebar getSidebar(final UUID uniqueId);
+    Sidebar getSidebar(final UUID uniqueId);
 }

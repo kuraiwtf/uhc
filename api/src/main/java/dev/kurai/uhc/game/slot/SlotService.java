@@ -2,7 +2,7 @@ package dev.kurai.uhc.game.slot;
 
 public interface SlotService {
 
-  SlotProvider slotProvider();
+    SlotProvider slotProvider();
 
-  void slotProvider(final SlotProvider slotProvider);
+    void slotProvider(final SlotProvider slotProvider);
 }

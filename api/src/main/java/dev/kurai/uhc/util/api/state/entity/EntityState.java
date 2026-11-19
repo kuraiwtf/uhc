@@ -4,10 +4,10 @@ import dev.kurai.uhc.util.api.state.State;
 
 public interface EntityState<E> extends State {
 
-  @Override
-  String getId();
+    @Override
+    String getId();
 
-  void onEntry(final E entity);
+    void onEntry(final E entity);
 
-  void onExit(final E entity);
+    void onExit(final E entity);
 }

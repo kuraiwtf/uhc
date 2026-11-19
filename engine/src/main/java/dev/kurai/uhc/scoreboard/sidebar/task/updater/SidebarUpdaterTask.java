@@ -6,40 +6,40 @@ import org.bukkit.Bukkit;
 
 public final class SidebarUpdaterTask implements Runnable {
 
-  private final SidebarService sidebarService;
+    private final SidebarService sidebarService;
 
-  public SidebarUpdaterTask(final SidebarService sidebarService) {
-    this.sidebarService = sidebarService;
-  }
-
-  @Override
-  public void run() {
-    final var titleAdapter = this.sidebarService.getTitleAdapter();
-    final var adapter = this.sidebarService.getAdapter();
-
-    if (adapter == null || titleAdapter == null) {
-      return;
+    public SidebarUpdaterTask(final SidebarService sidebarService) {
+        this.sidebarService = sidebarService;
     }
 
-    for (final var player : Bukkit.getServer().getOnlinePlayers()) {
-      final var sidebar = this.sidebarService.getSidebar(player.getUniqueId());
-      if (sidebar == null) {
-        continue;
-      }
+    @Override
+    public void run() {
+        final var titleAdapter = this.sidebarService.getTitleAdapter();
+        final var adapter = this.sidebarService.getAdapter();
 
-      sidebar.editTitle(titleAdapter.provideTitle(player));
+        if (adapter == null || titleAdapter == null) {
+            return;
+        }
 
-      int score = 15;
-      final var providedLines = adapter.provideLines(player);
-      final var activeScores = Sets.<Integer>newHashSet();
+        for (final var player : Bukkit.getServer().getOnlinePlayers()) {
+            final var sidebar = this.sidebarService.getSidebar(player.getUniqueId());
+            if (sidebar == null) {
+                continue;
+            }
 
-      for (final var entry : providedLines) {
-        activeScores.add(score);
-        sidebar.overrideLine(score--, entry);
-      }
+            sidebar.editTitle(titleAdapter.provideTitle(player));
 
-      sidebar.trimLines(activeScores);
-      sidebar.send();
+            int score = 15;
+            final var providedLines = adapter.provideLines(player);
+            final var activeScores = Sets.<Integer>newHashSet();
+
+            for (final var entry : providedLines) {
+                activeScores.add(score);
+                sidebar.overrideLine(score--, entry);
+            }
+
+            sidebar.trimLines(activeScores);
+            sidebar.send();
+        }
     }
-  }
 }

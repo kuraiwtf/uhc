@@ -11,19 +11,16 @@ import org.jspecify.annotations.NullMarked;
 @NullMarked
 public interface RestrictionStrategy {
 
-  @Contract(pure = true)
-  static RestrictionStrategy onUse() {
-    return PowerRestriction::onUse;
-  }
+    @Contract(pure = true)
+    static RestrictionStrategy onUse() {
+        return PowerRestriction::onUse;
+    }
 
-  static RestrictionStrategy delayed(final int delayTicks) {
-    return (restriction, power, player) ->
-        Bukkit.getScheduler()
-            .runTaskLater(
-                UltraHardcoreAPI.getInstance().plugin(),
-                () -> restriction.onUse(power, player),
-                delayTicks);
-  }
+    static RestrictionStrategy delayed(final int delayTicks) {
+        return (restriction, power, player) -> Bukkit.getScheduler()
+                .runTaskLater(
+                        UltraHardcoreAPI.getInstance().plugin(), () -> restriction.onUse(power, player), delayTicks);
+    }
 
-  void apply(final PowerRestriction restriction, final AbstractPower power, final Player player);
+    void apply(final PowerRestriction restriction, final AbstractPower power, final Player player);
 }

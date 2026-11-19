@@ -2,21 +2,21 @@ package dev.kurai.uhc.game.disconnect;
 
 public interface DisconnectService {
 
-  int disconnectTime();
+    int disconnectTime();
 
-  void disconnectTime(final int disconnectTime);
+    void disconnectTime(final int disconnectTime);
 
-  Strategy strategy();
+    Strategy strategy();
 
-  void strategy(final Strategy strategy);
+    void strategy(final Strategy strategy);
 
-  void start();
+    void start();
 
-  void stop();
+    void stop();
 
-  enum Strategy {
-    DISABLED,
-    ONCE,
-    CUMULATIVE
-  }
+    enum Strategy {
+        DISABLED,
+        ONCE,
+        CUMULATIVE
+    }
 }

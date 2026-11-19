@@ -4,11 +4,6 @@ import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.event.defaults.game.CycleChangeEvent;
 import dev.kurai.uhc.game.cycle.builtin.DayCycle;
 import dev.kurai.uhc.game.cycle.builtin.NightCycle;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-
 import dev.kurai.uhc.module.role.AbstractRole;
 import dev.kurai.uhc.module.role.RoleComponent;
 import dev.kurai.uhc.profile.Profile;
@@ -18,171 +13,175 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+
 @Getter
 @Setter
 public final class CycleServiceImpl implements CycleService {
 
-  private final LinkedList<AbstractCycle> phases = new LinkedList<>();
-  private final UltraHardcoreAPI ultraHardcore;
-  private boolean enabled;
-  private int totalCycleDuration = 10 * 60;
-  private int currentIndex = 0;
-  private int currentCycleDuration = 0;
-  private BukkitTask currentTask = null;
+    private final LinkedList<AbstractCycle> phases = new LinkedList<>();
+    private final UltraHardcoreAPI ultraHardcore;
+    private boolean enabled;
+    private int totalCycleDuration = 10 * 60;
+    private int currentIndex = 0;
+    private int currentCycleDuration = 0;
+    private BukkitTask currentTask = null;
 
-  public CycleServiceImpl(final UltraHardcoreAPI ultraHardcore) {
-    this.ultraHardcore = ultraHardcore;
-    this.registerCycle(new DayCycle(ultraHardcore));
-    this.registerCycle(new NightCycle(ultraHardcore));
-  }
-
-  @Override
-  public void start() {
-    if (!this.enabled || this.phases.isEmpty()) {
-      return;
+    public CycleServiceImpl(final UltraHardcoreAPI ultraHardcore) {
+        this.ultraHardcore = ultraHardcore;
+        this.registerCycle(new DayCycle(ultraHardcore));
+        this.registerCycle(new NightCycle(ultraHardcore));
     }
 
-    this.currentCycleDuration = (this.totalCycleDuration / this.phases.size()) * 20;
-    this.runCycle(0);
-  }
+    @Override
+    public void start() {
+        if (!this.enabled || this.phases.isEmpty()) {
+            return;
+        }
 
-  private void runCycle(final int index) {
-    this.runCycle(index, null);
-  }
-
-  private void runCycle(final int index, final AbstractCycle previousCycle) {
-    if (!this.enabled) {
-      return;
+        this.currentCycleDuration = (this.totalCycleDuration / this.phases.size()) * 20;
+        this.runCycle(0);
     }
 
-    final var phaseList = List.copyOf(this.phases);
-    final var cycle = phaseList.get(index);
-
-    final var event = new CycleChangeEvent(previousCycle, cycle);
-    Bukkit.getPluginManager().callEvent(event);
-    if (event.isCancelled()) {
-      return;
+    private void runCycle(final int index) {
+        this.runCycle(index, null);
     }
 
-    this.currentIndex = index;
-    cycle.onStart();
+    private void runCycle(final int index, final AbstractCycle previousCycle) {
+        if (!this.enabled) {
+            return;
+        }
 
-    for (final Profile profile : this.ultraHardcore.profileService().getPlayingProfiles()) {
-      final Player player = profile.getPlayer();
-      final RoleComponent roleComponent = profile.getComponent(RoleComponent.class);
-      if (player != null && roleComponent != null) {
-        final AbstractRole role = roleComponent.role();
-        role.onCycle(player, cycle);
-      }
+        final var phaseList = List.copyOf(this.phases);
+        final var cycle = phaseList.get(index);
+
+        final var event = new CycleChangeEvent(previousCycle, cycle);
+        Bukkit.getPluginManager().callEvent(event);
+        if (event.isCancelled()) {
+            return;
+        }
+
+        this.currentIndex = index;
+        cycle.onStart();
+
+        for (final Profile profile : this.ultraHardcore.profileService().getPlayingProfiles()) {
+            final Player player = profile.getPlayer();
+            final RoleComponent roleComponent = profile.getComponent(RoleComponent.class);
+            if (player != null && roleComponent != null) {
+                final AbstractRole role = roleComponent.role();
+                role.onCycle(player, cycle);
+            }
+        }
+
+        this.currentTask = Bukkit.getScheduler()
+                .runTaskLater(
+                        this.ultraHardcore.plugin(),
+                        () -> {
+                            cycle.onStop();
+                            final int next = (index + 1) % phaseList.size();
+                            this.runCycle(next, cycle);
+                        },
+                        this.currentCycleDuration);
     }
 
-    this.currentTask =
-        Bukkit.getScheduler()
-            .runTaskLater(
-                this.ultraHardcore.plugin(),
-                () -> {
-                  cycle.onStop();
-                  final int next = (index + 1) % phaseList.size();
-                  this.runCycle(next, cycle);
-                },
-                this.currentCycleDuration);
-  }
-
-  @Override
-  public void stop() {
-    if (this.currentTask != null) {
-      this.currentTask.cancel();
-      this.currentTask = null;
-    }
-  }
-
-  @Override
-  public void skipCycleTo(final AbstractCycle target) {
-    if (this.currentTask == null || !this.enabled) {
-      return;
+    @Override
+    public void stop() {
+        if (this.currentTask != null) {
+            this.currentTask.cancel();
+            this.currentTask = null;
+        }
     }
 
-    final List<AbstractCycle> phaseList = List.copyOf(this.phases);
-    final int targetIndex = phaseList.indexOf(target);
-    if (targetIndex == -1) {
-      throw new IllegalArgumentException("Cycle not found: " + target.getId());
+    @Override
+    public void skipCycleTo(final AbstractCycle target) {
+        if (this.currentTask == null || !this.enabled) {
+            return;
+        }
+
+        final List<AbstractCycle> phaseList = List.copyOf(this.phases);
+        final int targetIndex = phaseList.indexOf(target);
+        if (targetIndex == -1) {
+            throw new IllegalArgumentException("Cycle not found: " + target.getId());
+        }
+
+        final AbstractCycle current = phaseList.get(this.currentIndex);
+
+        this.currentTask.cancel();
+        this.currentTask = null;
+
+        current.onSkip();
+
+        this.runCycle(targetIndex, current);
     }
 
-    final AbstractCycle current = phaseList.get(this.currentIndex);
+    @Override
+    public void skipCycle() {
+        if (this.currentTask == null || !this.enabled) {
+            return;
+        }
 
-    this.currentTask.cancel();
-    this.currentTask = null;
+        final List<AbstractCycle> phaseList = List.copyOf(this.phases);
+        final AbstractCycle current = phaseList.get(this.currentIndex);
 
-    current.onSkip();
+        this.currentTask.cancel();
+        this.currentTask = null;
 
-    this.runCycle(targetIndex, current);
-  }
+        current.onSkip();
 
-  @Override
-  public void skipCycle() {
-    if (this.currentTask == null || !this.enabled) {
-      return;
+        final int next = (this.currentIndex + 1) % phaseList.size();
+        this.runCycle(next, current);
     }
 
-    final List<AbstractCycle> phaseList = List.copyOf(this.phases);
-    final AbstractCycle current = phaseList.get(this.currentIndex);
-
-    this.currentTask.cancel();
-    this.currentTask = null;
-
-    current.onSkip();
-
-    final int next = (this.currentIndex + 1) % phaseList.size();
-    this.runCycle(next, current);
-  }
-
-  @Override
-  public Collection<AbstractCycle> getPhases() {
-    return Collections.unmodifiableList(this.phases);
-  }
-
-  @Override
-  public void clearPhases() {
-    this.phases.clear();
-  }
-
-  @Override
-  public void registerCycle(final AbstractCycle cycle) {
-    this.phases.add(cycle);
-  }
-
-  @Override
-  public void registerCycle(final int index, final AbstractCycle cycle) {
-    this.phases.add(index, cycle);
-  }
-
-  @Override
-  public void registerCycleBefore(final AbstractCycle from, final AbstractCycle cycle) {
-    final var index = this.phases.indexOf(from);
-    if (index == -1) {
-      throw new IllegalArgumentException("Cycle not found: " + from.getId());
+    @Override
+    public Collection<AbstractCycle> getPhases() {
+        return Collections.unmodifiableList(this.phases);
     }
 
-    this.phases.add(index, cycle);
-  }
-
-  @Override
-  public void registerCycleAfter(final AbstractCycle from, final AbstractCycle cycle) {
-    final var index = this.phases.indexOf(from);
-    if (index == -1) {
-      throw new IllegalArgumentException("Cycle not found: " + from.getId());
+    @Override
+    public void clearPhases() {
+        this.phases.clear();
     }
 
-    this.phases.add(index + 1, cycle);
-  }
+    @Override
+    public void registerCycle(final AbstractCycle cycle) {
+        this.phases.add(cycle);
+    }
 
-  @Override
-  public void unregisterCycle(final String id) {
-    this.phases.removeIf(cycle -> cycle.getId().equals(id));
-  }
+    @Override
+    public void registerCycle(final int index, final AbstractCycle cycle) {
+        this.phases.add(index, cycle);
+    }
 
-  @Override
-  public boolean hasPhase(final String id) {
-    return this.phases.stream().anyMatch(cycle -> cycle.getId().equals(id));
-  }
+    @Override
+    public void registerCycleBefore(final AbstractCycle from, final AbstractCycle cycle) {
+        final var index = this.phases.indexOf(from);
+        if (index == -1) {
+            throw new IllegalArgumentException("Cycle not found: " + from.getId());
+        }
+
+        this.phases.add(index, cycle);
+    }
+
+    @Override
+    public void registerCycleAfter(final AbstractCycle from, final AbstractCycle cycle) {
+        final var index = this.phases.indexOf(from);
+        if (index == -1) {
+            throw new IllegalArgumentException("Cycle not found: " + from.getId());
+        }
+
+        this.phases.add(index + 1, cycle);
+    }
+
+    @Override
+    public void unregisterCycle(final String id) {
+        this.phases.removeIf(cycle -> cycle.getId().equals(id));
+    }
+
+    @Override
+    public boolean hasPhase(final String id) {
+        return this.phases.stream().anyMatch(cycle -> cycle.getId().equals(id));
+    }
 }

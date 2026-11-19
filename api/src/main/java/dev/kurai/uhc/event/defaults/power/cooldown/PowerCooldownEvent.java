@@ -12,17 +12,16 @@ import org.jspecify.annotations.Nullable;
 @RequiredArgsConstructor
 public class PowerCooldownEvent extends Event {
 
-  private static final HandlerList HANDLERS = new HandlerList();
+    private static final HandlerList HANDLERS = new HandlerList();
+    private final @Nullable Player player;
+    private final CooldownPowerRestriction restriction;
 
-  public static HandlerList getHandlerList() {
-    return HANDLERS;
-  }
+    public static HandlerList getHandlerList() {
+        return HANDLERS;
+    }
 
-  private final @Nullable Player player;
-  private final CooldownPowerRestriction restriction;
-
-  @Override
-  public HandlerList getHandlers() {
-    return HANDLERS;
-  }
+    @Override
+    public HandlerList getHandlers() {
+        return HANDLERS;
+    }
 }

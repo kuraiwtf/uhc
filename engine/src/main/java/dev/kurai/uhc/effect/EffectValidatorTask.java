@@ -6,19 +6,19 @@ import dev.kurai.uhc.profile.ProfileService;
 
 public final class EffectValidatorTask implements Runnable {
 
-  private final ProfileService profileService;
+    private final ProfileService profileService;
 
-  public EffectValidatorTask(final ProfileService profileService) {
-    this.profileService = profileService;
-  }
-
-  @Override
-  public void run() {
-    for (final Profile profile : this.profileService.getProfiles()) {
-      final EffectHoldingComponent component = profile.getComponent(EffectHoldingComponent.class);
-      if (component != null) {
-        component.holder().validateEffects();
-      }
+    public EffectValidatorTask(final ProfileService profileService) {
+        this.profileService = profileService;
     }
-  }
+
+    @Override
+    public void run() {
+        for (final Profile profile : this.profileService.getProfiles()) {
+            final EffectHoldingComponent component = profile.getComponent(EffectHoldingComponent.class);
+            if (component != null) {
+                component.holder().validateEffects();
+            }
+        }
+    }
 }

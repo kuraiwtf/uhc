@@ -6,5 +6,5 @@ import org.bukkit.entity.Player;
 @FunctionalInterface
 public interface SidebarTitleAdapter {
 
-  Component provideTitle(final Player player);
+    Component provideTitle(final Player player);
 }

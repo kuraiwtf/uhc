@@ -1,50 +1,53 @@
 package dev.kurai.uhc.util.api.cache;
 
 import dev.kurai.uhc.util.api.Identifiable;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.function.Predicate;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.UnmodifiableView;
 import org.jspecify.annotations.Nullable;
 
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.function.Predicate;
+
 public interface Cache<O, T extends Identifiable<O>> extends Iterable<T> {
 
-  @UnmodifiableView
-  Collection<T> findAll();
+    @UnmodifiableView
+    Collection<T> findAll();
 
-  T insert(final O id, final T entity);
+    T insert(final O id, final T entity);
 
-  @ApiStatus.NonExtendable
-  default T insert(final T entity) {
-    return this.insert(entity.getId(), entity);
-  }
+    @ApiStatus.NonExtendable
+    default T insert(final T entity) {
+        return this.insert(entity.getId(), entity);
+    }
 
-  void deleteById(final O id);
+    void deleteById(final O id);
 
-  @ApiStatus.NonExtendable
-  default void delete(final T entity) {
-    this.deleteById(entity.getId());
-  }
+    @ApiStatus.NonExtendable
+    default void delete(final T entity) {
+        this.deleteById(entity.getId());
+    }
 
-  void deleteAll();
+    void deleteAll();
 
-  @UnmodifiableView
-  Collection<T> findAll(final Predicate<? super T> filter);
+    @UnmodifiableView
+    Collection<T> findAll(final Predicate<? super T> filter);
 
-  @Nullable T findById(final O id);
+    @Nullable
+    T findById(final O id);
 
-  @Nullable T findBy(final Predicate<? super T> filter);
+    @Nullable
+    T findBy(final Predicate<? super T> filter);
 
-  boolean existsById(final O id);
+    boolean existsById(final O id);
 
-  boolean exists(final Predicate<? super T> filter);
+    boolean exists(final Predicate<? super T> filter);
 
-  @ApiStatus.NonExtendable
-  default boolean exists(final T entity) {
-    return this.existsById(entity.getId());
-  }
+    @ApiStatus.NonExtendable
+    default boolean exists(final T entity) {
+        return this.existsById(entity.getId());
+    }
 
-  @Override
-  Iterator<T> iterator();
+    @Override
+    Iterator<T> iterator();
 }

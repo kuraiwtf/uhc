@@ -6,25 +6,22 @@ import org.bukkit.entity.Player;
 
 public final class Skin {
 
-  private String value = "";
-  private String signature = "";
+    private String value = "";
+    private String signature = "";
 
-  public Skin(final Player player) {
-    final GameProfile gameProfile = ((CraftPlayer) player).getHandle().getProfile();
-    gameProfile.getProperties().get("textures").stream()
-        .findAny()
-        .ifPresent(
-            property -> {
-              this.value = property.getValue();
-              this.signature = property.getSignature();
-            });
-  }
+    public Skin(final Player player) {
+        final GameProfile gameProfile = ((CraftPlayer) player).getHandle().getProfile();
+        gameProfile.getProperties().get("textures").stream().findAny().ifPresent(property -> {
+            this.value = property.getValue();
+            this.signature = property.getSignature();
+        });
+    }
 
-  public String getSkinValue() {
-    return this.value;
-  }
+    public String getSkinValue() {
+        return this.value;
+    }
 
-  public String getSkinSignature() {
-    return this.signature;
-  }
+    public String getSkinSignature() {
+        return this.signature;
+    }
 }

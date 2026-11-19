@@ -11,27 +11,24 @@ import org.jspecify.annotations.NullMarked;
 
 @NullMarked
 @Command(
-    @CommandMeta(
-        name = "uhc",
-        aliases = {"rules", "regles"},
-        description = "uhc.command.rules.description"))
+        @CommandMeta(
+                name = "uhc",
+                aliases = {"rules", "regles"},
+                description = "uhc.command.rules.description"))
 public final class UltraHardcoreCommand {
 
-  private final UltraHardcoreAPI ultraHardcore;
+    private final UltraHardcoreAPI ultraHardcore;
 
-  public UltraHardcoreCommand(final UltraHardcoreAPI ultraHardcore) {
-    this.ultraHardcore = ultraHardcore;
-  }
+    public UltraHardcoreCommand(final UltraHardcoreAPI ultraHardcore) {
+        this.ultraHardcore = ultraHardcore;
+    }
 
-  @DefaultCommand
-  public void rules(final Player player) {
-    new RulesViewMenu(player, this.ultraHardcore).open();
-  }
+    @DefaultCommand
+    public void rules(final Player player) {
+        new RulesViewMenu(player, this.ultraHardcore).open();
+    }
 
-  @SubCommand(
-      @CommandMeta(
-          name = "loadtexts",
-          permission = "uhc.command.loadtexts",
-          description = "Charge les textes"))
-  public void loadTexts(final Player player) {}
+    @SubCommand(
+            @CommandMeta(name = "loadtexts", permission = "uhc.command.loadtexts", description = "Charge les textes"))
+    public void loadTexts(final Player player) {}
 }

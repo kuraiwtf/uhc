@@ -4,13 +4,13 @@ import dev.kurai.uhc.profile.Profile;
 
 public final class DeadProfileState extends ProfileState {
 
-  public DeadProfileState() {
-    super("dead");
-  }
+    public DeadProfileState() {
+        super("dead");
+    }
 
-  @Override
-  public void onEntry(final Profile profile) {}
+    @Override
+    public void onEntry(final Profile profile) {}
 
-  @Override
-  public void onExit(final Profile profile) {}
+    @Override
+    public void onExit(final Profile profile) {}
 }

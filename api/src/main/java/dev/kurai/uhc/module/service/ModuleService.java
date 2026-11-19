@@ -5,9 +5,9 @@ import dev.kurai.uhc.module.command.ModuleCommandProvider;
 
 public interface ModuleService {
 
-  void installModule(final AbstractModule module);
+    void installModule(final AbstractModule module);
 
-  AbstractModule getCurrentModule();
+    AbstractModule getCurrentModule();
 
-  void registerCommandProvider(final ModuleCommandProvider provider);
+    void registerCommandProvider(final ModuleCommandProvider provider);
 }

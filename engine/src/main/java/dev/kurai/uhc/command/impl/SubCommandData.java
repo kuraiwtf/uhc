@@ -5,5 +5,4 @@ import dev.kurai.uhc.command.argument.data.ArgumentData;
 import java.lang.reflect.Method;
 import java.util.List;
 
-public record SubCommandData(
-    CommandMeta commandMeta, Object object, Method method, List<ArgumentData> arguments) {}
+public record SubCommandData(CommandMeta commandMeta, Object object, Method method, List<ArgumentData> arguments) {}

@@ -5,13 +5,13 @@ import org.bukkit.inventory.ItemStack;
 
 public interface Camp {
 
-  String getName();
+    String getName();
 
-  String objective();
+    String objective();
 
-  ChatColor primaryColor();
+    ChatColor primaryColor();
 
-  ChatColor secondaryColor();
+    ChatColor secondaryColor();
 
-  ItemStack display();
+    ItemStack display();
 }

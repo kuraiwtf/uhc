@@ -9,9 +9,9 @@ import org.jspecify.annotations.NullMarked;
 @UtilityClass
 public final class UltraHardcoreKey {
 
-  public final @KeyPattern.Namespace String NAMESPACE = "uhc";
+    public final @KeyPattern.Namespace String NAMESPACE = "uhc";
 
-  public Key key(final @KeyPattern.Value String key) {
-    return Key.key(NAMESPACE, key);
-  }
+    public Key key(final @KeyPattern.Value String key) {
+        return Key.key(NAMESPACE, key);
+    }
 }

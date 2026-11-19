@@ -1,9 +1,5 @@
 package dev.kurai.uhc;
 
-import static net.kyori.adventure.text.Component.text;
-import static net.kyori.adventure.text.format.NamedTextColor.DARK_GRAY;
-import static org.bukkit.Material.*;
-
 import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.event.EventManager;
 import dev.kurai.actionbar.ActionbarService;
@@ -12,19 +8,12 @@ import dev.kurai.uhc.command.CommandRegistrar;
 import dev.kurai.uhc.command.CommandRegistrarImpl;
 import dev.kurai.uhc.command.argument.builtin.uhc.TimerArgumentResolver;
 import dev.kurai.uhc.command.defaults.*;
-import dev.kurai.uhc.module.command.RoleDataArgumentResolver;
-import dev.kurai.uhc.module.role.RoleMeta;
-import dev.kurai.uhc.game.combat.CombatValidatorTask;
-import dev.kurai.uhc.effect.EffectListener;
-import dev.kurai.uhc.effect.EffectPacketSender;
-import dev.kurai.uhc.effect.EffectRefreshTask;
-import dev.kurai.uhc.effect.EffectService;
-import dev.kurai.uhc.effect.EffectServiceImpl;
-import dev.kurai.uhc.effect.EffectValidatorTask;
+import dev.kurai.uhc.effect.*;
 import dev.kurai.uhc.event.EventService;
 import dev.kurai.uhc.event.EventServiceImpl;
 import dev.kurai.uhc.game.GameService;
 import dev.kurai.uhc.game.GameServiceImpl;
+import dev.kurai.uhc.game.combat.CombatValidatorTask;
 import dev.kurai.uhc.game.configuration.inventory.InventoryConfiguration;
 import dev.kurai.uhc.game.enchantment.EnchantmentLimitListener;
 import dev.kurai.uhc.game.recipe.RecipeListener;
@@ -41,6 +30,8 @@ import dev.kurai.uhc.listener.game.WaitingListener;
 import dev.kurai.uhc.logger.LoggerService;
 import dev.kurai.uhc.logger.LoggerServiceImpl;
 import dev.kurai.uhc.module.ModuleServiceImpl;
+import dev.kurai.uhc.module.command.RoleDataArgumentResolver;
+import dev.kurai.uhc.module.role.RoleMeta;
 import dev.kurai.uhc.module.service.ModuleService;
 import dev.kurai.uhc.nickname.NicknameService;
 import dev.kurai.uhc.nickname.NicknameServiceImpl;
@@ -82,180 +73,175 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import pt.supercrafting.entity.EntityLib;
 
+import static net.kyori.adventure.text.Component.text;
+import static net.kyori.adventure.text.format.NamedTextColor.DARK_GRAY;
+import static org.bukkit.Material.*;
+
 @Getter
 public final class UltraHardcoreEngine extends UltraHardcoreAPI {
 
-  private BukkitAudiences bukkitAudiences;
-  private ActionbarService actionbarService;
-  private CommandRegistrar commandRegistrar;
-  private EffectService effectService;
-  private EntityLib entityLib;
-  private EventService eventService;
-  private GameService gameService;
-  private HelpOpService helpOpService;
-  private ItemService itemService;
-  private LoggerService loggerService;
-  private ModuleService moduleService;
-  private NicknameService nicknameService;
-  private PowerService powerService;
-  private ProfileService profileService;
-  private SidebarService sidebarService;
-  private SkinService skinService;
-  private TabListService tabListService;
-  private TeamService teamService;
-  private WhitelistService whitelistService;
-  private WinService winService;
-  private WorldService worldService;
+    private BukkitAudiences bukkitAudiences;
+    private ActionbarService actionbarService;
+    private CommandRegistrar commandRegistrar;
+    private EffectService effectService;
+    private EntityLib entityLib;
+    private EventService eventService;
+    private GameService gameService;
+    private HelpOpService helpOpService;
+    private ItemService itemService;
+    private LoggerService loggerService;
+    private ModuleService moduleService;
+    private NicknameService nicknameService;
+    private PowerService powerService;
+    private ProfileService profileService;
+    private SidebarService sidebarService;
+    private SkinService skinService;
+    private TabListService tabListService;
+    private TeamService teamService;
+    private WhitelistService whitelistService;
+    private WinService winService;
+    private WorldService worldService;
 
-  private Location spawnLocation;
+    private Location spawnLocation;
 
-  public UltraHardcoreEngine(final Plugin plugin) {
-    super(plugin);
-  }
-
-  @Override
-  public void onLoad() {
-    this.plugin.saveDefaultConfig();
-  }
-
-  @Override
-  public void onDisable() {
-    if (this.bukkitAudiences != null) {
-      this.bukkitAudiences.close();
+    public UltraHardcoreEngine(final Plugin plugin) {
+        super(plugin);
     }
 
-    destroy(this);
-  }
+    @Override
+    public void onLoad() {
+        this.plugin.saveDefaultConfig();
+    }
 
-  @Override
-  public void onEnable() {
-    this.spawnLocation =
-        Location.deserialize(
-            this.plugin.getConfig().getConfigurationSection("spawn").getValues(false));
+    @Override
+    public void onDisable() {
+        if (this.bukkitAudiences != null) {
+            this.bukkitAudiences.close();
+        }
 
-    this.bukkitAudiences = BukkitAudiences.create(this.plugin);
-    new MenuHandler((JavaPlugin) this.plugin);
-    this.commandRegistrar = new CommandRegistrarImpl(this);
-    this.eventService = new EventServiceImpl(this.plugin);
+        destroy(this);
+    }
 
-    this.effectService = new EffectServiceImpl();
-    this.entityLib = EntityLib.create(this.plugin, PacketEvents.getAPI());
+    @Override
+    public void onEnable() {
+        this.spawnLocation = Location.deserialize(
+                this.plugin.getConfig().getConfigurationSection("spawn").getValues(false));
 
-    this.sidebarService = new SidebarServiceImpl(this);
+        this.bukkitAudiences = BukkitAudiences.create(this.plugin);
+        new MenuHandler((JavaPlugin) this.plugin);
+        this.commandRegistrar = new CommandRegistrarImpl(this);
+        this.eventService = new EventServiceImpl(this.plugin);
 
-    this.actionbarService =
-        ActionbarService.actionbarService(
-            this.plugin,
-            player -> this.bukkitAudiences.player(player),
-            JoinConfiguration.builder()
-                .prefix(text("»", DARK_GRAY).appendSpace())
-                .separator(Component.space().append(text("❘", DARK_GRAY)).appendSpace())
-                .suffix(Component.space().append(text("«", DARK_GRAY)))
-                .build(),
-            ActionbarUpdateConfiguration.EVERY_TICK);
-    this.teamService = new TeamServiceImpl(this);
-    this.gameService = new GameServiceImpl(this);
-    this.helpOpService = new HelpOpServiceImpl();
-    this.itemService = new ItemServiceImpl(this);
-    this.moduleService = new ModuleServiceImpl(this);
-    this.nicknameService = new NicknameServiceImpl(this.plugin);
-    this.powerService = new PowerServiceImpl();
-    this.profileService = new ProfileServiceImpl(this);
-    this.loggerService = new LoggerServiceImpl(this.profileService);
-    this.skinService = new SkinServiceImpl(this.plugin, this.profileService);
-    this.tabListService = new TabListServiceImpl(this);
-    this.whitelistService = new WhitelistServiceImpl();
-    this.winService = new WinServiceImpl(this.profileService, this.teamService);
-    this.worldService = new WorldServiceImpl(this.plugin, this.profileService);
+        this.effectService = new EffectServiceImpl();
+        this.entityLib = EntityLib.create(this.plugin, PacketEvents.getAPI());
 
-    this.commandRegistrar.registerCommands(
-        new AnswerCommand(this),
-        new DevelopmentCommands(this),
-        new GroupCommand(
-            this.gameService().groupService(),
-            this.profileService,
-            this.gameService().hostService()),
-        new HelpOpCommand(this),
-        new HostCommand(this.bukkitAudiences, this),
-        new ModerationCommands(this),
-        new ModuleCommands(this),
-        new PlayerCommands(this),
-        new PlayersCommand(this),
-        new SpectatorCommand(this),
-        new TeamCommand(this),
-        new TeamInventoryCommand(this),
-        new UltraHardcoreCommand(this),
-        new WhitelistCommand(this));
+        this.sidebarService = new SidebarServiceImpl(this);
 
-    final TimerService timerService = this.gameService.timerService();
-    this.commandRegistrar
-        .getArgumentResolverRegistrar()
-        .registerArgumentResolver(
-            AbstractTimer.class, new TimerArgumentResolver(this.bukkitAudiences, timerService));
-    this.commandRegistrar
-        .getArgumentResolverRegistrar()
-        .registerArgumentResolver(
-            RoleMeta.class, new RoleDataArgumentResolver(this.moduleService));
+        this.actionbarService = ActionbarService.actionbarService(
+                this.plugin,
+                player -> this.bukkitAudiences.player(player),
+                JoinConfiguration.builder()
+                        .prefix(text("»", DARK_GRAY).appendSpace())
+                        .separator(
+                                Component.space().append(text("❘", DARK_GRAY)).appendSpace())
+                        .suffix(Component.space().append(text("«", DARK_GRAY)))
+                        .build(),
+                ActionbarUpdateConfiguration.EVERY_TICK);
+        this.teamService = new TeamServiceImpl(this);
+        this.gameService = new GameServiceImpl(this);
+        this.helpOpService = new HelpOpServiceImpl();
+        this.itemService = new ItemServiceImpl(this);
+        this.moduleService = new ModuleServiceImpl(this);
+        this.nicknameService = new NicknameServiceImpl(this.plugin);
+        this.powerService = new PowerServiceImpl();
+        this.profileService = new ProfileServiceImpl(this);
+        this.loggerService = new LoggerServiceImpl(this.profileService);
+        this.skinService = new SkinServiceImpl(this.plugin, this.profileService);
+        this.tabListService = new TabListServiceImpl(this);
+        this.whitelistService = new WhitelistServiceImpl();
+        this.winService = new WinServiceImpl(this.profileService, this.teamService);
+        this.worldService = new WorldServiceImpl(this.plugin, this.profileService);
 
-    final EventManager eventManager = PacketEvents.getAPI().getEventManager();
+        this.commandRegistrar.registerCommands(
+                new AnswerCommand(this),
+                new DevelopmentCommands(this),
+                new GroupCommand(
+                        this.gameService().groupService(),
+                        this.profileService,
+                        this.gameService().hostService()),
+                new HelpOpCommand(this),
+                new HostCommand(this.bukkitAudiences, this),
+                new ModerationCommands(this),
+                new ModuleCommands(this),
+                new PlayerCommands(this),
+                new PlayersCommand(this),
+                new SpectatorCommand(this),
+                new TeamCommand(this),
+                new TeamInventoryCommand(this),
+                new UltraHardcoreCommand(this),
+                new WhitelistCommand(this));
 
-    final var fixListener = new FixListener();
-    final var resourcePackListener = new ResourcePackListener(this.plugin, this.moduleService);
-    eventManager.registerListeners(fixListener, resourcePackListener);
+        final TimerService timerService = this.gameService.timerService();
+        this.commandRegistrar
+                .getArgumentResolverRegistrar()
+                .registerArgumentResolver(
+                        AbstractTimer.class, new TimerArgumentResolver(this.bukkitAudiences, timerService));
+        this.commandRegistrar
+                .getArgumentResolverRegistrar()
+                .registerArgumentResolver(RoleMeta.class, new RoleDataArgumentResolver(this.moduleService));
 
-    final var effectPacketSender = new EffectPacketSender(this.effectService, this.profileService);
-    this.eventService.registerListeners(
-        fixListener,
-        resourcePackListener,
-        new AccessListener(
-            this.gameService.hostService(), this.moduleService, this.whitelistService),
-        new ChatListener(),
-        new ItemListener(this.itemService),
-        new WaitingListener(this),
-        new EffectListener(effectPacketSender, this.profileService),
-        new RecipeListener(this.gameService.recipeService()),
-        new EnchantmentLimitListener(this.gameService.enchantmentLimitService()),
-        new TeamListener(this.teamService, this.moduleService));
+        final EventManager eventManager = PacketEvents.getAPI().getEventManager();
 
-    Bukkit.getScheduler()
-        .runTaskTimerAsynchronously(
-            this.plugin, new TabListUpdaterTask(this.tabListService), 0, 10L);
+        final var fixListener = new FixListener();
+        final var resourcePackListener = new ResourcePackListener(this.plugin, this.moduleService);
+        eventManager.registerListeners(fixListener, resourcePackListener);
 
-    Bukkit.getScheduler()
-        .runTaskTimer(
-            this.plugin,
-            new TeamDisplayTask(this.profileService, this.teamService, this.moduleService),
-            0,
-            1L);
+        final var effectPacketSender = new EffectPacketSender(this.effectService, this.profileService);
+        this.eventService.registerListeners(
+                fixListener,
+                resourcePackListener,
+                new AccessListener(this.gameService.hostService(), this.moduleService, this.whitelistService),
+                new ChatListener(),
+                new ItemListener(this.itemService),
+                new WaitingListener(this),
+                new EffectListener(effectPacketSender, this.profileService),
+                new RecipeListener(this.gameService.recipeService()),
+                new EnchantmentLimitListener(this.gameService.enchantmentLimitService()),
+                new TeamListener(this.teamService, this.moduleService));
 
-    InventoryConfiguration.INVENTORY_CONTENT_OPTION.setValue(
-        new ItemStack[] {
-          new ItemStack(BOOK, 7),
-          new ItemStack(WATER_BUCKET),
-          new ItemStack(ARROW, 16),
-          new ItemStack(GOLDEN_CARROT, 64)
+        Bukkit.getScheduler()
+                .runTaskTimerAsynchronously(this.plugin, new TabListUpdaterTask(this.tabListService), 0, 10L);
+
+        Bukkit.getScheduler()
+                .runTaskTimer(
+                        this.plugin,
+                        new TeamDisplayTask(this.profileService, this.teamService, this.moduleService),
+                        0,
+                        1L);
+
+        InventoryConfiguration.INVENTORY_CONTENT_OPTION.setValue(new ItemStack[] {
+            new ItemStack(BOOK, 7),
+            new ItemStack(WATER_BUCKET),
+            new ItemStack(ARROW, 16),
+            new ItemStack(GOLDEN_CARROT, 64)
         });
 
-    timerService.registerTimers(
-        new InvincibilityTimer(this),
-        new PvPTimer(this),
-        new BorderTimer(this.worldService, this.bukkitAudiences));
+        timerService.registerTimers(
+                new InvincibilityTimer(this),
+                new PvPTimer(this),
+                new BorderTimer(this.worldService, this.bukkitAudiences));
 
-    Bukkit.getScheduler()
-        .runTaskTimer(this.plugin, new EffectValidatorTask(this.profileService), 0, 5);
+        Bukkit.getScheduler().runTaskTimer(this.plugin, new EffectValidatorTask(this.profileService), 0, 5);
 
-    Bukkit.getScheduler()
-        .runTaskTimer(
-            this.plugin,
-            new CombatValidatorTask(this.profileService, this.gameService.combatService()),
-            0,
-            1L);
+        Bukkit.getScheduler()
+                .runTaskTimer(
+                        this.plugin,
+                        new CombatValidatorTask(this.profileService, this.gameService.combatService()),
+                        0,
+                        1L);
 
-    Bukkit.getScheduler()
-        .runTaskTimerAsynchronously(
-            this.plugin,
-            new EffectRefreshTask(effectPacketSender),
-            0,
-            EffectRefreshTask.INTERVAL_TICKS);
-  }
+        Bukkit.getScheduler()
+                .runTaskTimerAsynchronously(
+                        this.plugin, new EffectRefreshTask(effectPacketSender), 0, EffectRefreshTask.INTERVAL_TICKS);
+    }
 }

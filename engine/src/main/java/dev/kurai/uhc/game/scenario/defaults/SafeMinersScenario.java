@@ -4,8 +4,6 @@ import com.google.common.collect.Lists;
 import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.game.scenario.AbstractScenario;
 import dev.kurai.uhc.game.scenario.ScenarioCategory;
-import java.util.Collection;
-import java.util.List;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.EventHandler;
@@ -14,38 +12,36 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.Collection;
+import java.util.List;
+
 public final class SafeMinersScenario extends AbstractScenario implements Listener {
 
-  private static final Collection<DamageCause> IMMUNE =
-      Lists.newArrayList(
-          DamageCause.FALL,
-          DamageCause.FALLING_BLOCK,
-          DamageCause.FIRE_TICK,
-          DamageCause.FIRE,
-          DamageCause.LAVA);
+    private static final Collection<DamageCause> IMMUNE = Lists.newArrayList(
+            DamageCause.FALL, DamageCause.FALLING_BLOCK, DamageCause.FIRE_TICK, DamageCause.FIRE, DamageCause.LAVA);
 
-  public SafeMinersScenario(final UltraHardcoreAPI ultraHardcore) {
-    super("safe_miners", "Safe Miners", ultraHardcore, ScenarioCategory.MINING);
-  }
-
-  @Override
-  public List<String> provideLore() {
-    return Lists.newArrayList("Les dégâts sont annulés", "en dessous de la couche 40.");
-  }
-
-  @Override
-  public ItemStack provideIcon() {
-    return new ItemStack(Material.LAVA_BUCKET);
-  }
-
-  @EventHandler
-  public void onEntityDamage(final EntityDamageEvent event) {
-    if (event.getEntity().getType() != EntityType.PLAYER
-        || !IMMUNE.contains(event.getCause())
-        || event.getEntity().getLocation().getY() > 40) {
-      return;
+    public SafeMinersScenario(final UltraHardcoreAPI ultraHardcore) {
+        super("safe_miners", "Safe Miners", ultraHardcore, ScenarioCategory.MINING);
     }
 
-    event.setCancelled(true);
-  }
+    @Override
+    public List<String> provideLore() {
+        return Lists.newArrayList("Les dégâts sont annulés", "en dessous de la couche 40.");
+    }
+
+    @Override
+    public ItemStack provideIcon() {
+        return new ItemStack(Material.LAVA_BUCKET);
+    }
+
+    @EventHandler
+    public void onEntityDamage(final EntityDamageEvent event) {
+        if (event.getEntity().getType() != EntityType.PLAYER
+                || !IMMUNE.contains(event.getCause())
+                || event.getEntity().getLocation().getY() > 40) {
+            return;
+        }
+
+        event.setCancelled(true);
+    }
 }

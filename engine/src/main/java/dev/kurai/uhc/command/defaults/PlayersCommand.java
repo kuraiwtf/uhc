@@ -11,26 +11,23 @@ import org.jspecify.annotations.NullMarked;
 @NullMarked
 public final class PlayersCommand {
 
-  private final UltraHardcoreAPI ultraHardcore;
+    private final UltraHardcoreAPI ultraHardcore;
 
-  public PlayersCommand(final UltraHardcoreAPI ultraHardcore) {
-    this.ultraHardcore = ultraHardcore;
-  }
-
-  @Command(
-      @CommandMeta(
-          name = "players",
-          description = "Modifier les limites d'enchantement des joueurs"))
-  public void players(final Player player) {
-    if (!this.ultraHardcore.gameService().hostService().hasHostAccess(player)) {
-      player.sendMessage(CC.MISSING_PERMISSION);
-      return;
+    public PlayersCommand(final UltraHardcoreAPI ultraHardcore) {
+        this.ultraHardcore = ultraHardcore;
     }
 
-    new EnchantmentLimitPlayersMenu(
-            player,
-            this.ultraHardcore.profileService(),
-            this.ultraHardcore.gameService().enchantmentLimitService())
-        .open();
-  }
+    @Command(@CommandMeta(name = "players", description = "Modifier les limites d'enchantement des joueurs"))
+    public void players(final Player player) {
+        if (!this.ultraHardcore.gameService().hostService().hasHostAccess(player)) {
+            player.sendMessage(CC.MISSING_PERMISSION);
+            return;
+        }
+
+        new EnchantmentLimitPlayersMenu(
+                        player,
+                        this.ultraHardcore.profileService(),
+                        this.ultraHardcore.gameService().enchantmentLimitService())
+                .open();
+    }
 }

@@ -1,35 +1,34 @@
 package dev.kurai.uhc.module.power.restriction.holder;
 
 import dev.kurai.uhc.module.power.restriction.PowerRestriction;
+import org.jspecify.annotations.Nullable;
+
 import java.util.Collection;
 import java.util.Optional;
-import org.jspecify.annotations.Nullable;
 
 public interface PowerRestrictionHolder {
 
-  Collection<PowerRestriction> getRestrictions();
+    Collection<PowerRestriction> getRestrictions();
 
-  void addRestriction(final PowerRestriction restriction);
+    void addRestriction(final PowerRestriction restriction);
 
-  default void addRestrictions(final PowerRestriction... restrictions) {
-    for (final var restriction : restrictions) {
-      this.addRestriction(restriction);
+    default void addRestrictions(final PowerRestriction... restrictions) {
+        for (final var restriction : restrictions) {
+            this.addRestriction(restriction);
+        }
     }
-  }
 
-  void removeRestriction(final String id);
+    void removeRestriction(final String id);
 
-  default void removeRestrictions(final String... ids) {
-    for (final var id : ids) {
-      this.removeRestriction(id);
+    default void removeRestrictions(final String... ids) {
+        for (final var id : ids) {
+            this.removeRestriction(id);
+        }
     }
-  }
 
-  <T extends PowerRestriction> Optional<T> findOptionalRestriction(
-      final Class<T> restrictionClass, final String id);
+    <T extends PowerRestriction> Optional<T> findOptionalRestriction(final Class<T> restrictionClass, final String id);
 
-  default <T extends PowerRestriction> @Nullable T findRestriction(
-      final Class<T> restrictionClass, final String id) {
-    return this.findOptionalRestriction(restrictionClass, id).orElse(null);
-  }
+    default <T extends PowerRestriction> @Nullable T findRestriction(final Class<T> restrictionClass, final String id) {
+        return this.findOptionalRestriction(restrictionClass, id).orElse(null);
+    }
 }

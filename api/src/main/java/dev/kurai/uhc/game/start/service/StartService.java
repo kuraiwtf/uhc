@@ -6,28 +6,28 @@ import java.util.Collection;
 
 public interface StartService extends StartPhaseHolder {
 
-  @Override
-  Collection<StartPhase> getPhases();
+    @Override
+    Collection<StartPhase> getPhases();
 
-  @Override
-  void clearPhases();
+    @Override
+    void clearPhases();
 
-  @Override
-  void registerPhase(final StartPhase phase);
+    @Override
+    void registerPhase(final StartPhase phase);
 
-  @Override
-  void unregisterPhase(final String id);
+    @Override
+    void unregisterPhase(final String id);
 
-  @Override
-  boolean hasPhase(final String id);
+    @Override
+    boolean hasPhase(final String id);
 
-  boolean isStarting();
+    boolean isStarting();
 
-  void cancelStart();
+    void cancelStart();
 
-  void handleStart();
+    void handleStart();
 
-  void handleFinalStart();
+    void handleFinalStart();
 
-  void stopGameTasks();
+    void stopGameTasks();
 }

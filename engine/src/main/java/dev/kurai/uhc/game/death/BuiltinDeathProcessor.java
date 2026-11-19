@@ -9,30 +9,29 @@ import org.bukkit.inventory.ItemStack;
 
 final class BuiltinDeathProcessor implements DeathProcessor {
 
-  private final UltraHardcoreAPI ultraHardcore;
-  private final DeathService deathService;
+    private final UltraHardcoreAPI ultraHardcore;
+    private final DeathService deathService;
 
-  BuiltinDeathProcessor(final UltraHardcoreAPI ultraHardcore, final DeathService deathService) {
-    this.ultraHardcore = ultraHardcore;
-    this.deathService = deathService;
-  }
-
-  @Override
-  public void processDeath(final DeathContext context) {
-    final PlayerDeathEvent event = context.event();
-
-    final Player player = event.getEntity();
-    final Player killer = player.getKiller();
-    if (killer != null) {
-      killer.getInventory().addItem(new ItemStack(Material.GOLDEN_APPLE));
-      killer.giveExpLevels(3);
+    BuiltinDeathProcessor(final UltraHardcoreAPI ultraHardcore, final DeathService deathService) {
+        this.ultraHardcore = ultraHardcore;
+        this.deathService = deathService;
     }
 
-    final Profile profile =
-        this.ultraHardcore.profileService().getOrCreateProfile(player.getUniqueId());
-    this.deathService.eliminate(
-        profile,
-        killer == null ? null : this.ultraHardcore.profileService().getOrCreateProfile(killer),
-        false);
-  }
+    @Override
+    public void processDeath(final DeathContext context) {
+        final PlayerDeathEvent event = context.event();
+
+        final Player player = event.getEntity();
+        final Player killer = player.getKiller();
+        if (killer != null) {
+            killer.getInventory().addItem(new ItemStack(Material.GOLDEN_APPLE));
+            killer.giveExpLevels(3);
+        }
+
+        final Profile profile = this.ultraHardcore.profileService().getOrCreateProfile(player.getUniqueId());
+        this.deathService.eliminate(
+                profile,
+                killer == null ? null : this.ultraHardcore.profileService().getOrCreateProfile(killer),
+                false);
+    }
 }

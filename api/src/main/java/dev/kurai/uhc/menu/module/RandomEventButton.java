@@ -8,17 +8,17 @@ import org.bukkit.inventory.ItemStack;
 
 public final class RandomEventButton extends Button {
 
-  private final ModuleEventHolder eventHolder;
+    private final ModuleEventHolder eventHolder;
 
-  public RandomEventButton(final ModuleEventHolder eventHolder) {
-    this.eventHolder = eventHolder;
-  }
+    public RandomEventButton(final ModuleEventHolder eventHolder) {
+        this.eventHolder = eventHolder;
+    }
 
-  @Override
-  public ItemStack getIcon() {
-    return new ItemBuilder(Material.ENCHANTED_BOOK)
-        .name("§a§lÉvènements Aléatoires")
-        .lore("", "§fPermet de modifier les", "§févènements aléatoires de", "§fla partie.", "")
-        .asItemStack();
-  }
+    @Override
+    public ItemStack getIcon() {
+        return new ItemBuilder(Material.ENCHANTED_BOOK)
+                .name("§a§lÉvènements Aléatoires")
+                .lore("", "§fPermet de modifier les", "§févènements aléatoires de", "§fla partie.", "")
+                .asItemStack();
+    }
 }

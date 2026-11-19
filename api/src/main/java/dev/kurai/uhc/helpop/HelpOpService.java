@@ -1,20 +1,21 @@
 package dev.kurai.uhc.helpop;
 
+import org.jspecify.annotations.NullMarked;
+
 import java.util.Collection;
 import java.util.Optional;
 import java.util.UUID;
-import org.jspecify.annotations.NullMarked;
 
 @NullMarked
 public interface HelpOpService {
 
-  HelpOpTicket createTicket(final UUID askerId, final String askerName, final String question);
+    HelpOpTicket createTicket(final UUID askerId, final String askerName, final String question);
 
-  Optional<HelpOpTicket> getTicket(final int id);
+    Optional<HelpOpTicket> getTicket(final int id);
 
-  Collection<HelpOpTicket> getTickets();
+    Collection<HelpOpTicket> getTickets();
 
-  void registerAction(final HelpOpAction action);
+    void registerAction(final HelpOpAction action);
 
-  Collection<HelpOpAction> getActions();
+    Collection<HelpOpAction> getActions();
 }

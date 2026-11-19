@@ -6,22 +6,22 @@ import org.bukkit.event.inventory.PrepareItemCraftEvent;
 
 public final class RecipeListener implements Listener {
 
-  private final RecipeService recipeService;
+    private final RecipeService recipeService;
 
-  public RecipeListener(final RecipeService recipeService) {
-    this.recipeService = recipeService;
-  }
-
-  @EventHandler
-  public void onPrepareCraft(final PrepareItemCraftEvent event) {
-    final var recipe = event.getRecipe();
-    if (recipe == null) {
-      return;
+    public RecipeListener(final RecipeService recipeService) {
+        this.recipeService = recipeService;
     }
 
-    final GameRecipe gameRecipe = this.recipeService.recipe(recipe.getResult());
-    if (gameRecipe != null && !gameRecipe.isEnabled()) {
-      event.getInventory().setResult(null);
+    @EventHandler
+    public void onPrepareCraft(final PrepareItemCraftEvent event) {
+        final var recipe = event.getRecipe();
+        if (recipe == null) {
+            return;
+        }
+
+        final GameRecipe gameRecipe = this.recipeService.recipe(recipe.getResult());
+        if (gameRecipe != null && !gameRecipe.isEnabled()) {
+            event.getInventory().setResult(null);
+        }
     }
-  }
 }

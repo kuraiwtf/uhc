@@ -5,25 +5,25 @@ import java.util.Collection;
 
 public interface OptionHolder {
 
-  Collection<Option<?>> getOptions();
+    Collection<Option<?>> getOptions();
 
-  void addOption(final Option<?> option);
+    void addOption(final Option<?> option);
 
-  default void addOptions(final Option<?>... options) {
-    for (final var option : options) {
-      this.addOption(option);
+    default void addOptions(final Option<?>... options) {
+        for (final var option : options) {
+            this.addOption(option);
+        }
     }
-  }
 
-  void removeOption(final Option<?> option);
+    void removeOption(final Option<?> option);
 
-  default void removeOptions(final Option<?>... options) {
-    for (final var option : options) {
-      this.removeOption(option);
+    default void removeOptions(final Option<?>... options) {
+        for (final var option : options) {
+            this.removeOption(option);
+        }
     }
-  }
 
-  <T> Option<T> getOption(final String id);
+    <T> Option<T> getOption(final String id);
 
-  boolean hasOption(final String id);
+    boolean hasOption(final String id);
 }

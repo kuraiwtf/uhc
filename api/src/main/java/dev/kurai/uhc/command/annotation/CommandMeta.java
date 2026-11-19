@@ -6,13 +6,13 @@ import java.lang.annotation.RetentionPolicy;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface CommandMeta {
 
-  String name();
+    String name();
 
-  String[] aliases() default {};
+    String[] aliases() default {};
 
-  String permission() default "";
+    String permission() default "";
 
-  String description() default "";
+    String description() default "";
 
-  boolean async() default false;
+    boolean async() default false;
 }

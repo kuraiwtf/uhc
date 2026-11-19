@@ -45,58 +45,58 @@ import org.jspecify.annotations.NullMarked;
 @Setter
 public final class GameServiceImpl implements GameService {
 
-  private final UltraHardcoreAPI ultraHardcore;
+    private final UltraHardcoreAPI ultraHardcore;
 
-  private final CombatService combatService;
-  private final CycleService cycleService;
-  private final DeathService deathService;
-  private final DisconnectService disconnectService;
-  private final DropRateService dropRateService;
-  private final EnchantmentLimitService enchantmentLimitService;
-  private final EpisodeService episodeService;
-  private final GroupService groupService;
-  private final HostService hostService;
-  private final RecipeService recipeService;
-  private final GameRuleService ruleService;
-  private final ScatterService scatterService;
-  private final ScenarioService scenarioService;
-  private final SlotService slotService;
-  private final StartService startService;
-  private final TimerService timerService;
+    private final CombatService combatService;
+    private final CycleService cycleService;
+    private final DeathService deathService;
+    private final DisconnectService disconnectService;
+    private final DropRateService dropRateService;
+    private final EnchantmentLimitService enchantmentLimitService;
+    private final EpisodeService episodeService;
+    private final GroupService groupService;
+    private final HostService hostService;
+    private final RecipeService recipeService;
+    private final GameRuleService ruleService;
+    private final ScatterService scatterService;
+    private final ScenarioService scenarioService;
+    private final SlotService slotService;
+    private final StartService startService;
+    private final TimerService timerService;
 
-  private boolean testMode;
-  private boolean playing;
+    private boolean testMode;
+    private boolean playing;
 
-  private int duration;
+    private int duration;
 
-  private long startTime;
+    private long startTime;
 
-  public GameServiceImpl(final UltraHardcoreAPI ultraHardcore) {
-    this.ultraHardcore = ultraHardcore;
+    public GameServiceImpl(final UltraHardcoreAPI ultraHardcore) {
+        this.ultraHardcore = ultraHardcore;
 
-    this.combatService = new CombatServiceImpl();
-    this.cycleService = new CycleServiceImpl(ultraHardcore);
-    this.deathService = new DeathServiceImpl(ultraHardcore);
-    this.disconnectService = new DisconnectServiceImpl(ultraHardcore);
-    (this.dropRateService = new DropRateServiceImpl(ultraHardcore.eventService()))
-        .registerModifiers(new AppleDropRateModifier(), new FlintDropRateModifier());
-    this.enchantmentLimitService = new EnchantmentLimitServiceImpl();
-    this.episodeService = new EpisodeServiceImpl(ultraHardcore);
-    this.groupService = new GroupServiceImpl(ultraHardcore.plugin());
-    this.hostService = new HostServiceImpl(ultraHardcore);
-    this.recipeService = new RecipeServiceImpl();
-    this.ruleService = new GameRuleServiceImpl();
-    this.scatterService = new ScatterServiceImpl(ultraHardcore);
-    this.scenarioService = new ScenarioServiceImpl(ultraHardcore);
-    this.slotService = new SlotServiceImpl();
-    this.startService = new StartServiceImpl(ultraHardcore);
-    this.timerService = new TimerServiceImpl(ultraHardcore.plugin());
-  }
+        this.combatService = new CombatServiceImpl();
+        this.cycleService = new CycleServiceImpl(ultraHardcore);
+        this.deathService = new DeathServiceImpl(ultraHardcore);
+        this.disconnectService = new DisconnectServiceImpl(ultraHardcore);
+        (this.dropRateService = new DropRateServiceImpl(ultraHardcore.eventService()))
+                .registerModifiers(new AppleDropRateModifier(), new FlintDropRateModifier());
+        this.enchantmentLimitService = new EnchantmentLimitServiceImpl();
+        this.episodeService = new EpisodeServiceImpl(ultraHardcore);
+        this.groupService = new GroupServiceImpl(ultraHardcore.plugin());
+        this.hostService = new HostServiceImpl(ultraHardcore);
+        this.recipeService = new RecipeServiceImpl();
+        this.ruleService = new GameRuleServiceImpl();
+        this.scatterService = new ScatterServiceImpl(ultraHardcore);
+        this.scenarioService = new ScenarioServiceImpl(ultraHardcore);
+        this.slotService = new SlotServiceImpl();
+        this.startService = new StartServiceImpl(ultraHardcore);
+        this.timerService = new TimerServiceImpl(ultraHardcore.plugin());
+    }
 
-  @Override
-  public Iterable<? extends Audience> audiences() {
-    return this.ultraHardcore
-        .profileService()
-        .getProfiles(profile -> profile.findPlayer().isPresent());
-  }
+    @Override
+    public Iterable<? extends Audience> audiences() {
+        return this.ultraHardcore
+                .profileService()
+                .getProfiles(profile -> profile.findPlayer().isPresent());
+    }
 }

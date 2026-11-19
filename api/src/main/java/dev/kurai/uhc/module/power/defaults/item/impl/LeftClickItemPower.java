@@ -6,11 +6,8 @@ import java.util.UUID;
 
 public abstract class LeftClickItemPower extends AbstractItemPower {
 
-  public LeftClickItemPower(
-      final String identifier,
-      final String name,
-      final UUID owner,
-      final UltraHardcoreAPI ultraHardcore) {
-    super(identifier, name, owner, ultraHardcore);
-  }
+    public LeftClickItemPower(
+            final String identifier, final String name, final UUID owner, final UltraHardcoreAPI ultraHardcore) {
+        super(identifier, name, owner, ultraHardcore);
+    }
 }

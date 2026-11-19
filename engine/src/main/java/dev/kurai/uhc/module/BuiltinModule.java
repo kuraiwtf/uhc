@@ -13,30 +13,30 @@ import org.bukkit.inventory.ItemStack;
 @Setter
 public final class BuiltinModule extends AbstractModule implements TeamModule {
 
-  private int minTeamSize;
-  private int teamSize;
-  private int maxTeamSize;
+    private int minTeamSize;
+    private int teamSize;
+    private int maxTeamSize;
 
-  private TeamDisplay teamDisplay;
-  private boolean teamInventory;
-  private boolean friendlyFire;
-  private boolean randomTeam;
+    private TeamDisplay teamDisplay;
+    private boolean teamInventory;
+    private boolean friendlyFire;
+    private boolean randomTeam;
 
-  public BuiltinModule(final UltraHardcoreAPI ultraHardcore) {
-    super("uhc", "UHC", ultraHardcore.plugin(), null, ultraHardcore);
-    this.teamDisplay = TeamDisplay.NONE;
-    this.minTeamSize = 1;
-    this.teamSize = 1;
-    this.maxTeamSize = Integer.MAX_VALUE;
-  }
+    public BuiltinModule(final UltraHardcoreAPI ultraHardcore) {
+        super("uhc", "UHC", ultraHardcore.plugin(), null, ultraHardcore);
+        this.teamDisplay = TeamDisplay.NONE;
+        this.minTeamSize = 1;
+        this.teamSize = 1;
+        this.maxTeamSize = Integer.MAX_VALUE;
+    }
 
-  @Override
-  public String developer() {
-    return "kurai";
-  }
+    @Override
+    public String developer() {
+        return "kurai";
+    }
 
-  @Override
-  public ItemStack provideModuleIcon(final Player player) {
-    return new ItemStack(Material.GOLDEN_APPLE);
-  }
+    @Override
+    public ItemStack provideModuleIcon(final Player player) {
+        return new ItemStack(Material.GOLDEN_APPLE);
+    }
 }

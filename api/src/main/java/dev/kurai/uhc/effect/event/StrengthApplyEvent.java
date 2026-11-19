@@ -7,50 +7,50 @@ import org.bukkit.event.HandlerList;
 
 public final class StrengthApplyEvent extends Event implements Cancellable {
 
-  private static final HandlerList HANDLER_LIST = new HandlerList();
-  private final Player damager;
-  private final Player victim;
-  private double strengthValue;
-  private boolean cancelled = false;
+    private static final HandlerList HANDLER_LIST = new HandlerList();
+    private final Player damager;
+    private final Player victim;
+    private double strengthValue;
+    private boolean cancelled = false;
 
-  public StrengthApplyEvent(final Player damager, final Player victim, final double strengthValue) {
-    this.damager = damager;
-    this.victim = victim;
-    this.strengthValue = strengthValue;
-  }
+    public StrengthApplyEvent(final Player damager, final Player victim, final double strengthValue) {
+        this.damager = damager;
+        this.victim = victim;
+        this.strengthValue = strengthValue;
+    }
 
-  public static HandlerList getHandlerList() {
-    return HANDLER_LIST;
-  }
+    public static HandlerList getHandlerList() {
+        return HANDLER_LIST;
+    }
 
-  public Player damager() {
-    return this.damager;
-  }
+    public Player damager() {
+        return this.damager;
+    }
 
-  public Player victim() {
-    return this.victim;
-  }
+    public Player victim() {
+        return this.victim;
+    }
 
-  public double strengthValue() {
-    return this.strengthValue;
-  }
+    public double strengthValue() {
+        return this.strengthValue;
+    }
 
-  public void strengthValue(final double resistanceValue) {
-    this.strengthValue = resistanceValue;
-  }
+    public void strengthValue(final double resistanceValue) {
+        this.strengthValue = resistanceValue;
+    }
 
-  @Override
-  public boolean isCancelled() {
-    return this.cancelled;
-  }
+    @Override
+    public boolean isCancelled() {
+        return this.cancelled;
+    }
 
-  @Override
-  public void setCancelled(final boolean cancelled) {
-    this.cancelled = cancelled;
-  }
+    @Override
+    public void setCancelled(final boolean cancelled) {
+        this.cancelled = cancelled;
+    }
 
-  @Override
-  public HandlerList getHandlers() {
-    return HANDLER_LIST;
-  }
+    @Override
+    public HandlerList getHandlers() {
+        return HANDLER_LIST;
+    }
 }

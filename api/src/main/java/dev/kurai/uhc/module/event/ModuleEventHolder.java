@@ -1,15 +1,17 @@
 package dev.kurai.uhc.module.event;
 
-import java.util.Collection;
 import org.jspecify.annotations.Nullable;
+
+import java.util.Collection;
 
 public interface ModuleEventHolder {
 
-  Collection<ModuleEvent> events();
+    Collection<ModuleEvent> events();
 
-  void registerEvent(final ModuleEvent event);
+    void registerEvent(final ModuleEvent event);
 
-  void unregisterEvent(final String identifier);
+    void unregisterEvent(final String identifier);
 
-  @Nullable ModuleEvent event(final String identifier);
+    @Nullable
+    ModuleEvent event(final String identifier);
 }

@@ -7,14 +7,14 @@ import org.bukkit.entity.Player;
 
 public interface PowerRestriction extends Identifiable<String> {
 
-  @Override
-  String getId();
+    @Override
+    String getId();
 
-  void onUse(final AbstractPower power, final Player player);
+    void onUse(final AbstractPower power, final Player player);
 
-  Component provideRestrictionMessage(final AbstractPower power, final Player player);
+    Component provideRestrictionMessage(final AbstractPower power, final Player player);
 
-  boolean restrictsPower(final AbstractPower power, final Player player);
+    boolean restrictsPower(final AbstractPower power, final Player player);
 
-  RestrictionStrategy strategy();
+    RestrictionStrategy strategy();
 }

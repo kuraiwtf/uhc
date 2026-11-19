@@ -1,17 +1,17 @@
 package dev.kurai.uhc.game.configuration.border;
 
 public enum BorderType {
-  DAMAGE("Dégâts"),
-  TELEPORT("Téléportation"),
-  ;
+    DAMAGE("Dégâts"),
+    TELEPORT("Téléportation"),
+    ;
 
-  private final String name;
+    private final String name;
 
-  BorderType(final String name) {
-    this.name = name;
-  }
+    BorderType(final String name) {
+        this.name = name;
+    }
 
-  public String getName() {
-    return this.name;
-  }
+    public String getName() {
+        return this.name;
+    }
 }

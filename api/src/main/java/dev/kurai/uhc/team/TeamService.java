@@ -1,38 +1,40 @@
 package dev.kurai.uhc.team;
 
+import org.jspecify.annotations.NullMarked;
+
 import java.util.Collection;
 import java.util.Optional;
 import java.util.UUID;
-import org.jspecify.annotations.NullMarked;
 
 @NullMarked
 public interface TeamService {
 
-  boolean enabled();
+    boolean enabled();
 
-  Collection<Team> teams();
+    Collection<Team> teams();
 
-  Optional<Team> teamOf(final UUID uniqueId);
+    Optional<Team> teamOf(final UUID uniqueId);
 
-  default boolean areTeammates(final UUID first, final UUID second) {
-    return !first.equals(second) && this.teamOf(first).filter(team -> team.contains(second)).isPresent();
-  }
+    default boolean areTeammates(final UUID first, final UUID second) {
+        return !first.equals(second)
+                && this.teamOf(first).filter(team -> team.contains(second)).isPresent();
+    }
 
-  Optional<Team> createTeam(final UUID leader);
+    Optional<Team> createTeam(final UUID leader);
 
-  boolean invite(final Team team, final UUID invitee);
+    boolean invite(final Team team, final UUID invitee);
 
-  Optional<Team> pendingInvite(final UUID invitee, final UUID inviter);
+    Optional<Team> pendingInvite(final UUID invitee, final UUID inviter);
 
-  boolean join(final Team team, final UUID uniqueId);
+    boolean join(final Team team, final UUID uniqueId);
 
-  void leave(final UUID uniqueId);
+    void leave(final UUID uniqueId);
 
-  void disband(final Team team);
+    void disband(final Team team);
 
-  void clear();
+    void clear();
 
-  void assignUnteamed(final Collection<UUID> players);
+    void assignUnteamed(final Collection<UUID> players);
 
-  void randomize(final Collection<UUID> players);
+    void randomize(final Collection<UUID> players);
 }

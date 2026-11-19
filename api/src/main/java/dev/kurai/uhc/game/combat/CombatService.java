@@ -6,15 +6,15 @@ import org.jspecify.annotations.NullMarked;
 @NullMarked
 public interface CombatService {
 
-  long combatDuration();
+    long combatDuration();
 
-  void combatDuration(final long millis);
+    void combatDuration(final long millis);
 
-  void enterCombat(final Profile profile);
+    void enterCombat(final Profile profile);
 
-  void leaveCombat(final Profile profile);
+    void leaveCombat(final Profile profile);
 
-  boolean inCombat(final Profile profile);
+    boolean inCombat(final Profile profile);
 
-  void validate(final Profile profile);
+    void validate(final Profile profile);
 }

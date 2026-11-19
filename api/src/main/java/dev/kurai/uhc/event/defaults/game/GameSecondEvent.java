@@ -5,24 +5,23 @@ import org.bukkit.event.HandlerList;
 
 public final class GameSecondEvent extends Event {
 
-  private static final HandlerList HANDLERS = new HandlerList();
+    private static final HandlerList HANDLERS = new HandlerList();
+    private final int seconds;
 
-  public static HandlerList getHandlerList() {
-    return HANDLERS;
-  }
+    public GameSecondEvent(final int seconds) {
+        this.seconds = seconds;
+    }
 
-  private final int seconds;
+    public static HandlerList getHandlerList() {
+        return HANDLERS;
+    }
 
-  public GameSecondEvent(final int seconds) {
-    this.seconds = seconds;
-  }
+    public int ticks() {
+        return this.seconds;
+    }
 
-  public int ticks() {
-    return this.seconds;
-  }
-
-  @Override
-  public HandlerList getHandlers() {
-    return HANDLERS;
-  }
+    @Override
+    public HandlerList getHandlers() {
+        return HANDLERS;
+    }
 }

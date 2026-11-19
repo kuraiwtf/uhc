@@ -29,80 +29,80 @@ import pt.supercrafting.entity.EntityLib;
 @NullUnmarked
 public abstract class UltraHardcoreAPI {
 
-  private static UltraHardcoreAPI instance;
+    private static UltraHardcoreAPI instance;
 
-  protected final Plugin plugin;
+    protected final Plugin plugin;
 
-  protected UltraHardcoreAPI(final Plugin plugin) {
-    this.plugin = plugin;
-  }
-
-  public static synchronized UltraHardcoreAPI create(final UltraHardcoreAPI instance) {
-    Preconditions.checkArgument(UltraHardcoreAPI.instance == null, "API instance already exists!");
-    return UltraHardcoreAPI.instance = instance;
-  }
-
-  public static synchronized void destroy(final UltraHardcoreAPI instance) {
-    if (UltraHardcoreAPI.instance == instance) {
-      UltraHardcoreAPI.instance = null;
+    protected UltraHardcoreAPI(final Plugin plugin) {
+        this.plugin = plugin;
     }
-  }
 
-  public static UltraHardcoreAPI getInstance() {
-    return instance;
-  }
+    public static synchronized UltraHardcoreAPI create(final UltraHardcoreAPI instance) {
+        Preconditions.checkArgument(UltraHardcoreAPI.instance == null, "API instance already exists!");
+        return UltraHardcoreAPI.instance = instance;
+    }
 
-  public void onLoad() {}
+    public static synchronized void destroy(final UltraHardcoreAPI instance) {
+        if (UltraHardcoreAPI.instance == instance) {
+            UltraHardcoreAPI.instance = null;
+        }
+    }
 
-  public void onEnable() {}
+    public static UltraHardcoreAPI getInstance() {
+        return instance;
+    }
 
-  public void onDisable() {}
+    public void onLoad() {}
 
-  public Plugin plugin() {
-    return this.plugin;
-  }
+    public void onEnable() {}
 
-  public abstract BukkitAudiences bukkitAudiences();
+    public void onDisable() {}
 
-  public abstract ActionbarService actionbarService();
+    public Plugin plugin() {
+        return this.plugin;
+    }
 
-  public abstract CommandRegistrar commandRegistrar();
+    public abstract BukkitAudiences bukkitAudiences();
 
-  public abstract EffectService effectService();
+    public abstract ActionbarService actionbarService();
 
-  public abstract EntityLib entityLib();
+    public abstract CommandRegistrar commandRegistrar();
 
-  public abstract EventService eventService();
+    public abstract EffectService effectService();
 
-  public abstract GameService gameService();
+    public abstract EntityLib entityLib();
 
-  public abstract HelpOpService helpOpService();
+    public abstract EventService eventService();
 
-  public abstract ItemService itemService();
+    public abstract GameService gameService();
 
-  public abstract LoggerService loggerService();
+    public abstract HelpOpService helpOpService();
 
-  public abstract ModuleService moduleService();
+    public abstract ItemService itemService();
 
-  public abstract NicknameService nicknameService();
+    public abstract LoggerService loggerService();
 
-  public abstract PowerService powerService();
+    public abstract ModuleService moduleService();
 
-  public abstract ProfileService profileService();
+    public abstract NicknameService nicknameService();
 
-  public abstract SidebarService sidebarService();
+    public abstract PowerService powerService();
 
-  public abstract SkinService skinService();
+    public abstract ProfileService profileService();
 
-  public abstract TabListService tabListService();
+    public abstract SidebarService sidebarService();
 
-  public abstract TeamService teamService();
+    public abstract SkinService skinService();
 
-  public abstract WhitelistService whitelistService();
+    public abstract TabListService tabListService();
 
-  public abstract WinService winService();
+    public abstract TeamService teamService();
 
-  public abstract WorldService worldService();
+    public abstract WhitelistService whitelistService();
 
-  public abstract Location spawnLocation();
+    public abstract WinService winService();
+
+    public abstract WorldService worldService();
+
+    public abstract Location spawnLocation();
 }

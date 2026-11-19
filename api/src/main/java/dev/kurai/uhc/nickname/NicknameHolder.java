@@ -5,13 +5,13 @@ import java.util.UUID;
 
 public interface NicknameHolder {
 
-  Nickname nickname(final UUID targetId);
+    Nickname nickname(final UUID targetId);
 
-  boolean hasColor(final UUID targetId, final Color color);
+    boolean hasColor(final UUID targetId, final Color color);
 
-  void applyColor(final UUID targetId, final Color color);
+    void applyColor(final UUID targetId, final Color color);
 
-  void removeColor(final UUID targetId);
+    void removeColor(final UUID targetId);
 
-  void updateNickname(final UUID targetId);
+    void updateNickname(final UUID targetId);
 }

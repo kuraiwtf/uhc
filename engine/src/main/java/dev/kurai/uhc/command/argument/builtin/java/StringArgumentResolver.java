@@ -5,8 +5,8 @@ import org.bukkit.command.CommandSender;
 
 public final class StringArgumentResolver implements ArgumentResolver<String> {
 
-  @Override
-  public String resolve(final CommandSender sender, final String argument) {
-    return argument;
-  }
+    @Override
+    public String resolve(final CommandSender sender, final String argument) {
+        return argument;
+    }
 }

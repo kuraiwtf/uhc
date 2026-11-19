@@ -5,5 +5,5 @@ import java.util.Collection;
 
 public interface WinInformation {
 
-  Collection<Profile> winners();
+    Collection<Profile> winners();
 }

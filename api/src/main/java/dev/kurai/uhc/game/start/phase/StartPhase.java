@@ -4,10 +4,10 @@ import dev.kurai.uhc.util.api.Identifiable;
 
 public interface StartPhase extends Identifiable<String> {
 
-  @Override
-  String getId();
+    @Override
+    String getId();
 
-  void start();
+    void start();
 
-  void cancel();
+    void cancel();
 }

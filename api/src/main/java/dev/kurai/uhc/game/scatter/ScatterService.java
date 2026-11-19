@@ -4,11 +4,11 @@ import org.bukkit.entity.Player;
 
 public interface ScatterService {
 
-  ScatterPositionProvider getPositionProvider();
+    ScatterPositionProvider getPositionProvider();
 
-  void setPositionProvider(final ScatterPositionProvider positionProvider);
+    void setPositionProvider(final ScatterPositionProvider positionProvider);
 
-  void handleScatter();
+    void handleScatter();
 
-  void handlePlayerLateScatter(final Player player);
+    void handlePlayerLateScatter(final Player player);
 }

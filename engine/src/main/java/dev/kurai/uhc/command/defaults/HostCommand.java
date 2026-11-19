@@ -1,9 +1,5 @@
 package dev.kurai.uhc.command.defaults;
 
-import static dev.kurai.uhc.util.CC.MISSING_PERMISSION;
-import static dev.kurai.uhc.util.CC.prefix;
-import static net.kyori.adventure.text.Component.text;
-
 import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.command.annotation.Command;
 import dev.kurai.uhc.command.annotation.CommandMeta;
@@ -24,10 +20,6 @@ import dev.kurai.uhc.profile.component.PlayerInformationComponent;
 import dev.kurai.uhc.profile.state.PlayingProfileState;
 import dev.kurai.uhc.timer.AbstractTimer;
 import dev.kurai.uhc.util.CC;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -39,412 +31,371 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.PlayerInventory;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
+import static dev.kurai.uhc.util.CC.MISSING_PERMISSION;
+import static dev.kurai.uhc.util.CC.prefix;
+import static net.kyori.adventure.text.Component.text;
+
 @RequiredArgsConstructor
-@Command(
-    @CommandMeta(name = "host", aliases = "h", description = "Commande de gestion de la partie"))
+@Command(@CommandMeta(name = "host", aliases = "h", description = "Commande de gestion de la partie"))
 public final class HostCommand {
 
-  private final BukkitAudiences bukkitAudiences;
-  private final UltraHardcoreAPI ultraHardcore;
+    private final BukkitAudiences bukkitAudiences;
+    private final UltraHardcoreAPI ultraHardcore;
 
-  @SubCommand(@CommandMeta(name = "add", description = "Ajouter un co-hôte"))
-  public void add(final Player player, final @Argument(name = "joueur") Player target) {
-    final HostService hostService = this.ultraHardcore.gameService().hostService();
-    if (!hostService.isHost(player)) {
-      player.sendMessage(MISSING_PERMISSION);
-      return;
+    @SubCommand(@CommandMeta(name = "add", description = "Ajouter un co-hôte"))
+    public void add(final Player player, final @Argument(name = "joueur") Player target) {
+        final HostService hostService = this.ultraHardcore.gameService().hostService();
+        if (!hostService.isHost(player)) {
+            player.sendMessage(MISSING_PERMISSION);
+            return;
+        }
+
+        if (hostService.coHost(target)) {
+            player.sendMessage(CC.prefix("Ce joueur est déjà un co-hôte de la partie."));
+            return;
+        }
+
+        hostService.addCoHost(target.getUniqueId());
+        player.sendMessage(
+                CC.prefix("Vous avez ajouté&6 %s&f comme co-hôte de la partie.".formatted(target.getName())));
     }
 
-    if (hostService.coHost(target)) {
-      player.sendMessage(CC.prefix("Ce joueur est déjà un co-hôte de la partie."));
-      return;
+    @SubCommand(@CommandMeta(name = "remove", description = "Retirer un co-hôte"))
+    public void remove(final Player player, final @Argument(name = "joueur") Player target) {
+        final HostService hostService = this.ultraHardcore.gameService().hostService();
+        if (!hostService.isHost(player)) {
+            player.sendMessage(MISSING_PERMISSION);
+            return;
+        }
+
+        if (!hostService.coHost(target)) {
+            player.sendMessage(CC.prefix("Ce joueur n'est pas un co-hôte de la partie."));
+            return;
+        }
+
+        hostService.removeCoHost(target.getUniqueId());
+        player.sendMessage(CC.prefix("Vous avez retiré&6 %s&f des co-hôtes de la partie.".formatted(target.getName())));
     }
 
-    hostService.addCoHost(target.getUniqueId());
-    player.sendMessage(
-        CC.prefix(
-            "Vous avez ajouté&6 %s&f comme co-hôte de la partie.".formatted(target.getName())));
-  }
+    @SubCommand(@CommandMeta(name = "config", description = "Configurer la partie"))
+    public void config(final Player player) {
+        final HostService hostService = this.ultraHardcore.gameService().hostService();
+        if (!hostService.hasHostAccess(player)) {
+            player.sendMessage(MISSING_PERMISSION);
+            return;
+        }
 
-  @SubCommand(@CommandMeta(name = "remove", description = "Retirer un co-hôte"))
-  public void remove(final Player player, final @Argument(name = "joueur") Player target) {
-    final HostService hostService = this.ultraHardcore.gameService().hostService();
-    if (!hostService.isHost(player)) {
-      player.sendMessage(MISSING_PERMISSION);
-      return;
+        new ConfigurationMenu(player, this.ultraHardcore).open();
     }
 
-    if (!hostService.coHost(target)) {
-      player.sendMessage(CC.prefix("Ce joueur n'est pas un co-hôte de la partie."));
-      return;
+    @SubCommand(@CommandMeta(name = "force", description = "Forcer un timer"))
+    public void force(final Player player, final @Argument(name = "timer") AbstractTimer timer) {
+        if (!this.ultraHardcore.gameService().hostService().hasHostAccess(player)) {
+            player.sendMessage(MISSING_PERMISSION);
+            return;
+        }
+
+        if (!timer.isRunning()) {
+            player.sendMessage(CC.prefix("Ce timer n'est&c pas en cours&r."));
+            return;
+        }
+
+        timer.setTimeLeft(5);
+        this.bukkitAudiences
+                .player(player)
+                .sendMessage(prefix().append(text("Vous venez de forcer le timer "))
+                        .append(text(timer.getName(), NamedTextColor.GOLD))
+                        .append(text(" à "))
+                        .append(text(5, NamedTextColor.AQUA, TextDecoration.BOLD))
+                        .append(text('s', NamedTextColor.AQUA))
+                        .append(text('.'))
+                        .build());
     }
 
-    hostService.removeCoHost(target.getUniqueId());
-    player.sendMessage(
-        CC.prefix(
-            "Vous avez retiré&6 %s&f des co-hôtes de la partie.".formatted(target.getName())));
-  }
+    @SubCommand(@CommandMeta(name = "info", description = "Afficher les informations de la partie"))
+    public void info(final Player player) {
+        final HostService hostService = this.ultraHardcore.gameService().hostService();
+        final Profile hostProfile = hostService.hostProfile();
+        final Profile profile = this.ultraHardcore.profileService().getOrCreateProfile(player);
 
-  @SubCommand(@CommandMeta(name = "config", description = "Configurer la partie"))
-  public void config(final Player player) {
-    final HostService hostService = this.ultraHardcore.gameService().hostService();
-    if (!hostService.hasHostAccess(player)) {
-      player.sendMessage(MISSING_PERMISSION);
-      return;
+        profile.sendMessage("");
+        profile.sendMessage("Voici les informations de la partie:");
+        profile.sendMessage("");
+        profile.sendMessage(
+                "&8»&r Hôte principal:&6 %s".formatted(hostProfile == null ? "Aucun" : hostProfile.getName()));
+
+        profile.sendMessage("");
+        final var coHosts = hostService.coHosts();
+        if (coHosts.isEmpty()) {
+            profile.sendMessage("&8»&c Aucun co-hôte.");
+        } else {
+            profile.sendMessage("&8»&r Co-hôtes&8 (&6%d&8):".formatted(coHosts.size()));
+            for (final UUID coHost : coHosts) {
+                final Profile coHostProfile =
+                        this.ultraHardcore.profileService().getOrCreateProfile(coHost);
+                profile.sendMessage("   &8»&r %s".formatted(coHostProfile.getName()));
+            }
+        }
+        profile.sendMessage("");
     }
 
-    new ConfigurationMenu(player, this.ultraHardcore).open();
-  }
+    @SubCommand(@CommandMeta(name = "refill", description = "Redonner les objets de pouvoir à un joueur"))
+    public void refill(final Player player, final @Argument(name = "joueur", defaultValue = "self") Player target) {
+        if (!this.ultraHardcore.gameService().hostService().hasHostAccess(player)
+                && !player.getUniqueId().equals(target.getUniqueId())) {
+            player.sendMessage(MISSING_PERMISSION);
+            return;
+        }
 
-  @SubCommand(@CommandMeta(name = "force", description = "Forcer un timer"))
-  public void force(final Player player, final @Argument(name = "timer") AbstractTimer timer) {
-    if (!this.ultraHardcore.gameService().hostService().hasHostAccess(player)) {
-      player.sendMessage(MISSING_PERMISSION);
-      return;
+        final Profile profile = this.ultraHardcore.profileService().getOrCreateProfile(target);
+
+        final var childPowers = profile.getPowers().stream()
+                .filter(AbstractParentItemPower.class::isInstance)
+                .map(AbstractParentItemPower.class::cast)
+                .flatMap(parent -> parent.getChildren().stream())
+                .collect(Collectors.toSet());
+
+        for (final AbstractPower power : profile.getPowers()) {
+            if (!(power instanceof final AbstractItemPower itemPower) || childPowers.contains(power)) {
+                continue;
+            }
+
+            target.getInventory().addItem(itemPower.getIcon(target));
+        }
+
+        player.sendMessage(CC.prefix("Vous avez redonné les pouvoirs à&6 %s&r.".formatted(target.getName())));
     }
 
-    if (!timer.isRunning()) {
-      player.sendMessage(CC.prefix("Ce timer n'est&c pas en cours&r."));
-      return;
+    @SubCommand(@CommandMeta(name = "killoffline", aliases = "ko", description = "Éliminer un joueur hors-ligne"))
+    public void killOffline(final Player player, final @Argument(name = "joueur") OfflinePlayer target) {
+        final GameService gameService = this.ultraHardcore.gameService();
+        if (gameService.startTime() == 0L) {
+            player.sendMessage(CC.prefix("La partie n'est pas en cours de jeu."));
+            return;
+        }
+
+        if (!this.ultraHardcore.gameService().hostService().hasHostAccess(player)) {
+            player.sendMessage(MISSING_PERMISSION);
+            return;
+        }
+
+        final Profile profile = this.ultraHardcore.profileService().getOrCreateProfile(target.getUniqueId());
+        if (target.isOnline()
+                || !profile.hasComponent(DisconnectComponent.class)
+                || !profile.hasComponent(PlayerInformationComponent.class)
+                || profile.hasComponent(DeadComponent.class)) {
+            player.sendMessage(CC.prefix("Le joueur&6 %s&r est&c mort&r ou&a en ligne&r.".formatted(target.getName())));
+            return;
+        }
+
+        gameService.deathService().eliminate(profile, null, true);
+
+        player.sendMessage(CC.prefix("Vous venez d'&céliminer&f le joueur&6 %s&r.".formatted(target.getName())));
     }
 
-    timer.setTimeLeft(5);
-    this.bukkitAudiences
-        .player(player)
-        .sendMessage(
-            prefix()
-                .append(text("Vous venez de forcer le timer "))
-                .append(text(timer.getName(), NamedTextColor.GOLD))
-                .append(text(" à "))
-                .append(text(5, NamedTextColor.AQUA, TextDecoration.BOLD))
-                .append(text('s', NamedTextColor.AQUA))
-                .append(text('.'))
-                .build());
-  }
+    @SubCommand(@CommandMeta(name = "chat", description = "Activer/désactiver le chat de la partie"))
+    public void chat(final Player player) {
+        if (!this.ultraHardcore.gameService().hostService().hasHostAccess(player)) {
+            player.sendMessage(MISSING_PERMISSION);
+            return;
+        }
 
-  @SubCommand(@CommandMeta(name = "info", description = "Afficher les informations de la partie"))
-  public void info(final Player player) {
-    final HostService hostService = this.ultraHardcore.gameService().hostService();
-    final Profile hostProfile = hostService.hostProfile();
-    final Profile profile = this.ultraHardcore.profileService().getOrCreateProfile(player);
+        final boolean enabled = !GameService.CHAT_OPTION.getValue();
+        GameService.CHAT_OPTION.setValue(enabled);
 
-    profile.sendMessage("");
-    profile.sendMessage("Voici les informations de la partie:");
-    profile.sendMessage("");
-    profile.sendMessage(
-        "&8»&r Hôte principal:&6 %s"
-            .formatted(hostProfile == null ? "Aucun" : hostProfile.getName()));
-
-    profile.sendMessage("");
-    final var coHosts = hostService.coHosts();
-    if (coHosts.isEmpty()) {
-      profile.sendMessage("&8»&c Aucun co-hôte.");
-    } else {
-      profile.sendMessage("&8»&r Co-hôtes&8 (&6%d&8):".formatted(coHosts.size()));
-      for (final UUID coHost : coHosts) {
-        final Profile coHostProfile =
-            this.ultraHardcore.profileService().getOrCreateProfile(coHost);
-        profile.sendMessage("   &8»&r %s".formatted(coHostProfile.getName()));
-      }
-    }
-    profile.sendMessage("");
-  }
-
-  @SubCommand(
-      @CommandMeta(name = "refill", description = "Redonner les objets de pouvoir à un joueur"))
-  public void refill(
-      final Player player, final @Argument(name = "joueur", defaultValue = "self") Player target) {
-    if (!this.ultraHardcore.gameService().hostService().hasHostAccess(player)
-        && !player.getUniqueId().equals(target.getUniqueId())) {
-      player.sendMessage(MISSING_PERMISSION);
-      return;
+        Bukkit.broadcastMessage(CC.prefix(
+                enabled
+                        ? "&6" + player.getName() + "&f vient d'&aactiver&f le chat de la partie."
+                        : "&6" + player.getName() + "&f vient de&c désactiver&f le chat de la partie."));
     }
 
-    final Profile profile = this.ultraHardcore.profileService().getOrCreateProfile(target);
+    @SubCommand(@CommandMeta(name = "stop", description = "Fermer la partie"))
+    public void stop(final Player player) {
+        if (!this.ultraHardcore.gameService().hostService().isHost(player)) {
+            player.sendMessage(MISSING_PERMISSION);
+            return;
+        }
 
-    final var childPowers =
-        profile.getPowers().stream()
-            .filter(AbstractParentItemPower.class::isInstance)
-            .map(AbstractParentItemPower.class::cast)
-            .flatMap(parent -> parent.getChildren().stream())
-            .collect(Collectors.toSet());
-
-    for (final AbstractPower power : profile.getPowers()) {
-      if (!(power instanceof final AbstractItemPower itemPower) || childPowers.contains(power)) {
-        continue;
-      }
-
-      target.getInventory().addItem(itemPower.getIcon(target));
+        Bukkit.shutdown();
     }
 
-    player.sendMessage(
-        CC.prefix("Vous avez redonné les pouvoirs à&6 %s&r.".formatted(target.getName())));
-  }
+    @SubCommand(@CommandMeta(name = "set", description = "Définir le joueur hôte de la partie"))
+    public void set(final Player player, final @Argument(name = "joueur") Player target) {
+        final HostService hostService = this.ultraHardcore.gameService().hostService();
+        if (!hostService.isHost(player)) {
+            player.sendMessage(MISSING_PERMISSION);
+            return;
+        }
 
-  @SubCommand(
-      @CommandMeta(
-          name = "killoffline",
-          aliases = "ko",
-          description = "Éliminer un joueur hors-ligne"))
-  public void killOffline(
-      final Player player, final @Argument(name = "joueur") OfflinePlayer target) {
-    final GameService gameService = this.ultraHardcore.gameService();
-    if (gameService.startTime() == 0L) {
-      player.sendMessage(CC.prefix("La partie n'est pas en cours de jeu."));
-      return;
+        final UUID host = hostService.host();
+        if (host != null && host.equals(target.getUniqueId())) {
+            player.sendMessage(CC.prefix("Ce joueur est déjà l'hôte principal de la partie."));
+            return;
+        }
+
+        hostService.host(target.getUniqueId());
+        player.sendMessage(
+                CC.prefix("Vous avez défini&6 %s&f comme hôte principal de la partie.".formatted(target.getName())));
     }
 
-    if (!this.ultraHardcore.gameService().hostService().hasHostAccess(player)) {
-      player.sendMessage(MISSING_PERMISSION);
-      return;
+    @SubCommand(@CommandMeta(name = "latescatter", aliases = "late", description = "Ajouter un joueur en retard"))
+    @Command(@CommandMeta(name = "latescatter", aliases = "late", description = "Ajouter un joueur en retard"))
+    public void lateScatter(final Player player, final @Argument(name = "joueur") Player target) {
+        final GameService gameService = this.ultraHardcore.gameService();
+        if (gameService.startTime() == 0L) {
+            player.sendMessage(CC.prefix("La partie n'est pas en cours de jeu."));
+            return;
+        }
+
+        if (!this.ultraHardcore.gameService().hostService().hasHostAccess(player)) {
+            player.sendMessage(MISSING_PERMISSION);
+            return;
+        }
+
+        final Profile profile = this.ultraHardcore.profileService().getOrCreateProfile(target.getUniqueId());
+        if (profile.getState() instanceof PlayingProfileState || profile.hasComponent(DeadComponent.class)) {
+            player.sendMessage(
+                    CC.prefix("Le joueur&6 %s&r ne peut pas être ajouté à la partie.".formatted(target.getName())));
+            return;
+        }
+
+        this.ultraHardcore.gameService().scatterService().handlePlayerLateScatter(target);
+
+        Bukkit.broadcastMessage(CC.prefix(
+                "&b" + player.getName() + "&f vient d'ajouter le joueur &d" + target.getName() + "&f à la partie."));
+        player.sendMessage(CC.prefix("Vous venez d'ajouter le joueur&6 %s&r à la partie.".formatted(target.getName())));
     }
 
-    final Profile profile =
-        this.ultraHardcore.profileService().getOrCreateProfile(target.getUniqueId());
-    if (target.isOnline()
-        || !profile.hasComponent(DisconnectComponent.class)
-        || !profile.hasComponent(PlayerInformationComponent.class)
-        || profile.hasComponent(DeadComponent.class)) {
-      player.sendMessage(
-          CC.prefix("Le joueur&6 %s&r est&c mort&r ou&a en ligne&r.".formatted(target.getName())));
-      return;
+    @SubCommand(@CommandMeta(name = "revive", description = "Ressusciter un joueur"))
+    @Command(@CommandMeta(name = "revive", description = "Ressusciter un joueur"))
+    public void revive(final Player player, final @Argument(name = "joueur") Player target) {
+        final GameService gameService = this.ultraHardcore.gameService();
+        if (gameService.startTime() == 0L) {
+            player.sendMessage(CC.prefix("La partie n'est pas en cours de jeu."));
+            return;
+        }
+
+        if (!this.ultraHardcore.gameService().hostService().hasHostAccess(player)) {
+            player.sendMessage(MISSING_PERMISSION);
+            return;
+        }
+
+        final Profile profile = this.ultraHardcore.profileService().getOrCreateProfile(target.getUniqueId());
+        final DeadComponent component = profile.getComponent(DeadComponent.class);
+        if (component == null) {
+            player.sendMessage(CC.prefix("Le joueur&6 %s&r n'est pas mort.".formatted(target.getName())));
+            return;
+        }
+
+        target.setGameMode(GameMode.SURVIVAL);
+        target.teleport(component.location());
+        this.heal(target);
+
+        final var droppedItems = component.droppedItems();
+        for (final var entity : component.location().getWorld().getEntities()) {
+            if (droppedItems.contains(entity.getUniqueId())) {
+                entity.remove();
+            }
+        }
+
+        final PlayerInventory inventory = target.getInventory();
+        inventory.setContents(component.inventory());
+        inventory.setArmorContents(component.armor());
+
+        for (final Player receiver : Bukkit.getOnlinePlayers()) {
+            receiver.playSound(receiver.getLocation(), Sound.ZOMBIE_UNFECT, 1f, 2f);
+        }
+
+        profile.setState(new PlayingProfileState());
+        profile.removeComponent(DeadComponent.class);
+
+        player.sendMessage(CC.prefix("Vous venez de&d ressusciter&f le joueur&6 %s&r.".formatted(target.getName())));
     }
 
-    gameService.deathService().eliminate(profile, null, true);
+    @Command(@CommandMeta(name = "heal", description = "Soigner des joueurs"))
+    public void heal(final Player player, final @Argument(name = "joueurs", defaultValue = "all") String[] targets) {
+        if (this.ultraHardcore.gameService().startTime() == 0L) {
+            player.sendMessage(CC.prefix("La partie n'est pas en cours de jeu."));
+            return;
+        }
 
-    player.sendMessage(
-        CC.prefix("Vous venez d'&céliminer&f le joueur&6 %s&r.".formatted(target.getName())));
-  }
+        if (!this.ultraHardcore.gameService().hostService().hasHostAccess(player)) {
+            player.sendMessage(MISSING_PERMISSION);
+            return;
+        }
 
-  @SubCommand(@CommandMeta(name = "chat", description = "Activer/désactiver le chat de la partie"))
-  public void chat(final Player player) {
-    if (!this.ultraHardcore.gameService().hostService().hasHostAccess(player)) {
-      player.sendMessage(MISSING_PERMISSION);
-      return;
+        final boolean all = targets[0].equalsIgnoreCase("all");
+        final var targetNames = Arrays.stream(targets).toList();
+        final List<Player> candidates = Bukkit.getOnlinePlayers().stream()
+                .filter(p -> all || targetNames.stream().anyMatch(filtered -> filtered.equalsIgnoreCase(p.getName())))
+                .map(Player.class::cast)
+                .toList();
+
+        final var healable = candidates.stream().filter(this::isNotInCombat).toList();
+        if (all) {
+            Bukkit.broadcastMessage(
+                    CC.prefix("§6" + player.getName() + "§f vient de§d soigner§f tous les joueurs de la partie."));
+        }
+
+        for (final Player target : healable) {
+            if (!all) {
+                target.sendMessage(CC.prefix("Vous avez été soigné par§6 " + player.getName() + "§f."));
+            }
+            this.heal(target);
+        }
     }
 
-    final boolean enabled = !GameService.CHAT_OPTION.getValue();
-    GameService.CHAT_OPTION.setValue(enabled);
-
-    Bukkit.broadcastMessage(
-        CC.prefix(
-            enabled
-                ? "&6" + player.getName() + "&f vient d'&aactiver&f le chat de la partie."
-                : "&6" + player.getName() + "&f vient de&c désactiver&f le chat de la partie."));
-  }
-
-  @SubCommand(@CommandMeta(name = "stop", description = "Fermer la partie"))
-  public void stop(final Player player) {
-    if (!this.ultraHardcore.gameService().hostService().isHost(player)) {
-      player.sendMessage(MISSING_PERMISSION);
-      return;
+    private boolean isNotInCombat(final Player target) {
+        return !this.ultraHardcore
+                .gameService()
+                .combatService()
+                .inCombat(this.ultraHardcore.profileService().getOrCreateProfile(target.getUniqueId()));
     }
 
-    Bukkit.shutdown();
-  }
+    private void heal(final Player target) {
+        target.setHealth(target.getMaxHealth());
 
-  @SubCommand(@CommandMeta(name = "set", description = "Définir le joueur hôte de la partie"))
-  public void set(final Player player, final @Argument(name = "joueur") Player target) {
-    final HostService hostService = this.ultraHardcore.gameService().hostService();
-    if (!hostService.isHost(player)) {
-      player.sendMessage(MISSING_PERMISSION);
-      return;
+        target.setFoodLevel(20);
+        target.setSaturation(20.0f);
     }
 
-    final UUID host = hostService.host();
-    if (host != null && host.equals(target.getUniqueId())) {
-      player.sendMessage(CC.prefix("Ce joueur est déjà l'hôte principal de la partie."));
-      return;
+    @Command(@CommandMeta(name = "save", description = "Sauvegarder l'inventaire de départ"))
+    public void saveInventory(final Player player) {
+        if (!this.ultraHardcore.gameService().hostService().hasHostAccess(player)) {
+            player.sendMessage(MISSING_PERMISSION);
+            return;
+        }
+
+        final var profile = this.ultraHardcore.profileService().getOrCreateProfile(player.getUniqueId());
+        final var editorComponent = profile.getComponent(InventoryEditorComponent.class);
+        if (editorComponent == null) {
+            this.bukkitAudiences
+                    .player(player)
+                    .sendMessage(
+                            prefix().append(text("Vous n'êtes pas en mode édition d'inventaire.", NamedTextColor.RED))
+                                    .build());
+            return;
+        }
+
+        final var inventory = player.getInventory();
+        InventoryConfiguration.INVENTORY_CONTENT_OPTION.setValue(
+                inventory.getContents().clone());
+        InventoryConfiguration.INVENTORY_ARMOR_OPTION.setValue(
+                inventory.getArmorContents().clone());
+
+        profile.removeComponent(InventoryEditorComponent.class);
+
+        inventory.clear();
+        inventory.setArmorContents(null);
+        inventory.setContents(editorComponent.savedInventory());
+        inventory.setArmorContents(editorComponent.savedArmor());
+
+        player.setGameMode(GameMode.SURVIVAL);
+        player.sendMessage(CC.prefix("Vous venez de&a sauvegarder&r l'&ainventaire de départ&r."));
     }
-
-    hostService.host(target.getUniqueId());
-    player.sendMessage(
-        CC.prefix(
-            "Vous avez défini&6 %s&f comme hôte principal de la partie."
-                .formatted(target.getName())));
-  }
-
-  @SubCommand(
-      @CommandMeta(
-          name = "latescatter",
-          aliases = "late",
-          description = "Ajouter un joueur en retard"))
-  @Command(
-      @CommandMeta(
-          name = "latescatter",
-          aliases = "late",
-          description = "Ajouter un joueur en retard"))
-  public void lateScatter(final Player player, final @Argument(name = "joueur") Player target) {
-    final GameService gameService = this.ultraHardcore.gameService();
-    if (gameService.startTime() == 0L) {
-      player.sendMessage(CC.prefix("La partie n'est pas en cours de jeu."));
-      return;
-    }
-
-    if (!this.ultraHardcore.gameService().hostService().hasHostAccess(player)) {
-      player.sendMessage(MISSING_PERMISSION);
-      return;
-    }
-
-    final Profile profile =
-        this.ultraHardcore.profileService().getOrCreateProfile(target.getUniqueId());
-    if (profile.getState() instanceof PlayingProfileState
-        || profile.hasComponent(DeadComponent.class)) {
-      player.sendMessage(
-          CC.prefix(
-              "Le joueur&6 %s&r ne peut pas être ajouté à la partie.".formatted(target.getName())));
-      return;
-    }
-
-    this.ultraHardcore.gameService().scatterService().handlePlayerLateScatter(target);
-
-    Bukkit.broadcastMessage(
-        CC.prefix(
-            "&b"
-                + player.getName()
-                + "&f vient d'ajouter le joueur &d"
-                + target.getName()
-                + "&f à la partie."));
-    player.sendMessage(
-        CC.prefix(
-            "Vous venez d'ajouter le joueur&6 %s&r à la partie.".formatted(target.getName())));
-  }
-
-  @SubCommand(@CommandMeta(name = "revive", description = "Ressusciter un joueur"))
-  @Command(@CommandMeta(name = "revive", description = "Ressusciter un joueur"))
-  public void revive(final Player player, final @Argument(name = "joueur") Player target) {
-    final GameService gameService = this.ultraHardcore.gameService();
-    if (gameService.startTime() == 0L) {
-      player.sendMessage(CC.prefix("La partie n'est pas en cours de jeu."));
-      return;
-    }
-
-    if (!this.ultraHardcore.gameService().hostService().hasHostAccess(player)) {
-      player.sendMessage(MISSING_PERMISSION);
-      return;
-    }
-
-    final Profile profile =
-        this.ultraHardcore.profileService().getOrCreateProfile(target.getUniqueId());
-    final DeadComponent component = profile.getComponent(DeadComponent.class);
-    if (component == null) {
-      player.sendMessage(CC.prefix("Le joueur&6 %s&r n'est pas mort.".formatted(target.getName())));
-      return;
-    }
-
-    target.setGameMode(GameMode.SURVIVAL);
-    target.teleport(component.location());
-    this.heal(target);
-
-    final var droppedItems = component.droppedItems();
-    for (final var entity : component.location().getWorld().getEntities()) {
-      if (droppedItems.contains(entity.getUniqueId())) {
-        entity.remove();
-      }
-    }
-
-    final PlayerInventory inventory = target.getInventory();
-    inventory.setContents(component.inventory());
-    inventory.setArmorContents(component.armor());
-
-    for (final Player receiver : Bukkit.getOnlinePlayers()) {
-      receiver.playSound(receiver.getLocation(), Sound.ZOMBIE_UNFECT, 1f, 2f);
-    }
-
-    profile.setState(new PlayingProfileState());
-    profile.removeComponent(DeadComponent.class);
-
-    player.sendMessage(
-        CC.prefix("Vous venez de&d ressusciter&f le joueur&6 %s&r.".formatted(target.getName())));
-  }
-
-  @Command(@CommandMeta(name = "heal", description = "Soigner des joueurs"))
-  public void heal(final Player player, final @Argument(name = "joueurs", defaultValue = "all") String[] targets) {
-    if (this.ultraHardcore.gameService().startTime() == 0L) {
-      player.sendMessage(CC.prefix("La partie n'est pas en cours de jeu."));
-      return;
-    }
-
-    if (!this.ultraHardcore.gameService().hostService().hasHostAccess(player)) {
-      player.sendMessage(MISSING_PERMISSION);
-      return;
-    }
-
-    final boolean all = targets[0].equalsIgnoreCase("all");
-    final var targetNames = Arrays.stream(targets).toList();
-    final List<Player> candidates =
-        Bukkit.getOnlinePlayers().stream()
-            .filter(
-                p ->
-                    all
-                        || targetNames.stream()
-                            .anyMatch(filtered -> filtered.equalsIgnoreCase(p.getName())))
-            .map(Player.class::cast)
-            .toList();
-
-    final var healable = candidates.stream().filter(this::isNotInCombat).toList();
-    if (all) {
-      Bukkit.broadcastMessage(
-          CC.prefix(
-              "§6"
-                  + player.getName()
-                  + "§f vient de§d soigner§f tous les joueurs de la partie."));
-    }
-
-    for (final Player target : healable) {
-      if (!all) {
-        target.sendMessage(CC.prefix("Vous avez été soigné par§6 " + player.getName() + "§f."));
-      }
-      this.heal(target);
-    }
-  }
-
-  private boolean isNotInCombat(final Player target) {
-    return !this.ultraHardcore
-        .gameService()
-        .combatService()
-        .inCombat(this.ultraHardcore.profileService().getOrCreateProfile(target.getUniqueId()));
-  }
-
-  private void heal(final Player target) {
-    target.setHealth(target.getMaxHealth());
-
-    target.setFoodLevel(20);
-    target.setSaturation(20.0f);
-  }
-
-  @Command(@CommandMeta(name = "save", description = "Sauvegarder l'inventaire de départ"))
-  public void saveInventory(final Player player) {
-    if (!this.ultraHardcore.gameService().hostService().hasHostAccess(player)) {
-      player.sendMessage(MISSING_PERMISSION);
-      return;
-    }
-
-    final var profile =
-        this.ultraHardcore.profileService().getOrCreateProfile(player.getUniqueId());
-    final var editorComponent = profile.getComponent(InventoryEditorComponent.class);
-    if (editorComponent == null) {
-      this.bukkitAudiences
-          .player(player)
-          .sendMessage(
-              prefix()
-                  .append(text("Vous n'êtes pas en mode édition d'inventaire.", NamedTextColor.RED))
-                  .build());
-      return;
-    }
-
-    final var inventory = player.getInventory();
-    InventoryConfiguration.INVENTORY_CONTENT_OPTION.setValue(inventory.getContents().clone());
-    InventoryConfiguration.INVENTORY_ARMOR_OPTION.setValue(inventory.getArmorContents().clone());
-
-    profile.removeComponent(InventoryEditorComponent.class);
-
-    inventory.clear();
-    inventory.setArmorContents(null);
-    inventory.setContents(editorComponent.savedInventory());
-    inventory.setArmorContents(editorComponent.savedArmor());
-
-    player.setGameMode(GameMode.SURVIVAL);
-    player.sendMessage(CC.prefix("Vous venez de&a sauvegarder&r l'&ainventaire de départ&r."));
-  }
 }

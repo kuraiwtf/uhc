@@ -10,125 +10,122 @@ import dev.kurai.uhc.profile.Profile;
 import dev.kurai.uhc.util.Color;
 import dev.kurai.uhc.util.api.Identifiable;
 import dev.kurai.uhc.util.api.name.Nameable;
-import java.util.*;
 import org.bukkit.entity.Player;
 import org.jspecify.annotations.Nullable;
 
-public abstract class AbstractPower
-    implements Identifiable<String>, Nameable<String>, PowerRestrictionHolder {
+import java.util.*;
 
-  protected final String identifier;
-  protected final String name;
+public abstract class AbstractPower implements Identifiable<String>, Nameable<String>, PowerRestrictionHolder {
 
-  protected final Map<String, PowerRestriction> restrictions;
+    protected final String identifier;
+    protected final String name;
 
-  protected final UUID owner;
-  protected final UltraHardcoreAPI ultraHardcore;
+    protected final Map<String, PowerRestriction> restrictions;
 
-  protected final Profile profile;
+    protected final UUID owner;
+    protected final UltraHardcoreAPI ultraHardcore;
 
-  protected boolean roleDescriptionDisplay;
+    protected final Profile profile;
 
-  protected AbstractPower(
-      final String identifier,
-      final String name,
-      final UUID owner,
-      final UltraHardcoreAPI ultraHardcore) {
-    this.identifier = identifier;
-    this.name = name;
-    this.owner = owner;
-    this.ultraHardcore = ultraHardcore;
+    protected boolean roleDescriptionDisplay;
 
-    this.restrictions = Maps.newConcurrentMap();
+    protected AbstractPower(
+            final String identifier, final String name, final UUID owner, final UltraHardcoreAPI ultraHardcore) {
+        this.identifier = identifier;
+        this.name = name;
+        this.owner = owner;
+        this.ultraHardcore = ultraHardcore;
 
-    this.profile = ultraHardcore.profileService().getOrCreateProfile(owner);
-  }
+        this.restrictions = Maps.newConcurrentMap();
 
-  public boolean roleDescriptionDisplay() {
-    return this.roleDescriptionDisplay;
-  }
-
-  public void roleDescriptionDisplay(final boolean roleDescriptionDisplay) {
-    this.roleDescriptionDisplay = roleDescriptionDisplay;
-  }
-
-  public List<String> lore() {
-    return List.of("§cLa description de ce pouvoir est introuvable.");
-  }
-
-  public @Nullable ActionbarEntry provideActionbarEntry(final Player player) {
-    return null;
-  }
-
-  public Color getColor() {
-    return Color.GOLD;
-  }
-
-  public abstract boolean onUse(final Player player);
-
-  public void onRemove(final Player player) {}
-
-  public final void use(final Player player) {
-    for (final var restriction : this.restrictions.values()) {
-      if (restriction.restrictsPower(this, player)) {
-        this.profile.sendMessage(restriction.provideRestrictionMessage(this, player));
-        return;
-      }
+        this.profile = ultraHardcore.profileService().getOrCreateProfile(owner);
     }
 
-    final var powerUseEvent =
-        this.ultraHardcore.eventService().dispatchEvent(new PowerUseEvent(this.profile, this));
-    if (powerUseEvent.isCancelled()) {
-      return;
+    public boolean roleDescriptionDisplay() {
+        return this.roleDescriptionDisplay;
     }
 
-    if (!this.onUse(player)) {
-      return;
+    public void roleDescriptionDisplay(final boolean roleDescriptionDisplay) {
+        this.roleDescriptionDisplay = roleDescriptionDisplay;
     }
 
-    for (final PowerRestriction restriction : this.getRestrictions()) {
-      restriction.strategy().apply(restriction, this, player);
+    public List<String> lore() {
+        return List.of("§cLa description de ce pouvoir est introuvable.");
     }
-  }
 
-  @Override
-  public final Collection<PowerRestriction> getRestrictions() {
-    return this.restrictions.values();
-  }
+    public @Nullable ActionbarEntry provideActionbarEntry(final Player player) {
+        return null;
+    }
 
-  @Override
-  public final void addRestriction(final PowerRestriction restriction) {
-    this.restrictions.put(restriction.getId(), restriction);
-  }
+    public Color getColor() {
+        return Color.GOLD;
+    }
 
-  @Override
-  public final void removeRestriction(final String id) {
-    this.restrictions.remove(id);
-  }
+    public abstract boolean onUse(final Player player);
 
-  @Override
-  public final <T extends PowerRestriction> Optional<T> findOptionalRestriction(
-      final Class<T> restrictionClass, final String id) {
-    return Optional.ofNullable(this.restrictions.get(id))
-        .filter(restrictionClass::isInstance)
-        .map(restrictionClass::cast);
-  }
+    public void onRemove(final Player player) {}
 
-  public final UltraHardcoreAPI ultraHardcore() {
-    return this.ultraHardcore;
-  }
+    public final void use(final Player player) {
+        for (final var restriction : this.restrictions.values()) {
+            if (restriction.restrictsPower(this, player)) {
+                this.profile.sendMessage(restriction.provideRestrictionMessage(this, player));
+                return;
+            }
+        }
 
-  public final Profile getPlayer() {
-    return this.profile;
-  }
+        final var powerUseEvent =
+                this.ultraHardcore.eventService().dispatchEvent(new PowerUseEvent(this.profile, this));
+        if (powerUseEvent.isCancelled()) {
+            return;
+        }
 
-  @Override
-  public final String getId() {
-    return this.identifier;
-  }
+        if (!this.onUse(player)) {
+            return;
+        }
 
-  @Override
-  public final String getName() {
-    return this.name;
-  }
+        for (final PowerRestriction restriction : this.getRestrictions()) {
+            restriction.strategy().apply(restriction, this, player);
+        }
+    }
+
+    @Override
+    public final Collection<PowerRestriction> getRestrictions() {
+        return this.restrictions.values();
+    }
+
+    @Override
+    public final void addRestriction(final PowerRestriction restriction) {
+        this.restrictions.put(restriction.getId(), restriction);
+    }
+
+    @Override
+    public final void removeRestriction(final String id) {
+        this.restrictions.remove(id);
+    }
+
+    @Override
+    public final <T extends PowerRestriction> Optional<T> findOptionalRestriction(
+            final Class<T> restrictionClass, final String id) {
+        return Optional.ofNullable(this.restrictions.get(id))
+                .filter(restrictionClass::isInstance)
+                .map(restrictionClass::cast);
+    }
+
+    public final UltraHardcoreAPI ultraHardcore() {
+        return this.ultraHardcore;
+    }
+
+    public final Profile getPlayer() {
+        return this.profile;
+    }
+
+    @Override
+    public final String getId() {
+        return this.identifier;
+    }
+
+    @Override
+    public final String getName() {
+        return this.name;
+    }
 }

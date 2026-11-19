@@ -4,13 +4,13 @@ import dev.kurai.uhc.profile.Profile;
 
 public final class SpectatingProfileState extends ProfileState {
 
-  public SpectatingProfileState() {
-    super("spectating");
-  }
+    public SpectatingProfileState() {
+        super("spectating");
+    }
 
-  @Override
-  public void onEntry(final Profile profile) {}
+    @Override
+    public void onEntry(final Profile profile) {}
 
-  @Override
-  public void onExit(final Profile profile) {}
+    @Override
+    public void onExit(final Profile profile) {}
 }

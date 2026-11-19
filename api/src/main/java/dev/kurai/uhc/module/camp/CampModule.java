@@ -6,9 +6,9 @@ import java.util.UUID;
 
 public interface CampModule {
 
-  Collection<Camp> availableCamps();
+    Collection<Camp> availableCamps();
 
-  default Optional<? extends Camp> campOf(final UUID uniqueId) {
-    return Optional.empty();
-  }
+    default Optional<? extends Camp> campOf(final UUID uniqueId) {
+        return Optional.empty();
+    }
 }

@@ -5,5 +5,5 @@ import org.bukkit.entity.Player;
 @FunctionalInterface
 public interface OfflinePlayerAction {
 
-  void onJoin(final Player player);
+    void onJoin(final Player player);
 }

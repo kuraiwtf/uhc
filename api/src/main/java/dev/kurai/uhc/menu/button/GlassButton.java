@@ -8,21 +8,21 @@ import org.jetbrains.annotations.Contract;
 
 public final class GlassButton extends Button {
 
-  private final int data;
+    private final int data;
 
-  public GlassButton(final int data) {
-    this.data = data;
-  }
+    public GlassButton(final int data) {
+        this.data = data;
+    }
 
-  @Contract(pure = true)
-  @Override
-  public ItemStack getIcon() {
-    return new ItemBuilder(Material.STAINED_GLASS_PANE)
-        .data(this.data)
-        .name("&0")
-        .lunarTag("unclickable", true)
-        .lunarTag("hideSlotHighlight", true)
-        .lunarTag("hideItemTooltip", true)
-        .asItemStack();
-  }
+    @Contract(pure = true)
+    @Override
+    public ItemStack getIcon() {
+        return new ItemBuilder(Material.STAINED_GLASS_PANE)
+                .data(this.data)
+                .name("&0")
+                .lunarTag("unclickable", true)
+                .lunarTag("hideSlotHighlight", true)
+                .lunarTag("hideItemTooltip", true)
+                .asItemStack();
+    }
 }

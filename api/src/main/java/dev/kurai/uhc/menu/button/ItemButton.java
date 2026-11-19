@@ -7,15 +7,15 @@ import org.jetbrains.annotations.Contract;
 
 public final class ItemButton extends Button {
 
-  private final ItemStack item;
+    private final ItemStack item;
 
-  public ItemButton(final ItemStack item) {
-    this.item = item;
-  }
+    public ItemButton(final ItemStack item) {
+        this.item = item;
+    }
 
-  @Contract(pure = true)
-  @Override
-  public ItemStack getIcon() {
-    return new ItemBuilder(this.item).lunarTag("unclickable", true).asItemStack();
-  }
+    @Contract(pure = true)
+    @Override
+    public ItemStack getIcon() {
+        return new ItemBuilder(this.item).lunarTag("unclickable", true).asItemStack();
+    }
 }

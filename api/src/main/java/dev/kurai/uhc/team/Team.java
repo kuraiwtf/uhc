@@ -2,26 +2,28 @@ package dev.kurai.uhc.team;
 
 import dev.kurai.uhc.util.api.Identifiable;
 import dev.kurai.uhc.util.api.name.Nameable;
-import java.util.Collection;
-import java.util.UUID;
 import org.bukkit.inventory.Inventory;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
+import java.util.Collection;
+import java.util.UUID;
+
 @NullMarked
 public interface Team extends Identifiable<Integer>, Nameable<String> {
 
-  TeamStyle style();
+    TeamStyle style();
 
-  default String coloredName() {
-    return this.style().coloredName();
-  }
+    default String coloredName() {
+        return this.style().coloredName();
+    }
 
-  UUID leader();
+    UUID leader();
 
-  Collection<UUID> members();
+    Collection<UUID> members();
 
-  boolean contains(final UUID uniqueId);
+    boolean contains(final UUID uniqueId);
 
-  @Nullable Inventory inventory();
+    @Nullable
+    Inventory inventory();
 }

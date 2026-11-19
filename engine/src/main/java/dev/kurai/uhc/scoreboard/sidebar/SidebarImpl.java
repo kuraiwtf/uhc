@@ -8,172 +8,164 @@ import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSc
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerUpdateScore;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
+
 public final class SidebarImpl implements Sidebar {
 
-  private static final String OBJECTIVE_NAME = "arena";
-  private static final int MAX_ENTRY_LENGTH = 40;
+    private static final String OBJECTIVE_NAME = "arena";
+    private static final int MAX_ENTRY_LENGTH = 40;
 
-  private final UUID uniqueId;
-  private final Map<Integer, Component> entries;
+    private final UUID uniqueId;
+    private final Map<Integer, Component> entries;
 
-  private Component previousTitle;
+    private Component previousTitle;
 
-  public SidebarImpl(final UUID uniqueId) {
-    this.uniqueId = uniqueId;
-    this.entries = Maps.newHashMap();
+    public SidebarImpl(final UUID uniqueId) {
+        this.uniqueId = uniqueId;
+        this.entries = Maps.newHashMap();
 
-    this.writePacket(
-        new WrapperPlayServerScoreboardObjective(
-            OBJECTIVE_NAME,
-            WrapperPlayServerScoreboardObjective.ObjectiveMode.CREATE,
-            Component.text("Scoreboard"),
-            null));
+        this.writePacket(new WrapperPlayServerScoreboardObjective(
+                OBJECTIVE_NAME,
+                WrapperPlayServerScoreboardObjective.ObjectiveMode.CREATE,
+                Component.text("Scoreboard"),
+                null));
 
-    this.writePacket(new WrapperPlayServerDisplayScoreboard(1, OBJECTIVE_NAME));
-  }
-
-  @Override
-  public void editTitle(final Component title) {
-    Preconditions.checkNotNull(title, "title cannot be null");
-    if (this.previousTitle != null && this.previousTitle.equals(title)) {
-      return;
+        this.writePacket(new WrapperPlayServerDisplayScoreboard(1, OBJECTIVE_NAME));
     }
 
-    this.previousTitle = title;
-    this.writePacket(
-        new WrapperPlayServerScoreboardObjective(
-            OBJECTIVE_NAME,
-            WrapperPlayServerScoreboardObjective.ObjectiveMode.UPDATE,
-            title,
-            null));
-  }
+    @Override
+    public void editTitle(final Component title) {
+        Preconditions.checkNotNull(title, "title cannot be null");
+        if (this.previousTitle != null && this.previousTitle.equals(title)) {
+            return;
+        }
 
-  @Override
-  public void overrideLine(final int score, final Component content) {
-    Preconditions.checkNotNull(content, "content cannot be null");
-
-    if (this.hasEntry(score)) {
-      if (this.entries.get(score).equals(content)) {
-        return;
-      }
-
-      this.removeLine(score);
+        this.previousTitle = title;
+        this.writePacket(new WrapperPlayServerScoreboardObjective(
+                OBJECTIVE_NAME, WrapperPlayServerScoreboardObjective.ObjectiveMode.UPDATE, title, null));
     }
 
-    this.writePacket(
-        new WrapperPlayServerUpdateScore(
-            this.entryName(score, content),
-            WrapperPlayServerUpdateScore.Action.CREATE_OR_UPDATE_ITEM,
-            OBJECTIVE_NAME,
-            score,
-            Component.empty(),
-            ScoreFormat.blankScore()));
-    this.entries.put(score, content);
-  }
+    @Override
+    public void overrideLine(final int score, final Component content) {
+        Preconditions.checkNotNull(content, "content cannot be null");
 
-  @Override
-  public void removeLine(final int score) {
-    if (!this.hasEntry(score)) {
-      return;
+        if (this.hasEntry(score)) {
+            if (this.entries.get(score).equals(content)) {
+                return;
+            }
+
+            this.removeLine(score);
+        }
+
+        this.writePacket(new WrapperPlayServerUpdateScore(
+                this.entryName(score, content),
+                WrapperPlayServerUpdateScore.Action.CREATE_OR_UPDATE_ITEM,
+                OBJECTIVE_NAME,
+                score,
+                Component.empty(),
+                ScoreFormat.blankScore()));
+        this.entries.put(score, content);
     }
 
-    final var component = this.entries.get(score);
-    if (component == null) {
-      return;
+    @Override
+    public void removeLine(final int score) {
+        if (!this.hasEntry(score)) {
+            return;
+        }
+
+        final var component = this.entries.get(score);
+        if (component == null) {
+            return;
+        }
+
+        this.writePacket(new WrapperPlayServerUpdateScore(
+                this.entryName(score, component),
+                WrapperPlayServerUpdateScore.Action.REMOVE_ITEM,
+                OBJECTIVE_NAME,
+                score,
+                component,
+                ScoreFormat.blankScore()));
+        this.entries.remove(score);
     }
 
-    this.writePacket(
-        new WrapperPlayServerUpdateScore(
-            this.entryName(score, component),
-            WrapperPlayServerUpdateScore.Action.REMOVE_ITEM,
-            OBJECTIVE_NAME,
-            score,
-            component,
-            ScoreFormat.blankScore()));
-    this.entries.remove(score);
-  }
-
-  @Override
-  public void trimLines(final Set<Integer> activeScores) {
-    final var staleScores = Maps.newHashMap(this.entries).keySet();
-    staleScores.removeAll(activeScores);
-    staleScores.forEach(this::removeLine);
-  }
-
-  @Override
-  public void destroy() {
-    for (final var score : Set.copyOf(this.entries.keySet())) {
-      this.removeLine(score);
+    @Override
+    public void trimLines(final Set<Integer> activeScores) {
+        final var staleScores = Maps.newHashMap(this.entries).keySet();
+        staleScores.removeAll(activeScores);
+        staleScores.forEach(this::removeLine);
     }
 
-    this.writePacket(
-        new WrapperPlayServerScoreboardObjective(
-            OBJECTIVE_NAME,
-            WrapperPlayServerScoreboardObjective.ObjectiveMode.REMOVE,
-            Component.empty(),
-            WrapperPlayServerScoreboardObjective.RenderType.INTEGER,
-            ScoreFormat.blankScore()));
-  }
+    @Override
+    public void destroy() {
+        for (final var score : Set.copyOf(this.entries.keySet())) {
+            this.removeLine(score);
+        }
 
-  @Override
-  public void send() {
-    final var player = Bukkit.getPlayer(this.uniqueId);
-    if (player == null) {
-      return;
+        this.writePacket(new WrapperPlayServerScoreboardObjective(
+                OBJECTIVE_NAME,
+                WrapperPlayServerScoreboardObjective.ObjectiveMode.REMOVE,
+                Component.empty(),
+                WrapperPlayServerScoreboardObjective.RenderType.INTEGER,
+                ScoreFormat.blankScore()));
     }
 
-    final var user = PacketEvents.getAPI().getPlayerManager().getUser(player);
-    if (user == null) {
-      return;
+    @Override
+    public void send() {
+        final var player = Bukkit.getPlayer(this.uniqueId);
+        if (player == null) {
+            return;
+        }
+
+        final var user = PacketEvents.getAPI().getPlayerManager().getUser(player);
+        if (user == null) {
+            return;
+        }
+
+        user.flushPackets();
     }
 
-    user.flushPackets();
-  }
+    private String entryName(final int score, final Component content) {
+        final String name = this.provideColor(score)
+                + ""
+                + ChatColor.WHITE
+                + LegacyComponentSerializer.legacySection().serialize(content);
+        if (name.length() <= MAX_ENTRY_LENGTH) {
+            return name;
+        }
 
-  private String entryName(final int score, final Component content) {
-    final String name =
-        this.provideColor(score)
-            + ""
-            + ChatColor.WHITE
-            + LegacyComponentSerializer.legacySection().serialize(content);
-    if (name.length() <= MAX_ENTRY_LENGTH) {
-      return name;
+        int end = MAX_ENTRY_LENGTH;
+        if (name.charAt(end - 1) == ChatColor.COLOR_CHAR) {
+            end--;
+        }
+        return name.substring(0, end);
     }
 
-    int end = MAX_ENTRY_LENGTH;
-    if (name.charAt(end - 1) == ChatColor.COLOR_CHAR) {
-      end--;
-    }
-    return name.substring(0, end);
-  }
-
-  private ChatColor provideColor(final int score) {
-    return ChatColor.values()[score % ChatColor.values().length];
-  }
-
-  private boolean hasEntry(final int line) {
-    return this.entries.containsKey(line);
-  }
-
-  private void writePacket(final PacketWrapper<?> removePacket) {
-    final var player = Bukkit.getPlayer(this.uniqueId);
-    if (player == null) {
-      return;
+    private ChatColor provideColor(final int score) {
+        return ChatColor.values()[score % ChatColor.values().length];
     }
 
-    final var user = PacketEvents.getAPI().getPlayerManager().getUser(player);
-    if (user == null) {
-      return;
+    private boolean hasEntry(final int line) {
+        return this.entries.containsKey(line);
     }
 
-    user.writePacket(removePacket);
-  }
+    private void writePacket(final PacketWrapper<?> removePacket) {
+        final var player = Bukkit.getPlayer(this.uniqueId);
+        if (player == null) {
+            return;
+        }
+
+        final var user = PacketEvents.getAPI().getPlayerManager().getUser(player);
+        if (user == null) {
+            return;
+        }
+
+        user.writePacket(removePacket);
+    }
 }

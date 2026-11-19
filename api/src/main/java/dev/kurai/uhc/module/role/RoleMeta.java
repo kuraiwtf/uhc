@@ -4,17 +4,17 @@ import dev.kurai.uhc.module.camp.Camp;
 
 public interface RoleMeta {
 
-  String name();
+    String name();
 
-  String getDefaultName();
+    String getDefaultName();
 
-  String getName();
+    String getName();
 
-  Camp camp();
+    Camp camp();
 
-  Class<? extends AbstractRole> roleClass();
+    Class<? extends AbstractRole> roleClass();
 
-  default int maxAmount() {
-    return 1;
-  }
+    default int maxAmount() {
+        return 1;
+    }
 }

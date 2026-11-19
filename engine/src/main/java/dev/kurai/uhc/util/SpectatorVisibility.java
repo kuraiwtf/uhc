@@ -9,30 +9,30 @@ import org.jspecify.annotations.NullMarked;
 @NullMarked
 public final class SpectatorVisibility {
 
-  private SpectatorVisibility() {}
+    private SpectatorVisibility() {}
 
-  public static void refresh(final UltraHardcoreAPI ultraHardcore) {
-    final var profileService = ultraHardcore.profileService();
-    final var online = Bukkit.getOnlinePlayers();
+    public static void refresh(final UltraHardcoreAPI ultraHardcore) {
+        final var profileService = ultraHardcore.profileService();
+        final var online = Bukkit.getOnlinePlayers();
 
-    for (final Player viewer : online) {
-      final boolean viewerIsSpectator =
-          profileService.getOrCreateProfile(viewer).hasComponent(SpectatorComponent.class);
+        for (final Player viewer : online) {
+            final boolean viewerIsSpectator =
+                    profileService.getOrCreateProfile(viewer).hasComponent(SpectatorComponent.class);
 
-      for (final Player target : online) {
-        if (viewer.equals(target)) {
-          continue;
+            for (final Player target : online) {
+                if (viewer.equals(target)) {
+                    continue;
+                }
+
+                final boolean targetIsSpectator =
+                        profileService.getOrCreateProfile(target).hasComponent(SpectatorComponent.class);
+
+                if (targetIsSpectator && !viewerIsSpectator) {
+                    viewer.hidePlayer(target);
+                } else {
+                    viewer.showPlayer(target);
+                }
+            }
         }
-
-        final boolean targetIsSpectator =
-            profileService.getOrCreateProfile(target).hasComponent(SpectatorComponent.class);
-
-        if (targetIsSpectator && !viewerIsSpectator) {
-          viewer.hidePlayer(target);
-        } else {
-          viewer.showPlayer(target);
-        }
-      }
     }
-  }
 }

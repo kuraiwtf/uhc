@@ -1,7 +1,5 @@
 package dev.kurai.uhc.command.defaults;
 
-import static dev.kurai.uhc.util.CC.MISSING_PERMISSION;
-
 import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.command.annotation.Command;
 import dev.kurai.uhc.command.annotation.CommandMeta;
@@ -17,90 +15,82 @@ import lombok.RequiredArgsConstructor;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 
+import static dev.kurai.uhc.util.CC.MISSING_PERMISSION;
+
 @RequiredArgsConstructor
 @Command(@CommandMeta(name = "spectator", aliases = "spec"))
 public final class SpectatorCommand {
 
-  private static final Class<? extends Component> SPECTATOR_COMPONENT = SpectatorComponent.class;
+    private static final Class<? extends Component> SPECTATOR_COMPONENT = SpectatorComponent.class;
 
-  private final UltraHardcoreAPI ultraHardcore;
+    private final UltraHardcoreAPI ultraHardcore;
 
-  @SubCommand(@CommandMeta(name = "list"))
-  public void list(final Player player) {
-    final var spectators =
-        this.ultraHardcore
-            .profileService()
-            .getProfiles(profile -> profile.hasComponent(SPECTATOR_COMPONENT));
+    @SubCommand(@CommandMeta(name = "list"))
+    public void list(final Player player) {
+        final var spectators =
+                this.ultraHardcore.profileService().getProfiles(profile -> profile.hasComponent(SPECTATOR_COMPONENT));
 
-    if (spectators.isEmpty()) {
-      player.sendMessage(CC.prefix("Il n'y a aucun&d spectateur&r pour le moment."));
-      return;
+        if (spectators.isEmpty()) {
+            player.sendMessage(CC.prefix("Il n'y a aucun&d spectateur&r pour le moment."));
+            return;
+        }
+
+        player.sendMessage(CC.prefix("Voici la liste des&d spectateurs&r:"));
+        for (final Profile profile : spectators) {
+            player.sendMessage(CC.colorize("&8 -&r %s".formatted(profile.getName())));
+        }
     }
 
-    player.sendMessage(CC.prefix("Voici la liste des&d spectateurs&r:"));
-    for (final Profile profile : spectators) {
-      player.sendMessage(CC.colorize("&8 -&r %s".formatted(profile.getName())));
-    }
-  }
+    @SubCommand(@CommandMeta(name = "add", permission = "uhc.command.spectator.add"))
+    public void add(final Player player, final @Argument(name = "joueur") Player target) {
+        final GameService gameService = this.ultraHardcore.gameService();
+        if (!gameService.hostService().hasHostAccess(player)) {
+            player.sendMessage(MISSING_PERMISSION);
+            return;
+        }
 
-  @SubCommand(@CommandMeta(name = "add", permission = "uhc.command.spectator.add"))
-  public void add(final Player player, final @Argument(name = "joueur") Player target) {
-    final GameService gameService = this.ultraHardcore.gameService();
-    if (!gameService.hostService().hasHostAccess(player)) {
-      player.sendMessage(MISSING_PERMISSION);
-      return;
+        if (gameService.startTime() > 0L) {
+            player.sendMessage(CC.prefix("&cVous ne pouvez pas ajouter de spectateur pendant la partie."));
+            return;
+        }
+
+        final Profile profile = this.ultraHardcore.profileService().getOrCreateProfile(target);
+        if (profile.hasComponent(SPECTATOR_COMPONENT)) {
+            player.sendMessage(CC.prefix("&6%s&r est déjà un&d spectateur&r.".formatted(target.getName())));
+            return;
+        }
+
+        profile.addComponent(new SpectatorComponent());
+        target.setGameMode(GameMode.SPECTATOR);
+        SpectatorVisibility.refresh(this.ultraHardcore);
+        player.sendMessage(CC.prefix(
+                "Vous venez d'&aajouter&f le joueur&6 %s&r en tant que&d spectateur&r.".formatted(target.getName())));
     }
 
-    if (gameService.startTime() > 0L) {
-      player.sendMessage(
-          CC.prefix("&cVous ne pouvez pas ajouter de spectateur pendant la partie."));
-      return;
-    }
+    @SubCommand(@CommandMeta(name = "remove", permission = "uhc.command.spectator.remove"))
+    public void remove(final Player player, final @Argument(name = "joueur") Player target) {
+        final GameService gameService = this.ultraHardcore.gameService();
+        if (!gameService.hostService().hasHostAccess(player)) {
+            player.sendMessage(MISSING_PERMISSION);
+            return;
+        }
 
-    final Profile profile = this.ultraHardcore.profileService().getOrCreateProfile(target);
-    if (profile.hasComponent(SPECTATOR_COMPONENT)) {
-      player.sendMessage(
-          CC.prefix("&6%s&r est déjà un&d spectateur&r.".formatted(target.getName())));
-      return;
-    }
+        if (gameService.startTime() > 0L) {
+            player.sendMessage(CC.prefix("&cVous ne pouvez pas retirer de spectateur pendant la partie."));
+            return;
+        }
 
-    profile.addComponent(new SpectatorComponent());
-    target.setGameMode(GameMode.SPECTATOR);
-    SpectatorVisibility.refresh(this.ultraHardcore);
-    player.sendMessage(
-        CC.prefix(
-            "Vous venez d'&aajouter&f le joueur&6 %s&r en tant que&d spectateur&r."
+        final Profile profile = this.ultraHardcore.profileService().getOrCreateProfile(target);
+        if (!profile.hasComponent(SPECTATOR_COMPONENT)) {
+            player.sendMessage(CC.prefix("&6%s&r n'est pas un&d spectateur&r.".formatted(target.getName())));
+            return;
+        }
+
+        profile.removeComponent(SPECTATOR_COMPONENT);
+        target.setGameMode(GameMode.SURVIVAL);
+        target.teleport(this.ultraHardcore.spawnLocation());
+        SpectatorVisibility.refresh(this.ultraHardcore);
+        player.sendMessage(CC.prefix("Vous venez de&c retirer&f le joueur&6 %s&r de la liste des&d spectateurs&r."
                 .formatted(target.getName())));
-  }
-
-  @SubCommand(@CommandMeta(name = "remove", permission = "uhc.command.spectator.remove"))
-  public void remove(final Player player, final @Argument(name = "joueur") Player target) {
-    final GameService gameService = this.ultraHardcore.gameService();
-    if (!gameService.hostService().hasHostAccess(player)) {
-      player.sendMessage(MISSING_PERMISSION);
-      return;
     }
-
-    if (gameService.startTime() > 0L) {
-      player.sendMessage(
-          CC.prefix("&cVous ne pouvez pas retirer de spectateur pendant la partie."));
-      return;
-    }
-
-    final Profile profile = this.ultraHardcore.profileService().getOrCreateProfile(target);
-    if (!profile.hasComponent(SPECTATOR_COMPONENT)) {
-      player.sendMessage(
-          CC.prefix("&6%s&r n'est pas un&d spectateur&r.".formatted(target.getName())));
-      return;
-    }
-
-    profile.removeComponent(SPECTATOR_COMPONENT);
-    target.setGameMode(GameMode.SURVIVAL);
-    target.teleport(this.ultraHardcore.spawnLocation());
-    SpectatorVisibility.refresh(this.ultraHardcore);
-    player.sendMessage(
-        CC.prefix(
-            "Vous venez de&c retirer&f le joueur&6 %s&r de la liste des&d spectateurs&r."
-                .formatted(target.getName())));
-  }
 }

@@ -16,33 +16,33 @@ import org.bukkit.event.Listener;
 @Duration(min = 15 * 60, defaultValue = 20 * 60, max = 60 * 60)
 public final class PvPTimer extends AbstractTimer implements Listener {
 
-  static final String IDENTIFIER = "pvp";
+    static final String IDENTIFIER = "pvp";
 
-  private final UltraHardcoreAPI ultraHardcore;
+    private final UltraHardcoreAPI ultraHardcore;
 
-  public PvPTimer(final UltraHardcoreAPI ultraHardcore) {
-    this.ultraHardcore = ultraHardcore;
-  }
-
-  @Override
-  public void onStart() {
-    this.ultraHardcore.eventService().registerListener(this);
-  }
-
-  @Override
-  public void onEnd() {
-    this.ultraHardcore.eventService().unregisterListener(this);
-    this.ultraHardcore.worldService().getWorld().setPVP(true);
-  }
-
-  @EventHandler
-  public void onPreDeath(final GamePreDeathEvent event) {
-    final Player player = event.getVictim().getPlayer();
-    if (player != null) {
-      player.sendMessage(CC.prefix("Vous avez été automatiquement§d ressuscité§f."));
-      event.setRespawnLocation(player.getLocation());
+    public PvPTimer(final UltraHardcoreAPI ultraHardcore) {
+        this.ultraHardcore = ultraHardcore;
     }
 
-    event.setCancelled(true);
-  }
+    @Override
+    public void onStart() {
+        this.ultraHardcore.eventService().registerListener(this);
+    }
+
+    @Override
+    public void onEnd() {
+        this.ultraHardcore.eventService().unregisterListener(this);
+        this.ultraHardcore.worldService().getWorld().setPVP(true);
+    }
+
+    @EventHandler
+    public void onPreDeath(final GamePreDeathEvent event) {
+        final Player player = event.getVictim().getPlayer();
+        if (player != null) {
+            player.sendMessage(CC.prefix("Vous avez été automatiquement§d ressuscité§f."));
+            event.setRespawnLocation(player.getLocation());
+        }
+
+        event.setCancelled(true);
+    }
 }

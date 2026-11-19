@@ -1,7 +1,5 @@
 package dev.kurai.uhc.item.builtin;
 
-import static org.bukkit.event.block.Action.*;
-
 import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.item.CustomItem;
 import dev.kurai.uhc.menu.ConfigurationMenu;
@@ -14,44 +12,47 @@ import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
+import static org.bukkit.event.block.Action.RIGHT_CLICK_AIR;
+import static org.bukkit.event.block.Action.RIGHT_CLICK_BLOCK;
+
 public final class ConfigurationItem extends CustomItem {
 
-  private static final String IDENTIFIER = "configuration";
+    private static final String IDENTIFIER = "configuration";
 
-  private final UltraHardcoreAPI ultraHardcore;
+    private final UltraHardcoreAPI ultraHardcore;
 
-  public ConfigurationItem(final UltraHardcoreAPI ultraHardcore) {
-    super(IDENTIFIER, 4, true, false);
-    this.ultraHardcore = ultraHardcore;
-  }
-
-  @Override
-  public ItemStack provideIcon(final Player player) {
-    return new ItemBuilder(Material.REDSTONE_COMPARATOR)
-        .name("&c&lConfigurer la partie&8 " + CC.SQUARE + "&7 Clic-Droit")
-        .lore("", "&7" + CC.BAR + "&f Permet de configurer la partie.", "")
-        .glowing(true)
-        .asItemStack();
-  }
-
-  @Override
-  public void onInteract(final Player player, final PlayerInteractEvent event) {
-    event.setCancelled(true);
-    final var action = event.getAction();
-    if (action != RIGHT_CLICK_AIR && action != RIGHT_CLICK_BLOCK) {
-      return;
+    public ConfigurationItem(final UltraHardcoreAPI ultraHardcore) {
+        super(IDENTIFIER, 4, true, false);
+        this.ultraHardcore = ultraHardcore;
     }
 
-    new ConfigurationMenu(player, this.ultraHardcore).open();
-  }
+    @Override
+    public ItemStack provideIcon(final Player player) {
+        return new ItemBuilder(Material.REDSTONE_COMPARATOR)
+                .name("&c&lConfigurer la partie&8 " + CC.SQUARE + "&7 Clic-Droit")
+                .lore("", "&7" + CC.BAR + "&f Permet de configurer la partie.", "")
+                .glowing(true)
+                .asItemStack();
+    }
 
-  @Override
-  public void onDrop(final Player player, final PlayerDropItemEvent event) {
-    event.setCancelled(true);
-  }
+    @Override
+    public void onInteract(final Player player, final PlayerInteractEvent event) {
+        event.setCancelled(true);
+        final var action = event.getAction();
+        if (action != RIGHT_CLICK_AIR && action != RIGHT_CLICK_BLOCK) {
+            return;
+        }
 
-  @Override
-  public void onInventoryClick(final Player player, final InventoryClickEvent event) {
-    event.setCancelled(true);
-  }
+        new ConfigurationMenu(player, this.ultraHardcore).open();
+    }
+
+    @Override
+    public void onDrop(final Player player, final PlayerDropItemEvent event) {
+        event.setCancelled(true);
+    }
+
+    @Override
+    public void onInventoryClick(final Player player, final InventoryClickEvent event) {
+        event.setCancelled(true);
+    }
 }

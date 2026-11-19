@@ -5,24 +5,24 @@ import org.bukkit.event.HandlerList;
 
 public final class GameEpisodeChangeEvent extends Event {
 
-  private static final HandlerList HANDLER_LIST = new HandlerList();
+    private static final HandlerList HANDLER_LIST = new HandlerList();
 
-  private final int episode;
+    private final int episode;
 
-  public GameEpisodeChangeEvent(final int episode) {
-    this.episode = episode;
-  }
+    public GameEpisodeChangeEvent(final int episode) {
+        this.episode = episode;
+    }
 
-  public static HandlerList getHandlerList() {
-    return HANDLER_LIST;
-  }
+    public static HandlerList getHandlerList() {
+        return HANDLER_LIST;
+    }
 
-  public int getEpisode() {
-    return this.episode;
-  }
+    public int getEpisode() {
+        return this.episode;
+    }
 
-  @Override
-  public HandlerList getHandlers() {
-    return HANDLER_LIST;
-  }
+    @Override
+    public HandlerList getHandlers() {
+        return HANDLER_LIST;
+    }
 }

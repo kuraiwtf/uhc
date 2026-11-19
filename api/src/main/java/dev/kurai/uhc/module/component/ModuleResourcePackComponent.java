@@ -5,5 +5,5 @@ import java.util.Collection;
 
 public record ModuleResourcePackComponent(Collection<ResourcePack> packs) implements Component {
 
-  public record ResourcePack(String url, String hash) {}
+    public record ResourcePack(String url, String hash) {}
 }

@@ -5,5 +5,5 @@ import java.util.Locale;
 @FunctionalInterface
 public interface Localizable {
 
-  Locale getLocale();
+    Locale getLocale();
 }

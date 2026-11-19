@@ -6,15 +6,15 @@ import org.bukkit.inventory.Recipe;
 
 public interface GameRecipe extends Keyed<String>, Nameable<String> {
 
-  @Override
-  String getKey();
+    @Override
+    String getKey();
 
-  @Override
-  String getName();
+    @Override
+    String getName();
 
-  boolean isEnabled();
+    boolean isEnabled();
 
-  void setEnabled(final boolean enabled);
+    void setEnabled(final boolean enabled);
 
-  Recipe bukkitRecipe();
+    Recipe bukkitRecipe();
 }

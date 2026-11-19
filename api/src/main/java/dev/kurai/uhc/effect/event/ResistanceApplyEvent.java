@@ -7,51 +7,50 @@ import org.bukkit.event.HandlerList;
 
 public final class ResistanceApplyEvent extends Event implements Cancellable {
 
-  private static final HandlerList HANDLER_LIST = new HandlerList();
-  private final Player damager;
-  private final Player victim;
-  private double resistanceValue;
-  private boolean cancelled = false;
+    private static final HandlerList HANDLER_LIST = new HandlerList();
+    private final Player damager;
+    private final Player victim;
+    private double resistanceValue;
+    private boolean cancelled = false;
 
-  public ResistanceApplyEvent(
-      final Player damager, final Player victim, final double resistanceValue) {
-    this.damager = damager;
-    this.victim = victim;
-    this.resistanceValue = resistanceValue;
-  }
+    public ResistanceApplyEvent(final Player damager, final Player victim, final double resistanceValue) {
+        this.damager = damager;
+        this.victim = victim;
+        this.resistanceValue = resistanceValue;
+    }
 
-  public static HandlerList getHandlerList() {
-    return HANDLER_LIST;
-  }
+    public static HandlerList getHandlerList() {
+        return HANDLER_LIST;
+    }
 
-  public Player damager() {
-    return this.damager;
-  }
+    public Player damager() {
+        return this.damager;
+    }
 
-  public Player victim() {
-    return this.victim;
-  }
+    public Player victim() {
+        return this.victim;
+    }
 
-  public double resistanceValue() {
-    return this.resistanceValue;
-  }
+    public double resistanceValue() {
+        return this.resistanceValue;
+    }
 
-  public void resistanceValue(final double resistanceValue) {
-    this.resistanceValue = resistanceValue;
-  }
+    public void resistanceValue(final double resistanceValue) {
+        this.resistanceValue = resistanceValue;
+    }
 
-  @Override
-  public boolean isCancelled() {
-    return this.cancelled;
-  }
+    @Override
+    public boolean isCancelled() {
+        return this.cancelled;
+    }
 
-  @Override
-  public void setCancelled(final boolean cancelled) {
-    this.cancelled = cancelled;
-  }
+    @Override
+    public void setCancelled(final boolean cancelled) {
+        this.cancelled = cancelled;
+    }
 
-  @Override
-  public HandlerList getHandlers() {
-    return HANDLER_LIST;
-  }
+    @Override
+    public HandlerList getHandlers() {
+        return HANDLER_LIST;
+    }
 }

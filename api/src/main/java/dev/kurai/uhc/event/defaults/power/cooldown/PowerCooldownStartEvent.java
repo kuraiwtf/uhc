@@ -6,18 +6,18 @@ import org.bukkit.event.HandlerList;
 
 public final class PowerCooldownStartEvent extends PowerCooldownEvent {
 
-  private static final HandlerList HANDLERS = new HandlerList();
+    private static final HandlerList HANDLERS = new HandlerList();
 
-  public static HandlerList getHandlerList() {
-    return HANDLERS;
-  }
+    public PowerCooldownStartEvent(final Player player, final CooldownPowerRestriction restriction) {
+        super(player, restriction);
+    }
 
-  public PowerCooldownStartEvent(final Player player, final CooldownPowerRestriction restriction) {
-    super(player, restriction);
-  }
+    public static HandlerList getHandlerList() {
+        return HANDLERS;
+    }
 
-  @Override
-  public HandlerList getHandlers() {
-    return HANDLERS;
-  }
+    @Override
+    public HandlerList getHandlers() {
+        return HANDLERS;
+    }
 }

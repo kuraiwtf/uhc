@@ -4,10 +4,6 @@ import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.event.defaults.host.HostAccessUpdateEvent;
 import dev.kurai.uhc.game.host.resolver.PlayerJoinHostResolver;
 import dev.kurai.uhc.profile.Profile;
-import java.util.Collection;
-import java.util.Set;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
@@ -15,159 +11,151 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
+import java.util.Collection;
+import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+
 @Getter
 @Setter
 @NullMarked
 public final class HostServiceImpl implements HostService {
 
-  private final Set<UUID> coHosts = ConcurrentHashMap.newKeySet();
-  private final Collection<TickableHostResolver> tickableHostResolvers =
-      ConcurrentHashMap.newKeySet();
-  private final UltraHardcoreAPI ultraHardcore;
-  private volatile @Nullable UUID host;
+    private final Set<UUID> coHosts = ConcurrentHashMap.newKeySet();
+    private final Collection<TickableHostResolver> tickableHostResolvers = ConcurrentHashMap.newKeySet();
+    private final UltraHardcoreAPI ultraHardcore;
+    private volatile @Nullable UUID host;
 
-  public HostServiceImpl(final UltraHardcoreAPI ultraHardcore) {
-    this.ultraHardcore = ultraHardcore;
-    final var service = HostServiceImpl.this;
-    this.processHostResolver(
-        () -> {
-          final var env = System.getenv("SERVER_HOST_ID");
-          if (env != null) {
-            try {
-              return UUID.fromString(env.trim());
-            } catch (final IllegalArgumentException e) {
-              ultraHardcore
-                  .plugin()
-                  .getLogger()
-                  .warning("SERVER_HOST_ID is not a valid UUID: " + env);
+    public HostServiceImpl(final UltraHardcoreAPI ultraHardcore) {
+        this.ultraHardcore = ultraHardcore;
+        final var service = HostServiceImpl.this;
+        this.processHostResolver(() -> {
+            final var env = System.getenv("SERVER_HOST_ID");
+            if (env != null) {
+                try {
+                    return UUID.fromString(env.trim());
+                } catch (final IllegalArgumentException e) {
+                    ultraHardcore.plugin().getLogger().warning("SERVER_HOST_ID is not a valid UUID: " + env);
+                }
             }
-          }
 
-          return null;
+            return null;
         });
 
-    this.addTickableHostResolver(new PlayerJoinHostResolver(ultraHardcore.eventService()));
+        this.addTickableHostResolver(new PlayerJoinHostResolver(ultraHardcore.eventService()));
 
-    new BukkitRunnable() {
-      @Override
-      public void run() {
-        if (service.host != null) {
-          this.cancel();
-          return;
-        }
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                if (service.host != null) {
+                    this.cancel();
+                    return;
+                }
 
-        for (final var resolver : service.tickableHostResolvers) {
-          service.processHostResolver(resolver);
-          if (service.host != null) {
-            this.cancel();
+                for (final var resolver : service.tickableHostResolvers) {
+                    service.processHostResolver(resolver);
+                    if (service.host != null) {
+                        this.cancel();
+                        return;
+                    }
+                }
+            }
+        }.runTaskTimer(ultraHardcore.plugin(), 0L, 20L);
+    }
+
+    @Override
+    public void processHostResolver(final HostResolver resolver) {
+        if (this.host != null) {
             return;
-          }
         }
-      }
-    }.runTaskTimer(ultraHardcore.plugin(), 0L, 20L);
-  }
 
-  @Override
-  public void processHostResolver(final HostResolver resolver) {
-    if (this.host != null) {
-      return;
+        final var uuid = resolver.resolveHost();
+        if (uuid == null) {
+            return;
+        }
+
+        this.host(uuid);
     }
 
-    final var uuid = resolver.resolveHost();
-    if (uuid == null) {
-      return;
+    @Override
+    public @Nullable Profile hostProfile() {
+        final var current = this.host;
+        return current == null ? null : this.ultraHardcore.profileService().getOrCreateProfile(current);
     }
 
-    this.host(uuid);
-  }
+    @Override
+    public void host(final @Nullable UUID host) {
+        if (this.host != null) {
+            final var event = this.ultraHardcore
+                    .eventService()
+                    .dispatchEvent(new HostAccessUpdateEvent(
+                            this.host, HostAccessUpdateEvent.Type.HOST, HostAccessUpdateEvent.Status.DENIED));
+            if (event.isCancelled()) {
+                return;
+            }
+        }
 
-  @Override
-  public @Nullable Profile hostProfile() {
-    final var current = this.host;
-    return current == null ? null : this.ultraHardcore.profileService().getOrCreateProfile(current);
-  }
+        final var event = this.ultraHardcore
+                .eventService()
+                .dispatchEvent(new HostAccessUpdateEvent(
+                        host, HostAccessUpdateEvent.Type.HOST, HostAccessUpdateEvent.Status.ALLOWED));
+        if (event.isCancelled()) {
+            return;
+        }
 
-  @Override
-  public void host(final @Nullable UUID host) {
-    if (this.host != null) {
-      final var event =
-          this.ultraHardcore
-              .eventService()
-              .dispatchEvent(
-                  new HostAccessUpdateEvent(
-                      this.host,
-                      HostAccessUpdateEvent.Type.HOST,
-                      HostAccessUpdateEvent.Status.DENIED));
-      if (event.isCancelled()) {
-        return;
-      }
+        this.host = host;
     }
 
-    final var event =
-        this.ultraHardcore
-            .eventService()
-            .dispatchEvent(
-                new HostAccessUpdateEvent(
-                    host, HostAccessUpdateEvent.Type.HOST, HostAccessUpdateEvent.Status.ALLOWED));
-    if (event.isCancelled()) {
-      return;
+    @Override
+    public void addTickableHostResolver(final TickableHostResolver resolver) {
+        this.tickableHostResolvers.add(resolver);
     }
 
-    this.host = host;
-  }
-
-  @Override
-  public void addTickableHostResolver(final TickableHostResolver resolver) {
-    this.tickableHostResolvers.add(resolver);
-  }
-
-  @Override
-  public void removeTickableHostResolver(final TickableHostResolver resolver) {
-    this.tickableHostResolvers.remove(resolver);
-  }
-
-  @Override
-  public boolean addCoHost(final UUID coHost) {
-    final var event =
-        new HostAccessUpdateEvent(
-            coHost, HostAccessUpdateEvent.Type.CO_HOST, HostAccessUpdateEvent.Status.ALLOWED);
-    Bukkit.getPluginManager().callEvent(event);
-
-    if (event.isCancelled()) {
-      return false;
+    @Override
+    public void removeTickableHostResolver(final TickableHostResolver resolver) {
+        this.tickableHostResolvers.remove(resolver);
     }
 
-    this.coHosts.add(coHost);
-    return true;
-  }
+    @Override
+    public boolean addCoHost(final UUID coHost) {
+        final var event = new HostAccessUpdateEvent(
+                coHost, HostAccessUpdateEvent.Type.CO_HOST, HostAccessUpdateEvent.Status.ALLOWED);
+        Bukkit.getPluginManager().callEvent(event);
 
-  @Override
-  public boolean removeCoHost(final UUID coHost) {
-    final var event =
-        new HostAccessUpdateEvent(
-            coHost, HostAccessUpdateEvent.Type.CO_HOST, HostAccessUpdateEvent.Status.DENIED);
-    Bukkit.getPluginManager().callEvent(event);
-    if (event.isCancelled()) {
-      return false;
+        if (event.isCancelled()) {
+            return false;
+        }
+
+        this.coHosts.add(coHost);
+        return true;
     }
 
-    this.coHosts.remove(coHost);
-    return true;
-  }
+    @Override
+    public boolean removeCoHost(final UUID coHost) {
+        final var event = new HostAccessUpdateEvent(
+                coHost, HostAccessUpdateEvent.Type.CO_HOST, HostAccessUpdateEvent.Status.DENIED);
+        Bukkit.getPluginManager().callEvent(event);
+        if (event.isCancelled()) {
+            return false;
+        }
 
-  @Override
-  public boolean coHost(final UUID uniqueId) {
-    return this.coHosts.contains(uniqueId);
-  }
+        this.coHosts.remove(coHost);
+        return true;
+    }
 
-  @Override
-  public boolean isHost(final UUID uniqueId) {
-    return (this.host != null && this.host.equals(uniqueId))
-        || Bukkit.getOfflinePlayer(uniqueId).isOp();
-  }
+    @Override
+    public boolean coHost(final UUID uniqueId) {
+        return this.coHosts.contains(uniqueId);
+    }
 
-  @Override
-  public boolean hasHostAccess(final UUID uniqueId) {
-    return this.isHost(uniqueId) || this.coHost(uniqueId);
-  }
+    @Override
+    public boolean isHost(final UUID uniqueId) {
+        return (this.host != null && this.host.equals(uniqueId))
+                || Bukkit.getOfflinePlayer(uniqueId).isOp();
+    }
+
+    @Override
+    public boolean hasHostAccess(final UUID uniqueId) {
+        return this.isHost(uniqueId) || this.coHost(uniqueId);
+    }
 }

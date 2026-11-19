@@ -2,7 +2,7 @@ package dev.kurai.uhc.game.group;
 
 public interface GroupProvider {
 
-  int groups();
+    int groups();
 
-  void groups(final int groups);
+    void groups(final int groups);
 }

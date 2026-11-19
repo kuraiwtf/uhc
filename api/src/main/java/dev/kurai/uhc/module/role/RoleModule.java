@@ -1,20 +1,19 @@
 package dev.kurai.uhc.module.role;
 
 import java.util.Collection;
-import java.util.Optional;
 import java.util.UUID;
 
 public interface RoleModule {
 
-  Collection<RoleMeta> availableRoles();
+    Collection<RoleMeta> availableRoles();
 
-  Collection<RoleMeta> enabledRoles();
+    Collection<RoleMeta> enabledRoles();
 
-  default boolean forceRole(final UUID target, final RoleMeta roleMeta) {
-    return false;
-  }
+    default boolean forceRole(final UUID target, final RoleMeta roleMeta) {
+        return false;
+    }
 
-  boolean hiddenComposition();
+    boolean hiddenComposition();
 
-  void hiddenComposition(final boolean hiddenComposition);
+    void hiddenComposition(final boolean hiddenComposition);
 }

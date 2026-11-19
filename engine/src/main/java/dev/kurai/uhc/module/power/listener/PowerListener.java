@@ -27,316 +27,304 @@ import dev.kurai.uhc.profile.ProfileService;
 import dev.kurai.uhc.util.CC;
 import dev.kurai.uhc.util.GlobalUtil;
 import io.github.retrooper.packetevents.util.SpigotConversionUtil;
-import java.util.Map;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.event.player.PlayerCommandPreprocessEvent;
-import org.bukkit.event.player.PlayerDropItemEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.plugin.Plugin;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+
 @NullMarked
 public final class PowerListener extends PacketListenerAbstract implements Listener {
 
-  private final ProfileService profileService;
-  private final ModuleService moduleService;
-  private final Plugin plugin;
+    private final ProfileService profileService;
+    private final ModuleService moduleService;
+    private final Plugin plugin;
 
-  private final Map<Integer, UUID> entityOwners = new ConcurrentHashMap<>();
+    private final Map<Integer, UUID> entityOwners = new ConcurrentHashMap<>();
 
-  public PowerListener(
-      final ProfileService profileService, final ModuleService moduleService, final Plugin plugin) {
-    this.profileService = profileService;
-    this.moduleService = moduleService;
-    this.plugin = plugin;
+    public PowerListener(final ProfileService profileService, final ModuleService moduleService, final Plugin plugin) {
+        this.profileService = profileService;
+        this.moduleService = moduleService;
+        this.plugin = plugin;
 
-    for (final Player online : Bukkit.getOnlinePlayers()) {
-      this.entityOwners.put(online.getEntityId(), online.getUniqueId());
-    }
-  }
-
-  @EventHandler
-  public void onJoin(final PlayerJoinEvent event) {
-    this.entityOwners.put(event.getPlayer().getEntityId(), event.getPlayer().getUniqueId());
-  }
-
-  @EventHandler
-  public void onQuit(final PlayerQuitEvent event) {
-    this.entityOwners.remove(event.getPlayer().getEntityId());
-  }
-
-  @EventHandler
-  public void onCooldownStart(final PowerCooldownStartEvent event) {
-    this.updatePower(event.player(), event.restriction());
-  }
-
-  @EventHandler
-  public void onCooldownEnd(final PowerCooldownEndEvent event) {
-    this.updatePower(event.player(), event.restriction());
-  }
-
-  private void updatePower(
-      final @Nullable Player player, final CooldownPowerRestriction restriction) {
-    if (player == null) {
-      return;
+        for (final Player online : Bukkit.getOnlinePlayers()) {
+            this.entityOwners.put(online.getEntityId(), online.getUniqueId());
+        }
     }
 
-    final Profile profile = this.profileService.getOrCreateProfile(player);
-    if (!(profile.getPower(restriction.getId()) instanceof final AbstractItemPower power)) {
-      return;
+    @EventHandler
+    public void onJoin(final PlayerJoinEvent event) {
+        this.entityOwners.put(event.getPlayer().getEntityId(), event.getPlayer().getUniqueId());
     }
 
-    final PlayerInventory inventory = player.getInventory();
-    for (final ItemStack content : inventory.getContents()) {
-      if (content != null && power.isSimilar(content)) {
-        inventory.setItem(inventory.first(content), power.getIcon(player));
+    @EventHandler
+    public void onQuit(final PlayerQuitEvent event) {
+        this.entityOwners.remove(event.getPlayer().getEntityId());
+    }
+
+    @EventHandler
+    public void onCooldownStart(final PowerCooldownStartEvent event) {
+        this.updatePower(event.player(), event.restriction());
+    }
+
+    @EventHandler
+    public void onCooldownEnd(final PowerCooldownEndEvent event) {
+        this.updatePower(event.player(), event.restriction());
+    }
+
+    private void updatePower(final @Nullable Player player, final CooldownPowerRestriction restriction) {
+        if (player == null) {
+            return;
+        }
+
+        final Profile profile = this.profileService.getOrCreateProfile(player);
+        if (!(profile.getPower(restriction.getId()) instanceof final AbstractItemPower power)) {
+            return;
+        }
+
+        final PlayerInventory inventory = player.getInventory();
+        for (final ItemStack content : inventory.getContents()) {
+            if (content != null && power.isSimilar(content)) {
+                inventory.setItem(inventory.first(content), power.getIcon(player));
+            }
+        }
+    }
+
+    @Override
+    public void onPacketSend(final PacketSendEvent event) {
+        if (event.getPacketType() != PacketType.Play.Server.ENTITY_EQUIPMENT) {
+            return;
+        }
+
+        final WrapperPlayServerEntityEquipment packet = new WrapperPlayServerEntityEquipment(event);
+        final Equipment hand = packet.getEquipment().stream()
+                .filter(equipment -> equipment.getSlot() == EquipmentSlot.MAIN_HAND)
+                .findFirst()
+                .orElse(null);
+
+        if (hand == null) {
+            return;
+        }
+
+        final Player receiver = event.getPlayer();
+        if (receiver == null || packet.getEntityId() == receiver.getEntityId()) {
+            return;
+        }
+
+        final UUID ownerId = this.entityOwners.get(packet.getEntityId());
+        if (ownerId == null) {
+            return;
+        }
+
+        final Profile ownerProfile = this.profileService.findProfile(ownerId).orElse(null);
+        if (ownerProfile == null) {
+            return;
+        }
+
+        final ItemStack held = SpigotConversionUtil.toBukkitItemStack(hand.getItem());
+        if (held == null) {
+            return;
+        }
+
+        final var foundPower = ownerProfile.getPowers().stream()
+                .filter(AbstractItemPower.class::isInstance)
+                .map(AbstractItemPower.class::cast)
+                .filter(power -> power.isSimilar(held))
+                .findFirst()
+                .orElse(null);
+
+        if (foundPower == null) {
+            return;
+        }
+
+        hand.setItem(com.github.retrooper.packetevents.protocol.item.ItemStack.builder()
+                .type(ItemTypes.NETHER_STAR)
+                .build());
+
+        packet.setEquipment(packet.getEquipment());
+        event.markForReEncode(true);
+    }
+
+    @EventHandler
+    public void onPlayerDropItem(final PlayerDropItemEvent event) {
+        final Player player = event.getPlayer();
+        final Profile profile = this.profileService.getOrCreateProfile(player);
+        profile.getPowers().stream()
+                .filter(AbstractItemPower.class::isInstance)
+                .map(AbstractItemPower.class::cast)
+                .filter(power ->
+                        power.getIcon(player).isSimilar(event.getItemDrop().getItemStack()))
+                .findFirst()
+                .ifPresent(_ -> event.setCancelled(true));
+    }
+
+    @EventHandler
+    public void onInteract(final PlayerInteractEvent event) {
+        if (!event.hasItem()) {
+            return;
+        }
+
+        final var player = event.getPlayer();
+        final var profile = this.profileService.getOrCreateProfile(player.getUniqueId());
+
+        final boolean rightClick = event.getAction().name().contains("RIGHT");
+        final boolean leftClick = event.getAction().name().contains("LEFT");
+        if (!rightClick && !leftClick) {
+            return;
+        }
+
+        final var simplePowerClass = rightClick ? RightClickItemPower.class : LeftClickItemPower.class;
+        final var foundPower = profile.getPowers().stream()
+                .filter(simplePowerClass::isInstance)
+                .map(simplePowerClass::cast)
+                .filter(power -> power.hasPowerInHand(player))
+                .findFirst()
+                .orElse(null);
+
+        if (foundPower == null) {
+            final var targetPowerClass =
+                    rightClick ? RightClickPlayerTargetItemPower.class : LeftClickPlayerTargetItemPower.class;
+            profile.getPowers().stream()
+                    .filter(targetPowerClass::isInstance)
+                    .map(targetPowerClass::cast)
+                    .filter(power -> power.hasPowerInHand(player))
+                    .findFirst()
+                    .ifPresent(foundTargetPower -> this.handleTargetItemPower(player, foundTargetPower, event));
+            return;
+        }
+
+        foundPower.use(player);
+        event.setCancelled(true);
+    }
+
+    /*@EventHandler
+    public void onParentInteract(final PlayerInteractEvent event) {
+      if (!event.hasItem()) {
+        return;
       }
-    }
-  }
 
-  @Override
-  public void onPacketSend(final PacketSendEvent event) {
-    if (event.getPacketType() != PacketType.Play.Server.ENTITY_EQUIPMENT) {
-      return;
-    }
+      final var player = event.getPlayer();
+      final var profile = this.profileService.getOrCreateProfile(player.getUniqueId());
+      if (profile == null) {
+        return;
+      }
 
-    final WrapperPlayServerEntityEquipment packet = new WrapperPlayServerEntityEquipment(event);
-    final Equipment hand =
-        packet.getEquipment().stream()
-            .filter(equipment -> equipment.getSlot() == EquipmentSlot.MAIN_HAND)
-            .findFirst()
-            .orElse(null);
+      if (!event.getAction().name().contains("RIGHT")) {
+        return;
+      }
 
-    if (hand == null) {
-      return;
-    }
+      final var foundPower =
+          profile.getPowers().stream()
+              .filter(AbstractParentItemPower.class::isInstance)
+              .map(AbstractParentItemPower.class::cast)
+              .filter(power -> power.getIcon(player).isSimilar(event.getItem()))
+              .findFirst()
+              .orElse(null);
 
-    final Player receiver = event.getPlayer();
-    if (receiver == null || packet.getEntityId() == receiver.getEntityId()) {
-      return;
-    }
+      if (foundPower == null || foundPower.getCurrentPower() == null) {
+        return;
+      }
 
-    final UUID ownerId = this.entityOwners.get(packet.getEntityId());
-    if (ownerId == null) {
-      return;
-    }
+      foundPower.getCurrentPower().use(player);
+      event.setCancelled(true);
+    }*/
 
-    final Profile ownerProfile = this.profileService.findProfile(ownerId).orElse(null);
-    if (ownerProfile == null) {
-      return;
-    }
+    private void handleTargetItemPower(
+            final Player player, final PlayerTargetItemPower foundPower, final Cancellable cancellable) {
+        final var target = GlobalUtil.getTargetPlayer(player);
+        if (target == null
+                || target.getWorld() != player.getWorld()
+                || target.getLocation().distanceSquared(player.getLocation())
+                        > foundPower.getRange() * foundPower.getRange()) {
+            player.sendMessage(CC.prefix("&cVous devez cibler un joueur pour utiliser ce pouvoir."));
+            return;
+        }
 
-    final ItemStack held = SpigotConversionUtil.toBukkitItemStack(hand.getItem());
-    if (held == null) {
-      return;
-    }
+        final PowerTargetSelectionEvent event = new PowerTargetSelectionEvent(
+                this.profileService.getOrCreateProfile(player),
+                this.profileService.getOrCreateProfile(target),
+                foundPower);
+        Bukkit.getPluginManager().callEvent(event);
 
-    final var foundPower =
-        ownerProfile.getPowers().stream()
-            .filter(AbstractItemPower.class::isInstance)
-            .map(AbstractItemPower.class::cast)
-            .filter(power -> power.isSimilar(held))
-            .findFirst()
-            .orElse(null);
+        if (event.isCancelled()) {
+            player.sendMessage(CC.prefix("§cVous ne pouvez pas cibler ce joueur."));
+            return;
+        }
 
-    if (foundPower == null) {
-      return;
-    }
-
-    hand.setItem(
-        com.github.retrooper.packetevents.protocol.item.ItemStack.builder()
-            .type(ItemTypes.NETHER_STAR)
-            .build());
-
-    packet.setEquipment(packet.getEquipment());
-    event.markForReEncode(true);
-  }
-
-  @EventHandler
-  public void onPlayerDropItem(final PlayerDropItemEvent event) {
-    final Player player = event.getPlayer();
-    final Profile profile = this.profileService.getOrCreateProfile(player);
-    profile.getPowers().stream()
-        .filter(AbstractItemPower.class::isInstance)
-        .map(AbstractItemPower.class::cast)
-        .filter(power -> power.getIcon(player).isSimilar(event.getItemDrop().getItemStack()))
-        .findFirst()
-        .ifPresent(_ -> event.setCancelled(true));
-  }
-
-  @EventHandler
-  public void onInteract(final PlayerInteractEvent event) {
-    if (!event.hasItem()) {
-      return;
+        foundPower.setTarget(target);
+        foundPower.use(player);
+        foundPower.setTarget(null);
+        cancellable.setCancelled(true);
     }
 
-    final var player = event.getPlayer();
-    final var profile = this.profileService.getOrCreateProfile(player.getUniqueId());
+    @EventHandler
+    public void onBlockPlace(final BlockPlaceEvent event) {
+        final var player = event.getPlayer();
+        final var profile = this.profileService.getOrCreateProfile(player.getUniqueId());
 
-    final boolean rightClick = event.getAction().name().contains("RIGHT");
-    final boolean leftClick = event.getAction().name().contains("LEFT");
-    if (!rightClick && !leftClick) {
-      return;
+        final var foundPower = profile.getPowers().stream()
+                .filter(AbstractItemPower.class::isInstance)
+                .map(AbstractItemPower.class::cast)
+                .filter(power -> power.hasPowerInHand(player))
+                .findFirst()
+                .orElse(null);
+
+        if (foundPower instanceof BlockPlacePower) {
+            foundPower.use(player);
+        }
     }
 
-    final var simplePowerClass = rightClick ? RightClickItemPower.class : LeftClickItemPower.class;
-    final var foundPower =
-        profile.getPowers().stream()
-            .filter(simplePowerClass::isInstance)
-            .map(simplePowerClass::cast)
-            .filter(power -> power.hasPowerInHand(player))
-            .findFirst()
-            .orElse(null);
+    @EventHandler
+    public void onPlayerCommandPreprocess(final PlayerCommandPreprocessEvent event) {
+        final var player = event.getPlayer();
+        final var profile = this.profileService.getOrCreateProfile(player.getUniqueId());
+        if (profile == null) {
+            return;
+        }
 
-    if (foundPower == null) {
-      final var targetPowerClass =
-          rightClick ? RightClickPlayerTargetItemPower.class : LeftClickPlayerTargetItemPower.class;
-      profile.getPowers().stream()
-          .filter(targetPowerClass::isInstance)
-          .map(targetPowerClass::cast)
-          .filter(power -> power.hasPowerInHand(player))
-          .findFirst()
-          .ifPresent(
-              foundTargetPower -> this.handleTargetItemPower(player, foundTargetPower, event));
-      return;
+        final var commandLabel = this.moduleService.getCurrentModule().getCommandName();
+        if (commandLabel == null) {
+            return;
+        }
+
+        final var prefix = "/" + commandLabel.toLowerCase() + " ";
+        if (!event.getMessage().toLowerCase().startsWith(prefix)) {
+            return;
+        }
+
+        final var arguments = Lists.newArrayList(
+                event.getMessage().substring(prefix.length()).trim().split("\\s+"));
+        final var commandName = arguments.removeFirst();
+        final var foundPower = profile.getPowers().stream()
+                .filter(AbstractCommandPower.class::isInstance)
+                .map(AbstractCommandPower.class::cast)
+                .filter(power -> commandName.equalsIgnoreCase(power.getCommandName()))
+                .findFirst()
+                .orElse(null);
+
+        if (foundPower == null) {
+            return;
+        }
+
+        final var powerArguments = Lists.<PowerArgument>newArrayList();
+        for (final var argument : arguments) {
+            powerArguments.add(new PowerArgument("argument_" + powerArguments.size(), argument));
+        }
+
+        foundPower.setArguments(powerArguments.toArray(new PowerArgument[0]));
+        foundPower.use(player);
+        foundPower.setArguments(null);
+        event.setCancelled(true);
     }
-
-    foundPower.use(player);
-    event.setCancelled(true);
-  }
-
-  /*@EventHandler
-  public void onParentInteract(final PlayerInteractEvent event) {
-    if (!event.hasItem()) {
-      return;
-    }
-
-    final var player = event.getPlayer();
-    final var profile = this.profileService.getOrCreateProfile(player.getUniqueId());
-    if (profile == null) {
-      return;
-    }
-
-    if (!event.getAction().name().contains("RIGHT")) {
-      return;
-    }
-
-    final var foundPower =
-        profile.getPowers().stream()
-            .filter(AbstractParentItemPower.class::isInstance)
-            .map(AbstractParentItemPower.class::cast)
-            .filter(power -> power.getIcon(player).isSimilar(event.getItem()))
-            .findFirst()
-            .orElse(null);
-
-    if (foundPower == null || foundPower.getCurrentPower() == null) {
-      return;
-    }
-
-    foundPower.getCurrentPower().use(player);
-    event.setCancelled(true);
-  }*/
-
-  private void handleTargetItemPower(
-      final Player player, final PlayerTargetItemPower foundPower, final Cancellable cancellable) {
-    final var target = GlobalUtil.getTargetPlayer(player);
-    if (target == null
-        || target.getWorld() != player.getWorld()
-        || target.getLocation().distanceSquared(player.getLocation())
-            > foundPower.getRange() * foundPower.getRange()) {
-      player.sendMessage(CC.prefix("&cVous devez cibler un joueur pour utiliser ce pouvoir."));
-      return;
-    }
-
-    final PowerTargetSelectionEvent event =
-        new PowerTargetSelectionEvent(
-            this.profileService.getOrCreateProfile(player),
-            this.profileService.getOrCreateProfile(target),
-            foundPower);
-    Bukkit.getPluginManager().callEvent(event);
-
-    if (event.isCancelled()) {
-      player.sendMessage(CC.prefix("§cVous ne pouvez pas cibler ce joueur."));
-      return;
-    }
-
-    foundPower.setTarget(target);
-    foundPower.use(player);
-    foundPower.setTarget(null);
-    cancellable.setCancelled(true);
-  }
-
-  @EventHandler
-  public void onBlockPlace(final BlockPlaceEvent event) {
-    final var player = event.getPlayer();
-    final var profile = this.profileService.getOrCreateProfile(player.getUniqueId());
-
-    final var foundPower =
-        profile.getPowers().stream()
-            .filter(AbstractItemPower.class::isInstance)
-            .map(AbstractItemPower.class::cast)
-            .filter(power -> power.hasPowerInHand(player))
-            .findFirst()
-            .orElse(null);
-
-    if (foundPower instanceof BlockPlacePower) {
-      foundPower.use(player);
-    }
-  }
-
-  @EventHandler
-  public void onPlayerCommandPreprocess(final PlayerCommandPreprocessEvent event) {
-    final var player = event.getPlayer();
-    final var profile = this.profileService.getOrCreateProfile(player.getUniqueId());
-    if (profile == null) {
-      return;
-    }
-
-    final var commandLabel = this.moduleService.getCurrentModule().getCommandName();
-    if (commandLabel == null) {
-      return;
-    }
-
-    final var prefix = "/" + commandLabel.toLowerCase() + " ";
-    if (!event.getMessage().toLowerCase().startsWith(prefix)) {
-      return;
-    }
-
-    final var arguments =
-        Lists.newArrayList(event.getMessage().substring(prefix.length()).trim().split("\\s+"));
-    final var commandName = arguments.removeFirst();
-    final var foundPower =
-        profile.getPowers().stream()
-            .filter(AbstractCommandPower.class::isInstance)
-            .map(AbstractCommandPower.class::cast)
-            .filter(power -> commandName.equalsIgnoreCase(power.getCommandName()))
-            .findFirst()
-            .orElse(null);
-
-    if (foundPower == null) {
-      return;
-    }
-
-    final var powerArguments = Lists.<PowerArgument>newArrayList();
-    for (final var argument : arguments) {
-      powerArguments.add(new PowerArgument("argument_" + powerArguments.size(), argument));
-    }
-
-    foundPower.setArguments(powerArguments.toArray(new PowerArgument[0]));
-    foundPower.use(player);
-    foundPower.setArguments(null);
-    event.setCancelled(true);
-  }
 }

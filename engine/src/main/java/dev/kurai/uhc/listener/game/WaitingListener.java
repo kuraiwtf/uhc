@@ -1,8 +1,5 @@
 package dev.kurai.uhc.listener.game;
 
-import static net.kyori.adventure.text.Component.text;
-import static net.kyori.adventure.text.format.NamedTextColor.*;
-
 import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.ecs.component.defaults.NameComponent;
 import dev.kurai.uhc.event.defaults.game.GameStartEvent;
@@ -27,155 +24,154 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jspecify.annotations.NullMarked;
 
+import static net.kyori.adventure.text.Component.text;
+import static net.kyori.adventure.text.format.NamedTextColor.DARK_GRAY;
+import static net.kyori.adventure.text.format.NamedTextColor.GREEN;
+
 @NullMarked
 public final class WaitingListener implements Listener {
 
-  private final UltraHardcoreAPI ultraHardcore;
+    private final UltraHardcoreAPI ultraHardcore;
 
-  public WaitingListener(final UltraHardcoreAPI ultraHardcore) {
-    this.ultraHardcore = ultraHardcore;
-  }
-
-  @EventHandler
-  public void onJoin(final PlayerJoinEvent event) {
-    event.setJoinMessage(null);
-    final var player = event.getPlayer();
-    player.teleport(this.ultraHardcore.spawnLocation());
-    player.setGameMode(GameMode.SURVIVAL);
-    player.setFallDistance(0.0f);
-    player.setExp(0.0F);
-    player.setLevel(0);
-    player.setFoodLevel(20);
-    player.setSaturation(20f);
-    player.setWalkSpeed(0.2F);
-    player.setFallDistance(0f);
-    player.setMaxHealth(20f);
-    player.setHealth(20f);
-    player.getInventory().setContents(new ItemStack[36]);
-    player.getInventory().setArmorContents(new ItemStack[4]);
-    for (final var effect : player.getActivePotionEffects()) {
-      player.removePotionEffect(effect.getType());
+    public WaitingListener(final UltraHardcoreAPI ultraHardcore) {
+        this.ultraHardcore = ultraHardcore;
     }
 
-    final var profile = this.ultraHardcore.profileService().getOrCreateProfile(player);
-    this.ultraHardcore
-        .plugin()
-        .getLogger()
-        .info(
-            "Created profile for %s (%s)."
-                .formatted(profile.getName(), profile.getId().toString()));
-    profile.addComponent(new NameComponent(player.getName()));
+    @EventHandler
+    public void onJoin(final PlayerJoinEvent event) {
+        event.setJoinMessage(null);
+        final var player = event.getPlayer();
+        player.teleport(this.ultraHardcore.spawnLocation());
+        player.setGameMode(GameMode.SURVIVAL);
+        player.setFallDistance(0.0f);
+        player.setExp(0.0F);
+        player.setLevel(0);
+        player.setFoodLevel(20);
+        player.setSaturation(20f);
+        player.setWalkSpeed(0.2F);
+        player.setFallDistance(0f);
+        player.setMaxHealth(20f);
+        player.setHealth(20f);
+        player.getInventory().setContents(new ItemStack[36]);
+        player.getInventory().setArmorContents(new ItemStack[4]);
+        for (final var effect : player.getActivePotionEffects()) {
+            player.removePotionEffect(effect.getType());
+        }
 
-    this.ultraHardcore
-        .bukkitAudiences()
-        .all()
-        .sendActionBar(
-            text()
-                .append(text(player.getName(), GREEN))
-                .append(text(" a rejoint la partie. "))
-                .append(text('(', DARK_GRAY))
-                .append(
-                    text(player.getServer().getOnlinePlayers().size(), GREEN, TextDecoration.BOLD))
-                .append(text('/', DARK_GRAY))
-                .append(text(player.getServer().getMaxPlayers(), GREEN))
-                .append(text(')', DARK_GRAY))
-                .build());
+        final var profile = this.ultraHardcore.profileService().getOrCreateProfile(player);
+        this.ultraHardcore
+                .plugin()
+                .getLogger()
+                .info("Created profile for %s (%s)."
+                        .formatted(profile.getName(), profile.getId().toString()));
+        profile.addComponent(new NameComponent(player.getName()));
 
-    for (final CustomItem item :
-        this.ultraHardcore.itemService().findAllBy(customItem -> !customItem.isSpectatorOnly())) {
-      if (!item.isHostOnly()
-          || this.ultraHardcore.gameService().hostService().hasHostAccess(player)) {
-        this.setItem(player, item.getSlot(), item.getClass());
-      }
+        this.ultraHardcore
+                .bukkitAudiences()
+                .all()
+                .sendActionBar(text().append(text(player.getName(), GREEN))
+                        .append(text(" a rejoint la partie. "))
+                        .append(text('(', DARK_GRAY))
+                        .append(text(player.getServer().getOnlinePlayers().size(), GREEN, TextDecoration.BOLD))
+                        .append(text('/', DARK_GRAY))
+                        .append(text(player.getServer().getMaxPlayers(), GREEN))
+                        .append(text(')', DARK_GRAY))
+                        .build());
+
+        for (final CustomItem item :
+                this.ultraHardcore.itemService().findAllBy(customItem -> !customItem.isSpectatorOnly())) {
+            if (!item.isHostOnly()
+                    || this.ultraHardcore.gameService().hostService().hasHostAccess(player)) {
+                this.setItem(player, item.getSlot(), item.getClass());
+            }
+        }
+
+        SpectatorVisibility.refresh(this.ultraHardcore);
     }
 
-    SpectatorVisibility.refresh(this.ultraHardcore);
-  }
+    @EventHandler
+    public void onHostUpdate(final HostAccessUpdateEvent event) {
+        final var player = Bukkit.getPlayer(event.getId());
+        if (player == null) {
+            return;
+        }
 
-  @EventHandler
-  public void onHostUpdate(final HostAccessUpdateEvent event) {
-    final var player = Bukkit.getPlayer(event.getId());
-    if (player == null) {
-      return;
+        for (final CustomItem item :
+                this.ultraHardcore.itemService().findAllBy(customItem -> !customItem.isSpectatorOnly())) {
+            if (!item.isHostOnly()) {
+                continue;
+            }
+
+            final int slot = item.getSlot();
+            if (event.getStatus() == HostAccessUpdateEvent.Status.ALLOWED) {
+                this.setItem(player, slot, item.getClass());
+            } else {
+                player.getInventory().setItem(slot, new ItemStack(Material.AIR));
+            }
+        }
     }
 
-    for (final CustomItem item :
-        this.ultraHardcore.itemService().findAllBy(customItem -> !customItem.isSpectatorOnly())) {
-      if (!item.isHostOnly()) {
-        continue;
-      }
-
-      final int slot = item.getSlot();
-      if (event.getStatus() == HostAccessUpdateEvent.Status.ALLOWED) {
-        this.setItem(player, slot, item.getClass());
-      } else {
-        player.getInventory().setItem(slot, new ItemStack(Material.AIR));
-      }
-    }
-  }
-
-  private void setItem(
-      final Player player, final int slot, final Class<? extends CustomItem> clazz) {
-    this.ultraHardcore
-        .itemService()
-        .findByClass(clazz)
-        .ifPresent(item -> player.getInventory().setItem(slot, item.provideIcon(player)));
-  }
-
-  @EventHandler
-  public void onEntityDamage(final EntityDamageEvent event) {
-    event.setCancelled(true);
-  }
-
-  @EventHandler
-  public void onFoodLevelChange(final FoodLevelChangeEvent event) {
-    event.setCancelled(true);
-  }
-
-  @EventHandler
-  public void onPlayerMove(final PlayerMoveEvent event) {
-    final var player = event.getPlayer();
-    if (event.getTo().getBlockY() > 0) {
-      return;
+    private void setItem(final Player player, final int slot, final Class<? extends CustomItem> clazz) {
+        this.ultraHardcore
+                .itemService()
+                .findByClass(clazz)
+                .ifPresent(item -> player.getInventory().setItem(slot, item.provideIcon(player)));
     }
 
-    player.teleport(this.ultraHardcore.spawnLocation());
-  }
-
-  @EventHandler
-  public void onBlockPlace(final BlockPlaceEvent event) {
-    if (event.getPlayer().isOp()) {
-      return;
+    @EventHandler
+    public void onEntityDamage(final EntityDamageEvent event) {
+        event.setCancelled(true);
     }
 
-    event.setCancelled(true);
-  }
-
-  @EventHandler
-  public void onBlockBreak(final BlockBreakEvent event) {
-    if (event.getPlayer().isOp()) {
-      return;
+    @EventHandler
+    public void onFoodLevelChange(final FoodLevelChangeEvent event) {
+        event.setCancelled(true);
     }
 
-    event.setCancelled(true);
-  }
+    @EventHandler
+    public void onPlayerMove(final PlayerMoveEvent event) {
+        final var player = event.getPlayer();
+        if (event.getTo().getBlockY() > 0) {
+            return;
+        }
 
-  @EventHandler
-  public void onPlayerArmorStandManipulate(final PlayerArmorStandManipulateEvent event) {
-    event.setCancelled(true);
-  }
-
-  @EventHandler
-  public void onPlayerInteract(final PlayerInteractEvent event) {
-    if (event.getPlayer().isOp()) {
-      return;
+        player.teleport(this.ultraHardcore.spawnLocation());
     }
 
-    event.setCancelled(true);
-  }
+    @EventHandler
+    public void onBlockPlace(final BlockPlaceEvent event) {
+        if (event.getPlayer().isOp()) {
+            return;
+        }
 
-  @EventHandler
-  public void onGameStart(final GameStartEvent event) {
-    this.ultraHardcore.eventService().unregisterListener(this);
-  }
+        event.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onBlockBreak(final BlockBreakEvent event) {
+        if (event.getPlayer().isOp()) {
+            return;
+        }
+
+        event.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onPlayerArmorStandManipulate(final PlayerArmorStandManipulateEvent event) {
+        event.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onPlayerInteract(final PlayerInteractEvent event) {
+        if (event.getPlayer().isOp()) {
+            return;
+        }
+
+        event.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onGameStart(final GameStartEvent event) {
+        this.ultraHardcore.eventService().unregisterListener(this);
+    }
 }

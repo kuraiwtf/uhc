@@ -1,6 +1,5 @@
 package dev.kurai.uhc.event.defaults.host;
 
-import java.util.UUID;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -9,36 +8,38 @@ import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
+import java.util.UUID;
+
 @RequiredArgsConstructor
 @Getter
 @Setter
 @Accessors(fluent = false)
 public final class HostAccessUpdateEvent extends Event implements Cancellable {
 
-  private static final HandlerList HANDLERS = new HandlerList();
+    private static final HandlerList HANDLERS = new HandlerList();
 
-  private final UUID id;
-  private final Type type;
-  private final Status status;
+    private final UUID id;
+    private final Type type;
+    private final Status status;
 
-  private boolean cancelled;
+    private boolean cancelled;
 
-  public static HandlerList getHandlerList() {
-    return HANDLERS;
-  }
+    public static HandlerList getHandlerList() {
+        return HANDLERS;
+    }
 
-  @Override
-  public HandlerList getHandlers() {
-    return HANDLERS;
-  }
+    @Override
+    public HandlerList getHandlers() {
+        return HANDLERS;
+    }
 
-  public enum Type {
-    HOST,
-    CO_HOST
-  }
+    public enum Type {
+        HOST,
+        CO_HOST
+    }
 
-  public enum Status {
-    ALLOWED,
-    DENIED
-  }
+    public enum Status {
+        ALLOWED,
+        DENIED
+    }
 }

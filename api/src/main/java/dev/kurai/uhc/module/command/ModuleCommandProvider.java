@@ -12,6 +12,7 @@ import org.jspecify.annotations.Nullable;
 @NullMarked
 public interface ModuleCommandProvider {
 
-  /** Returns the handler for this module, or {@code null} if the module is not concerned. */
-  @Nullable Object provide(final AbstractModule module);
+    /** Returns the handler for this module, or {@code null} if the module is not concerned. */
+    @Nullable
+    Object provide(final AbstractModule module);
 }

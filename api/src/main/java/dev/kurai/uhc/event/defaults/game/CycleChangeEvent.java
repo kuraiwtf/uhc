@@ -15,19 +15,19 @@ import org.bukkit.event.HandlerList;
 @RequiredArgsConstructor
 public final class CycleChangeEvent extends Event implements Cancellable {
 
-  private static final HandlerList HANDLERS = new HandlerList();
+    private static final HandlerList HANDLERS = new HandlerList();
 
-  private final AbstractCycle oldCycle;
-  private final AbstractCycle newCycle;
+    private final AbstractCycle oldCycle;
+    private final AbstractCycle newCycle;
 
-  private boolean cancelled;
+    private boolean cancelled;
 
-  public static HandlerList getHandlerList() {
-    return HANDLERS;
-  }
+    public static HandlerList getHandlerList() {
+        return HANDLERS;
+    }
 
-  @Override
-  public HandlerList getHandlers() {
-    return HANDLERS;
-  }
+    @Override
+    public HandlerList getHandlers() {
+        return HANDLERS;
+    }
 }
