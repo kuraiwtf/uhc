@@ -2,10 +2,10 @@ package dev.kurai.uhc.module;
 
 import com.google.common.collect.Maps;
 import dev.kurai.uhc.UltraHardcoreAPI;
-import dev.kurai.uhc.ecs.component.Component;
 import dev.kurai.uhc.ecs.component.defaults.IdentifierComponent;
 import dev.kurai.uhc.ecs.component.defaults.NameComponent;
 import dev.kurai.uhc.ecs.entity.Entity;
+import dev.kurai.uhc.ecs.entity.EntityBridge;
 import dev.kurai.uhc.menu.module.ModuleMenu;
 import dev.kurai.uhc.module.component.ModuleShortNameComponent;
 import dev.kurai.uhc.module.event.ModuleEvent;
@@ -13,7 +13,6 @@ import dev.kurai.uhc.module.event.ModuleEventHolder;
 import dev.kurai.uhc.util.Color;
 import dev.kurai.uhc.util.api.Identifiable;
 import dev.kurai.uhc.util.api.name.Nameable;
-import java.util.*;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -21,147 +20,128 @@ import org.bukkit.plugin.Plugin;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
 @NullMarked
 public abstract class AbstractModule
-    implements Entity<String>, Identifiable<String>, Nameable<String>, ModuleEventHolder {
+        implements EntityBridge<String>, Identifiable<String>, Nameable<String>, ModuleEventHolder {
 
-  protected final Map<Class<? extends Component>, Component> components;
+    protected final Entity<String> entity;
 
-  protected final Plugin plugin;
+    protected final Plugin plugin;
+    protected final UltraHardcoreAPI ultraHardcore;
 
-  protected final @Nullable String commandName;
+    protected final @Nullable String commandName;
 
-  protected final UltraHardcoreAPI ultraHardcore;
+    protected final Map<String, ModuleEvent> events;
+    protected final Collection<ModuleEvent> eventsView;
 
-  protected final Map<String, ModuleEvent> events;
-  protected final Collection<ModuleEvent> eventsView;
+    protected AbstractModule(
+            final String id,
+            final String name,
+            final Plugin plugin,
+            final @Nullable String commandName,
+            final UltraHardcoreAPI ultraHardcore) {
+        this.entity = new Entity<>(id);
+        this.addComponent(new NameComponent(name));
 
-  protected AbstractModule(
-      final String id,
-      final String name,
-      final Plugin plugin,
-      final @Nullable String commandName,
-      final UltraHardcoreAPI ultraHardcore) {
-    this.plugin = plugin;
-    this.components = Maps.newHashMap();
-    this.addComponents(new IdentifierComponent<>(id), new NameComponent(name));
+        this.plugin = plugin;
+        this.ultraHardcore = ultraHardcore;
 
-    this.commandName = commandName;
+        this.commandName = commandName;
 
-    this.ultraHardcore = ultraHardcore;
-
-    this.events = Maps.newHashMap();
-    this.eventsView = Collections.unmodifiableCollection(this.events.values());
-  }
-
-  public Color color() {
-    return Color.GOLD;
-  }
-
-  public <P extends Plugin> P plugin(final Class<P> pluginClass) {
-    return pluginClass.cast(this.plugin);
-  }
-
-  public abstract String developer();
-
-  public net.kyori.adventure.text.Component sidebarCredit() {
-    return MiniMessage.miniMessage().deserialize("<dark_aqua>@</dark_aqua><aqua>kuraiwtf</aqua>");
-  }
-
-  @Override
-  public Collection<Component> getComponents() {
-    return this.components.values();
-  }
-
-  @Override
-  public <E extends Entity<String>> E addComponent(final Component component) {
-    this.components.put(component.getClass(), component);
-    return (E) this;
-  }
-
-  @Override
-  public boolean removeComponent(final Class<? extends Component> componentClass) {
-    return this.components.remove(componentClass) != null;
-  }
-
-  @Override
-  public boolean hasComponent(final Class<? extends Component> componentClass) {
-    return this.components.containsKey(componentClass);
-  }
-
-  @Override
-  public <T extends Component> @Nullable T getComponent(final Class<T> componentClass) {
-    return Optional.ofNullable(this.components.get(componentClass))
-        .map(componentClass::cast)
-        .orElse(null);
-  }
-
-  @Override
-  public final String getId() {
-    final var component = this.getComponent(IdentifierComponent.class);
-    if (component == null) {
-      return "";
+        this.events = Maps.newHashMap();
+        this.eventsView = Collections.unmodifiableCollection(this.events.values());
     }
 
-    return component.getIdentifier().toString();
-  }
-
-  @Override
-  public final String getName() {
-    final var component = this.getComponent(NameComponent.class);
-    if (component == null) {
-      return "";
+    @Override
+    public Entity<String> asEntity() {
+        return this.entity;
     }
 
-    return component.getName();
-  }
-
-  public final String getShortName() {
-    final var component = this.getComponent(ModuleShortNameComponent.class);
-    if (component == null) {
-      return this.getName();
+    public Color color() {
+        return Color.GOLD;
     }
 
-    return component.shortName();
-  }
+    public <P extends Plugin> P plugin(final Class<P> pluginClass) {
+        return pluginClass.cast(this.plugin);
+    }
 
-  public final @Nullable String getCommandName() {
-    return this.commandName;
-  }
+    public abstract String developer();
 
-  public final UltraHardcoreAPI getUltraHardcore() {
-    return this.ultraHardcore;
-  }
+    public net.kyori.adventure.text.Component sidebarCredit() {
+        return MiniMessage.miniMessage().deserialize("<dark_aqua>@</dark_aqua><aqua>kuraiwtf</aqua>");
+    }
 
-  @Override
-  public Collection<ModuleEvent> events() {
-    return this.eventsView;
-  }
+    @Override
+    public final String getId() {
+        final var component = this.entity.getComponent(IdentifierComponent.class);
+        if (component == null) {
+            return "";
+        }
 
-  @Override
-  public void registerEvent(final ModuleEvent event) {
-    this.events.put(event.identifier(), event);
-  }
+        return component.getIdentifier().toString();
+    }
 
-  @Override
-  public void unregisterEvent(final String identifier) {
-    this.events.remove(identifier);
-  }
+    @Override
+    public final String getName() {
+        final var component = this.entity.getComponent(NameComponent.class);
+        if (component == null) {
+            return "";
+        }
 
-  @Override
-  public @Nullable ModuleEvent event(final String identifier) {
-    return this.events.get(identifier);
-  }
+        return component.getName();
+    }
 
-  public Collection<Object> commandHandlers() {
-    return List.of();
-  }
+    public final String getShortName() {
+        final var component = this.entity.getComponent(ModuleShortNameComponent.class);
+        if (component == null) {
+            return this.getName();
+        }
 
-  public @Nullable ModuleMenu provideModuleMenu(final Player player) {
-    return null;
-  }
+        return component.shortName();
+    }
 
-  public abstract ItemStack provideModuleIcon(final Player player);
+    public final @Nullable String getCommandName() {
+        return this.commandName;
+    }
 
-  public void onRoles() {}
+    public final UltraHardcoreAPI getUltraHardcore() {
+        return this.ultraHardcore;
+    }
+
+    @Override
+    public Collection<ModuleEvent> events() {
+        return this.eventsView;
+    }
+
+    @Override
+    public void registerEvent(final ModuleEvent event) {
+        this.events.put(event.identifier(), event);
+    }
+
+    @Override
+    public void unregisterEvent(final String identifier) {
+        this.events.remove(identifier);
+    }
+
+    @Override
+    public @Nullable ModuleEvent event(final String identifier) {
+        return this.events.get(identifier);
+    }
+
+    public Collection<Object> commandHandlers() {
+        return List.of();
+    }
+
+    public @Nullable ModuleMenu provideModuleMenu(final Player player) {
+        return null;
+    }
+
+    public abstract ItemStack provideModuleIcon(final Player player);
+
+    public void onRoles() {}
 }
