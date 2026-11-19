@@ -34,6 +34,7 @@ final class SkinHolderImpl implements SkinHolder {
     @Override
     public void removeSkin(final UUID uniqueId) {
         this.skins.remove(uniqueId);
+        this.updateSkin();
     }
 
     @Override
