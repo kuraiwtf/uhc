@@ -2,11 +2,11 @@ package dev.kurai.uhc.profile;
 
 import com.github.retrooper.packetevents.wrapper.PacketWrapper;
 import dev.kurai.actionbar.Actionbar;
-import dev.kurai.uhc.ecs.component.Component;
-import dev.kurai.uhc.ecs.entity.Entity;
+import dev.kurai.uhc.ecs.entity.EntityBridge;
 import dev.kurai.uhc.module.power.AbstractPower;
 import dev.kurai.uhc.module.power.holder.PowerHolder;
 import dev.kurai.uhc.profile.state.ProfileState;
+import dev.kurai.uhc.util.api.Identifiable;
 import dev.kurai.uhc.util.api.name.Nameable;
 import dev.kurai.uhc.util.api.state.Stateful;
 import java.util.Collection;
@@ -27,9 +27,9 @@ import org.jspecify.annotations.Nullable;
 
 @NullMarked
 public interface Profile
-    extends Nameable<String>,
+    extends Identifiable<UUID>, Nameable<String>,
         Stateful<ProfileState>,
-        Entity<UUID>,
+        EntityBridge<UUID>,
         PowerHolder,
         ForwardingAudience.Single {
 
@@ -126,21 +126,6 @@ public interface Profile
   void sendPrefixedMessage(final String message);
 
   void sendPrefixedMessage(final String message, final String prefix);
-
-  @Override
-  Collection<Component> getComponents();
-
-  @Override
-  <E extends Entity<UUID>> E addComponent(final Component component);
-
-  @Override
-  boolean removeComponent(final Class<? extends Component> componentClass);
-
-  @Override
-  boolean hasComponent(final Class<? extends Component> componentClass);
-
-  @Override
-  <T extends Component> @Nullable T getComponent(final Class<T> componentClass);
 
   @Override
   Collection<AbstractPower> getPowers();
