@@ -13,6 +13,7 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.jetbrains.annotations.Contract;
 
@@ -21,6 +22,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 import static net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacyAmpersand;
 
@@ -69,6 +71,18 @@ public final class ItemBuilder {
     @Override
     public ItemBuilder clone() {
         return new ItemBuilder(this.itemStack.clone());
+    }
+
+    public ItemBuilder editMeta(final Consumer<ItemMeta> modifier) {
+        return this.editMeta(ItemMeta.class, modifier);
+    }
+
+    public <M extends ItemMeta> ItemBuilder editMeta(final Class<? extends M> metaClass, final Consumer<M> modifier) {
+       final ItemMeta meta = this.itemStack.getItemMeta();
+        if (meta.getClass().isAssignableFrom(metaClass)) {
+            modifier.accept(metaClass.cast(meta));
+        }
+        return this;
     }
 
     public ItemBuilder lunarTag(final String key, final Object value) {
