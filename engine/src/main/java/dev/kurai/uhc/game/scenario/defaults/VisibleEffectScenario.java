@@ -13,6 +13,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.PotionEffectType;
 
+import java.util.List;
+
 public final class VisibleEffectScenario extends AbstractScenario {
 
     public VisibleEffectScenario(final UltraHardcoreAPI ultraHardcore) {
@@ -24,6 +26,11 @@ public final class VisibleEffectScenario extends AbstractScenario {
         return new ItemBuilder(Material.POTION)
                 .editMeta(PotionMeta.class, potionMeta -> potionMeta.setMainEffect(PotionEffectType.REGENERATION))
                 .asItemStack();
+    }
+
+    @Override
+    public List<String> provideLore() {
+        return List.of("Les valeurs des effets sont", "visibles dans la liste des joueurs.");
     }
 
     @Override
