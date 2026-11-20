@@ -21,6 +21,7 @@ import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.audience.Audience;
 import net.minecraft.server.v1_8_R3.Packet;
+import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
@@ -54,7 +55,7 @@ final class ProfileImpl implements Profile {
     ProfileImpl(final UUID id, final UltraHardcoreAPI ultraHardcore) {
         this.entity = new Entity<>(id)
                 .addComponents(
-                        new NameComponent(this.getOfflinePlayer().getName()),
+                        new NameComponent(Bukkit.getOfflinePlayer(id).getName()),
                         new ClaimComponent(),
                         new DamageImmunityComponent(),
                         new ProfileMiningComponent(),
@@ -73,7 +74,7 @@ final class ProfileImpl implements Profile {
 
     @Override
     public UUID getId() {
-        return this.getComponent(ProfileIdentifierComponent.class).getIdentifier();
+        return this.entity.getId();
     }
 
     @Override
