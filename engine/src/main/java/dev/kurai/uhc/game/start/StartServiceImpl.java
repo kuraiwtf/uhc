@@ -134,9 +134,6 @@ public final class StartServiceImpl implements StartService {
 
         PacketEvents.getAPI().getEventManager().registerListeners(powerListener);
 
-        final TabListService tabListService = this.ultraHardcore.tabListService();
-        tabListService.addPart(new EffectTabListPart(profileService));
-
         final GameService gameService = this.ultraHardcore.gameService();
         gameService.startTime(System.currentTimeMillis());
         gameService.timerService().startAllTimers();

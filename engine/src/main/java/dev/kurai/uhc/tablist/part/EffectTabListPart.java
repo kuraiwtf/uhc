@@ -20,6 +20,8 @@ import static net.kyori.adventure.text.format.NamedTextColor.*;
 
 public final class EffectTabListPart implements TabListPart {
 
+    public static final String PART_KEY = "effect";
+
     private static final Component SEPARATOR = text().appendSpace()
             .append(text(CC.SQUARE, DARK_GRAY))
             .appendSpace()
@@ -35,7 +37,7 @@ public final class EffectTabListPart implements TabListPart {
     @Contract(pure = true)
     @Override
     public String key() {
-        return "effect";
+        return PART_KEY;
     }
 
     @Override
