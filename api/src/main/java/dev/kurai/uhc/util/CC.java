@@ -5,6 +5,7 @@ import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.jetbrains.annotations.Contract;
 
 import static net.kyori.adventure.text.Component.text;
@@ -96,6 +97,15 @@ public final class CC {
 
     public static String prefix(final String text, final String prefix) {
         return colorize(prefix + " " + text);
+    }
+
+    public static String formatGameMode(final GameMode gameMode) {
+        return switch (gameMode) {
+            case CREATIVE -> "Créatif";
+            case SURVIVAL -> "Survie";
+            case ADVENTURE -> "Aventure";
+            case SPECTATOR -> "Spectateur";
+        };
     }
 
     /**
