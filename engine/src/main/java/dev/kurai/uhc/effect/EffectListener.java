@@ -120,8 +120,8 @@ public final class EffectListener implements Listener {
 
         event.setDamage(this.damageFormula(
                 event.getDamage(),
-                damagerEffectHolder.getEffectValue(EffectType.STRENGTH),
-                victimEffectHolder.getEffectValue(EffectType.RESISTANCE)));
+                damagerEffectHolder.effectValue(EffectType.STRENGTH),
+                victimEffectHolder.effectValue(EffectType.RESISTANCE)));
     }
 
     private double damageFormula(final double baseDamage, final double strengthValue, final double resistanceValue) {
@@ -137,7 +137,7 @@ public final class EffectListener implements Listener {
         final Profile profile = this.profileService.getOrCreateProfile(uniqueId);
         final EffectHolder effectHolder =
                 profile.getComponent(EffectHoldingComponent.class).holder();
-        final double totalPercent = effectHolder.getEffectValue(EffectType.SPEED);
+        final double totalPercent = effectHolder.effectValue(EffectType.SPEED);
         final float newSpeed = (float) Math.clamp(0.2f * (1 + totalPercent), 0.0, 1.0);
         if (player.getWalkSpeed() != newSpeed) {
             player.setWalkSpeed(newSpeed);

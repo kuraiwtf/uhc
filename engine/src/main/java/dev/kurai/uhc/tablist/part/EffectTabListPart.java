@@ -50,11 +50,11 @@ public final class EffectTabListPart implements TabListPart {
         final EffectHoldingComponent effectComponent = profile.getComponent(EffectHoldingComponent.class);
         assert effectComponent != null;
         final EffectHolder effectHolder = effectComponent.holder();
-        return text().append(this.provideEffectComponent(effectHolder.getEffectValue(STRENGTH), RED, '⚔'))
+        return text().append(this.provideEffectComponent(effectHolder.effectValue(STRENGTH), RED, '⚔'))
                 .append(SEPARATOR)
-                .append(this.provideEffectComponent(effectHolder.getEffectValue(RESISTANCE), GREEN, '☘'))
+                .append(this.provideEffectComponent(effectHolder.effectValue(RESISTANCE), GREEN, '☘'))
                 .append(SEPARATOR)
-                .append(this.provideEffectComponent(effectHolder.getEffectValue(SPEED), AQUA, '✪'))
+                .append(this.provideEffectComponent(effectHolder.effectValue(SPEED), AQUA, '✪'))
                 .appendNewline()
                 .build();
     }

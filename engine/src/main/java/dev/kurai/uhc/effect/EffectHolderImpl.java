@@ -88,12 +88,12 @@ public final class EffectHolderImpl implements EffectHolder {
     @Override
     public void removeEffect(final Key key) {
         for (final EffectType effectType : EffectType.values()) {
-            this.removeEffect(requireNonNull(key), effectType);
+            this.removeEffect(key, effectType);
         }
     }
 
     @Override
-    public double getEffectValue(final EffectType effectType) {
+    public double effectValue(final EffectType effectType) {
         return this.findEffectsByType(effectType).stream()
                 .mapToDouble(Effect::value)
                 .sum();

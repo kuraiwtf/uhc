@@ -61,5 +61,5 @@ public interface EffectHolder {
      * @return the total value of all active effects matching the specified type. Returns 0 if no
      *     effects of the given type are active.
      */
-    double getEffectValue(final EffectType effectType);
+    double effectValue(final EffectType effectType);
 }

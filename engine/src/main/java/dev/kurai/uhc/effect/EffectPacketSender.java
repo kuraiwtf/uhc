@@ -28,7 +28,7 @@ public final class EffectPacketSender {
         final EffectHolder effectHolder =
                 profile.getComponent(EffectHoldingComponent.class).holder();
         final double valuePerLevel = this.effectService.effectValuePerLevel(effectType) * 100;
-        final int amplifier = (int) Math.floor((effectHolder.getEffectValue(effectType) * 100) / valuePerLevel + 1e-9);
+        final int amplifier = (int) Math.floor((effectHolder.effectValue(effectType) * 100) / valuePerLevel + 1e-9);
 
         if (reset) {
             PLAYER_MANAGER.sendPacket(
