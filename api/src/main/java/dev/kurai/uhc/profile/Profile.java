@@ -5,6 +5,7 @@ import dev.kurai.actionbar.Actionbar;
 import dev.kurai.uhc.ecs.entity.EntityBridge;
 import dev.kurai.uhc.module.power.AbstractPower;
 import dev.kurai.uhc.module.power.holder.PowerHolder;
+import dev.kurai.uhc.profile.state.ProfileState;
 import dev.kurai.uhc.util.api.Identifiable;
 import dev.kurai.uhc.util.api.name.Nameable;
 import net.kyori.adventure.audience.ForwardingAudience;
@@ -49,6 +50,28 @@ public interface Profile
     int assists();
 
     void assists(final int assists);
+
+    ProfileState state();
+
+    void state(final ProfileState state);
+
+    boolean hasState(final ProfileState state);
+
+    default boolean waiting() {
+        return this.state() == ProfileState.WAITING;
+    }
+
+    default boolean alive() {
+        return this.state() == ProfileState.ALIVE;
+    }
+
+    default boolean dead() {
+        return this.state() == ProfileState.DEAD;
+    }
+
+    default boolean spectating() {
+        return this.state() == ProfileState.SPECTATING;
+    }
 
     Actionbar getActionbar();
 

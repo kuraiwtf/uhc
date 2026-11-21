@@ -3,6 +3,7 @@ package dev.kurai.uhc.profile;
 import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.wrapper.PacketWrapper;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityAnimation;
+import com.google.common.base.Preconditions;
 import dev.kurai.actionbar.Actionbar;
 import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.ecs.component.defaults.NameComponent;
@@ -10,13 +11,12 @@ import dev.kurai.uhc.ecs.entity.Entity;
 import dev.kurai.uhc.effect.EffectHolderImpl;
 import dev.kurai.uhc.effect.component.EffectHoldingComponent;
 import dev.kurai.uhc.event.defaults.player.PlayerDamageEvent;
+import dev.kurai.uhc.event.defaults.profile.ProfileStateChangeEvent;
 import dev.kurai.uhc.module.power.AbstractPower;
 import dev.kurai.uhc.module.power.defaults.item.AbstractItemPower;
 import dev.kurai.uhc.module.power.defaults.item.impl.parent.AbstractParentItemPower;
-import dev.kurai.uhc.profile.component.ClaimComponent;
-import dev.kurai.uhc.profile.component.DamageImmunityComponent;
-import dev.kurai.uhc.profile.component.OfflineActionComponent;
-import dev.kurai.uhc.profile.component.ProfileMiningComponent;
+import dev.kurai.uhc.profile.component.*;
+import dev.kurai.uhc.profile.state.ProfileState;
 import dev.kurai.uhc.util.CC;
 import lombok.Getter;
 import lombok.Setter;
@@ -38,7 +38,9 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static dev.kurai.uhc.util.packet.PacketWrapper.createPacketWrapper;
+import static java.util.Objects.requireNonNull;
 
 @NullMarked
 @Getter
@@ -61,10 +63,33 @@ final class ProfileImpl implements Profile {
                         new DamageImmunityComponent(),
                         new ProfileMiningComponent(),
                         new OfflineActionComponent(),
+                        new ProfileStateComponent(ProfileState.WAITING),
                         new EffectHoldingComponent(new EffectHolderImpl(id)));
 
         this.ultraHardcore = ultraHardcore;
         this.powers = new ConcurrentHashMap<>();
+    }
+
+    @Override
+    public ProfileState state() {
+        return this.getComponent(ProfileStateComponent.class).state();
+    }
+
+    @Override
+    public void state(final ProfileState state) {
+        final ProfileStateComponent component = this.getComponent(ProfileStateComponent.class);
+        final ProfileState previous = component.state();
+        if (previous == state) {
+            return;
+        }
+
+        component.state(state);
+        this.ultraHardcore.eventService().dispatchEvent(new ProfileStateChangeEvent(this, previous, state));
+    }
+
+    @Override
+    public boolean hasState(final ProfileState state) {
+        return this.state() == state;
     }
 
     @Override
@@ -80,20 +105,18 @@ final class ProfileImpl implements Profile {
     @Override
     public String getName() {
         final var component = this.getComponent(NameComponent.class);
-        if (component == null) {
-            return "";
-        }
-
-        return component.getName();
+        return component == null ? "" : component.getName();
     }
 
     public void setName(final String name) {
-        final var component = this.getComponent(NameComponent.class);
-        if (component == null) {
-            return;
-        }
+        requireNonNull(name, "Profile name cannot be null");
+        checkArgument(name.length() > 3, "Profile name length must be longer than or equals to 3");
+        checkArgument(name.length() <= 16, "Profile name length must be shorter than or equals to 16");
 
-        component.setName(name);
+        final var component = this.getComponent(NameComponent.class);
+        if (component != null) {
+            component.setName(name);
+        }
     }
 
     @Override
