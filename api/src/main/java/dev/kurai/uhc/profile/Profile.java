@@ -7,7 +7,7 @@ import dev.kurai.uhc.module.power.AbstractPower;
 import dev.kurai.uhc.module.power.holder.PowerHolder;
 import dev.kurai.uhc.profile.state.ProfileState;
 import dev.kurai.uhc.util.api.Identifiable;
-import dev.kurai.uhc.util.api.name.Nameable;
+import dev.kurai.uhc.util.api.name.impl.MutableNameable;
 import net.kyori.adventure.audience.ForwardingAudience;
 import net.minecraft.server.v1_8_R3.Packet;
 import org.bukkit.Bukkit;
@@ -28,7 +28,7 @@ import java.util.function.Consumer;
 @NullMarked
 public interface Profile
         extends Identifiable<UUID>,
-                Nameable<String>,
+                MutableNameable<String>,
                 EntityBridge<UUID>,
                 PowerHolder,
                 ForwardingAudience.Single {
@@ -42,6 +42,9 @@ public interface Profile
 
     @Override
     String getName();
+
+    @Override
+    void setName(final String name);
 
     int kills();
 

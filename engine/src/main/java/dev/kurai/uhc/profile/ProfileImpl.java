@@ -108,6 +108,7 @@ final class ProfileImpl implements Profile {
         return component == null ? "" : component.getName();
     }
 
+    @Override
     public void setName(final String name) {
         requireNonNull(name, "Profile name cannot be null");
         checkArgument(name.length() > 3, "Profile name length must be longer than or equals to 3");
