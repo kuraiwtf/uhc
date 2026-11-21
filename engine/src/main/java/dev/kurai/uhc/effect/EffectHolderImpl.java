@@ -68,7 +68,9 @@ public final class EffectHolderImpl implements EffectHolder {
 
     @Override
     public void removeEffect(final Key key, final EffectType effectType) {
-        final Effect effect = this.effects.get(key, effectType);
+        final Effect effect = this.effects.get(
+                requireNonNull(key, "Effect key must not be null"),
+                requireNonNull(effectType, "Effect type msut not be null"));
         if (effect == null) {
             return;
         }
@@ -86,7 +88,7 @@ public final class EffectHolderImpl implements EffectHolder {
     @Override
     public void removeEffect(final Key key) {
         for (final EffectType effectType : EffectType.values()) {
-            this.removeEffect(key, effectType);
+            this.removeEffect(requireNonNull(key), effectType);
         }
     }
 
