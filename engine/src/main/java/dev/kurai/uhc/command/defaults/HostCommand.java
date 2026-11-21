@@ -36,8 +36,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import static dev.kurai.uhc.util.CC.MISSING_PERMISSION;
-import static dev.kurai.uhc.util.CC.prefix;
+import static dev.kurai.uhc.util.CC.*;
 import static net.kyori.adventure.text.Component.text;
 
 @RequiredArgsConstructor
@@ -315,6 +314,19 @@ public final class HostCommand {
         profile.removeComponent(DeadComponent.class);
 
         player.sendMessage(CC.prefix("Vous venez de&d ressusciter&f le joueur&6 %s&r.".formatted(target.getName())));
+    }
+
+    @SubCommand(@CommandMeta(name = "gamemode", aliases = "gm", description = "Changer votre mode de jeu"))
+    public void gameMode(final Player player, final @Argument(name = "mode") GameMode gameMode) {
+        if (!this.ultraHardcore.gameService().hostService().hasHostAccess(player)) {
+            player.sendMessage(MISSING_PERMISSION);
+            return;
+        }
+
+        player.setGameMode(gameMode);
+        player.sendMessage(CC.prefix("Vous êtes désormais en §b" + formatGameMode(gameMode) + "§r."));
+        Bukkit.broadcastMessage(
+                CC.prefix("§6" + player.getName() + " §fvient de passer en §b" + formatGameMode(gameMode) + "§f."));
     }
 
     @Command(@CommandMeta(name = "heal", description = "Soigner des joueurs"))
