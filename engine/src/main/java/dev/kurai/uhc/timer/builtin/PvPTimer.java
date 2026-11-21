@@ -2,6 +2,7 @@ package dev.kurai.uhc.timer.builtin;
 
 import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.event.defaults.game.death.GamePreDeathEvent;
+import dev.kurai.uhc.game.GameService;
 import dev.kurai.uhc.timer.AbstractTimer;
 import dev.kurai.uhc.timer.annotation.Duration;
 import dev.kurai.uhc.util.CC;
@@ -33,6 +34,8 @@ public final class PvPTimer extends AbstractTimer implements Listener {
     public void onEnd() {
         this.ultraHardcore.eventService().unregisterListener(this);
         this.ultraHardcore.worldService().getWorld().setPVP(true);
+
+        GameService.CHAT_OPTION.setValue(false);
     }
 
     @EventHandler
