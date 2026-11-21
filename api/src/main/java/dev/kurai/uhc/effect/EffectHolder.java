@@ -16,6 +16,10 @@ public interface EffectHolder {
      */
     Collection<Effect> effects();
 
+    Collection<Effect> findEffectsByKey(final Key key);
+
+    Collection<Effect> findEffectsByType(final EffectType effectType);
+
     /**
      * Validates and updates the collection of effects held by the implementing entity. This method
      * will iterate over all currently active effects and remove any that have expired. An effect is
@@ -34,6 +38,8 @@ public interface EffectHolder {
      *     contain a key, type, value, duration, and creation time.
      */
     void addEffect(final Effect effect);
+
+    void removeEffect(final Key key, final EffectType effectType);
 
     /**
      * Removes an active effect associated with the given key from the implementing entity's

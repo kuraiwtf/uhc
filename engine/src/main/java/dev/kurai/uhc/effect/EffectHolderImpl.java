@@ -1,30 +1,46 @@
 package dev.kurai.uhc.effect;
 
+import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.Table;
 import dev.kurai.uhc.effect.event.*;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Bukkit;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
+
+import static java.util.Objects.requireNonNull;
 
 public final class EffectHolderImpl implements EffectHolder {
 
     private final UUID uniqueId;
-    private final Map<Key, Effect> effects;
+
+    private final Table<Key, EffectType, Effect> effects;
     private final Collection<Effect> effectsView;
 
     public EffectHolderImpl(final UUID uniqueId) {
         this.uniqueId = uniqueId;
-        this.effects = new ConcurrentHashMap<>();
-        this.effectsView = Collections.unmodifiableCollection(this.effects.values());
+        this.effectsView = Collections.unmodifiableCollection((this.effects = HashBasedTable.create()).values());
     }
 
     @Override
     public Collection<Effect> effects() {
         return this.effectsView;
+    }
+
+    @Override
+    public Collection<Effect> findEffectsByKey(final Key key) {
+        return this.effects
+                .row(requireNonNull(key, "Effect key must not be null"))
+                .values();
+    }
+
+    @Override
+    public Collection<Effect> findEffectsByType(final EffectType effectType) {
+        return this.effects
+                .column(requireNonNull(effectType, "Effect type must not be null"))
+                .values();
     }
 
     @Override
@@ -46,13 +62,13 @@ public final class EffectHolderImpl implements EffectHolder {
             return;
         }
 
-        this.effects.put(effect.key(), effect);
+        this.effects.put(effect.key(), effect.effectType(), effect);
         Bukkit.getPluginManager().callEvent(new EffectPostAddEvent(this.uniqueId, effect));
     }
 
     @Override
-    public void removeEffect(final Key key) {
-        final Effect effect = this.effects.get(key);
+    public void removeEffect(final Key key, final EffectType effectType) {
+        final Effect effect = this.effects.get(key, effectType);
         if (effect == null) {
             return;
         }
@@ -63,8 +79,15 @@ public final class EffectHolderImpl implements EffectHolder {
             return;
         }
 
-        this.effects.remove(key);
+        this.effects.remove(key, effectType);
         Bukkit.getPluginManager().callEvent(new EffectPostRemoveEvent(this.uniqueId, effect));
+    }
+
+    @Override
+    public void removeEffect(final Key key) {
+        for (final EffectType effectType : EffectType.values()) {
+            this.removeEffect(key, effectType);
+        }
     }
 
     @Override
