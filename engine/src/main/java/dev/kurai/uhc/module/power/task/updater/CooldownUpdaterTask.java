@@ -31,15 +31,22 @@ public final class CooldownUpdaterTask implements Runnable {
 
     @Override
     public void run() {
-        for (final var profile : this.profileService.getProfiles()) {
+        for (final Profile profile : this.profileService.getProfiles()) {
             if (profile.findPlayer().isEmpty()) {
                 continue;
             }
 
-            final var player = Objects.requireNonNull(profile.getPlayer());
-            for (final var power : profile.getPowers()) {
-                if (power instanceof AbstractParentItemPower
-                        || (power.getRestrictions().isEmpty() && power.provideActionbarEntry(player) == null)) {
+            final Player player = Objects.requireNonNull(profile.getPlayer());
+            for (final AbstractPower power : profile.getPowers()) {
+                if (power instanceof final AbstractParentItemPower parentPower) {
+                    final AbstractItemPower currentPower = parentPower.getCurrentPower();
+                    if (currentPower != null) {
+                        this.processItemPower(profile, player, currentPower);
+                    }
+                    continue;
+                }
+
+                if (power.getRestrictions().isEmpty() && power.provideActionbarEntry(player) == null) {
                     continue;
                 }
 
@@ -97,7 +104,7 @@ public final class CooldownUpdaterTask implements Runnable {
     }
 
     private Component buildStatusComponent(final AbstractPower power) {
-        final CooldownPowerRestriction cooldown = power.findRestriction(CooldownPowerRestriction.class, "cooldown");
+        final CooldownPowerRestriction cooldown = power.findRestriction(CooldownPowerRestriction.class, power.getId());
         final Color color = power.getColor();
         if (cooldown != null && cooldown.timeLeft() > 0) {
             return text().append(text(power.getName()))
