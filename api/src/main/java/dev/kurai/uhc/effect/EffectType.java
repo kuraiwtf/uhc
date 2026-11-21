@@ -9,13 +9,13 @@ public enum EffectType {
     RESISTANCE(PotionTypes.RESISTANCE),
     ;
 
-    private final PotionType packetType;
+    private final PotionType potionType;
 
-    EffectType(final PotionType packetType) {
-        this.packetType = packetType;
+    EffectType(final PotionType potionType) {
+        this.potionType = potionType;
     }
 
-    public PotionType packetType() {
-        return this.packetType;
+    public PotionType potionType() {
+        return this.potionType;
     }
 }

@@ -70,7 +70,7 @@ public final class EffectTabListPart implements TabListPart {
 
     private double provideEffectPercentage(final EffectHolder effectHolder, final EffectType effectType) {
         return effectHolder.effects().stream()
-                .filter(effect -> effect.type() == effectType)
+                .filter(effect -> effect.effectType() == effectType)
                 .mapToDouble(Effect::value)
                 .sum();
     }

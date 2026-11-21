@@ -32,7 +32,7 @@ public final class EffectPacketSender {
 
         if (reset) {
             PLAYER_MANAGER.sendPacket(
-                    player, new WrapperPlayServerRemoveEntityEffect(player.getEntityId(), effectType.packetType()));
+                    player, new WrapperPlayServerRemoveEntityEffect(player.getEntityId(), effectType.potionType()));
         }
 
         if (amplifier < 1) {
@@ -42,6 +42,6 @@ public final class EffectPacketSender {
         PLAYER_MANAGER.sendPacket(
                 player,
                 new WrapperPlayServerEntityEffect(
-                        player.getEntityId(), effectType.packetType(), amplifier - 1, CLIENT_DURATION, (byte) 0));
+                        player.getEntityId(), effectType.potionType(), amplifier - 1, CLIENT_DURATION, (byte) 0));
     }
 }

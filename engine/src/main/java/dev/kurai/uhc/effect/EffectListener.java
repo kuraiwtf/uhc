@@ -41,7 +41,7 @@ public final class EffectListener implements Listener {
     @EventHandler
     public void onEffectAdd(final EffectPostAddEvent event) {
         final UUID uniqueId = event.uniqueId();
-        final EffectType effectType = event.effect().type();
+        final EffectType effectType = event.effect().effectType();
         if (effectType == EffectType.SPEED) {
             this.validateSpeed(uniqueId);
         }
@@ -52,7 +52,7 @@ public final class EffectListener implements Listener {
     @EventHandler
     public void onEffectRemove(final EffectPostRemoveEvent event) {
         final UUID uniqueId = event.uniqueId();
-        final EffectType effectType = event.effect().type();
+        final EffectType effectType = event.effect().effectType();
         if (effectType == EffectType.SPEED) {
             this.validateSpeed(uniqueId);
         }

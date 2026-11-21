@@ -30,7 +30,7 @@ public final class EffectHolderImpl implements EffectHolder {
     @Override
     public void validateEffects() {
         for (final Effect effect : this.effects.values()) {
-            if (effect.isExpired()) {
+            if (effect.expired()) {
                 this.removeEffect(effect.key());
             }
         }
@@ -70,7 +70,7 @@ public final class EffectHolderImpl implements EffectHolder {
     @Override
     public double getEffectValue(final EffectType effectType) {
         return this.effectsView.stream()
-                .filter(effect -> effect.type() == effectType)
+                .filter(effect -> effect.effectType() == effectType)
                 .mapToDouble(Effect::value)
                 .sum();
     }

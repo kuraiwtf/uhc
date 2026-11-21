@@ -7,41 +7,23 @@ import java.time.Duration;
 import java.time.Instant;
 
 import static java.time.Instant.now;
+import static java.util.Objects.requireNonNull;
 
-public final class Effect implements Keyed {
+public record Effect(Key key, EffectType effectType, double value, Duration duration, Instant creationTime)
+        implements Keyed {
 
-    private final Key key;
-    private final EffectType type;
-    private final double value;
-    private final Duration duration;
-    private final Instant creationTime;
-
-    public Effect(final Key key, final EffectType type, final double value, final Duration duration) {
-        this.key = key;
-        this.type = type;
-        this.value = value;
-        this.duration = duration;
-        this.creationTime = now();
+    public Effect {
+        requireNonNull(this.key(), "Effect key must not be null");
+        requireNonNull(this.effectType(), "Effect type must not be null");
+        requireNonNull(this.duration(), "Effect duration must not be null");
+        requireNonNull(this.creationTime(), "Effect creation time must not be null");
     }
 
-    @Override
-    public Key key() {
-        return this.key;
+    public Effect(final Key key, final EffectType effectType, final double value, final Duration duration) {
+        this(key, effectType, value, duration, now());
     }
 
-    public EffectType type() {
-        return this.type;
-    }
-
-    public double value() {
-        return this.value;
-    }
-
-    public Duration duration() {
-        return this.duration;
-    }
-
-    public boolean isExpired() {
+    public boolean expired() {
         return !this.duration.isZero() && now().isAfter(this.creationTime.plus(this.duration));
     }
 }
