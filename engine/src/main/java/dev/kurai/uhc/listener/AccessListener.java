@@ -34,7 +34,7 @@ public final class AccessListener implements Listener {
     public void onJoin(final AsyncPlayerPreLoginEvent event) {
         final UUID uniqueId = event.getUniqueId();
         if (WHITELIST_OPTION.getValue()
-                && !this.whitelistService.isWhitelisted(uniqueId)
+                && !this.whitelistService.whitelisted(uniqueId)
                 && !this.hostService.hasHostAccess(uniqueId)) {
             event.setLoginResult(AsyncPlayerPreLoginEvent.Result.KICK_WHITELIST);
             event.setKickMessage("§cVous n'êtes pas dans la liste blanche de la partie.");

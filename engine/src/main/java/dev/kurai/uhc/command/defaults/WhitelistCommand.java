@@ -45,7 +45,7 @@ public final class WhitelistCommand {
 
         final WhitelistService whitelistService = this.ultraHardcore.whitelistService();
         for (final OfflinePlayer target : players) {
-            if (whitelistService.isWhitelisted(target.getUniqueId())) {
+            if (whitelistService.whitelisted(target.getUniqueId())) {
                 sender.sendMessage("§6" + BURGER + " " + target.getName());
                 continue;
             }
@@ -69,7 +69,7 @@ public final class WhitelistCommand {
 
         final WhitelistService whitelistService = this.ultraHardcore.whitelistService();
         for (final OfflinePlayer target : players) {
-            if (!whitelistService.isWhitelisted(target.getUniqueId())) {
+            if (!whitelistService.whitelisted(target.getUniqueId())) {
                 sender.sendMessage("§6" + BURGER + " " + target.getName());
                 continue;
             }

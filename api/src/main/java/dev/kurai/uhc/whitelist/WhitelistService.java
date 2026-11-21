@@ -14,5 +14,5 @@ public interface WhitelistService {
 
     void unwhitelist(final UUID id);
 
-    boolean isWhitelisted(final UUID id);
+    boolean whitelisted(final UUID id);
 }

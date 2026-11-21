@@ -118,7 +118,7 @@ public final class HostMCWhitelistProviderTask extends BukkitRunnable {
                 continue;
             }
 
-            if (!this.whitelistService.isWhitelisted(uniqueId)) {
+            if (!this.whitelistService.whitelisted(uniqueId)) {
                 this.whitelistService.whitelist(new UUID(0, 0), uniqueId, "Bot discord d'HostMC");
             }
 
