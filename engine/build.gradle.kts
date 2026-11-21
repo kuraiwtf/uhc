@@ -17,9 +17,16 @@ tasks {
 
   processResources {
     filteringCharset = "UTF-8"
+    filesMatching("plugin.yml") {
+      expand("version" to project.version)
+    }
   }
 
   shadowJar {
     archiveFileName.set("${rootProject.name}-${project.name}.jar")
+  }
+
+  build {
+    dependsOn(shadowJar)
   }
 }
