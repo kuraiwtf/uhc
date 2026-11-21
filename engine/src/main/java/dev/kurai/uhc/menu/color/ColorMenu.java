@@ -2,6 +2,7 @@ package dev.kurai.uhc.menu.color;
 
 import dev.kurai.uhc.menu.template.BorderTemplate;
 import dev.kurai.uhc.nickname.NicknameHolder;
+import dev.kurai.uhc.util.CC;
 import dev.kurai.uhc.util.Color;
 import dev.kurai.uhc.util.ItemBuilder;
 import net.j4c0b3y.api.menu.Menu;
@@ -17,14 +18,14 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.Collection;
+import java.util.List;
 
 public final class ColorMenu extends Menu {
 
     private final NicknameHolder nicknameHolder;
-    private final Collection<Player> players;
+    private final List<Player> players;
 
-    public ColorMenu(final Player player, final NicknameHolder nicknameHolder, final Collection<Player> players) {
+    public ColorMenu(final Player player, final NicknameHolder nicknameHolder, final List<Player> players) {
         super("Color - " + players.size() + " joueurs", MenuSize.FOUR, player);
         this.nicknameHolder = nicknameHolder;
         this.players = players;
@@ -50,10 +51,10 @@ public final class ColorMenu extends Menu {
     private static final class ColorButton extends Button {
 
         private final NicknameHolder nicknameHolder;
-        private final Collection<Player> players;
+        private final List<Player> players;
         private final Color color;
 
-        private ColorButton(final NicknameHolder nicknameHolder, final Collection<Player> players, final Color color) {
+        private ColorButton(final NicknameHolder nicknameHolder, final List<Player> players, final Color color) {
             this.nicknameHolder = nicknameHolder;
             this.players = players;
             this.color = color;
@@ -61,10 +62,22 @@ public final class ColorMenu extends Menu {
 
         @Override
         public ItemStack getIcon() {
+            boolean hasColor = false;
+            if (this.players.size() == 1) {
+                hasColor = this.nicknameHolder.hasColor(this.players.getFirst().getUniqueId(), this.color);
+            }
+
             final ChatColor chatColor = this.color.asBukkitColor();
             return new ItemBuilder(Material.INK_SACK)
                     .data(this.color.asDyeColor().getDyeData())
                     .name(chatColor + "&l" + this.color.name())
+                    .lore(
+                            "",
+                            hasColor
+                                    ? "§4 " + CC.DANGER + "§c Cette couleur est déjà appliquée."
+                                    : this.color.asBukkitColor() + " » §fCliquez pour appliquer cette couleur",
+                            "")
+                    .glowing(hasColor)
                     .asItemStack();
         }
 
