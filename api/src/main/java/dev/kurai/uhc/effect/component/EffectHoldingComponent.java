@@ -8,6 +8,6 @@ import java.util.Objects;
 public record EffectHoldingComponent(EffectHolder holder) implements Component {
 
     public EffectHoldingComponent {
-        Objects.requireNonNull(this.holder(), "Effect holder must not be null");
+        Objects.requireNonNull(holder, "Effect holder must not be null");
     }
 }
