@@ -1,5 +1,7 @@
 package dev.kurai.uhc.effect;
 
+import net.kyori.adventure.key.Key;
+
 import java.time.Duration;
 import java.time.Instant;
 
@@ -7,13 +9,13 @@ import static java.time.Instant.now;
 
 public final class Effect {
 
-    private final String key;
+    private final Key key;
     private final EffectType type;
     private final double value;
     private final Duration duration;
     private final Instant creationTime;
 
-    public Effect(final String key, final EffectType type, final double value, final Duration duration) {
+    public Effect(final Key key, final EffectType type, final double value, final Duration duration) {
         this.key = key;
         this.type = type;
         this.value = value;
@@ -21,7 +23,7 @@ public final class Effect {
         this.creationTime = now();
     }
 
-    public String key() {
+    public Key key() {
         return this.key;
     }
 

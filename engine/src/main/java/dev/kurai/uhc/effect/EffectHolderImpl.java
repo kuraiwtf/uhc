@@ -1,6 +1,7 @@
 package dev.kurai.uhc.effect;
 
 import dev.kurai.uhc.effect.event.*;
+import net.kyori.adventure.key.Key;
 import org.bukkit.Bukkit;
 
 import java.util.Collection;
@@ -12,7 +13,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public final class EffectHolderImpl implements EffectHolder {
 
     private final UUID uniqueId;
-    private final Map<String, Effect> effects;
+    private final Map<Key, Effect> effects;
     private final Collection<Effect> effectsView;
 
     public EffectHolderImpl(final UUID uniqueId) {
@@ -50,7 +51,7 @@ public final class EffectHolderImpl implements EffectHolder {
     }
 
     @Override
-    public void removeEffect(final String key) {
+    public void removeEffect(final Key key) {
         final Effect effect = this.effects.get(key);
         if (effect == null) {
             return;

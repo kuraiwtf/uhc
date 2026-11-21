@@ -1,5 +1,7 @@
 package dev.kurai.uhc.effect;
 
+import net.kyori.adventure.key.Key;
+
 import java.util.Collection;
 
 public interface EffectHolder {
@@ -41,7 +43,7 @@ public interface EffectHolder {
      * @param key the unique identifier of the effect to be removed. Must not be null. It should match
      *     the {@code key} of an effect in the collection to successfully remove it.
      */
-    void removeEffect(final String key);
+    void removeEffect(final Key key);
 
     /**
      * Retrieves the cumulative value of all active effects of the specified type associated with the
