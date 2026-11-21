@@ -38,7 +38,7 @@ public final class DevelopmentCommands {
 
         final Profile profile = this.ultraHardcore.profileService().getOrCreateProfile(target);
         for (final AbstractPower power : profile.getPowers()) {
-            power.findOptionalRestriction(CooldownPowerRestriction.class, "cooldown")
+            power.findOptionalRestriction(CooldownPowerRestriction.class, power.getId())
                     .ifPresent(restriction -> restriction.timeLeft(0));
         }
 
