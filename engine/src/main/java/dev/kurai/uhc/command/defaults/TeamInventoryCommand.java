@@ -3,7 +3,6 @@ package dev.kurai.uhc.command.defaults;
 import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.command.annotation.Command;
 import dev.kurai.uhc.command.annotation.CommandMeta;
-import dev.kurai.uhc.profile.state.PlayingProfileState;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.entity.Player;
 import org.jspecify.annotations.NullMarked;
@@ -24,8 +23,7 @@ public final class TeamInventoryCommand {
             return;
         }
 
-        if (!(this.ultraHardcore.profileService().getOrCreateProfile(player).getState()
-                instanceof PlayingProfileState)) {
+        if (!this.ultraHardcore.gameService().playing()) {
             player.sendMessage(prefix("&cL'inventaire d'équipe n'est accessible qu'une fois la partie commencée."));
             return;
         }

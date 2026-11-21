@@ -17,7 +17,8 @@ import dev.kurai.uhc.menu.spectator.InventoryViewMenu;
 import dev.kurai.uhc.profile.Profile;
 import dev.kurai.uhc.profile.ProfileService;
 import dev.kurai.uhc.profile.component.*;
-import dev.kurai.uhc.profile.state.PlayingProfileState;
+import dev.kurai.uhc.profile.component.AliveProfileComponent;
+import dev.kurai.uhc.profile.component.SpectatingProfileComponent;
 import dev.kurai.uhc.util.CC;
 import dev.kurai.uhc.util.SitUtil;
 import dev.kurai.uhc.util.SpectatorVisibility;
@@ -83,7 +84,7 @@ public final class PlayingListener implements Listener {
     public void onPreLogin(final AsyncPlayerPreLoginEvent event) {
         final Profile profile = this.ultraHardcore.profileService().getOrCreateProfile(event.getUniqueId());
         final OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(event.getUniqueId());
-        if (!(profile.getState() instanceof PlayingProfileState)
+        if (!profile.hasComponent(AliveProfileComponent.class)
                 && !offlinePlayer.isOp()
                 && !offlinePlayer.isWhitelisted()
                 && !this.ultraHardcore.gameService().ruleService().isRuleEnabled("spectator")) {
@@ -101,7 +102,7 @@ public final class PlayingListener implements Listener {
         final Profile profile = this.ultraHardcore.profileService().getOrCreateProfile(player);
         profile.addComponent(new NameComponent(player.getName()));
 
-        if (!(profile.getState() instanceof PlayingProfileState)) {
+        if (!profile.hasComponent(AliveProfileComponent.class)) {
             player.teleport(this.ultraHardcore.worldService().getWorld().getSpawnLocation());
             player.setGameMode(GameMode.SPECTATOR);
             SpectatorVisibility.refresh(this.ultraHardcore);
@@ -153,7 +154,7 @@ public final class PlayingListener implements Listener {
 
         final Player player = event.getPlayer();
         final Profile profile = this.ultraHardcore.profileService().getOrCreateProfile(player);
-        if (!(profile.getState() instanceof PlayingProfileState)) {
+        if (!profile.hasComponent(AliveProfileComponent.class)) {
             return;
         }
 
@@ -343,7 +344,7 @@ public final class PlayingListener implements Listener {
         final ProfileService profileService = this.ultraHardcore.profileService();
         final Profile profile = profileService.getOrCreateProfile(player.getUniqueId());
 
-        if (!profile.hasComponent(SpectatorComponent.class)
+        if (!profile.hasComponent(SpectatingProfileComponent.class)
                 || !(event.getRightClicked() instanceof final Player target)) {
             return;
         }
@@ -361,7 +362,7 @@ public final class PlayingListener implements Listener {
 
         final ProfileService profileService = this.ultraHardcore.profileService();
         final Profile profile = profileService.getOrCreateProfile(player.getUniqueId());
-        if (!(profile.getState() instanceof PlayingProfileState)) {
+        if (!profile.hasComponent(AliveProfileComponent.class)) {
             player.spigot().respawn();
             player.teleport(this.ultraHardcore.worldService().getWorld().getSpawnLocation());
             return;

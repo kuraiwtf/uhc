@@ -8,8 +8,8 @@ import dev.kurai.uhc.game.configuration.inventory.InventoryConfiguration;
 import dev.kurai.uhc.module.team.module.TeamModule;
 import dev.kurai.uhc.profile.Profile;
 import dev.kurai.uhc.profile.component.DisconnectComponent;
-import dev.kurai.uhc.profile.component.SpectatorComponent;
-import dev.kurai.uhc.profile.state.PlayingProfileState;
+import dev.kurai.uhc.profile.component.AliveProfileComponent;
+import dev.kurai.uhc.profile.component.SpectatingProfileComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -64,7 +64,7 @@ public final class ScatterServiceImpl implements ScatterService {
         final var teamService = this.ultraHardcore.teamService();
         final var profiles = this.ultraHardcore
                 .profileService()
-                .getProfiles(profile -> !profile.hasComponent(SpectatorComponent.class));
+                .getProfiles(profile -> !profile.hasComponent(SpectatingProfileComponent.class));
         profiles.stream()
                 .filter(profile -> profile.findPlayer().isEmpty())
                 .forEach(profile -> teamService.leave(profile.getId()));
@@ -98,8 +98,8 @@ public final class ScatterServiceImpl implements ScatterService {
         player.setGameMode(GameMode.SURVIVAL);
 
         final Profile profile = this.ultraHardcore.profileService().getOrCreateProfile(player);
-        profile.setState(new PlayingProfileState());
-        profile.removeComponent(SpectatorComponent.class);
+        profile.addComponent(new AliveProfileComponent());
+        profile.removeComponent(SpectatingProfileComponent.class);
 
         profile.addComponent(new DisconnectComponent(
                 this.ultraHardcore.gameService().disconnectService().disconnectTime(), Instant.now()));
@@ -121,10 +121,9 @@ public final class ScatterServiceImpl implements ScatterService {
                         .map(Bukkit::getPlayer)
                         .filter(mate -> mate != null
                                 && this.ultraHardcore
-                                                .profileService()
-                                                .getOrCreateProfile(mate)
-                                                .getState()
-                                        instanceof PlayingProfileState)
+                                        .profileService()
+                                        .getOrCreateProfile(mate)
+                                        .hasComponent(AliveProfileComponent.class))
                         .findFirst()
                         .map(Player::getLocation));
     }

@@ -1,7 +1,7 @@
 package dev.kurai.uhc.util;
 
 import dev.kurai.uhc.UltraHardcoreAPI;
-import dev.kurai.uhc.profile.component.SpectatorComponent;
+import dev.kurai.uhc.profile.component.SpectatingProfileComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jspecify.annotations.NullMarked;
@@ -17,7 +17,7 @@ public final class SpectatorVisibility {
 
         for (final Player viewer : online) {
             final boolean viewerIsSpectator =
-                    profileService.getOrCreateProfile(viewer).hasComponent(SpectatorComponent.class);
+                    profileService.getOrCreateProfile(viewer).hasComponent(SpectatingProfileComponent.class);
 
             for (final Player target : online) {
                 if (viewer.equals(target)) {
@@ -25,7 +25,7 @@ public final class SpectatorVisibility {
                 }
 
                 final boolean targetIsSpectator =
-                        profileService.getOrCreateProfile(target).hasComponent(SpectatorComponent.class);
+                        profileService.getOrCreateProfile(target).hasComponent(SpectatingProfileComponent.class);
 
                 if (targetIsSpectator && !viewerIsSpectator) {
                     viewer.hidePlayer(target);

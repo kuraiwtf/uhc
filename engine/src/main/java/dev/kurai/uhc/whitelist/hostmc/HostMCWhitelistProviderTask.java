@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.profile.Profile;
-import dev.kurai.uhc.profile.component.SpectatorComponent;
+import dev.kurai.uhc.profile.component.SpectatingProfileComponent;
 import dev.kurai.uhc.util.CC;
 import dev.kurai.uhc.util.SpectatorVisibility;
 import dev.kurai.uhc.whitelist.WhitelistService;
@@ -127,11 +127,11 @@ public final class HostMCWhitelistProviderTask extends BukkitRunnable {
             }
 
             final Profile profile = this.ultraHardcore.profileService().getOrCreateProfile(uniqueId);
-            if (profile.hasComponent(SpectatorComponent.class)) {
+            if (profile.hasComponent(SpectatingProfileComponent.class)) {
                 continue;
             }
 
-            profile.addComponent(new SpectatorComponent());
+            profile.addComponent(new SpectatingProfileComponent());
             profile.findPlayer().ifPresent(spectatorPlayer -> spectatorPlayer.setGameMode(GameMode.SPECTATOR));
         }
 

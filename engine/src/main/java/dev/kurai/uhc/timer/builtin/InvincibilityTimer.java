@@ -3,7 +3,7 @@ package dev.kurai.uhc.timer.builtin;
 import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.adventure.UltraHardcoreKey;
 import dev.kurai.uhc.profile.Profile;
-import dev.kurai.uhc.profile.component.SpectatorComponent;
+import dev.kurai.uhc.profile.component.SpectatingProfileComponent;
 import dev.kurai.uhc.timer.AbstractTimer;
 import dev.kurai.uhc.timer.annotation.Duration;
 import dev.kurai.uhc.util.api.annotation.Identifier;
@@ -76,7 +76,7 @@ public final class InvincibilityTimer extends AbstractTimer implements Listener 
         }
 
         final Profile profile = this.ultraHardcore.profileService().getOrCreateProfile(entity.getUniqueId());
-        if (!profile.hasComponent(SpectatorComponent.class)) {
+        if (!profile.hasComponent(SpectatingProfileComponent.class)) {
             event.setCancelled(true);
         }
     }

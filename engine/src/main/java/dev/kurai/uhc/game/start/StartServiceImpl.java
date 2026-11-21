@@ -19,12 +19,9 @@ import dev.kurai.uhc.module.power.task.updater.CooldownUpdaterTask;
 import dev.kurai.uhc.module.power.task.updater.GlowingTargetUpdaterTask;
 import dev.kurai.uhc.profile.ProfileService;
 import dev.kurai.uhc.profile.component.DisconnectComponent;
-import dev.kurai.uhc.profile.component.SpectatorComponent;
-import dev.kurai.uhc.profile.state.PlayingProfileState;
-import dev.kurai.uhc.profile.state.WaitingProfileState;
+import dev.kurai.uhc.profile.component.AliveProfileComponent;
+import dev.kurai.uhc.profile.component.SpectatingProfileComponent;
 import dev.kurai.uhc.scoreboard.sidebar.adapter.builtin.PlayingSidebarAdapter;
-import dev.kurai.uhc.tablist.TabListService;
-import dev.kurai.uhc.tablist.part.EffectTabListPart;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.inventory.ItemStack;
@@ -162,8 +159,7 @@ public final class StartServiceImpl implements StartService {
                 continue;
             }
 
-            if (!(profile.getState() instanceof WaitingProfileState)
-                    || profile.hasComponent(SpectatorComponent.class)) {
+            if (profile.hasComponent(SpectatingProfileComponent.class)) {
                 player.teleport(world.getSpawnLocation());
                 player.setGameMode(GameMode.SPECTATOR);
                 final PlayerInventory inventory = player.getInventory();
@@ -172,7 +168,7 @@ public final class StartServiceImpl implements StartService {
                 continue;
             }
 
-            profile.setState(new PlayingProfileState());
+            profile.addComponent(new AliveProfileComponent());
             profile.addComponent(
                     new DisconnectComponent(gameService.disconnectService().disconnectTime(), Instant.now()));
 

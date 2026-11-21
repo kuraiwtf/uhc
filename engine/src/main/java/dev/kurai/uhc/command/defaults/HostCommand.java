@@ -17,7 +17,8 @@ import dev.kurai.uhc.profile.component.DeadComponent;
 import dev.kurai.uhc.profile.component.DisconnectComponent;
 import dev.kurai.uhc.profile.component.InventoryEditorComponent;
 import dev.kurai.uhc.profile.component.PlayerInformationComponent;
-import dev.kurai.uhc.profile.state.PlayingProfileState;
+import dev.kurai.uhc.profile.component.AliveProfileComponent;
+import dev.kurai.uhc.profile.component.SpectatingProfileComponent;
 import dev.kurai.uhc.timer.AbstractTimer;
 import dev.kurai.uhc.util.CC;
 import lombok.RequiredArgsConstructor;
@@ -257,7 +258,8 @@ public final class HostCommand {
         }
 
         final Profile profile = this.ultraHardcore.profileService().getOrCreateProfile(target.getUniqueId());
-        if (profile.getState() instanceof PlayingProfileState || profile.hasComponent(DeadComponent.class)) {
+        if (profile.hasComponent(AliveProfileComponent.class)
+                || profile.hasComponent(SpectatingProfileComponent.class)) {
             player.sendMessage(
                     CC.prefix("Le joueur&6 %s&r ne peut pas être ajouté à la partie.".formatted(target.getName())));
             return;
@@ -310,7 +312,7 @@ public final class HostCommand {
             receiver.playSound(receiver.getLocation(), Sound.ZOMBIE_UNFECT, 1f, 2f);
         }
 
-        profile.setState(new PlayingProfileState());
+        profile.addComponent(new AliveProfileComponent());
         profile.removeComponent(DeadComponent.class);
 
         player.sendMessage(CC.prefix("Vous venez de&d ressusciter&f le joueur&6 %s&r.".formatted(target.getName())));

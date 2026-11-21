@@ -5,7 +5,7 @@ import dev.kurai.uhc.command.annotation.Command;
 import dev.kurai.uhc.command.annotation.CommandMeta;
 import dev.kurai.uhc.command.argument.annotation.Argument;
 import dev.kurai.uhc.helpop.HelpOpAction;
-import dev.kurai.uhc.profile.component.SpectatorComponent;
+import dev.kurai.uhc.profile.component.SpectatingProfileComponent;
 import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
@@ -48,7 +48,7 @@ public final class HelpOpCommand {
         final var recipients = this.ultraHardcore
                 .profileService()
                 .getProfiles(profile ->
-                        hostService.hasHostAccess(profile.getId()) || profile.hasComponent(SpectatorComponent.class));
+                        hostService.hasHostAccess(profile.getId()) || profile.hasComponent(SpectatingProfileComponent.class));
 
         final var broadcast = text().append(prefix())
                 .append(text("[", DARK_GRAY))

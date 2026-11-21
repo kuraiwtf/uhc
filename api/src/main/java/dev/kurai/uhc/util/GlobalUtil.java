@@ -4,7 +4,7 @@ import com.google.common.collect.Lists;
 import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.event.defaults.player.PlayerExplosionEvent;
 import dev.kurai.uhc.profile.Profile;
-import dev.kurai.uhc.profile.component.SpectatorComponent;
+import dev.kurai.uhc.profile.component.SpectatingProfileComponent;
 import net.minecraft.server.v1_8_R3.EntityLightning;
 import net.minecraft.server.v1_8_R3.PacketPlayOutSpawnEntityWeather;
 import org.bukkit.Bukkit;
@@ -307,7 +307,7 @@ public final class GlobalUtil {
                         && !UltraHardcoreAPI.getInstance()
                                 .profileService()
                                 .getOrCreateProfile(player)
-                                .hasComponent(SpectatorComponent.class))
+                                .hasComponent(SpectatingProfileComponent.class))
                 .toList();
     }
 
@@ -343,7 +343,7 @@ public final class GlobalUtil {
                         .filter(target -> !UltraHardcoreAPI.getInstance()
                                 .profileService()
                                 .getOrCreateProfile(target)
-                                .hasComponent(SpectatorComponent.class))
+                                .hasComponent(SpectatingProfileComponent.class))
                         .toList());
     }
 

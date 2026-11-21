@@ -7,7 +7,7 @@ import dev.kurai.uhc.logger.LogCategories;
 import dev.kurai.uhc.module.power.AbstractPower;
 import dev.kurai.uhc.module.power.defaults.item.impl.parent.AbstractParentItemPower;
 import dev.kurai.uhc.profile.Profile;
-import dev.kurai.uhc.profile.component.SpectatorComponent;
+import dev.kurai.uhc.profile.component.SpectatingProfileComponent;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -28,7 +28,7 @@ import java.util.Set;
 @RequiredArgsConstructor
 public final class SpectatorListener implements Listener {
 
-    private static final Class<? extends Component> SPECTATOR_COMPONENT = SpectatorComponent.class;
+    private static final Class<? extends Component> SPECTATOR_COMPONENT = SpectatingProfileComponent.class;
 
     private static final Set<String> PRIVATE_COMMANDS = Set.of(
             "msg",

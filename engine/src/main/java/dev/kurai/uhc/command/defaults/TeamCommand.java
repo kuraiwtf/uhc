@@ -6,7 +6,6 @@ import dev.kurai.uhc.command.annotation.CommandMeta;
 import dev.kurai.uhc.command.annotation.SubCommand;
 import dev.kurai.uhc.command.argument.annotation.Argument;
 import dev.kurai.uhc.module.team.module.TeamModule;
-import dev.kurai.uhc.profile.state.WaitingProfileState;
 import dev.kurai.uhc.team.Team;
 import dev.kurai.uhc.team.TeamService;
 import lombok.RequiredArgsConstructor;
@@ -41,8 +40,7 @@ public final class TeamCommand {
             return false;
         }
 
-        if (!(this.ultraHardcore.profileService().getOrCreateProfile(player).getState()
-                instanceof WaitingProfileState)) {
+        if (this.ultraHardcore.gameService().playing()) {
             player.sendMessage(prefix("&cVous ne pouvez plus modifier les équipes."));
             return false;
         }

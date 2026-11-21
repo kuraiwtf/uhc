@@ -7,7 +7,7 @@ import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.module.power.defaults.item.impl.player.PlayerTargetItemPower;
 import dev.kurai.uhc.profile.Profile;
 import dev.kurai.uhc.profile.ProfileService;
-import dev.kurai.uhc.profile.state.PlayingProfileState;
+import dev.kurai.uhc.profile.component.AliveProfileComponent;
 import dev.kurai.uhc.util.GlobalUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -48,7 +48,7 @@ public final class GlowingTargetUpdaterTask implements Runnable {
         final var target = GlobalUtil.getTargetPlayer(player);
         if (target == null
                 || !target.isOnline()
-                || !(this.profileService.getOrCreateProfile(target).getState() instanceof PlayingProfileState)) {
+                || !(this.profileService.getOrCreateProfile(target).hasComponent(AliveProfileComponent.class))) {
             return;
         }
 
@@ -67,7 +67,7 @@ public final class GlowingTargetUpdaterTask implements Runnable {
                                 final Profile newProfile = this.profileService.getOrCreateProfile(newTarget);
                                 if (!power.hasPowerInHand(player)
                                         || !newTarget.getUniqueId().equals(target.getUniqueId())
-                                        || !(newProfile.getState() instanceof PlayingProfileState)) {
+                                        || !(newProfile.hasComponent(AliveProfileComponent.class))) {
                                     GLOW_MODULE.resetGlow(apolloPlayer, target.getUniqueId());
                                 }
                             },

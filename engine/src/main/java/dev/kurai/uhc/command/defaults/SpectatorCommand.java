@@ -8,7 +8,7 @@ import dev.kurai.uhc.command.argument.annotation.Argument;
 import dev.kurai.uhc.ecs.component.Component;
 import dev.kurai.uhc.game.GameService;
 import dev.kurai.uhc.profile.Profile;
-import dev.kurai.uhc.profile.component.SpectatorComponent;
+import dev.kurai.uhc.profile.component.SpectatingProfileComponent;
 import dev.kurai.uhc.util.CC;
 import dev.kurai.uhc.util.SpectatorVisibility;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +21,7 @@ import static dev.kurai.uhc.util.CC.MISSING_PERMISSION;
 @Command(@CommandMeta(name = "spectator", aliases = "spec"))
 public final class SpectatorCommand {
 
-    private static final Class<? extends Component> SPECTATOR_COMPONENT = SpectatorComponent.class;
+    private static final Class<? extends Component> SPECTATOR_COMPONENT = SpectatingProfileComponent.class;
 
     private final UltraHardcoreAPI ultraHardcore;
 
@@ -60,7 +60,7 @@ public final class SpectatorCommand {
             return;
         }
 
-        profile.addComponent(new SpectatorComponent());
+        profile.addComponent(new SpectatingProfileComponent());
         target.setGameMode(GameMode.SPECTATOR);
         SpectatorVisibility.refresh(this.ultraHardcore);
         player.sendMessage(CC.prefix(

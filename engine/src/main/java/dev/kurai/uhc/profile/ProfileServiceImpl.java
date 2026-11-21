@@ -2,7 +2,7 @@ package dev.kurai.uhc.profile;
 
 import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.profile.component.DeadComponent;
-import dev.kurai.uhc.profile.component.SpectatorComponent;
+import dev.kurai.uhc.profile.component.SpectatingProfileComponent;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Unmodifiable;
 import org.jspecify.annotations.NullMarked;
@@ -61,6 +61,6 @@ public final class ProfileServiceImpl implements ProfileService {
     @Override
     public @Unmodifiable Collection<Profile> getPlayingProfiles() {
         return this.getProfiles(profile ->
-                !profile.hasComponent(SpectatorComponent.class) && !profile.hasComponent(DeadComponent.class));
+                !profile.hasComponent(SpectatingProfileComponent.class) && !profile.hasComponent(DeadComponent.class));
     }
 }

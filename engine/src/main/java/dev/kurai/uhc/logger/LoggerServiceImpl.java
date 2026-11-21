@@ -2,7 +2,7 @@ package dev.kurai.uhc.logger;
 
 import dev.kurai.uhc.profile.Profile;
 import dev.kurai.uhc.profile.ProfileService;
-import dev.kurai.uhc.profile.component.SpectatorComponent;
+import dev.kurai.uhc.profile.component.SpectatingProfileComponent;
 import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
@@ -29,7 +29,7 @@ public final class LoggerServiceImpl implements LoggerService {
                         .hoverEvent(showText(text("Cliquez pour vous téléporter à cette action"))))
                 .build();
         for (final Profile profile :
-                this.profileService.getProfiles(profile -> profile.hasComponent(SpectatorComponent.class))) {
+                this.profileService.getProfiles(profile -> profile.hasComponent(SpectatingProfileComponent.class))) {
             profile.sendMessage(message);
         }
     }

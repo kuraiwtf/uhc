@@ -6,8 +6,7 @@ import dev.kurai.uhc.menu.template.BorderTemplate;
 import dev.kurai.uhc.menu.template.PaginationTemplate;
 import dev.kurai.uhc.profile.Profile;
 import dev.kurai.uhc.profile.ProfileService;
-import dev.kurai.uhc.profile.state.PlayingProfileState;
-import dev.kurai.uhc.profile.state.WaitingProfileState;
+import dev.kurai.uhc.profile.component.SpectatingProfileComponent;
 import dev.kurai.uhc.util.ItemBuilder;
 import net.j4c0b3y.api.menu.MenuSize;
 import net.j4c0b3y.api.menu.annotation.AutoUpdate;
@@ -44,8 +43,7 @@ public final class EnchantmentLimitPlayersMenu extends PaginatedMenu {
     @Override
     public @Unmodifiable List<Button> getEntries() {
         return this.profileService
-                .getProfiles(profile -> profile.getState() instanceof WaitingProfileState
-                        || profile.getState() instanceof PlayingProfileState)
+                .getProfiles(profile -> !profile.hasComponent(SpectatingProfileComponent.class))
                 .stream()
                 .map(PlayerButton::new)
                 .map(Button.class::cast)

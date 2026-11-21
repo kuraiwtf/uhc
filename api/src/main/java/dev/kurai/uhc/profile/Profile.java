@@ -5,10 +5,8 @@ import dev.kurai.actionbar.Actionbar;
 import dev.kurai.uhc.ecs.entity.EntityBridge;
 import dev.kurai.uhc.module.power.AbstractPower;
 import dev.kurai.uhc.module.power.holder.PowerHolder;
-import dev.kurai.uhc.profile.state.ProfileState;
 import dev.kurai.uhc.util.api.Identifiable;
 import dev.kurai.uhc.util.api.name.Nameable;
-import dev.kurai.uhc.util.api.state.Stateful;
 import net.kyori.adventure.audience.ForwardingAudience;
 import net.minecraft.server.v1_8_R3.Packet;
 import org.bukkit.Bukkit;
@@ -30,7 +28,6 @@ import java.util.function.Consumer;
 public interface Profile
         extends Identifiable<UUID>,
                 Nameable<String>,
-                Stateful<ProfileState>,
                 EntityBridge<UUID>,
                 PowerHolder,
                 ForwardingAudience.Single {
@@ -64,12 +61,6 @@ public interface Profile
             this.addItem(item);
         }
     }
-
-    @Override
-    ProfileState getState();
-
-    @Override
-    void setState(final ProfileState state);
 
     void addPotionEffect(final PotionEffect effect);
 

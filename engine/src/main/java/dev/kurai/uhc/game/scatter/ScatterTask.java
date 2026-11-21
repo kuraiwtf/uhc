@@ -4,7 +4,7 @@ import com.google.common.collect.Lists;
 import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.game.configuration.border.BorderConfiguration;
 import dev.kurai.uhc.profile.Profile;
-import dev.kurai.uhc.profile.component.SpectatorComponent;
+import dev.kurai.uhc.profile.component.SpectatingProfileComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -28,7 +28,7 @@ public final class ScatterTask extends BukkitRunnable {
         final var remaining = Lists.newArrayList(
                 ultraHardcore
                         .profileService()
-                        .getProfiles(profile -> !profile.hasComponent(SpectatorComponent.class))
+                        .getProfiles(profile -> !profile.hasComponent(SpectatingProfileComponent.class))
                         .stream()
                         .map(Profile::getId)
                         .toList());

@@ -13,9 +13,10 @@ import dev.kurai.uhc.event.defaults.player.PlayerDamageEvent;
 import dev.kurai.uhc.module.power.AbstractPower;
 import dev.kurai.uhc.module.power.defaults.item.AbstractItemPower;
 import dev.kurai.uhc.module.power.defaults.item.impl.parent.AbstractParentItemPower;
-import dev.kurai.uhc.profile.component.*;
-import dev.kurai.uhc.profile.state.ProfileState;
-import dev.kurai.uhc.profile.state.WaitingProfileState;
+import dev.kurai.uhc.profile.component.ClaimComponent;
+import dev.kurai.uhc.profile.component.DamageImmunityComponent;
+import dev.kurai.uhc.profile.component.OfflineActionComponent;
+import dev.kurai.uhc.profile.component.ProfileMiningComponent;
 import dev.kurai.uhc.util.CC;
 import lombok.Getter;
 import lombok.Setter;
@@ -60,7 +61,6 @@ final class ProfileImpl implements Profile {
                         new DamageImmunityComponent(),
                         new ProfileMiningComponent(),
                         new OfflineActionComponent(),
-                        new ProfileStateComponent(new WaitingProfileState()),
                         new EffectHoldingComponent(new EffectHolderImpl(id)));
 
         this.ultraHardcore = ultraHardcore;
@@ -134,21 +134,6 @@ final class ProfileImpl implements Profile {
                 + " d'être ajouté"
                 + (plural ? "s" : "")
                 + " à votre&a /full&r.");
-    }
-
-    @Override
-    public ProfileState getState() {
-        return this.getComponent(ProfileStateComponent.class).getState();
-    }
-
-    @Override
-    public void setState(final ProfileState state) {
-        if (this.getState() != null) {
-            this.getState().onExit(this);
-        }
-
-        this.getComponent(ProfileStateComponent.class).setState(state);
-        state.onEntry(this);
     }
 
     @Override

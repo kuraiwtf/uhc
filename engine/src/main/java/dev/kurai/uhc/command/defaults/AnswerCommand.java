@@ -8,7 +8,7 @@ import dev.kurai.uhc.command.argument.annotation.Argument;
 import dev.kurai.uhc.helpop.HelpOpTicket;
 import dev.kurai.uhc.menu.spectator.InventoryViewMenu;
 import dev.kurai.uhc.profile.Profile;
-import dev.kurai.uhc.profile.component.SpectatorComponent;
+import dev.kurai.uhc.profile.component.SpectatingProfileComponent;
 import dev.kurai.uhc.util.CC;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Bukkit;
@@ -131,7 +131,7 @@ public final class AnswerCommand {
     private boolean hasAccess(final Player player) {
         final var hostService = this.ultraHardcore.gameService().hostService();
         final var profile = this.ultraHardcore.profileService().getOrCreateProfile(player);
-        if (hostService.hasHostAccess(player) || profile.hasComponent(SpectatorComponent.class)) {
+        if (hostService.hasHostAccess(player) || profile.hasComponent(SpectatingProfileComponent.class)) {
             return true;
         }
 

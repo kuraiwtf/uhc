@@ -13,8 +13,7 @@ import dev.kurai.uhc.profile.component.DeadComponent;
 import dev.kurai.uhc.profile.component.DisconnectComponent;
 import dev.kurai.uhc.profile.component.PlayerInformationComponent;
 import dev.kurai.uhc.profile.component.ProcessingDeathComponent;
-import dev.kurai.uhc.profile.state.DeadProfileState;
-import dev.kurai.uhc.profile.state.PlayingProfileState;
+import dev.kurai.uhc.profile.component.AliveProfileComponent;
 import dev.kurai.uhc.util.ItemBuilder;
 import dev.kurai.uhc.win.BuiltinWinInformation;
 import dev.kurai.uhc.win.WinCelebration;
@@ -98,7 +97,7 @@ public final class DeathServiceImpl implements DeathService {
             }
         });
 
-        profile.setState(new PlayingProfileState());
+        profile.addComponent(new AliveProfileComponent());
         profile.removeComponent(DeadComponent.class);
 
         profile.removeComponent(ProcessingDeathComponent.class);
@@ -197,7 +196,7 @@ public final class DeathServiceImpl implements DeathService {
                 informationComponent.armor().clone(),
                 droppedItems));
 
-        profile.setState(new DeadProfileState());
+        profile.removeComponent(AliveProfileComponent.class);
 
         profile.sendMessage(emptyLine(DARK_PURPLE, LIGHT_PURPLE));
         profile.sendMessage("");
