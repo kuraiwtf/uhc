@@ -200,7 +200,7 @@ public final class UltraHardcoreEngine extends UltraHardcoreAPI {
         this.eventService.registerListeners(
                 fixListener,
                 resourcePackListener,
-                new AccessListener(this.gameService.hostService(), this.moduleService, this.whitelistService),
+                new AccessListener(this.gameService.hostService(), this.whitelistService),
                 new ChatListener(),
                 new ItemListener(this.itemService),
                 new WaitingListener(this),

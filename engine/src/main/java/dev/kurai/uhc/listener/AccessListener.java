@@ -1,7 +1,6 @@
 package dev.kurai.uhc.listener;
 
 import dev.kurai.uhc.game.host.HostService;
-import dev.kurai.uhc.module.service.ModuleService;
 import dev.kurai.uhc.whitelist.WhitelistService;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -16,13 +15,10 @@ import static dev.kurai.uhc.game.GameService.WHITELIST_OPTION;
 public final class AccessListener implements Listener {
 
     private final HostService hostService;
-    private final ModuleService moduleService;
     private final WhitelistService whitelistService;
 
-    public AccessListener(
-            final HostService hostService, final ModuleService moduleService, final WhitelistService whitelistService) {
+    public AccessListener(final HostService hostService, final WhitelistService whitelistService) {
         this.hostService = hostService;
-        this.moduleService = moduleService;
         this.whitelistService = whitelistService;
     }
 
