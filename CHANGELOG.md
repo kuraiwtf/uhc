@@ -1,5 +1,39 @@
 # Changelog
 
+## [1.19.0](https://github.com/kuraiwtf/uhc/compare/v1.18.0...v1.19.0) (2026-11-21)
+
+
+### Features
+
+* add decrement event to power cooldowns ([175c2ee](https://github.com/kuraiwtf/uhc/commit/175c2ee153648bb2b964dc0b35ebf0fd4448979c))
+* add editMeta helpers to ItemBuilder ([98f430e](https://github.com/kuraiwtf/uhc/commit/98f430e55147c5bc03a02cfe5eef52aadf7812cf))
+* add formatGameMode helper to CC ([197caca](https://github.com/kuraiwtf/uhc/commit/197caca4831cb88ef2a272e72d00beddc4d1a071))
+* add GameMode argument resolver ([00004b8](https://github.com/kuraiwtf/uhc/commit/00004b8b52e52e9473ebf7a8cce054ef0916fa58))
+* add gamemode host command ([118778c](https://github.com/kuraiwtf/uhc/commit/118778cc1bf730d435b20123370a339530a74684))
+* add lore to VisibleEffectScenario ([40380a0](https://github.com/kuraiwtf/uhc/commit/40380a0664125285f8875ce579a7b502f515d1a4))
+* add VisibleEffectScenario to show active effects in tab list ([27b4a9e](https://github.com/kuraiwtf/uhc/commit/27b4a9e8d61e0e4bcf78811fd64b840fc1aafef7))
+* highlight already-applied colors in color menu ([d1c3df4](https://github.com/kuraiwtf/uhc/commit/d1c3df42ad4985dbf0e0eab227b9f397195da42c))
+* implement Keyed on Effect ([4f7f6d9](https://github.com/kuraiwtf/uhc/commit/4f7f6d9a58d7c63ded597703e7f8c6dbe0c8a5ad))
+* implement Listener on VisibleEffectScenario ([6979edb](https://github.com/kuraiwtf/uhc/commit/6979edb7511b503c1193ddca7ec730a3a8e6b447))
+* reset chat option when PvP timer ends ([6e0f273](https://github.com/kuraiwtf/uhc/commit/6e0f273dc3115ccd6b16d32a0b986f42705a7769))
+
+
+### Bug Fixes
+
+* process item powers through their current power in cooldown updater ([41ea5fa](https://github.com/kuraiwtf/uhc/commit/41ea5fa90bb8a12cf45ef31d61e0c453b3eb5684))
+* resolve power cooldown restriction by power id in development command ([7428231](https://github.com/kuraiwtf/uhc/commit/742823130c29d24e026a3c00d8a70ac63c0c5f47))
+* resolve profile name from UUID via Bukkit and use entity id ([8970a11](https://github.com/kuraiwtf/uhc/commit/8970a11a30b4681c9f55fdfc6f5cc784b1cb424e))
+* use item power identifier for cooldown restriction lookup ([2321afc](https://github.com/kuraiwtf/uhc/commit/2321afc182ca55ba3abd7968399fc4524eb2c65b))
+
+
+### Code Refactoring
+
+* drop unused ModuleService from AccessListener ([251710f](https://github.com/kuraiwtf/uhc/commit/251710f93364885ff5e1978213763e083b40e66e))
+* make EntityBridge generic over id type only ([cad5cce](https://github.com/kuraiwtf/uhc/commit/cad5cce5f6b21c738592a6087bcf0c8dcad5b74e))
+* remove unused util API package ([be421bc](https://github.com/kuraiwtf/uhc/commit/be421bc4a71f2cbb9a4fc9b452794461c33026c4))
+* rename getEntireHealth to getHealthAndAbsorption ([1900add](https://github.com/kuraiwtf/uhc/commit/1900add9a468dc63dd59731f988e449b5e15ace9))
+* use adventure Key for effect identifiers ([fc206c6](https://github.com/kuraiwtf/uhc/commit/fc206c68b9350003e315b7fd83e8721aa43093d7))
+
 ## [1.18.0](https://github.com/kuraiwtf/uhc/compare/v1.17.1...v1.18.0) (2026-11-20)
 
 
