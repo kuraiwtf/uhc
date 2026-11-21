@@ -28,7 +28,7 @@ public abstract class AbstractItemPower extends AbstractPower {
     }
 
     public Object provideGlint(final Player player) {
-        final CooldownPowerRestriction cooldown = this.findRestriction(CooldownPowerRestriction.class, "cooldown");
+        final CooldownPowerRestriction cooldown = this.findRestriction(CooldownPowerRestriction.class, this.identifier);
         if (cooldown != null && cooldown.restrictsPower(this, player)) {
             return "#AA0000";
         }
