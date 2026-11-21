@@ -13,7 +13,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Getter
 @Setter
-public final class DeadComponent implements Component {
+public final class DeathRecordComponent implements Component {
 
     private UUID killer;
     private long deathTime;
