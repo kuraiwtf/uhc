@@ -1,13 +1,14 @@
 package dev.kurai.uhc.effect;
 
 import net.kyori.adventure.key.Key;
+import net.kyori.adventure.key.Keyed;
 
 import java.time.Duration;
 import java.time.Instant;
 
 import static java.time.Instant.now;
 
-public final class Effect {
+public final class Effect implements Keyed {
 
     private final Key key;
     private final EffectType type;
@@ -23,6 +24,7 @@ public final class Effect {
         this.creationTime = now();
     }
 
+    @Override
     public Key key() {
         return this.key;
     }
