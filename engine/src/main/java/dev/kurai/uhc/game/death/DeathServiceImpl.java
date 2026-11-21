@@ -37,7 +37,6 @@ import static net.kyori.adventure.key.Key.key;
 import static org.bukkit.ChatColor.DARK_PURPLE;
 import static org.bukkit.ChatColor.LIGHT_PURPLE;
 
-@NullMarked
 @Getter
 @Setter
 public final class DeathServiceImpl implements DeathService {

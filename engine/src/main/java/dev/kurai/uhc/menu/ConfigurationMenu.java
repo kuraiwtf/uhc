@@ -7,7 +7,7 @@ import dev.kurai.uhc.game.configuration.border.BorderConfiguration;
 import dev.kurai.uhc.game.scenario.ScenarioService;
 import dev.kurai.uhc.game.slot.SlotService;
 import dev.kurai.uhc.game.slot.impl.MutableSlotProvider;
-import dev.kurai.uhc.game.start.service.StartService;
+import dev.kurai.uhc.game.start.StartService;
 import dev.kurai.uhc.menu.rules.RulesMenu;
 import dev.kurai.uhc.menu.scenario.ScenarioConfigurationMenu;
 import dev.kurai.uhc.menu.slots.SlotsConfigurationMenu;

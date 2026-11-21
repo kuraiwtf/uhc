@@ -4,7 +4,6 @@ import dev.kurai.uhc.command.annotation.CommandMeta;
 import dev.kurai.uhc.command.argument.ArgumentResolverRegistrar;
 import org.jspecify.annotations.NullMarked;
 
-@NullMarked
 public interface CommandRegistrar {
 
     ArgumentResolverRegistrar getArgumentResolverRegistrar();

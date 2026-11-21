@@ -1,6 +1,5 @@
-package dev.kurai.uhc.game.start.phase.holder;
+package dev.kurai.uhc.game.start.phase;
 
-import dev.kurai.uhc.game.start.phase.StartPhase;
 import java.util.Collection;
 
 public interface StartPhaseHolder {

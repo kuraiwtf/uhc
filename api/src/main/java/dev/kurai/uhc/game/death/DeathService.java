@@ -5,7 +5,6 @@ import org.bukkit.Location;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
-@NullMarked
 public interface DeathService {
 
     DeathAnnounce deathAnnounce();

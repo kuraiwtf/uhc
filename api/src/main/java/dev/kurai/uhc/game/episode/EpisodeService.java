@@ -1,5 +1,8 @@
 package dev.kurai.uhc.game.episode;
 
+import org.jspecify.annotations.NullMarked;
+
+@NullMarked
 public interface EpisodeService {
 
     boolean isEnabled();

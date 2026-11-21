@@ -14,7 +14,7 @@ import dev.kurai.uhc.game.rule.GameRuleService;
 import dev.kurai.uhc.game.scatter.ScatterService;
 import dev.kurai.uhc.game.scenario.ScenarioService;
 import dev.kurai.uhc.game.slot.SlotService;
-import dev.kurai.uhc.game.start.service.StartService;
+import dev.kurai.uhc.game.start.StartService;
 import dev.kurai.uhc.timer.TimerService;
 import dev.kurai.uhc.util.api.option.Option;
 import net.kyori.adventure.audience.ForwardingAudience;

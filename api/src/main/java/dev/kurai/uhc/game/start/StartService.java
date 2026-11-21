@@ -1,7 +1,7 @@
-package dev.kurai.uhc.game.start.service;
+package dev.kurai.uhc.game.start;
 
 import dev.kurai.uhc.game.start.phase.StartPhase;
-import dev.kurai.uhc.game.start.phase.holder.StartPhaseHolder;
+import dev.kurai.uhc.game.start.phase.StartPhaseHolder;
 import java.util.Collection;
 
 public interface StartService extends StartPhaseHolder {

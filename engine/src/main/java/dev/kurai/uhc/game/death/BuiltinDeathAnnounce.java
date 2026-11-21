@@ -12,12 +12,11 @@ import static net.kyori.adventure.text.minimessage.MiniMessage.miniMessage;
 import static net.kyori.adventure.text.minimessage.tag.Tag.inserting;
 import static net.kyori.adventure.text.minimessage.tag.resolver.TagResolver.resolver;
 
-@NullMarked
-public final class BuiltinDeathAnnounce implements DeathAnnounce {
+final class BuiltinDeathAnnounce implements DeathAnnounce {
 
     private final TeamService teamService;
 
-    public BuiltinDeathAnnounce(final TeamService teamService) {
+    BuiltinDeathAnnounce(final TeamService teamService) {
         this.teamService = teamService;
     }
 

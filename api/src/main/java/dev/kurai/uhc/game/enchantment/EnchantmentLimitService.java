@@ -2,12 +2,10 @@ package dev.kurai.uhc.game.enchantment;
 
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
-import org.jspecify.annotations.NullMarked;
 
 import java.util.OptionalInt;
 import java.util.UUID;
 
-@NullMarked
 public interface EnchantmentLimitService {
 
     OptionalInt limit(EnchantmentLimitType type, Enchantment enchantment);

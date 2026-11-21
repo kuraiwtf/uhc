@@ -1,8 +1,10 @@
 package dev.kurai.uhc.command.annotation;
 
+import org.jspecify.annotations.NullMarked;
+
 import java.lang.annotation.Annotation;
 
-/** Programmatic {@link CommandMeta}, for commands whose name is only known at runtime. */
+@NullMarked
 public record SimpleCommandMeta(String name, String[] aliases, String permission, String description, boolean async)
         implements CommandMeta {
 

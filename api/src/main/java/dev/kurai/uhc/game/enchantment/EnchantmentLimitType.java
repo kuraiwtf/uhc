@@ -1,10 +1,8 @@
 package dev.kurai.uhc.game.enchantment;
 
 import org.bukkit.Material;
-import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
-@NullMarked
 public enum EnchantmentLimitType {
     GLOBAL("&d&lGlobale", "&d", Material.ENCHANTED_BOOK, "global"),
     IRON("&7&lFer", "&7", Material.IRON_CHESTPLATE, "fer"),

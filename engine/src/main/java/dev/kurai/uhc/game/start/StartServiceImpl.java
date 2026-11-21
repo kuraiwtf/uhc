@@ -11,7 +11,6 @@ import dev.kurai.uhc.game.configuration.border.BorderConfiguration;
 import dev.kurai.uhc.game.configuration.inventory.InventoryConfiguration;
 import dev.kurai.uhc.game.start.countdown.task.StartCountdownTask;
 import dev.kurai.uhc.game.start.phase.StartPhase;
-import dev.kurai.uhc.game.start.service.StartService;
 import dev.kurai.uhc.listener.game.PlayingListener;
 import dev.kurai.uhc.listener.game.SpectatorListener;
 import dev.kurai.uhc.module.power.listener.PowerListener;
@@ -28,6 +27,7 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scheduler.BukkitTask;
+import org.jspecify.annotations.Nullable;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -41,8 +41,9 @@ public final class StartServiceImpl implements StartService {
 
     private final LinkedList<StartPhase> phases;
     private final List<BukkitTask> gameTasks = new ArrayList<>();
-    private StartPhase phase;
-    private BukkitTask startTask;
+
+    private @Nullable StartPhase phase;
+    private @Nullable BukkitTask startTask;
 
     public StartServiceImpl(final UltraHardcoreAPI ultraHardcore) {
         this.ultraHardcore = ultraHardcore;

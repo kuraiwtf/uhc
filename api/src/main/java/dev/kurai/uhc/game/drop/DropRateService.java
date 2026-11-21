@@ -1,11 +1,9 @@
 package dev.kurai.uhc.game.drop;
 
-import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 import java.util.Collection;
 
-@NullMarked
 public interface DropRateService {
 
     Collection<AbstractDropRateModifier> getModifiers();

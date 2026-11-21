@@ -3,12 +3,10 @@ package dev.kurai.uhc.game.drop;
 import dev.kurai.uhc.util.api.Identifiable;
 import dev.kurai.uhc.util.api.name.Nameable;
 import org.bukkit.inventory.ItemStack;
-import org.jspecify.annotations.NullMarked;
 
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
-@NullMarked
 public abstract class AbstractDropRateModifier implements Identifiable<String>, Nameable<String> {
 
     protected final String id;

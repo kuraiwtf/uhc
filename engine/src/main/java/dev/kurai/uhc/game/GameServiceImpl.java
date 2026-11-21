@@ -32,7 +32,7 @@ import dev.kurai.uhc.game.scenario.ScenarioServiceImpl;
 import dev.kurai.uhc.game.slot.SlotService;
 import dev.kurai.uhc.game.slot.SlotServiceImpl;
 import dev.kurai.uhc.game.start.StartServiceImpl;
-import dev.kurai.uhc.game.start.service.StartService;
+import dev.kurai.uhc.game.start.StartService;
 import dev.kurai.uhc.timer.TimerService;
 import dev.kurai.uhc.timer.TimerServiceImpl;
 import lombok.Getter;

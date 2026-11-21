@@ -2,14 +2,12 @@ package dev.kurai.uhc.game.host;
 
 import dev.kurai.uhc.profile.Profile;
 import org.bukkit.entity.Player;
-import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Set;
 import java.util.UUID;
 
-@NullMarked
 public interface HostService {
 
     @Nullable
