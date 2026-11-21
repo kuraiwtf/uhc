@@ -21,12 +21,12 @@ public final class PlayerUtil {
         return ((CraftPlayer) player).getHandle().getAbsorptionHearts();
     }
 
-    public static double getEntireHealth(final Player player) {
+    public static double getHealthAndAbsorption(final Player player) {
         return getHealth(player) + getAbsorption(player);
     }
 
-    public static Component formatHealthAsPercentage(final Player player, final boolean complete, final Style style) {
-        final double health = complete ? getEntireHealth(player) : getHealth(player);
+    public static Component formatHealthAsPercentage(final Player player, final boolean withAbsorption, final Style style) {
+        final double health = withAbsorption ? getHealthAndAbsorption(player) : getHealth(player);
         return text("%.2f".formatted(health / player.getMaxHealth() * 100))
                 .style(style)
                 .append(text('%').decoration(TextDecoration.BOLD, false));
@@ -38,7 +38,7 @@ public final class PlayerUtil {
             final Style currentHealthStyle,
             final Style maxHealthStyle,
             final Component separator) {
-        final double health = complete ? getEntireHealth(player) : getHealth(player);
+        final double health = complete ? getHealthAndAbsorption(player) : getHealth(player);
         return text().append(text(health).style(currentHealthStyle))
                 .append(text(HEART).style(currentHealthStyle).decoration(TextDecoration.BOLD, false))
                 .append(separator)
@@ -53,7 +53,7 @@ public final class PlayerUtil {
             final Style halfHeartStyle,
             final Style absorptionHeartStyle,
             final Style emptyHeartStyle) {
-        final double health = getEntireHealth(player);
+        final double health = getHealthAndAbsorption(player);
         final double absorption = getAbsorption(player);
 
         final int fullHearts = (int) Math.floor(health / 2.0);
