@@ -8,8 +8,7 @@ import dev.kurai.uhc.game.configuration.inventory.InventoryConfiguration;
 import dev.kurai.uhc.module.team.module.TeamModule;
 import dev.kurai.uhc.profile.Profile;
 import dev.kurai.uhc.profile.component.DisconnectComponent;
-import dev.kurai.uhc.profile.component.AliveProfileComponent;
-import dev.kurai.uhc.profile.component.SpectatingProfileComponent;
+import dev.kurai.uhc.profile.state.ProfileState;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -64,7 +63,7 @@ public final class ScatterServiceImpl implements ScatterService {
         final var teamService = this.ultraHardcore.teamService();
         final var profiles = this.ultraHardcore
                 .profileService()
-                .getProfiles(profile -> !profile.hasComponent(SpectatingProfileComponent.class));
+                .getProfiles(profile -> !profile.spectating());
         profiles.stream()
                 .filter(profile -> profile.findPlayer().isEmpty())
                 .forEach(profile -> teamService.leave(profile.getId()));
@@ -98,8 +97,7 @@ public final class ScatterServiceImpl implements ScatterService {
         player.setGameMode(GameMode.SURVIVAL);
 
         final Profile profile = this.ultraHardcore.profileService().getOrCreateProfile(player);
-        profile.addComponent(new AliveProfileComponent());
-        profile.removeComponent(SpectatingProfileComponent.class);
+        profile.state(ProfileState.ALIVE);
 
         profile.addComponent(new DisconnectComponent(
                 this.ultraHardcore.gameService().disconnectService().disconnectTime(), Instant.now()));
@@ -123,7 +121,7 @@ public final class ScatterServiceImpl implements ScatterService {
                                 && this.ultraHardcore
                                         .profileService()
                                         .getOrCreateProfile(mate)
-                                        .hasComponent(AliveProfileComponent.class))
+                                        .alive())
                         .findFirst()
                         .map(Player::getLocation));
     }

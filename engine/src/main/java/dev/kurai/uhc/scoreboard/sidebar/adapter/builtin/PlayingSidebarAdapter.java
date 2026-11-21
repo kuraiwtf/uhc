@@ -5,7 +5,6 @@ import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.game.group.GroupProvider;
 import dev.kurai.uhc.game.group.GroupService;
 import dev.kurai.uhc.profile.Profile;
-import dev.kurai.uhc.profile.component.AliveProfileComponent;
 import dev.kurai.uhc.scoreboard.sidebar.SidebarAdapter;
 import dev.kurai.uhc.timer.TimerService;
 import dev.kurai.uhc.timer.builtin.BorderTimer;
@@ -44,7 +43,7 @@ public final class PlayingSidebarAdapter implements SidebarAdapter {
 
         final var alive = this.ultraHardcore
                 .profileService()
-                .getProfiles(profile -> profile.hasComponent(AliveProfileComponent.class));
+                .getProfiles(profile -> profile.alive());
         final var teamService = this.ultraHardcore.teamService();
         this.aliveCount = alive.size();
         this.teamsAlive = alive.stream()

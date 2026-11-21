@@ -3,8 +3,7 @@ package dev.kurai.uhc.module.role;
 import com.google.common.collect.Lists;
 import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.game.GameService;
-import dev.kurai.uhc.profile.component.DeadComponent;
-import dev.kurai.uhc.profile.component.SpectatingProfileComponent;
+import dev.kurai.uhc.profile.Profile;
 import dev.kurai.uhc.timer.AbstractTimer;
 import dev.kurai.uhc.timer.annotation.Duration;
 import dev.kurai.uhc.util.api.annotation.Identifier;
@@ -47,8 +46,7 @@ public final class RoleAttributionTimer extends AbstractTimer {
 
         final var profiles = Lists.newArrayList(this.ultraHardcore
                 .profileService()
-                .getProfiles(profile ->
-                        !profile.hasComponent(SpectatingProfileComponent.class) && !profile.hasComponent(DeadComponent.class)));
+                .getProfiles(Profile::alive));
 
         final var iterator = profiles.iterator();
         final GameService gameService = this.ultraHardcore.gameService();

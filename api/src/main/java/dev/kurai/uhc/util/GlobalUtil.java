@@ -4,7 +4,6 @@ import com.google.common.collect.Lists;
 import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.event.defaults.player.PlayerExplosionEvent;
 import dev.kurai.uhc.profile.Profile;
-import dev.kurai.uhc.profile.component.SpectatingProfileComponent;
 import net.minecraft.server.v1_8_R3.EntityLightning;
 import net.minecraft.server.v1_8_R3.PacketPlayOutSpawnEntityWeather;
 import org.bukkit.Bukkit;
@@ -304,10 +303,10 @@ public final class GlobalUtil {
 
         return location.getWorld().getPlayers().stream()
                 .filter(player -> player.getLocation().distance(location) < radius
-                        && !UltraHardcoreAPI.getInstance()
+                        && UltraHardcoreAPI.getInstance()
                                 .profileService()
                                 .getOrCreateProfile(player)
-                                .hasComponent(SpectatingProfileComponent.class))
+                                .alive())
                 .toList();
     }
 
@@ -340,10 +339,10 @@ public final class GlobalUtil {
         return getTarget(
                 player,
                 player.getWorld().getPlayers().stream()
-                        .filter(target -> !UltraHardcoreAPI.getInstance()
+                        .filter(target -> UltraHardcoreAPI.getInstance()
                                 .profileService()
                                 .getOrCreateProfile(target)
-                                .hasComponent(SpectatingProfileComponent.class))
+                                .alive())
                         .toList());
     }
 

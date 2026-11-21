@@ -13,12 +13,11 @@ import dev.kurai.uhc.module.power.AbstractPower;
 import dev.kurai.uhc.module.power.defaults.item.AbstractItemPower;
 import dev.kurai.uhc.module.power.defaults.item.impl.parent.AbstractParentItemPower;
 import dev.kurai.uhc.profile.Profile;
-import dev.kurai.uhc.profile.component.DeadComponent;
+import dev.kurai.uhc.profile.component.DeathRecordComponent;
 import dev.kurai.uhc.profile.component.DisconnectComponent;
 import dev.kurai.uhc.profile.component.InventoryEditorComponent;
 import dev.kurai.uhc.profile.component.PlayerInformationComponent;
-import dev.kurai.uhc.profile.component.AliveProfileComponent;
-import dev.kurai.uhc.profile.component.SpectatingProfileComponent;
+import dev.kurai.uhc.profile.state.ProfileState;
 import dev.kurai.uhc.timer.AbstractTimer;
 import dev.kurai.uhc.util.CC;
 import lombok.RequiredArgsConstructor;
@@ -188,7 +187,7 @@ public final class HostCommand {
         if (target.isOnline()
                 || !profile.hasComponent(DisconnectComponent.class)
                 || !profile.hasComponent(PlayerInformationComponent.class)
-                || profile.hasComponent(DeadComponent.class)) {
+                || profile.dead()) {
             player.sendMessage(CC.prefix("Le joueur&6 %s&r est&c mort&r ou&a en ligne&r.".formatted(target.getName())));
             return;
         }
@@ -258,8 +257,7 @@ public final class HostCommand {
         }
 
         final Profile profile = this.ultraHardcore.profileService().getOrCreateProfile(target.getUniqueId());
-        if (profile.hasComponent(AliveProfileComponent.class)
-                || profile.hasComponent(SpectatingProfileComponent.class)) {
+        if (!profile.waiting()) {
             player.sendMessage(
                     CC.prefix("Le joueur&6 %s&r ne peut pas être ajouté à la partie.".formatted(target.getName())));
             return;
@@ -287,8 +285,8 @@ public final class HostCommand {
         }
 
         final Profile profile = this.ultraHardcore.profileService().getOrCreateProfile(target.getUniqueId());
-        final DeadComponent component = profile.getComponent(DeadComponent.class);
-        if (component == null) {
+        final DeathRecordComponent component = profile.getComponent(DeathRecordComponent.class);
+        if (!profile.dead() || component == null) {
             player.sendMessage(CC.prefix("Le joueur&6 %s&r n'est pas mort.".formatted(target.getName())));
             return;
         }
@@ -312,8 +310,8 @@ public final class HostCommand {
             receiver.playSound(receiver.getLocation(), Sound.ZOMBIE_UNFECT, 1f, 2f);
         }
 
-        profile.addComponent(new AliveProfileComponent());
-        profile.removeComponent(DeadComponent.class);
+        profile.state(ProfileState.ALIVE);
+        profile.removeComponent(DeathRecordComponent.class);
 
         player.sendMessage(CC.prefix("Vous venez de&d ressusciter&f le joueur&6 %s&r.".formatted(target.getName())));
     }

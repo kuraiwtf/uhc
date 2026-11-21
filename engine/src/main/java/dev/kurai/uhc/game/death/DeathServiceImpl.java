@@ -9,11 +9,11 @@ import dev.kurai.uhc.item.CustomItem;
 import dev.kurai.uhc.logger.LogCategories;
 import dev.kurai.uhc.module.power.defaults.item.AbstractItemPower;
 import dev.kurai.uhc.profile.Profile;
-import dev.kurai.uhc.profile.component.DeadComponent;
+import dev.kurai.uhc.profile.component.DeathRecordComponent;
 import dev.kurai.uhc.profile.component.DisconnectComponent;
 import dev.kurai.uhc.profile.component.PlayerInformationComponent;
 import dev.kurai.uhc.profile.component.ProcessingDeathComponent;
-import dev.kurai.uhc.profile.component.AliveProfileComponent;
+import dev.kurai.uhc.profile.state.ProfileState;
 import dev.kurai.uhc.util.ItemBuilder;
 import dev.kurai.uhc.win.BuiltinWinInformation;
 import dev.kurai.uhc.win.WinCelebration;
@@ -83,7 +83,7 @@ public final class DeathServiceImpl implements DeathService {
 
             player.setFireTicks(0);
 
-            final DeadComponent component = profile.getComponent(DeadComponent.class);
+            final DeathRecordComponent component = profile.getComponent(DeathRecordComponent.class);
             if (component != null) {
                 final var droppedItems = component.droppedItems();
                 for (final var entity : component.location().getWorld().getEntities()) {
@@ -97,8 +97,8 @@ public final class DeathServiceImpl implements DeathService {
             }
         });
 
-        profile.addComponent(new AliveProfileComponent());
-        profile.removeComponent(DeadComponent.class);
+        profile.state(ProfileState.ALIVE);
+        profile.removeComponent(DeathRecordComponent.class);
 
         profile.removeComponent(ProcessingDeathComponent.class);
         profile.removeComponent(PlayerInformationComponent.class);
@@ -188,15 +188,14 @@ public final class DeathServiceImpl implements DeathService {
         profile.removeComponent(PlayerInformationComponent.class);
         profile.removeComponent(ProcessingDeathComponent.class);
 
-        profile.addComponent(new DeadComponent(
+        profile.addComponent(new DeathRecordComponent(
                 killer == null ? null : killer.getId(),
                 System.currentTimeMillis() - this.ultraHardcore.gameService().startTime(),
                 informationComponent.lastLocation().clone(),
                 informationComponent.inventory().clone(),
                 informationComponent.armor().clone(),
                 droppedItems));
-
-        profile.removeComponent(AliveProfileComponent.class);
+        profile.state(ProfileState.DEAD);
 
         profile.sendMessage(emptyLine(DARK_PURPLE, LIGHT_PURPLE));
         profile.sendMessage("");

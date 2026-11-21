@@ -19,8 +19,7 @@ import dev.kurai.uhc.module.power.task.updater.CooldownUpdaterTask;
 import dev.kurai.uhc.module.power.task.updater.GlowingTargetUpdaterTask;
 import dev.kurai.uhc.profile.ProfileService;
 import dev.kurai.uhc.profile.component.DisconnectComponent;
-import dev.kurai.uhc.profile.component.AliveProfileComponent;
-import dev.kurai.uhc.profile.component.SpectatingProfileComponent;
+import dev.kurai.uhc.profile.state.ProfileState;
 import dev.kurai.uhc.scoreboard.sidebar.adapter.builtin.PlayingSidebarAdapter;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -159,7 +158,7 @@ public final class StartServiceImpl implements StartService {
                 continue;
             }
 
-            if (profile.hasComponent(SpectatingProfileComponent.class)) {
+            if (profile.spectating()) {
                 player.teleport(world.getSpawnLocation());
                 player.setGameMode(GameMode.SPECTATOR);
                 final PlayerInventory inventory = player.getInventory();
@@ -168,7 +167,7 @@ public final class StartServiceImpl implements StartService {
                 continue;
             }
 
-            profile.addComponent(new AliveProfileComponent());
+            profile.state(ProfileState.ALIVE);
             profile.addComponent(
                     new DisconnectComponent(gameService.disconnectService().disconnectTime(), Instant.now()));
 

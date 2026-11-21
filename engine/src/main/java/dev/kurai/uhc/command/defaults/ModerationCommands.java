@@ -13,7 +13,6 @@ import dev.kurai.uhc.menu.spectator.InventoryViewMenu;
 import dev.kurai.uhc.menu.spectator.TopLuckMenu;
 import dev.kurai.uhc.profile.Profile;
 import dev.kurai.uhc.profile.ProfileService;
-import dev.kurai.uhc.profile.component.SpectatingProfileComponent;
 import dev.kurai.uhc.util.CC;
 import dev.kurai.uhc.util.GlobalUtil;
 import org.bukkit.Location;
@@ -71,7 +70,7 @@ public final class ModerationCommands {
         final HostService hostService = this.ultraHardcore.gameService().hostService();
         final ProfileService profileService = this.ultraHardcore.profileService();
         final Profile profile = profileService.getOrCreateProfile(player);
-        if (!hostService.hasHostAccess(player) && !profile.hasComponent(SpectatingProfileComponent.class)) {
+        if (!hostService.hasHostAccess(player) && !profile.spectating()) {
             player.sendMessage(CC.MISSING_PERMISSION);
             return;
         }
@@ -84,7 +83,7 @@ public final class ModerationCommands {
         final HostService hostService = this.ultraHardcore.gameService().hostService();
         final ProfileService profileService = this.ultraHardcore.profileService();
         final Profile profile = profileService.getOrCreateProfile(player);
-        if (!hostService.hasHostAccess(player) && !profile.hasComponent(SpectatingProfileComponent.class)) {
+        if (!hostService.hasHostAccess(player) && !profile.spectating()) {
             player.sendMessage(CC.prefix(CC.MISSING_PERMISSION));
             return;
         }

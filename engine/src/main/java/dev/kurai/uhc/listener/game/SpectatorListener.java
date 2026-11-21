@@ -1,13 +1,11 @@
 package dev.kurai.uhc.listener.game;
 
 import dev.kurai.uhc.UltraHardcoreAPI;
-import dev.kurai.uhc.ecs.component.Component;
 import dev.kurai.uhc.event.defaults.power.PowerUseEvent;
 import dev.kurai.uhc.logger.LogCategories;
 import dev.kurai.uhc.module.power.AbstractPower;
 import dev.kurai.uhc.module.power.defaults.item.impl.parent.AbstractParentItemPower;
 import dev.kurai.uhc.profile.Profile;
-import dev.kurai.uhc.profile.component.SpectatingProfileComponent;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -28,7 +26,6 @@ import java.util.Set;
 @RequiredArgsConstructor
 public final class SpectatorListener implements Listener {
 
-    private static final Class<? extends Component> SPECTATOR_COMPONENT = SpectatingProfileComponent.class;
 
     private static final Set<String> PRIVATE_COMMANDS = Set.of(
             "msg",
@@ -62,7 +59,7 @@ public final class SpectatorListener implements Listener {
         }
 
         final Profile profile = this.ultraHardcore.profileService().getOrCreateProfile(entity.getUniqueId());
-        if (profile.hasComponent(SPECTATOR_COMPONENT)) {
+        if (profile.spectating()) {
             event.setCancelled(true);
         }
     }
@@ -74,7 +71,7 @@ public final class SpectatorListener implements Listener {
             return;
         }
         final Profile profile = this.ultraHardcore.profileService().getOrCreateProfile(entity.getUniqueId());
-        if (profile.hasComponent(SPECTATOR_COMPONENT)) {
+        if (profile.spectating()) {
             event.setCancelled(true);
         }
     }
@@ -84,7 +81,7 @@ public final class SpectatorListener implements Listener {
         final Profile profile = this.ultraHardcore
                 .profileService()
                 .getOrCreateProfile(event.getPlayer().getUniqueId());
-        if (profile.hasComponent(SPECTATOR_COMPONENT)) {
+        if (profile.spectating()) {
             event.setCancelled(true);
         }
     }
@@ -94,7 +91,7 @@ public final class SpectatorListener implements Listener {
         final Profile profile = this.ultraHardcore
                 .profileService()
                 .getOrCreateProfile(event.getPlayer().getUniqueId());
-        if (profile.hasComponent(SPECTATOR_COMPONENT)) {
+        if (profile.spectating()) {
             event.setCancelled(true);
         }
     }
@@ -104,7 +101,7 @@ public final class SpectatorListener implements Listener {
         final Profile profile = this.ultraHardcore
                 .profileService()
                 .getOrCreateProfile(event.getPlayer().getUniqueId());
-        if (profile.hasComponent(SPECTATOR_COMPONENT)) {
+        if (profile.spectating()) {
             event.setCancelled(true);
         }
     }
@@ -113,7 +110,7 @@ public final class SpectatorListener implements Listener {
     public void onCommand(final PlayerCommandPreprocessEvent event) {
         final Player player = event.getPlayer();
         final Profile profile = this.ultraHardcore.profileService().getOrCreateProfile(player.getUniqueId());
-        if (profile.hasComponent(SPECTATOR_COMPONENT)) {
+        if (profile.spectating()) {
             return;
         }
 

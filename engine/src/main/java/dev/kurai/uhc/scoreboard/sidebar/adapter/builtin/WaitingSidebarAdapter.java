@@ -4,7 +4,6 @@ import com.google.common.collect.Lists;
 import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.module.team.module.TeamModule;
 import dev.kurai.uhc.profile.ProfileService;
-import dev.kurai.uhc.profile.component.SpectatingProfileComponent;
 import dev.kurai.uhc.scoreboard.sidebar.SidebarAdapter;
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
@@ -48,7 +47,7 @@ public final class WaitingSidebarAdapter implements SidebarAdapter {
                 .append(text(
                         profileService
                                 .getProfiles(profile -> profile.findPlayer().isPresent()
-                                        && !profile.hasComponent(SpectatingProfileComponent.class))
+                                        && !profile.spectating())
                                 .size(),
                         GREEN))
                 .append(text('/', DARK_GRAY))

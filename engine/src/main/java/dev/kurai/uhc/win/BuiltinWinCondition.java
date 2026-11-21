@@ -2,7 +2,6 @@ package dev.kurai.uhc.win;
 
 import dev.kurai.uhc.profile.Profile;
 import dev.kurai.uhc.profile.ProfileService;
-import dev.kurai.uhc.profile.component.AliveProfileComponent;
 import dev.kurai.uhc.team.Team;
 import dev.kurai.uhc.team.TeamService;
 import org.jetbrains.annotations.Unmodifiable;
@@ -25,7 +24,7 @@ public final class BuiltinWinCondition implements WinCondition {
     @Override
     public @Nullable @Unmodifiable Collection<Profile> validateWin() {
         final var playingProfiles =
-                this.profileService.getProfiles(profile -> profile.hasComponent(AliveProfileComponent.class));
+                this.profileService.getProfiles(Profile::alive);
         if (playingProfiles.isEmpty()) {
             return Collections.emptyList();
         }

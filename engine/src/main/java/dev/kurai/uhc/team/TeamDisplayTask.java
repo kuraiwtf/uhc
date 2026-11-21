@@ -8,7 +8,6 @@ import dev.kurai.uhc.adventure.UltraHardcoreKey;
 import dev.kurai.uhc.module.service.ModuleService;
 import dev.kurai.uhc.module.team.module.TeamModule;
 import dev.kurai.uhc.profile.ProfileService;
-import dev.kurai.uhc.profile.component.AliveProfileComponent;
 import dev.kurai.uhc.util.CC;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
@@ -67,7 +66,7 @@ public final class TeamDisplayTask implements Runnable {
                                     && mate.isOnline()
                                     && this.profileService
                                             .getOrCreateProfile(mate)
-                                            .hasComponent(AliveProfileComponent.class))
+                                            .alive())
                             .toList();
 
             if (display.actionBar() && !teammates.isEmpty()) {

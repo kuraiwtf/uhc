@@ -5,10 +5,9 @@ import dev.kurai.uhc.command.annotation.Command;
 import dev.kurai.uhc.command.annotation.CommandMeta;
 import dev.kurai.uhc.command.annotation.SubCommand;
 import dev.kurai.uhc.command.argument.annotation.Argument;
-import dev.kurai.uhc.ecs.component.Component;
 import dev.kurai.uhc.game.GameService;
 import dev.kurai.uhc.profile.Profile;
-import dev.kurai.uhc.profile.component.SpectatingProfileComponent;
+import dev.kurai.uhc.profile.state.ProfileState;
 import dev.kurai.uhc.util.CC;
 import dev.kurai.uhc.util.SpectatorVisibility;
 import lombok.RequiredArgsConstructor;
@@ -21,14 +20,12 @@ import static dev.kurai.uhc.util.CC.MISSING_PERMISSION;
 @Command(@CommandMeta(name = "spectator", aliases = "spec"))
 public final class SpectatorCommand {
 
-    private static final Class<? extends Component> SPECTATOR_COMPONENT = SpectatingProfileComponent.class;
-
     private final UltraHardcoreAPI ultraHardcore;
 
     @SubCommand(@CommandMeta(name = "list"))
     public void list(final Player player) {
         final var spectators =
-                this.ultraHardcore.profileService().getProfiles(profile -> profile.hasComponent(SPECTATOR_COMPONENT));
+                this.ultraHardcore.profileService().getProfiles(profile -> profile.spectating());
 
         if (spectators.isEmpty()) {
             player.sendMessage(CC.prefix("Il n'y a aucun&d spectateur&r pour le moment."));
@@ -55,12 +52,12 @@ public final class SpectatorCommand {
         }
 
         final Profile profile = this.ultraHardcore.profileService().getOrCreateProfile(target);
-        if (profile.hasComponent(SPECTATOR_COMPONENT)) {
+        if (profile.spectating()) {
             player.sendMessage(CC.prefix("&6%s&r est déjà un&d spectateur&r.".formatted(target.getName())));
             return;
         }
 
-        profile.addComponent(new SpectatingProfileComponent());
+        profile.state(ProfileState.SPECTATING);
         target.setGameMode(GameMode.SPECTATOR);
         SpectatorVisibility.refresh(this.ultraHardcore);
         player.sendMessage(CC.prefix(
@@ -81,12 +78,12 @@ public final class SpectatorCommand {
         }
 
         final Profile profile = this.ultraHardcore.profileService().getOrCreateProfile(target);
-        if (!profile.hasComponent(SPECTATOR_COMPONENT)) {
+        if (!profile.spectating()) {
             player.sendMessage(CC.prefix("&6%s&r n'est pas un&d spectateur&r.".formatted(target.getName())));
             return;
         }
 
-        profile.removeComponent(SPECTATOR_COMPONENT);
+        profile.state(ProfileState.WAITING);
         target.setGameMode(GameMode.SURVIVAL);
         target.teleport(this.ultraHardcore.spawnLocation());
         SpectatorVisibility.refresh(this.ultraHardcore);

@@ -9,7 +9,6 @@ import dev.kurai.uhc.module.camp.CampModule;
 import dev.kurai.uhc.module.role.RoleComponent;
 import dev.kurai.uhc.module.role.RoleMeta;
 import dev.kurai.uhc.module.role.RoleModule;
-import dev.kurai.uhc.profile.component.SpectatingProfileComponent;
 import dev.kurai.uhc.util.CC;
 import dev.kurai.uhc.util.Color;
 import org.bukkit.entity.Player;
@@ -54,7 +53,7 @@ public final class RoleColorModuleCommands {
     @SubCommand(@CommandMeta(name = "auto-color", description = "Colorer automatiquement"))
     public void autoColor(final Player player) {
         final var profileService = this.ultraHardcore.profileService();
-        if (!profileService.getOrCreateProfile(player).hasComponent(SpectatingProfileComponent.class) && !player.isOp()) {
+        if (!profileService.getOrCreateProfile(player).spectating() && !player.isOp()) {
             player.sendMessage(MISSING_PERMISSION);
             return;
         }

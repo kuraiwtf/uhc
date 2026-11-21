@@ -3,7 +3,6 @@ package dev.kurai.uhc.game.disconnect;
 import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.profile.Profile;
 import dev.kurai.uhc.profile.component.DisconnectComponent;
-import dev.kurai.uhc.profile.component.AliveProfileComponent;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -38,7 +37,7 @@ public final class DisconnectServiceImpl implements DisconnectService {
 
                             for (final Profile profile : this.ultraHardcore
                                     .profileService()
-                                    .getProfiles(profile -> profile.hasComponent(AliveProfileComponent.class)
+                                    .getProfiles(profile -> profile.alive()
                                             && profile.findPlayer().isEmpty())) {
                                 final DisconnectComponent disconnectComponent =
                                         profile.getComponent(DisconnectComponent.class);
