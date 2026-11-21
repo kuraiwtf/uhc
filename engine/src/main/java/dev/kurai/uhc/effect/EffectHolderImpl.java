@@ -92,8 +92,7 @@ public final class EffectHolderImpl implements EffectHolder {
 
     @Override
     public double getEffectValue(final EffectType effectType) {
-        return this.effectsView.stream()
-                .filter(effect -> effect.effectType() == effectType)
+        return this.findEffectsByType(effectType).stream()
                 .mapToDouble(Effect::value)
                 .sum();
     }

@@ -1,8 +1,6 @@
 package dev.kurai.uhc.tablist.part;
 
-import dev.kurai.uhc.effect.Effect;
 import dev.kurai.uhc.effect.EffectHolder;
-import dev.kurai.uhc.effect.EffectType;
 import dev.kurai.uhc.effect.component.EffectHoldingComponent;
 import dev.kurai.uhc.profile.Profile;
 import dev.kurai.uhc.profile.ProfileService;
@@ -52,12 +50,11 @@ public final class EffectTabListPart implements TabListPart {
         final EffectHoldingComponent effectComponent = profile.getComponent(EffectHoldingComponent.class);
         assert effectComponent != null;
         final EffectHolder effectHolder = effectComponent.holder();
-        return text().append(
-                        this.provideEffectComponent(this.provideEffectPercentage(effectHolder, STRENGTH), RED, '⚔'))
+        return text().append(this.provideEffectComponent(effectHolder.getEffectValue(STRENGTH), RED, '⚔'))
                 .append(SEPARATOR)
-                .append(this.provideEffectComponent(this.provideEffectPercentage(effectHolder, RESISTANCE), GREEN, '☘'))
+                .append(this.provideEffectComponent(effectHolder.getEffectValue(RESISTANCE), GREEN, '☘'))
                 .append(SEPARATOR)
-                .append(this.provideEffectComponent(this.provideEffectPercentage(effectHolder, SPEED), AQUA, '✪'))
+                .append(this.provideEffectComponent(effectHolder.getEffectValue(SPEED), AQUA, '✪'))
                 .appendNewline()
                 .build();
     }
@@ -66,12 +63,6 @@ public final class EffectTabListPart implements TabListPart {
     @Override
     public Position position() {
         return Position.BOTTOM;
-    }
-
-    private double provideEffectPercentage(final EffectHolder effectHolder, final EffectType effectType) {
-        return effectHolder.findEffectsByType(effectType).stream()
-                .mapToDouble(Effect::value)
-                .sum();
     }
 
     @Contract("_, _, _ -> new")
