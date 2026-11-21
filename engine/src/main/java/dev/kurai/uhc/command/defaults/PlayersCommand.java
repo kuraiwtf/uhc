@@ -6,9 +6,7 @@ import dev.kurai.uhc.command.annotation.CommandMeta;
 import dev.kurai.uhc.menu.rules.enchantment.EnchantmentLimitPlayersMenu;
 import dev.kurai.uhc.util.CC;
 import org.bukkit.entity.Player;
-import org.jspecify.annotations.NullMarked;
 
-@NullMarked
 public final class PlayersCommand {
 
     private final UltraHardcoreAPI ultraHardcore;

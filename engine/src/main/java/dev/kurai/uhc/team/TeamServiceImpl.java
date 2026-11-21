@@ -7,14 +7,12 @@ import dev.kurai.uhc.nickname.NicknameValue;
 import dev.kurai.uhc.nickname.NicknameValueType;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
-import org.jspecify.annotations.NullMarked;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.stream.Collectors;
 
-@NullMarked
 public final class TeamServiceImpl implements TeamService {
 
     private static final String NICKNAME_VALUE_ID = "team";

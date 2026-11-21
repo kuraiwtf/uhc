@@ -14,7 +14,6 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.jspecify.annotations.NullMarked;
 
 import java.util.List;
 import java.util.Set;
@@ -23,7 +22,6 @@ import java.util.UUID;
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.format.NamedTextColor.*;
 
-@NullMarked
 public final class TeamDisplayTask implements Runnable {
 
     private static final Key ACTIONBAR_KEY = UltraHardcoreKey.key("team");

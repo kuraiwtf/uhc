@@ -9,12 +9,10 @@ import dev.kurai.uhc.menu.rules.inventory.StartInventoryViewMenu;
 import dev.kurai.uhc.menu.scenario.ScenarioViewMenu;
 import dev.kurai.uhc.profile.component.ClaimComponent;
 import org.bukkit.entity.Player;
-import org.jspecify.annotations.NullMarked;
 
 import static dev.kurai.uhc.util.CC.prefix;
 import static net.kyori.adventure.text.Component.text;
 
-@NullMarked
 public final class PlayerCommands {
 
     private final UltraHardcoreAPI ultraHardcore;
@@ -26,7 +24,7 @@ public final class PlayerCommands {
     @Command(@CommandMeta(name = "claim", aliases = "full"))
     public void claim(final Player player) {
         final var profile = this.ultraHardcore.profileService().getOrCreateProfile(player.getUniqueId());
-        if (profile == null || !profile.hasComponent(ClaimComponent.class)) {
+        if (!profile.hasComponent(ClaimComponent.class)) {
             return;
         }
 

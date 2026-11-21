@@ -2,7 +2,9 @@ package dev.kurai.uhc.event;
 
 import org.bukkit.event.Event;
 import org.bukkit.event.Listener;
+import org.jspecify.annotations.NullMarked;
 
+@NullMarked
 public interface EventService {
 
     void registerListener(final Listener listener);

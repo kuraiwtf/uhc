@@ -3,7 +3,6 @@ package dev.kurai.uhc.team;
 import com.google.common.collect.Sets;
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.Inventory;
-import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 import java.util.Collection;
@@ -11,7 +10,6 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.function.BooleanSupplier;
 
-@NullMarked
 final class TeamImpl implements Team {
 
     private final int id;

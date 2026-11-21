@@ -15,7 +15,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitTask;
-import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 import java.util.UUID;
@@ -24,7 +23,6 @@ import java.util.regex.Pattern;
 import static dev.kurai.uhc.util.CC.*;
 
 @Command(@CommandMeta(name = "whitelist", aliases = "wl"))
-@NullMarked
 @RequiredArgsConstructor
 public final class WhitelistCommand {
 

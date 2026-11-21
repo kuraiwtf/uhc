@@ -5,11 +5,9 @@ import dev.kurai.uhc.command.annotation.Command;
 import dev.kurai.uhc.command.annotation.CommandMeta;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.entity.Player;
-import org.jspecify.annotations.NullMarked;
 
 import static dev.kurai.uhc.util.CC.prefix;
 
-@NullMarked
 @RequiredArgsConstructor
 public final class TeamInventoryCommand {
 

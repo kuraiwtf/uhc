@@ -12,11 +12,13 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Map;
 
+@NullMarked
 public final class ArgumentResolverRegistrarImpl implements ArgumentResolverRegistrar {
 
     private final BukkitAudiences bukkitAudiences;

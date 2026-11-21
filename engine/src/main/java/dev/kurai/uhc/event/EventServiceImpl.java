@@ -4,7 +4,9 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
+import org.jspecify.annotations.NullMarked;
 
+@NullMarked
 public final class EventServiceImpl implements EventService {
 
     private final Plugin plugin;

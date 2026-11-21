@@ -18,9 +18,7 @@ import dev.kurai.uhc.util.GlobalUtil;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageEvent;
-import org.jspecify.annotations.NullMarked;
 
-@NullMarked
 public final class ModerationCommands {
 
     private final UltraHardcoreAPI ultraHardcore;

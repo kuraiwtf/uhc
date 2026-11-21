@@ -24,8 +24,7 @@ public final class SpectatorCommand {
 
     @SubCommand(@CommandMeta(name = "list"))
     public void list(final Player player) {
-        final var spectators =
-                this.ultraHardcore.profileService().getProfiles(profile -> profile.spectating());
+        final var spectators = this.ultraHardcore.profileService().getProfiles(Profile::spectating);
 
         if (spectators.isEmpty()) {
             player.sendMessage(CC.prefix("Il n'y a aucun&d spectateur&r pour le moment."));

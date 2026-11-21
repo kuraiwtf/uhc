@@ -3,7 +3,6 @@ package dev.kurai.uhc.profile;
 import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.wrapper.PacketWrapper;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityAnimation;
-import com.google.common.base.Preconditions;
 import dev.kurai.actionbar.Actionbar;
 import dev.kurai.uhc.UltraHardcoreAPI;
 import dev.kurai.uhc.ecs.component.defaults.NameComponent;
@@ -31,7 +30,6 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
 import java.util.*;
@@ -42,7 +40,6 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static dev.kurai.uhc.util.packet.PacketWrapper.createPacketWrapper;
 import static java.util.Objects.requireNonNull;
 
-@NullMarked
 @Getter
 @Setter
 final class ProfileImpl implements Profile {

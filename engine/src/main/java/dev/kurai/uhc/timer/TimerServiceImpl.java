@@ -1,6 +1,7 @@
 package dev.kurai.uhc.timer;
 
 import org.bukkit.plugin.Plugin;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -8,6 +9,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
+@NullMarked
 public final class TimerServiceImpl implements TimerService {
 
     private final Map<String, AbstractTimer> timers;

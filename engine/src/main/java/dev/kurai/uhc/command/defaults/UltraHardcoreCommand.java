@@ -7,9 +7,7 @@ import dev.kurai.uhc.command.annotation.DefaultCommand;
 import dev.kurai.uhc.command.annotation.SubCommand;
 import dev.kurai.uhc.menu.rules.view.RulesViewMenu;
 import org.bukkit.entity.Player;
-import org.jspecify.annotations.NullMarked;
 
-@NullMarked
 @Command(
         @CommandMeta(
                 name = "uhc",

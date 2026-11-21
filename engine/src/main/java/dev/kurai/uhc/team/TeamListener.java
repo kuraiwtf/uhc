@@ -8,9 +8,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.jspecify.annotations.NullMarked;
 
-@NullMarked
 public final class TeamListener implements Listener {
 
     private final TeamService teamService;

@@ -6,12 +6,14 @@ import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import org.bukkit.Location;
+import org.jspecify.annotations.NullMarked;
 
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.event.HoverEvent.showText;
 import static net.kyori.adventure.text.format.NamedTextColor.DARK_GRAY;
 
 @RequiredArgsConstructor
+@NullMarked
 public final class LoggerServiceImpl implements LoggerService {
 
     private final ProfileService profileService;
@@ -27,8 +29,8 @@ public final class LoggerServiceImpl implements LoggerService {
                                 "/tp " + location.getX() + " " + location.getY() + " " + location.getZ()))
                         .hoverEvent(showText(text("Cliquez pour vous téléporter à cette action"))))
                 .build();
-        for (final Profile profile :
-                this.profileService.getProfiles(profile -> profile.spectating())) {
+
+        for (final Profile profile : this.profileService.getProfiles(Profile::spectating)) {
             profile.sendMessage(message);
         }
     }

@@ -11,14 +11,12 @@ import dev.kurai.uhc.team.TeamService;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.jspecify.annotations.NullMarked;
 
 import java.util.stream.Collectors;
 
 import static dev.kurai.uhc.util.CC.prefix;
 
 @Command(@CommandMeta(name = "team", aliases = "equipe"))
-@NullMarked
 @RequiredArgsConstructor
 public final class TeamCommand {
 

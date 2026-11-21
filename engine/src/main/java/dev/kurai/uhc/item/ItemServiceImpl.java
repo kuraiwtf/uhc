@@ -6,6 +6,7 @@ import dev.kurai.uhc.item.builtin.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Unmodifiable;
+import org.jspecify.annotations.NullMarked;
 
 import java.util.Collection;
 import java.util.Map;
@@ -13,6 +14,7 @@ import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collector;
 
+@NullMarked
 public final class ItemServiceImpl implements ItemService {
 
     private final Map<String, CustomItem> registeredItems;

@@ -3,13 +3,11 @@ package dev.kurai.uhc.profile;
 import dev.kurai.uhc.UltraHardcoreAPI;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Unmodifiable;
-import org.jspecify.annotations.NullMarked;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
 
-@NullMarked
 public final class ProfileServiceImpl implements ProfileService {
 
     private final Map<UUID, Profile> profiles;
