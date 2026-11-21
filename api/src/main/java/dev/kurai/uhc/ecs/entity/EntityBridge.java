@@ -5,20 +5,18 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.Collection;
 
-public interface EntityBridge<I, S extends EntityBridge<I, S>> {
+public interface EntityBridge<I> {
 
     default Collection<Component> getComponents() {
         return this.asEntity().getComponents();
     }
 
-    default S addComponent(final Component component) {
-        this.asEntity().addComponent(component);
-        return this.self();
+    default Entity<I> addComponent(final Component component) {
+        return this.asEntity().addComponent(component);
     }
 
-    default S addComponents(final Component... components) {
-        this.asEntity().addComponents(components);
-        return this.self();
+    default Entity<I> addComponents(final Component... components) {
+        return this.asEntity().addComponents(components);
     }
 
     default boolean removeComponent(final Class<? extends Component> componentClass) {
@@ -34,9 +32,4 @@ public interface EntityBridge<I, S extends EntityBridge<I, S>> {
     }
 
     Entity<I> asEntity();
-
-    @SuppressWarnings("unchecked")
-    private S self() {
-        return (S) this;
-    }
 }

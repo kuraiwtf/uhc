@@ -27,7 +27,7 @@ import java.util.Map;
 
 @NullMarked
 public abstract class AbstractModule
-        implements EntityBridge<String, AbstractModule>, Identifiable<String>, Nameable<String>, ModuleEventHolder {
+        implements EntityBridge<String>, Identifiable<String>, Nameable<String>, ModuleEventHolder {
 
     protected final Entity<String> entity;
 

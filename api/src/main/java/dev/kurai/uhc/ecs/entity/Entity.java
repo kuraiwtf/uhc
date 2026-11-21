@@ -13,7 +13,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-public final class Entity<I> implements EntityBridge<I, Entity<I>>, Identifiable<I> {
+public final class Entity<I> implements EntityBridge<I>, Identifiable<I> {
 
     private final EventService eventService;
 
