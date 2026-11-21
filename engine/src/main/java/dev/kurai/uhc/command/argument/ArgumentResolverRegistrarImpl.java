@@ -1,11 +1,13 @@
 package dev.kurai.uhc.command.argument;
 
 import com.google.common.collect.Maps;
+import dev.kurai.uhc.command.argument.builtin.bukkit.GameModeArgumentResolver;
 import dev.kurai.uhc.command.argument.builtin.bukkit.OfflinePlayerArgumentResolver;
 import dev.kurai.uhc.command.argument.builtin.bukkit.PlayerArgumentResolver;
 import dev.kurai.uhc.command.argument.builtin.bukkit.WorldArgumentResolver;
 import dev.kurai.uhc.command.argument.builtin.java.*;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
+import org.bukkit.GameMode;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
@@ -46,6 +48,7 @@ public final class ArgumentResolverRegistrarImpl implements ArgumentResolverRegi
         this.registerArgumentResolver(Long.class, new LongArgumentResolver());
         this.registerArgumentResolver(long.class, new LongArgumentResolver());
 
+        this.registerArgumentResolver(GameMode.class, new GameModeArgumentResolver());
         this.registerArgumentResolver(OfflinePlayer.class, new OfflinePlayerArgumentResolver(this.bukkitAudiences));
         this.registerArgumentResolver(Player.class, new PlayerArgumentResolver(this.bukkitAudiences));
         this.registerArgumentResolver(World.class, new WorldArgumentResolver(this.bukkitAudiences));
