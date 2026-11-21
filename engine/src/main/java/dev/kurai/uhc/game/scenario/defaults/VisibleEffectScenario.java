@@ -9,13 +9,14 @@ import dev.kurai.uhc.tablist.part.EffectTabListPart;
 import dev.kurai.uhc.util.ItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.PotionEffectType;
 
 import java.util.List;
 
-public final class VisibleEffectScenario extends AbstractScenario {
+public final class VisibleEffectScenario extends AbstractScenario implements Listener {
 
     public VisibleEffectScenario(final UltraHardcoreAPI ultraHardcore) {
         super("visible_effect", "Visible Effect", ultraHardcore, ScenarioCategory.GAMEPLAY);
