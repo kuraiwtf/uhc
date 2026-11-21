@@ -1,5 +1,6 @@
 package dev.kurai.uhc.module.power.restriction.defaults;
 
+import dev.kurai.uhc.event.defaults.power.cooldown.PowerCooldownDecrementEvent;
 import dev.kurai.uhc.event.defaults.power.cooldown.PowerCooldownEndEvent;
 import dev.kurai.uhc.event.defaults.power.cooldown.PowerCooldownStartEvent;
 import dev.kurai.uhc.module.power.AbstractPower;
@@ -27,7 +28,7 @@ import static net.kyori.adventure.text.format.NamedTextColor.RED;
 @Setter
 public final class CooldownPowerRestriction implements PowerRestriction {
 
-    private static final String IDENTIFIER = "cooldown";
+    private final String identifier;
 
     private final Plugin plugin;
 
@@ -40,20 +41,24 @@ public final class CooldownPowerRestriction implements PowerRestriction {
     private BukkitTask task;
 
     public CooldownPowerRestriction(
-            final Plugin plugin, final int initialCooldownTime, final RestrictionStrategy strategy) {
+            final String identifier,
+            final Plugin plugin,
+            final int initialCooldownTime,
+            final RestrictionStrategy strategy) {
+        this.identifier = identifier;
         this.plugin = plugin;
         this.strategy = strategy;
         this.initialCooldownTime = initialCooldownTime;
         this.timeLeft = 0;
     }
 
-    public CooldownPowerRestriction(final Plugin plugin, final int initialCooldownTime) {
-        this(plugin, initialCooldownTime, RestrictionStrategy.onUse());
+    public CooldownPowerRestriction(final String identifier, final Plugin plugin, final int initialCooldownTime) {
+        this(identifier, plugin, initialCooldownTime, RestrictionStrategy.onUse());
     }
 
     @Override
     public String getId() {
-        return IDENTIFIER;
+        return this.identifier;
     }
 
     @Override
@@ -90,14 +95,24 @@ public final class CooldownPowerRestriction implements PowerRestriction {
 
         @Override
         public void run() {
+            final Player player = Bukkit.getPlayer(this.owner);
             if (this.restriction.timeLeft <= 0) {
                 this.restriction.task = null;
                 this.cancel();
-                Bukkit.getPluginManager()
-                        .callEvent(new PowerCooldownEndEvent(Bukkit.getPlayer(this.owner), this.restriction));
+                if (player != null) {
+                    Bukkit.getPluginManager().callEvent(new PowerCooldownEndEvent(player, this.restriction));
+                }
                 return;
             }
 
+            if (player != null) {
+                final PowerCooldownDecrementEvent decrementEvent =
+                        new PowerCooldownDecrementEvent(player, this.restriction);
+                Bukkit.getPluginManager().callEvent(decrementEvent);
+                if (decrementEvent.isCancelled()) {
+                    return;
+                }
+            }
             this.restriction.timeLeft--;
         }
     }
