@@ -2,5 +2,4 @@ rootProject.name = "uhc"
 
 includeBuild("build-logic")
 include("api", "engine")
-
-include("extensions:mumble-extension")
+include("extensions:mumble-extension", "extensions:minigame-extension")

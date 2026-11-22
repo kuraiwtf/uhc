@@ -46,6 +46,7 @@ jobs:
               -type f \
               ! -name "*-sources.jar" \
               ! -name "*-javadoc.jar" \
+              ! -path "engine/build/libs/engine-*.jar" \
               -print0
           )
 
