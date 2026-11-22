@@ -210,7 +210,7 @@ public final class UltraHardcoreEngine extends UltraHardcoreAPI {
                 new TeamListener(this.teamService, this.moduleService));
 
         Bukkit.getScheduler()
-                .runTaskTimerAsynchronously(this.plugin, new TabListUpdaterTask(this.tabListService), 0, 10L);
+                .runTaskTimer(this.plugin, new TabListUpdaterTask(this.tabListService), 0, 10L);
 
         Bukkit.getScheduler()
                 .runTaskTimer(
@@ -241,7 +241,7 @@ public final class UltraHardcoreEngine extends UltraHardcoreAPI {
                         1L);
 
         Bukkit.getScheduler()
-                .runTaskTimerAsynchronously(
+                .runTaskTimer(
                         this.plugin, new EffectRefreshTask(effectPacketSender), 0, EffectRefreshTask.INTERVAL_TICKS);
     }
 }

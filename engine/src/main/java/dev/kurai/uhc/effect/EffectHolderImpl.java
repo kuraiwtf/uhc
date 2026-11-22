@@ -8,6 +8,7 @@ import org.bukkit.Bukkit;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 
 import static java.util.Objects.requireNonNull;
@@ -45,9 +46,9 @@ public final class EffectHolderImpl implements EffectHolder {
 
     @Override
     public void validateEffects() {
-        for (final Effect effect : this.effects.values()) {
-            if (effect.expired()) {
-                this.removeEffect(effect.key());
+        for (final Effect effect : List.copyOf(this.effects.values())) {
+            if (effect.expired() && this.effects.get(effect.key(), effect.effectType()) == effect) {
+                this.removeEffect(effect.key(), effect.effectType());
             }
         }
 
