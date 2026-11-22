@@ -9,12 +9,14 @@ java {
   withJavadocJar()
 }
 
+val menuApiJar = file("../libs/MenuAPI-core-1.5.5.jar")
+
 dependencies {
   api(platform(libs.adventure.bom))
   api(libs.bundles.apollo)
   api(libs.bundles.adventure)
   api(libs.bundles.jackson)
-  api(files("../libs/MenuAPI-core-1.5.5.jar"))
+  compileOnlyApi(files(menuApiJar))
   api(libs.entity.lib)
   api(libs.actionbar.api)
   compileOnlyApi(libs.lombok)
@@ -22,6 +24,12 @@ dependencies {
   annotationProcessor(libs.lombok)
   compileOnly(libs.packetevents.spigot)
   compileOnly(libs.spigot)
+}
+
+tasks.jar {
+  from(zipTree(menuApiJar)) {
+    exclude("META-INF/**")
+  }
 }
 
 publishing {
@@ -32,17 +40,6 @@ publishing {
       groupId = project.group.toString()
       artifactId = "${rootProject.name}-${project.name}"
       version = project.version.toString()
-    }
-  }
-
-  repositories {
-    maven {
-      name = "GitHubPackages"
-      url = uri("https://maven.pkg.github.com/kuraiwtf/uhc")
-      credentials {
-        username = System.getenv("GITHUB_ACTOR")
-        password = System.getenv("GITHUB_TOKEN")
-      }
     }
   }
 }
