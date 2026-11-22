@@ -1,0 +1,7 @@
+name: MiniGame-Extension
+version: ${version}
+author: kurai
+main: dev.kurai.uhc.extension.minigame.MinigamePlugin
+
+depend:
+  - UHC-Engine
