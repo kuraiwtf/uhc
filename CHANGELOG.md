@@ -1,5 +1,57 @@
 # Changelog
 
+## [1.19.0](https://github.com/kuraiwtf/uhc/compare/v1.18.0...v1.19.0) (2026-11-22)
+
+
+### Features
+
+* add decrement event to power cooldowns ([175c2ee](https://github.com/kuraiwtf/uhc/commit/175c2ee153648bb2b964dc0b35ebf0fd4448979c))
+* add editMeta helpers to ItemBuilder ([98f430e](https://github.com/kuraiwtf/uhc/commit/98f430e55147c5bc03a02cfe5eef52aadf7812cf))
+* add effect lookup by key and type, and per-type removal ([78def1a](https://github.com/kuraiwtf/uhc/commit/78def1a8b6e1e8577bd3826772e1d31d381f4109))
+* add formatGameMode helper to CC ([197caca](https://github.com/kuraiwtf/uhc/commit/197caca4831cb88ef2a272e72d00beddc4d1a071))
+* add GameMode argument resolver ([00004b8](https://github.com/kuraiwtf/uhc/commit/00004b8b52e52e9473ebf7a8cce054ef0916fa58))
+* add gamemode host command ([118778c](https://github.com/kuraiwtf/uhc/commit/118778cc1bf730d435b20123370a339530a74684))
+* add lore to VisibleEffectScenario ([40380a0](https://github.com/kuraiwtf/uhc/commit/40380a0664125285f8875ce579a7b502f515d1a4))
+* add minigame extension with duel system ([7e991c3](https://github.com/kuraiwtf/uhc/commit/7e991c39acbba971e8f934c8cdb3dda7d7dee109))
+* add profile state to Profile API and ProfileImpl ([a06c887](https://github.com/kuraiwtf/uhc/commit/a06c88792f11f8c81f6d960dd7d0aea31a6dcdfb))
+* add VisibleEffectScenario to show active effects in tab list ([27b4a9e](https://github.com/kuraiwtf/uhc/commit/27b4a9e8d61e0e4bcf78811fd64b840fc1aafef7))
+* expose Profile name setter in API ([f561670](https://github.com/kuraiwtf/uhc/commit/f561670f55a8ecb07a727e960829546726ea5630))
+* highlight already-applied colors in color menu ([d1c3df4](https://github.com/kuraiwtf/uhc/commit/d1c3df42ad4985dbf0e0eab227b9f397195da42c))
+* implement Keyed on Effect ([4f7f6d9](https://github.com/kuraiwtf/uhc/commit/4f7f6d9a58d7c63ded597703e7f8c6dbe0c8a5ad))
+* implement Listener on VisibleEffectScenario ([6979edb](https://github.com/kuraiwtf/uhc/commit/6979edb7511b503c1193ddca7ec730a3a8e6b447))
+* reset chat option when PvP timer ends ([6e0f273](https://github.com/kuraiwtf/uhc/commit/6e0f273dc3115ccd6b16d32a0b986f42705a7769))
+
+
+### Bug Fixes
+
+* process item powers through their current power in cooldown updater ([41ea5fa](https://github.com/kuraiwtf/uhc/commit/41ea5fa90bb8a12cf45ef31d61e0c453b3eb5684))
+* resolve power cooldown restriction by power id in development command ([7428231](https://github.com/kuraiwtf/uhc/commit/742823130c29d24e026a3c00d8a70ac63c0c5f47))
+* resolve profile name from UUID via Bukkit and use entity id ([8970a11](https://github.com/kuraiwtf/uhc/commit/8970a11a30b4681c9f55fdfc6f5cc784b1cb424e))
+* use item power identifier for cooldown restriction lookup ([2321afc](https://github.com/kuraiwtf/uhc/commit/2321afc182ca55ba3abd7968399fc4524eb2c65b))
+* validate effect key and type in removeEffect ([2184604](https://github.com/kuraiwtf/uhc/commit/2184604fb2819735a901878b54f8217b9707586f))
+
+
+### Code Refactoring
+
+* add ProfileState enum and ProfileStateComponent ([8cd650b](https://github.com/kuraiwtf/uhc/commit/8cd650bb3337ae7f38eddd590bb85a59c875df0f))
+* convert Effect to record and rename accessors ([e554c84](https://github.com/kuraiwtf/uhc/commit/e554c846cda14b1eb99d7a4fcd1c2c77c954ee70))
+* drop unused ModuleService from AccessListener ([251710f](https://github.com/kuraiwtf/uhc/commit/251710f93364885ff5e1978213763e083b40e66e))
+* make EntityBridge generic over id type only ([cad5cce](https://github.com/kuraiwtf/uhc/commit/cad5cce5f6b21c738592a6087bcf0c8dcad5b74e))
+* move NullMarked to package-info across engine packages ([6a98108](https://github.com/kuraiwtf/uhc/commit/6a9810832198ec74f7aa206dff853016fd637b65))
+* move NullMarked to package-info and relocate start types ([0c86e05](https://github.com/kuraiwtf/uhc/commit/0c86e0561fab43d72ff6e85c314b1861791e7878))
+* remove unused util API package ([be421bc](https://github.com/kuraiwtf/uhc/commit/be421bc4a71f2cbb9a4fc9b452794461c33026c4))
+* rename DeadComponent to DeathRecordComponent ([01e877e](https://github.com/kuraiwtf/uhc/commit/01e877ed370a03e51255ca07313a6e5d5fde34c7))
+* rename EffectHolder getEffectValue to effectValue ([02dc251](https://github.com/kuraiwtf/uhc/commit/02dc2510566c51f79a292c3a012162c9c679d2ee))
+* rename getEntireHealth to getHealthAndAbsorption ([1900add](https://github.com/kuraiwtf/uhc/commit/1900add9a468dc63dd59731f988e449b5e15ace9))
+* rename WhitelistService.isWhitelisted to whitelisted ([d477dee](https://github.com/kuraiwtf/uhc/commit/d477dee41a32c6fb28540080dbb21991a15cba2e))
+* replace profile state components with Profile state API ([50c4974](https://github.com/kuraiwtf/uhc/commit/50c4974bf0f3ccec24d1772fe143bb62d5c6354a))
+* replace profile state with ECS components ([2489ff1](https://github.com/kuraiwtf/uhc/commit/2489ff112d45773d6ac28c85eeb574204fa48204))
+* replace profile state with ECS components ([9067dd8](https://github.com/kuraiwtf/uhc/commit/9067dd8bf0d72a4bab368382042ba05be1f2f8e2))
+* use adventure Key for effect identifiers ([fc206c6](https://github.com/kuraiwtf/uhc/commit/fc206c68b9350003e315b7fd83e8721aa43093d7))
+* use EffectHolder lookup for effect totals ([f76bc1d](https://github.com/kuraiwtf/uhc/commit/f76bc1d7f9fcb8a95dd1124961c9e5b8a4f996d0))
+* use EffectHolder lookup in effect tab list percentage ([30690f7](https://github.com/kuraiwtf/uhc/commit/30690f75ef8d492f6c3ef2ad0186babbff84d320))
+* use record component fields in Effect constructor ([2ce3bd1](https://github.com/kuraiwtf/uhc/commit/2ce3bd1f83a1c336ebd17dc22e3237030252dfa6))
+
 ## [1.18.0](https://github.com/kuraiwtf/uhc/compare/v1.17.1...v1.18.0) (2026-11-20)
 
 
