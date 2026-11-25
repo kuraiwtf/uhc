@@ -109,7 +109,7 @@ public final class WorldPreloadTask extends BukkitRunnable {
     private void unloadRow(final int blockZ) {
         final int chunkZ = blockZ >> 4;
         for (int x = -this.borderSize; x <= this.borderSize; x += 16) {
-            this.world.unloadChunkRequest(x >> 4, chunkZ);
+            this.world.unloadChunk(x >> 4, chunkZ, true, true);
         }
     }
 }
