@@ -91,6 +91,15 @@ public final class AnswerCommand {
         final var response = String.join(" ", message);
         target.sendMessage(prefix("Un membre de l'équipe vous a répondu&7:&a %s".formatted(response)));
         player.sendMessage(prefix("Votre réponse a été envoyée au help-op&6 #%s&r.".formatted(id)));
+
+        final var hostService = this.ultraHardcore.gameService().hostService();
+        final var notification = prefix("&6%s&r a répondu au help-op&6 #%s&7:&a %s"
+                .formatted(player.getName(), id, response));
+        this.ultraHardcore
+                .profileService()
+                .getProfiles(profile -> !profile.getId().equals(player.getUniqueId())
+                        && (hostService.hasHostAccess(profile.getId()) || profile.spectating()))
+                .forEach(profile -> profile.sendMessage(notification));
     }
 
     @SubCommand(@CommandMeta(name = "whois", description = "Voir le pseudo à l'origine d'un helpop"))
@@ -104,8 +113,15 @@ public final class AnswerCommand {
             return;
         }
 
-        player.sendMessage(prefix("Le joueur&6 %s&r a posé la question liée au help-op&6 #%s&r&r."
-                .formatted(ticketOptional.get().askerName(), id)));
+        final var ticket = ticketOptional.get();
+        player.sendMessage(prefix("Le joueur&6 %s&r a posé la question liée au help-op&6 #%s&r."
+                .formatted(ticket.askerName(), id)));
+
+        final var target = Bukkit.getPlayer(ticket.askerId());
+        if (target != null) {
+            target.sendMessage(prefix("&6%s&r a consulté votre pseudo pour le help-op&6 #%s&r."
+                    .formatted(player.getName(), id)));
+        }
     }
 
     @SubCommand(@CommandMeta(name = "list", description = "Voir la liste des help-ops en attente"))
