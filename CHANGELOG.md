@@ -1,5 +1,25 @@
 # Changelog
 
+## [1.20.0](https://github.com/kuraiwtf/uhc/compare/v1.19.0...v1.20.0) (2026-11-26)
+
+
+### Features
+
+* add usage provider for command argument errors ([69a0f44](https://github.com/kuraiwtf/uhc/commit/69a0f4401cd68173206c215975ab232609688e21))
+* fake enchantment glint on other players' equipment ([7cc71a5](https://github.com/kuraiwtf/uhc/commit/7cc71a5a0bd0ffba7229a02af04303228123a1b8))
+* notify helpop participants and whois target ([e27bb8e](https://github.com/kuraiwtf/uhc/commit/e27bb8e7d5bd53b05a8d7846160948e2ecd6c500))
+
+
+### Bug Fixes
+
+* avoid async tab list and effect tasks racing shared state ([9487ef4](https://github.com/kuraiwtf/uhc/commit/9487ef42eeb31820db8e5dade7a2d5612862a0bb))
+* use unloadChunk with save and force flags in world preload ([ad9b526](https://github.com/kuraiwtf/uhc/commit/ad9b526176a9d7b3d39c251d8be172a3d08682f0))
+
+
+### Code Refactoring
+
+* reuse usage provider for command argument errors ([a4f2e0c](https://github.com/kuraiwtf/uhc/commit/a4f2e0ca65524107d48f68cc3c091c0034ff56af))
+
 ## [1.19.0](https://github.com/kuraiwtf/uhc/compare/v1.18.0...v1.19.0) (2026-11-22)
 
 
