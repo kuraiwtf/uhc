@@ -4,7 +4,6 @@ import com.google.common.collect.Lists;
 import dev.kurai.uhc.command.annotation.CommandMeta;
 import dev.kurai.uhc.command.argument.data.ArgumentData;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
-import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
@@ -90,16 +89,9 @@ public final class UltraHardcoreOrphanCommand extends Command {
             minArgs = this.method.getParameters().length - (arrayOptional ? 2 : 1);
         }
 
+        final var usage = this.commandRegistrar.getUsageProvider().getUsage(this.commandMeta.name(), this.arguments);
         if (args.length < minArgs) {
-            audience.sendMessage(text().append(prefix())
-                    .append(text("Vous n'avez pas fourni suffisament d'arguments.", RED))
-                    .appendSpace()
-                    .append(text("(", DARK_GRAY))
-                    .append(text(minArgs, DARK_RED, TextDecoration.BOLD))
-                    .append(text("/", DARK_GRAY))
-                    .append(text(args.length, DARK_RED))
-                    .append(text(")", DARK_GRAY))
-                    .build());
+            audience.sendMessage(usage);
             return false;
         }
 
@@ -114,9 +106,7 @@ public final class UltraHardcoreOrphanCommand extends Command {
                         : this.arguments.get(i - 1).defaultValue();
                 final var resolved = registrar.resolveArgument(this.method.getParameterTypes()[i], sender, rawArg);
                 if (resolved == null) {
-                    audience.sendMessage(text().append(prefix())
-                            .append(text("Un argument est invalide.", RED))
-                            .build());
+                    audience.sendMessage(usage);
                     return false;
                 }
                 resolvedArguments.add(resolved);
@@ -132,9 +122,7 @@ public final class UltraHardcoreOrphanCommand extends Command {
                 if (i < arrayParamIndex) {
                     final var resolved = registrar.resolveArgument(type, sender, args[i - 1]);
                     if (resolved == null) {
-                        audience.sendMessage(text().append(prefix())
-                                .append(text("Un argument est invalide.", RED))
-                                .build());
+                        audience.sendMessage(usage);
                         return false;
                     }
 
@@ -150,9 +138,7 @@ public final class UltraHardcoreOrphanCommand extends Command {
                         final var resolved = registrar.resolveArgument(
                                 componentType, sender, useDefault ? arrayDefault : args[prefixCount + j]);
                         if (resolved == null) {
-                            audience.sendMessage(text().append(prefix())
-                                    .append(text("Un argument est invalide.", RED))
-                                    .build());
+                            audience.sendMessage(usage);
                             return false;
                         }
                         Array.set(array, j, resolved);
@@ -163,9 +149,7 @@ public final class UltraHardcoreOrphanCommand extends Command {
                     final int argIndex = args.length - (this.method.getParameters().length - i);
                     final var resolved = registrar.resolveArgument(type, sender, args[argIndex]);
                     if (resolved == null) {
-                        audience.sendMessage(text().append(prefix())
-                                .append(text("Un argument est invalide.", RED))
-                                .build());
+                        audience.sendMessage(usage);
                         return false;
                     }
                     resolvedArguments.add(resolved);

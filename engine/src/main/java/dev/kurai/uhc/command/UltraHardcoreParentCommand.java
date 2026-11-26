@@ -6,7 +6,6 @@ import dev.kurai.uhc.command.help.HelpCommand;
 import dev.kurai.uhc.command.impl.SubCommandData;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
-import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -167,16 +166,12 @@ public final class UltraHardcoreParentCommand extends Command {
             minArgs = method.getParameters().length - (arrayOptional ? 2 : 1);
         }
 
+        final String command = subCommand == this.defaultCommand
+                ? this.commandMeta.name()
+                : this.commandMeta.name() + " " + subCommand.commandMeta().name();
+        final var usage = this.commandRegistrar.getUsageProvider().getUsage(command, subCommand.arguments());
         if (rawArguments.size() < minArgs) {
-            audience.sendMessage(text().append(prefix())
-                    .append(text("Vous n'avez pas fourni suffisament d'arguments.", RED))
-                    .appendSpace()
-                    .append(text("(", DARK_GRAY))
-                    .append(text(rawArguments.size(), DARK_RED, TextDecoration.BOLD))
-                    .append(text("/", DARK_GRAY))
-                    .append(text(minArgs, DARK_RED))
-                    .append(text(")", DARK_GRAY))
-                    .build());
+            audience.sendMessage(usage);
             return false;
         }
 
@@ -191,9 +186,7 @@ public final class UltraHardcoreParentCommand extends Command {
                         : subCommand.arguments().get(i - 1).defaultValue();
                 final var resolved = registrar.resolveArgument(method.getParameterTypes()[i], sender, rawArg);
                 if (resolved == null) {
-                    audience.sendMessage(text().append(prefix())
-                            .append(text("Un argument est invalide.", RED))
-                            .build());
+                    audience.sendMessage(usage);
                     return false;
                 }
                 resolvedArguments.add(resolved);
@@ -209,9 +202,7 @@ public final class UltraHardcoreParentCommand extends Command {
                 if (i < arrayParamIndex) {
                     final var resolved = registrar.resolveArgument(type, sender, rawArguments.get(i - 1));
                     if (resolved == null) {
-                        audience.sendMessage(text().append(prefix())
-                                .append(text("Un argument est invalide.", RED))
-                                .build());
+                        audience.sendMessage(usage);
                         return false;
                     }
                     resolvedArguments.add(resolved);
@@ -227,9 +218,7 @@ public final class UltraHardcoreParentCommand extends Command {
                         final var resolved = registrar.resolveArgument(
                                 componentType, sender, useDefault ? arrayDefault : rawArguments.get(prefixCount + j));
                         if (resolved == null) {
-                            audience.sendMessage(text().append(prefix())
-                                    .append(text("Un argument est invalide.", RED))
-                                    .build());
+                            audience.sendMessage(usage);
                             return false;
                         }
                         Array.set(array, j, resolved);
@@ -240,9 +229,7 @@ public final class UltraHardcoreParentCommand extends Command {
                     final int argIndex = rawArguments.size() - (method.getParameters().length - i);
                     final var resolved = registrar.resolveArgument(type, sender, rawArguments.get(argIndex));
                     if (resolved == null) {
-                        audience.sendMessage(text().append(prefix())
-                                .append(text("Un argument est invalide.", RED))
-                                .build());
+                        audience.sendMessage(usage);
                         return false;
                     }
                     resolvedArguments.add(resolved);
