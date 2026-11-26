@@ -12,6 +12,10 @@ public interface CommandRegistrar {
 
     void setPermissionProvider(final PermissionProvider permissionProvider);
 
+    UsageProvider getUsageProvider();
+
+    void setUsageProvider(final UsageProvider usageProvider);
+
     void registerCommand(final Object command);
 
     default void registerCommands(final Object... commands) {

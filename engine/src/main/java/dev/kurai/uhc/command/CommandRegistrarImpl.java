@@ -24,11 +24,13 @@ public final class CommandRegistrarImpl implements CommandRegistrar {
     private final BukkitAudiences bukkitAudiences;
     private final ArgumentResolverRegistrar argumentResolverRegistrar;
     private PermissionProvider permissionProvider;
+    private UsageProvider usageProvider;
 
     public CommandRegistrarImpl(final UltraHardcoreAPI ultraHardcore) {
         this.bukkitAudiences = ultraHardcore.bukkitAudiences();
         this.argumentResolverRegistrar = new ArgumentResolverRegistrarImpl(this.bukkitAudiences);
         this.permissionProvider = new BuiltinPermissionProvider();
+        this.usageProvider = new BuiltinUsageProvider();
     }
 
     @Override
@@ -44,6 +46,16 @@ public final class CommandRegistrarImpl implements CommandRegistrar {
     @Override
     public void setPermissionProvider(final PermissionProvider permissionProvider) {
         this.permissionProvider = permissionProvider;
+    }
+
+    @Override
+    public UsageProvider getUsageProvider() {
+        return this.usageProvider;
+    }
+
+    @Override
+    public void setUsageProvider(final UsageProvider usageProvider) {
+        this.usageProvider = usageProvider;
     }
 
     @Override
