@@ -2,9 +2,15 @@ package dev.kurai.uhc.listener;
 
 import com.github.retrooper.packetevents.event.PacketListenerAbstract;
 import com.github.retrooper.packetevents.event.PacketSendEvent;
+import com.github.retrooper.packetevents.protocol.item.ItemStack;
+import com.github.retrooper.packetevents.protocol.item.enchantment.Enchantment;
+import com.github.retrooper.packetevents.protocol.item.enchantment.type.EnchantmentTypes;
 import com.github.retrooper.packetevents.protocol.packettype.PacketType;
+import com.github.retrooper.packetevents.protocol.packettype.PacketTypeCommon;
+import com.github.retrooper.packetevents.protocol.player.Equipment;
 import com.github.retrooper.packetevents.protocol.potion.PotionTypes;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityEffect;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityEquipment;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerRemoveEntityEffect;
 import net.minecraft.server.v1_8_R3.EntityPlayer;
 import org.bukkit.World;
@@ -18,12 +24,15 @@ import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
  * @author Super_Crafting
  */
 public final class FixListener extends PacketListenerAbstract implements Listener {
+
+    private static final Enchantment FAKE_ENCHANTMENT = new Enchantment(EnchantmentTypes.UNBREAKING, 67);
 
     private static void refreshWorld(final World world, final Player player) {
         for (final var worldPlayer : world.getPlayers()) {
@@ -63,30 +72,35 @@ public final class FixListener extends PacketListenerAbstract implements Listene
 
     @Override
     public void onPacketSend(final PacketSendEvent event) {
-        final Player receiver = event.getPlayer();
-        if (event.getPacketType() == PacketType.Play.Server.ENTITY_EFFECT) {
-            final var effectPacket = new WrapperPlayServerEntityEffect(event);
-            final int targetEntityId = effectPacket.getEntityId();
-            final int receiverEntityId = receiver.getEntityId();
-
-            if (targetEntityId != receiverEntityId) {
-                final var potionType = effectPacket.getPotionType();
-                if (potionType != PotionTypes.INVISIBILITY) {
-                    event.setCancelled(true);
-                    return;
-                }
+        final Player player = event.getPlayer();
+        final PacketTypeCommon packetType = event.getPacketType();
+        if (packetType == PacketType.Play.Server.ENTITY_EFFECT) {
+            final var packet = new WrapperPlayServerEntityEffect(event);
+            if (player.getEntityId() != packet.getEntityId() && packet.getPotionType() != PotionTypes.INVISIBILITY) {
+                event.setCancelled(true);
             }
         }
 
-        if (event.getPacketType() == PacketType.Play.Server.REMOVE_ENTITY_EFFECT) {
-            final var removeEffectPacket = new WrapperPlayServerRemoveEntityEffect(event);
-            final int targetEntityId = removeEffectPacket.getEntityId();
-            final int receiverEntityId = receiver.getEntityId();
+        if (packetType == PacketType.Play.Server.REMOVE_ENTITY_EFFECT) {
+            final var packet = new WrapperPlayServerRemoveEntityEffect(event);
+            if (player.getEntityId() != packet.getEntityId() && packet.getPotionType() != PotionTypes.INVISIBILITY) {
+                event.setCancelled(true);
+            }
+        }
 
-            if (targetEntityId != receiverEntityId) {
-                final var potionType = removeEffectPacket.getPotionType();
-                if (potionType != PotionTypes.INVISIBILITY) {
-                    event.setCancelled(true);
+        if (packetType == PacketType.Play.Server.ENTITY_EQUIPMENT) {
+            final WrapperPlayServerEntityEquipment packet = new WrapperPlayServerEntityEquipment(event);
+            if (player.getEntityId() != packet.getEntityId()) {
+                for (final Equipment equipment : packet.getEquipment()) {
+                    if (equipment == null || equipment.getItem() == null) {
+                        continue;
+                    }
+
+                    final ItemStack item = equipment.getItem();
+                    if (item.isEnchanted()) {
+                        item.setEnchantments(Collections.singletonList(FAKE_ENCHANTMENT));
+                        event.markForReEncode(true);
+                    }
                 }
             }
         }
